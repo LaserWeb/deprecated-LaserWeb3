@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>jQuery.NumPad - numeric keypad for jQuery Mobile (Demo)</title>
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		<!-- jQuery.NumPad -->
+		<script src="../../jquery.numpad.js"></script>
+		<link rel="stylesheet" href="../../jquery.numpad.css">
+		<script type="text/javascript">
+			// Set NumPad defaults for jQuery mobile. 
+			// These defaults will be applied to all NumPads within this document!
+			$.fn.numpad.defaults.gridTpl = '<table class="table modal-content"></table>';
+			$.fn.numpad.defaults.backgroundTpl = '<div class="modal-backdrop in"></div>';
+			$.fn.numpad.defaults.displayTpl = '<input type="text" class="form-control" />';
+			$.fn.numpad.defaults.buttonNumberTpl =  '<button type="button" class="btn btn-default"></button>';
+			$.fn.numpad.defaults.buttonFunctionTpl = '<button type="button" class="btn" style="width: 100%;"></button>';
+			$.fn.numpad.defaults.onKeypadCreate = function(){$(this).find('.done').addClass('btn-primary');};
+			
+			// Instantiate NumPad once the page is ready to be shown
+			$(document).ready(function(){
+				$('#text-basic').numpad();
+				$('#password').numpad({
+					displayTpl: '<input class="form-control" type="password" />',
+					hidePlusMinusButton: true,
+					hideDecimalButton: true	
+				});
+				$('#numpadButton-btn').numpad({
+					target: $('#numpadButton')
+				});
+				$('#numpad4div').numpad();
+				$('#numpad4column .qtyInput').numpad();
+				
+				$('#numpad4column tr').on('click', function(e){
+					$(this).find('.qtyInput').numpad('open');
+				});
+			});
+		</script>
+		<style type="text/css">
+			.nmpd-grid {border: none; padding: 20px;}
+			.nmpd-grid>tbody>tr>td {border: none;}
+			
+			/* Some custom styling for Bootstrap */
+			.qtyInput {display: block;
+			  width: 100%;
+			  padding: 6px 12px;
+			  color: #555;
+			  background-color: white;
+			  border: 1px solid #ccc;
+			  border-radius: 4px;
+			  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+			  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+			  -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+			  -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+			  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>jQuery.NumPad demo for Boostrap</h1>
+		<div class="well well-lg">jQuery.NumPad is a touch optimized on-screen numeric keypad, which can be used within any web UIs based on jQuery. This page shows how the NumPad can be integrated with bootstrap. It is fully compatible with bootstrap themes! See the full <a href="http://a.kabachnik.info/jquery-numpad.html">docs</a> for more information.</div>
+		<h2>Simple forms</h2>
+		<form>
+			<div class="form-group">
+				<label for="text-basic">Simple numeric input</label>
+				<input type="number" class="form-control" id="text-basic" placeholder="Enter a number">
+			</div>
+			<div class="form-group">
+				<label for="password">Pin code</label>
+				<input type="password" class="form-control" id="password" placeholder="Pin code">
+			</div>
+			<label for="numpadButton">Separate numpad button + maxlength=4 + input validation</label>
+			<div class="input-group">
+				<input type="text" id="numpadButton" class="form-control" placeholder="Enter a number" aria-describedby="numpadButton-btn" maxlength="4" onchange="alert('Value changed to ' + $(this).val());">
+				<span class="input-group-btn">
+					<button class="btn btn-default" id="numpadButton-btn" type="button"><i class="glyphicon glyphicon-th"></i></button>
+				</span>
+			</div>
+		</form>
+		<h2>Table</h2>
+		<p>Click on a row to open the numpad for the editable cell programmatically</p>
+		<table id="numpad4column" class="table">
+			<thead>
+				<tr>
+					<th>Product</th>
+					<th>Price</th>
+					<th>Quantity</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>XXL Keyboard</td>
+					<td>29,95</td>
+					<td class="qtyInput">1</td>
+				</tr>
+				<tr>
+					<td>XXL Mouse</td>
+					<td>19,95</td>
+					<td class="qtyInput">1</td>
+				</tr>
+				<tr>
+					<td>DVD-RW</td>
+					<td>1,95</td>
+					<td class="qtyInput">20</td>
+				</tr>
+			</tbody>
+		 </table>
+	</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "laserweb3",
+  "description": "a fully featured web ui for laser cutter/engravers, reprap and other 3d printers",
+  "contributors": [
+    {
+      "name": "Peter van der Walt",
+      "email": "peter.plaaswerf@gmail.com"
+    }
+  ],
+  "repository" :
+  {
+  	"type" : "git",
+  	"url" : "https://github.com/openhardwarecoza/LaserWeb3.git"
+  },
+  "licenses": [
+    {
+      "type": "AGPL-3.0",
+      "url": "http://www.gnu.org/licenses/agpl-3.0.txt"
+    }
+  ],
+  "dependencies": {
+    "chalk": "1.x.x",
+    "dotenv": "2.x.x",
+    "node-static": "0.7.x",
+    "serialport": "4.0.x",
+    "socket.io": "1.3.x"
+  },
+  "license": "AGPL-3.0"
+}

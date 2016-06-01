@@ -1,0 +1,1014 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>LaserWeb</title>
+
+    <meta name="description" content="Free Web Based Lasercutter Control Software for machines running on Grbl, Marlin, Smoothieware etc. Supports PNG/JPG/BMP Raster Engraving,  DXF/SVG Cutting">
+    <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator">
+    <meta name="google-site-verification" content="Q5N27jmbSMfsf_oC4UmRlNDVXKta7BP4DaDq1h0Ox5Y" />
+    <meta name="author" content="github.com/openhardwarecoza/LaserWeb2/">
+
+    <!--IE Compatibility modes-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!--Mobile first-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- Bootstrap and UX -->
+    <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css" id="theme_css" />
+    <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-callouts.css" />
+    <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-tour.min.css" />
+    <link type="text/css" rel="stylesheet" media="all" href="css/main.css" id="extra_css" />
+
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/jquery/mindmup-editabletable.js"></script>
+
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap-filestyle.js"></script>
+    <script src="lib/bootstrap/js/bootstrap-tour.min.js"></script>
+    <script src="lib/bootstrap/js/dropdowns-enhancement.js"></script>
+
+    <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-colorselector.css" id="extra_css" />
+    <script src="lib/bootstrap/js/bootstrap-colorselector.js"></script>
+
+    <script src="lib/nprogress/nprogress.js"></script>
+    <link rel="stylesheet" href="lib/nprogress/nprogress.css" />
+
+    <link rel="stylesheet" href="lib/jquery/jquery-ui.css" />
+    <script src="lib/jquery/jquery-ui.js"></script>
+    <script src="lib/jquery/jquery.ui.touch-punch.min.js"></script>
+
+    <!-- https://github.com/kabachello/jQuery.NumPad -->
+    <script src="lib/jnumpad/jquery.numpad.js"></script>
+    <link rel="stylesheet" href="lib/jnumpad/jquery.numpad.css" />
+
+    <!-- Font -->
+    <link rel="stylesheet" href="css/font-awesome.css" />
+
+    <!-- ThreeJS -->
+    <script src="lib/threejs/three.min.js"></script>
+    <script src="lib/threejs/GridRect.js"></script>
+    <script src="lib/threejs/OrbitControls.js"></script>
+    <script src="lib/threejs/Projector.js"></script>
+    <script src="lib/threejs/CanvasRenderer.js"></script>
+    <script src="lib/threejs/TransformControls.js"></script>
+    <script src="lib/threejs/TweenMax.min.js"></script>
+
+    <script src="js/viewer.js"></script>
+
+    <!-- Serial Port JSON -->
+    <!-- <script src="js/spjs.js"></script> -->
+
+    <!-- Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/socketcomms.js"></script>
+
+
+    <!-- DXF Library -->
+    <script type="text/javascript" src="lib/dxf/dxf-parser.js"></script>
+    <script type="text/javascript" src="lib/dxf/three-dxf.js"></script>
+    <script type="text/javascript" src="js/dxf-render.js"></script>
+
+    <!-- SVG Chilipeppr Lib -->
+    <script type="text/javascript" src="lib/snap/snap.svg-min.js"></script>
+    <script type="text/javascript" src="js/svg-render.js"></script>
+
+    <!-- SVG Lasersaur Library -->
+    <script type="text/javascript" src="lib/svgreader/SVGReader.js"></script>
+    <script type="text/javascript" src="lib/svgreader/svg2three.js"></script>
+    <script type="text/javascript" src="lib/svgreader/vec2.js"></script>
+    <script type="text/javascript" src="lib/svgreader/svg.js"></script>
+
+    <!-- Three CAM -->
+    <script type="text/javascript" src="js/fileprep.js"></script>
+    <script type="text/javascript" src="js/threegcode.js"></script>
+    <script type="text/javascript" src="lib/clipperjs/clipper_unminified.js"></script>
+
+    <!-- Raster CAM -->
+    <script type="text/javascript" src="js/raster.js"></script>
+    <script type="text/paperscript" src="js/laserraster.js" canvas="canvas-1"></script>
+    <script type="text/javascript" src="lib/paperjs/paper-full.min.js"></script>
+
+    <!-- STL Cam -->
+    <script type="text/javascript" src="lib/slacer/stl.js"></script>
+    <script type="text/javascript" src="lib/slacer/slicer.js"></script>
+    <script type="text/javascript" src="lib/slacer/mesh.js"></script>
+    <script type="text/javascript" src="js/stlcam.js"></script>
+
+    <!-- Jog Widget -->
+    <script type="text/javascript" src="js/jog.js"></script>
+
+    <!-- Smoothie Ethernet -->
+    <script type="text/javascript" src="js/smoothie.js"></script>
+
+    <!-- Grbl -->
+    <script type="text/javascript" src="js/grbl.js"></script>
+
+    <!-- Macros Panel -->
+    <script src="js/macros.js"></script>
+
+    <!-- Saved/load settings -->
+    <script src="js/localstorage.js"></script>
+
+    <!-- Gcode Viewer -->
+    <script src="lib/gcode-viewer/gcode-parser.js"></script>
+    <script src="lib/gcode-viewer/ui.js"></script>
+
+    <!-- User Interface -->
+    <script src="js/main.js"></script>
+
+    <!--Google Sign-in-->
+    <script src="https://apis.google.com/js/client.js"></script>
+    <script src="js/googlesignin.js"></script>
+    <meta name="google-signin-client_id" content="1086441811451-4nmidqbqq8tve1qqa592uq1hs04kl5sl.apps.googleusercontent.com">
+    <link rel="stylesheet" href="css/googlesignin.css" />
+
+    <!-- Product tour -->
+    <script src="js/tour.js"></script>
+
+
+
+</head>
+
+</body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+
+            <!-- Nav Collapse -->
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!-- <a class="navbar-brand" href="#">LaserWeb</a> -->
+            <form class="navbar-form navbar-left" role="form">
+                <span class="btn btn-default btn-file" title="Open a png, .jpg, .jpeg, .bmp, .gcode, .svg, .dxf, or .stl file" id="openbutton"><i class="fa fa-folder-open fa-fw"></i>Open<input id="file" type="file" accept=".png,.jpg,.jpeg,.bmp,.gcode,.g,.svg,.dxf,.stl" /></span>
+            </form>
+
+            <!-- Serial Port Form -->
+            <form class="navbar-form navbar-left" role="form">
+                <!-- <div class="form-group"> -->
+                    <label for="port"><i class="fa fa-usb icon-white"></i></label>
+                    <select id="port" class="form-control">
+                        <option value="no">Select port</option>
+                    </select>
+                <!-- </div>
+                <div class="form-group"> -->
+                    <label for="baud"><i class="fa fa-tty icon-white"></i></label>
+                    <!--input type="select" class="form-control" id="baud"-->
+                    <select id="baud" class="form-control">
+                        <option value="250000">250000</option>
+                        <option value="230400">230400</option>
+                        <option value="115200" selected="selected">115200</option>
+                        <option value="57600">57600</option>
+                        <option value="38400">38400</option>
+                        <option value="19200">19200</option>
+                        <option value="9600">9600</option>
+                    </select>
+                <!-- </div> -->
+                <a class="btn btn-default disabled" id="connect" href="#">Connect</a>
+                <a class="btn btn-default" id="refreshPort" href="#"><i class="fa fa-refresh"></i></a>
+            </form>
+
+            <!-- Fullscreen Button -->
+            <form class="navbar-form navbar-right" role="form">
+                <a data-placement="bottom" data-original-title="Fullscreen" data-toggle="tooltip" class="btn btn-default" id="toggleFullScreen" onclick="toggleFullScreen();">
+                    <i class="glyphicon glyphicon-fullscreen"></i>
+                </a>
+            </form>
+
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid" style="height: calc(100% - 70px); width: 100%;">
+    <!-- Main Body -->
+    <div id="container1">
+        <!-- First Row -->
+        <div id="col1">
+          <!-- Sidebar Column -->
+          <!-- Google Drive Signin -->
+          <table class="table">
+              <tr>
+                  <td>
+                      <a class="user-link" href=""><img id="userpic" class="media-object img-thumbnail user-img" alt="User Picture" src="css/user64.gif" height="64" width="64"></a>
+                  </td>
+                  <td>
+                      <h5 id="fullname">Sign In:</h5>
+                      <div id="gSignInWrapper">
+                          <button class="btn btn-success customGPlusSignIn" id="g-login"><i class="fa fa-fw fa-google" aria-hidden="true"></i>Login<i class="fa fa-fw fa-sign-in" aria-hidden="true"></i></button>
+                          <button class="btn btn-danger customGPlusSignIn" id="g-logout" onclick="signOut();" style="display:none;"><i class="fa fa-fw fa-google" aria-hidden="true"></i>Logout</button>
+                          <button class="btn btn-default customGPlusSignIn" id="g-open" onclick="createPicker();" style="display:none;"><i class="fa fa-fw fa-folder" aria-hidden="true"></i>Open from Drive</button>
+                      </div>
+                  </td>
+              </tr>
+          </table>
+
+          <p>
+          <!-- Tabs-->
+          <ul class="nav nav-tabs nav-justified">
+              <li id="toggleviewer" role="presentation" class="active"><a href="#">Control</a></li>
+              <li id="togglefile" role="presentation"><a href="#">CAM</a></li>
+              <li id="togglesettings" role="presentation"><a href="#">Settings</a></li>
+          </ul>
+
+          <div id="hometab" style="width: 90%;">
+            <p>
+              <center>
+                <table>
+                  <tr>
+                    <!-- <td><button type="button" class="btn btn-default" id="unlockBtn" onclick="unlockMachine();"><i class="fa fa-unlock fa-lg"></i></button></td> -->
+                    <td colspan="5">
+                      <div class="btn-group btn-group-justified" role="group" aria-label="controljob">
+                        <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="homeBtn" onclick="homeMachine();"><span class="fa-stack fa-1x"><i class="fa fa-home fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">home</strong><strong class="fa-stack-1x icon-bot-text">laser</strong></span></button></div>
+                        <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="playBtn" onclick="playpauseMachine();"><span class="fa-stack fa-1x"><i id="playicon" class="fa fa-play fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">run</strong><strong class="fa-stack-1x icon-bot-text">gcode</strong></span></button></div>
+                        <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="stopBtn" onclick="stopMachine();"><span class="fa-stack fa-1x"><i class="fa fa-stop fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">abort</strong><strong class="fa-stack-1x icon-bot-text">job</strong></span></button></div>
+                        <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="zeroBtn" onclick="sendGcode('G92 X0 Y0 Z0');"><span class="fa-stack fa-1x"><i class="fa fa-bullseye fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">set</strong><strong class="fa-stack-1x icon-bot-text">zero</strong></span></button></div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="5">&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td><button type="button" data-title="Jog Y+" class="btn btn-ctl btn-default" id="yP"><span class="fa-stack fa-1x"><i class="fa fa-arrow-up fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Y+</strong><strong class="fa-stack-1x stepsizeval icon-bot-text">0.1mm</strong></span></button></td>
+                    <td></td>
+                    <td></td>
+                    <td><button type="button" data-title="Jog X+" class="btn btn-ctl btn-default" id="zP"><span class="fa-stack fa-1x"><i class="fa fa-arrow-up fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Z+</strong><strong class="fa-stack-1x stepsizeval icon-bot-text">0.1mm</strong></span></button></td>
+                  </tr>
+                  <tr>
+                    <td><button type="button" data-title="Jog X-" class="btn btn-ctl btn-default" id="xM"><span class="fa-stack fa-1x"><i class="fa fa-arrow-left fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">X-</strong><strong class="fa-stack-1x stepsizeval icon-bot-text">0.1mm</strong></span></button></button></td>
+                    <td><button type="button" data-title="Jog Y-" class="btn btn-ctl btn-default" id="yM"><span class="fa-stack fa-1x"><i class="fa fa-arrow-down fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Y-</strong><strong class="fa-stack-1x stepsizeval icon-bot-text">0.1mm</strong></span></button></button></td>
+                    <td><button type="button" data-title="Jog X+" class="btn btn-ctl btn-default" id="xP"><span class="fa-stack fa-1x"><i class="fa fa-arrow-right fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">X+</strong><strong class="fa-stack-1x stepsizeval icon-bot-text">0.1mm</strong></span></button></button></td>
+                    <td><div style="width: 8px;"></div></td>
+                    <td><button type="button" data-title="Jog X+" class="btn btn-ctl btn-default" id="zM"><span class="fa-stack fa-1x"><i class="fa fa-arrow-down fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Z-</strong><strong class="fa-stack-1x stepsizeval icon-bot-text">0.1mm</strong></span></button></button></td>
+                  </tr>
+                  <tr>
+                    <td colspan="5">&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td colspan=5>
+                      <form id="stepsize">
+                        <!-- <div class="form-group"> -->
+                          <div data-toggle="buttons">
+                            <label class="btn btn-jog btn-default active"><input type="radio" name="stp" value="0.1"><span class="fa-stack fa-1x"><i class="fa fa-arrows-h fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">jog by</strong><strong class="fa-stack-1x icon-bot-text">0.1mm</strong></span></label>
+                            <label class="btn btn-jog btn-default">       <input type="radio" name="stp" value="1"><span class="fa-stack fa-1x"><i class="fa fa-arrows-h fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">jog by</strong><strong class="fa-stack-1x icon-bot-text">1mm</strong></span></label>
+                            <label class="btn btn-jog btn-default">       <input type="radio" name="stp" value="10"><span class="fa-stack fa-1x"><i class="fa fa-arrows-h fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">jog by</strong><strong class="fa-stack-1x icon-bot-text">10mm</strong></span></label>
+                            <label class="btn btn-jog btn-default">       <input type="radio" name="stp" value="100"><span class="fa-stack fa-1x"><i class="fa fa-arrows-h fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">jog by</strong><strong class="fa-stack-1x icon-bot-text">100mm</strong></span></label>
+                          </div>
+                        <!-- </div> -->
+                      </form>
+                    </td>
+                  </tr>
+                </table>
+              </center>
+          </div>
+
+            <!-- Tab Content -->
+            <div id="camleftcol" style="display:none; width: 90%; margin-left: 10px;">
+
+                <div class="bs-callout bs-callout-danger" id="filestatus">
+                    <h4><i class="fa fa-fw fa-exclamation" aria-hidden="true"></i>No File to work with</h4> Please <a href="#" onclick="$('#file').click()">open a file from the "Open" button</a>:
+                    <br> SVG (Paths only, single group), DXF (R14 Lines/Polylines/Circles), BMP/PNG/JPEG (Raster Engraving) and GCODE (External CAM) are all supported
+                </div>
+
+                <!-- Module CAM -->
+                <div id="cammodule">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-pills" role="tablist">
+                        <li><a href="#stltab" id="stlopt" role="tab" data-toggle="tab" style="display: none;">STL</a></li>
+                        <li class="active"><a href="#preptab" id="prepopt" role="tab" data-toggle="tab">Prepare</a>
+                        </li>
+                        <li><a href="#convtab" role="tab" data-toggle="tab">Convert</a></li>
+                    </ul>
+                    <!-- Tab panes -->
+
+                    <!-- Tab 1 -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="preptab">
+                            <form class="form-horizontal">
+                                <!-- <div class="form-group"> -->
+                                    <label for="inflateVal" class="control-label">Tool Offset:</label>
+                                    <div class="input-group">
+                                        <input type="number" step="0.1" class="form-control numpad input-sm" value="1" id="inflateVal" style="text-align:right;">
+                                        <span class="input-group-addon">mm</span>
+                                        <span class="input-group-btn">
+                                    <button id="stepinfup" class="btn btn-default btn-sm" type="button"><i class="fa fa-caret-up"></i></button>
+                                    <button id="stepinfdn" class="btn btn-default btn-sm" type="button"><i class="fa fa-caret-down"></i></button>
+                                    <button id="removeInflateGrp" class="btn btn-default btn-sm" type="button"><i class="fa fa-times"></i></button>
+                                  </span>
+                                    </div>
+                                <!-- </div> -->
+                            </form>
+
+                            <form class="form-horizontal">
+                                <!-- <div class="form-group"> -->
+                                    <label for="inflateVal" class="control-label">Scale:</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control  numpad input-sm" value="100" id="scaleFactor" style="text-align:right;">
+                                        <span class="input-group-addon">%</span>
+                                        <span class="input-group-btn">
+                                          <button id="stepscaleup" class="btn btn-default btn-sm" type="button"><i class="fa fa-caret-up"></i></button>
+                                          <button id="stepscaledn" class="btn btn-default btn-sm" type="button"><i class="fa fa-caret-down"></i></button>
+                                        </span>
+                                    </div>
+                                <!-- </div> -->
+                            </form>
+
+                            <form class="form-horizontal">
+                                <!-- <div class="form-group"> -->
+                                    <label class="control-label">Position:</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control  numpad input-sm" value="0" id="xpos" style="text-align:right;">
+                                        <span class="input-group-addon">X</span>
+                                        <input type="number" class="form-control  numpad input-sm" value="0" id="ypos" style="text-align:right;">
+                                        <span class="input-group-addon">Y</span>
+                                    </div>
+                                <!-- </div> -->
+                            </form>
+
+                            <form class="form-horizontal">
+                                <!-- <div class="form-group"> -->
+                                    <label class="control-label">Angle:</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control  numpad input-sm" value="0" id="rotationval" style="text-align:right;">
+                                        <span class="input-group-addon">&deg;</span>
+                                    </div>
+                                <!-- </div> -->
+                            </form>
+                        </div>
+
+                        <!-- Tab 2 -->
+                        <div class="tab-pane" id="convtab">
+                            <p>
+                                <div class="btn-group btn-group-justified" role="group" aria-label="gengcode">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-default" id="generategcode">Generate G-Code</button>
+                                    </div>
+                                </div>
+                                <div id="layers"> <!-- DXF -->
+                                </div>
+                                <div id="svgnewway" style="display: none;"> <!-- SVG -->
+                                  <div class="btn btn-warning btn-xs" id="pullcolors">Per stroke (Click to pull from SVG)</div>
+
+                                  <table class="table table-condensed" id="svglinestable">
+                                    <caption>Per-color parameters</caption>
+                                    <thead>
+                                        <tr>
+                                          <th style="text-align: center;">Color</th>
+                                          <th style="text-align: center;">Speed</th>
+                                          <th style="text-align: center;">% Power</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="svglinestbody">
+                                    </tbody>
+                                  </table>
+                                </div>
+                        </div>
+                        <!-- Tab 3 -->
+                        <div class="tab-pane" id="stltab">
+                            <p>
+
+                                <form class="form-horizontal">
+                                    <!-- <div class="form-group"> -->
+                                        <label for="inflateVal" class="control-label">Original STL:</label>
+                                        <div class="btn-group btn-group-justified" role="group" aria-label="stltab">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-default" id="showstl" onclick="window.showstl()">Show</button>
+                                            </div>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-default" id="hidestl" onclick="window.hidestl()">Hide</button>
+                                            </div>
+                                        </div>
+
+                                    <!-- </div> -->
+                                </form>
+
+                                <form class="form-horizontal">
+                                    <!-- <div class="form-group"> -->
+                                        Configure thickness per layer - usually this equates to the thickness of the material you'll be cutting the slices from:
+                                        <br>
+                                        <label for="inflateVal" class="control-label">Layer Height:</label>
+                                        <div class="btn-group btn-group-justified" role="group" aria-label="stltab">
+                                            <div class="input-group">
+                                                <input type="number" step="0.1" class="form-control  numpad input-sm" value="1.5" id="layerheight" style="text-align:right;">
+                                                <span class="input-group-addon">mm</span>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-default" id="generateslices" onclick="generateSlices();">Slice STL</button>
+                                        </div>
+                                </form>
+                                <!-- </div> -->
+                        </div>
+                    </div>
+                </div>
+                <!-- End Module CAM -->
+                <div class="canvas" id="rasterOutput" style="display: none;">
+                    <canvas id="canvas-1"></canvas>
+                </div>
+
+                <!-- Module Raster -->
+                <div class="list-group" id="rastermodule" style="display: none;">
+
+
+                    <div class="" id="rasterparams">
+                      <p>
+                      <form class="form-horizontal">
+                        <center>
+                            <a class="btn btn-sm btn-default" id="rasterNow"><i class="fa fa-square-o fa-lg" style="margin-right: 3px;"></i>Prepare Raster G-CODE</a>
+                            <!-- button type="button" class="btn btn-danger disabled" id="rasterWidgetSendRasterToLaser"><i class="fa fa-fire" style="margin-right: 8px;"></i>Send to Laser</button -->
+                        </center>
+                      </form>
+
+                        <form class="form-horizontal">
+                            <label for="laserpwrsliderlbl">Constrain Laser Power:</label>
+                            <br>
+                            <span id="laserpwr" style="border:0;  font-weight:bold; background: transparent;"></span>
+                            <div id="laserpwrslider"></div>
+                        </form>
+                        <hr>
+                        <form class="form-horizontal">
+                            <input type="checkbox" value="1" id="useRasterBlackWhiteSpeeds" /> Enable Adaptive Feedrate Grayscale Control
+                            <div class="" id="blackwhitespeedsection" style="display: none;">
+                                <span style="font-size: 10px; font-color: #ccc">This feature allows you to fine tune the grayscale for linearity based on the material in use. </span>
+                                <hr>
+                                <center>
+                                    <label for="laservariablespeedlbl">Feedrate for lightest (white) and darkest (black)</label>
+                                    <br>
+                                    <div id="laservariablespeedslider"></div>
+                                    <span id="laservariablespeed" style="border:0;  font-weight:bold; background: transparent;"></span><span>&nbsp;mm/min</span>
+                                </center>
+                            </div>
+                        </form>
+                        <form class="form-horizontal">
+                            <!-- <div class="form-group"> -->
+                                <label for="inflateVal" class="control-label">Resolution:</label>
+                                <div class="input-group">
+                                    <input type="text input-sm" class="form-control" value="72" id="rasterDPI">
+                                    <span class="input-group-addon" style="width: 60px;">dpi</span>
+                                </div>
+                                Imported Image Dimensions: <span id="dims">0px x 0 px</span>
+                                <br> Engraved Image Dimensions: <span id="physdims">0mm x 0 mm</span>
+                            <!-- </div> -->
+                        </form>
+                        <form class="form-horizontal">
+                            <!-- <div class="form-group"> -->
+                                <label for="inflateVal" class="control-label">Engrave (G1) Feedrate:</label>
+                                <div class="input-group">
+                                    <input type="text input-sm" class="form-control" value="2000" id="feedRate">
+                                    <span class="input-group-addon" style="width: 60px;">mm/min</span>
+                                </div>
+                            <!-- </div> -->
+                        </form>
+
+                        <form class="form-horizontal">
+                            <!-- <div class="form-group"> -->
+                                <label for="inflateVal" class="control-label">Rapid (G0) Feedrate:</label>
+                                <div class="input-group">
+                                    <input type="text input-sm" class="form-control" value="6000" id="rapidRate">
+                                    <span class="input-group-addon" style="width: 60px;">mm/min</span>
+                                </div>
+                            <!-- </div> -->
+                        </form>
+
+                        <form class="form-horizontal">
+                            <!-- <div class="form-group"> -->
+                                <label for="inflateVal" class="control-label">OFfset:</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="width: 60px;">X</span>
+                                    <input type="text input-sm" class="form-control" value="0" id="rasterxoffset">
+                                    <span class="input-group-addon" style="width: 60px;">Y</span>
+                                    <input type="text input-sm" class="form-control" value="0" id="rasteryoffset">
+                                    <span class="input-group-addon" style="width: 60px;">mm</span>
+                                </div>
+                            <!-- </div> -->
+                        </form>
+
+
+                        <center>
+
+                            <br>
+                            <div style="display: none;">
+                              <img id="origImage" style="border: 1px solid #555;  max-width:300px;">
+                          </div>
+                        </center>
+                        <hr>
+                        <div class="canvas" id="rasterOutput" style="display: none;">
+                            <canvas id="canvas-1"></canvas>
+                        </div>
+                    </div>
+                    <!-- rasterparams -->
+                    <div id="rasterProgressShroud">
+
+                        <center>
+                            <h3>Converting...</h3>
+                            <span id="rasterProgressPerc"></span>
+                        </center>
+                    </div>
+                    <!-- rastershroud -->
+
+                </div>
+
+
+            </div>
+            <!-- end of cam tabcontent -->
+
+            <div id="settingscol" style="display: none; width: 90%; margin-left: 10px;">
+              <div class="bs-callout bs-callout-danger" id="settingsstatus">
+                  <h4><i class="fa fa-fw fa-exclamation" aria-hidden="true"></i>Incomplete Config</h4> Please complete configuration
+              </div>
+                <ul class="nav nav-pills">
+                    <li class="active"><a data-toggle="tab" href="#home"><span class="fa-stack"><i class="fa fa-sitemap fa-stack-1x"></i><strong class="fa-stack-1x icon-text" style="margin-left: -4px;">SPJS</strong></span></i></a></li>
+                    <li><a data-toggle="tab" href="#menu1"><span class="fa-stack"><i class="fa fa-line-chart fa-stack-1x"></i><strong class="fa-stack-1x icon-text" style="margin-left: -2px;">SIZE</strong></span></i></a></li>
+                    <li><a data-toggle="tab" href="#menu2"><span class="fa-stack"><i class="fa fa-codepen fa-stack-1x"></i><strong class="fa-stack-1x icon-text" style="margin-left: -6px;">GCODE</strong></span></i></a></li>
+                    <li><a data-toggle="tab" href="#menu3"><span class="fa-stack"><i class="fa fa-wrench fa-stack-1x"></i><strong class="fa-stack-1x icon-text" style="margin-left: -3px;">TOOL</strong></span></i></a></li>
+                    <li><a data-toggle="tab" href="#menu4"><span class="fa-stack"><i class="fa fa-download fa-stack-1x"></i><strong class="fa-stack-1x icon-text" style="margin-left: -10px;">BACKUP</strong></span></i></a></li>
+                </ul>
+                <br>
+                <div class="tab-content">
+                    <div id="home" class="tab-pane fade in active">
+                        IP of machine hosting Serial Port JSON Server:
+                        <form class="form-horizontal">
+                            <!-- <div class="form-group"> -->
+                                <label for="laserXMax" class="control-label">IP Address</label>
+                                <input type="text" class="form-control" id="spjsip" placeholder="127.0.0.1">
+                            <!-- </div> -->
+                          </p>
+                        </form>
+                    </div>
+                    <div id="menu1" class="tab-pane fade">
+                        Configure LaserWeb 2.0 to your machine specifics:
+                        <br>
+                        <i>(NB: Page needs a refresh for these settings to take effect!)</i>
+                        <form class="form-horizontal">
+                            <!-- <div class="form-group"> -->
+                                <label for="laserXMax" class="control-label">X-Length</label>
+                                <input type="text" class="form-control numpad" id="laserXMax" placeholder="600">
+                            <!-- </div>
+                            <div class="form-group"> -->
+                                <label for="laserYMax" class="control-label">Y-Length</label>
+                                <input type="text" class="form-control numpad" id="laserYMax" placeholder="400">
+
+                                <label for="SpotSize" class="control-label">Laser Beam Diameter</label>
+                                <input type="text" class="form-control numpad" id="spotSize" placeholder="0.1">
+                            </form>
+                          </p>
+                        </form>
+                    </div>
+                    <div id="menu2" class="tab-pane fade">
+                        Configure pre/post/control GCode commands:
+                        <form class="form-horizontal">
+                            <!-- <div class="form-group"> -->
+                                <label for="startgcode" class="control-label">Start G-Code</label>
+                                <textarea class="form-control numpadgcode" id="startgcode" placeholder="G28\nG90\nM80"></textarea>
+                            <!-- </div> -->
+                            <!-- <div class="form-group"> -->
+                                <label for="laseron" class="control-label">Laser ON Command</label>
+                                <input type="text" class="form-control numpadgcode" id="laseron" placeholder="M3 / blank for firmwares that support G1"></input>
+                            <!-- </div> -->
+                            <!-- <div class="form-group"> -->
+                                <label for="laseroff" class="control-label">Laser OFF Command</label>
+                                <input type="text" class="form-control numpadgcode" id="laseroff" placeholder="M5 / blank for firmwares that support G1"></input>
+                            <!-- </div> -->
+                            <!-- <div class="form-group"> -->
+                                <label for="laseroff" class="control-label">PWM Max S</label>
+                                <input type="text" class="form-control  numpad" id="lasermultiply" placeholder="255"></input>
+                            <!-- </div> -->
+                            <!-- <div class="form-group"> -->
+                                <label for="homingseq" class="control-label">Homing Sequence</label>
+                                <input type="text" class="form-control numpadgcode" id="homingseq" placeholder="G28"></input>
+                            <!-- </div>
+                            <div class="form-group"> -->
+                                <label for="endgcode" class="control-label">End G-Code</label>
+                                <textarea class="form-control numpadgcode" id="endgcode" placeholder="M81\nG28\n"></textarea>
+                            <!-- </div>
+                            <div class="form-group"> -->
+                                <label for="endgcode" class="control-label">Travel Moves (mm/min)</label>
+                                <textarea class="form-control numpad" id="rapidspeed" placeholder="2000"></textarea>
+                            <!-- </div> -->
+                          </p>
+                        </form>
+                    </div>
+
+
+                    <div id="menu3" class="tab-pane fade">
+                        Configure how the application works, turn on/off features:
+                        <form class="form-horizontal">
+                            <!-- <div class="form-group"> -->
+                                <label for="endgcode" class="control-label">Experimental: Tool Offset </label>
+                                <select class="form-control" id="useOffset">
+                                    <option>Enable</option>
+                                    <option>Disable</option>
+                                </select>
+                            <!-- </div>
+                            <div class="form-group"> -->
+                                <label for="imagePosition" class="control-label">Place uploaded image in quadrant</label>
+                                <select class="form-control" id="imagePosition">
+                                    <option>BottomLeft</option>
+                                    <option>TopLeft</option>
+                                </select>
+
+                                <label for="useNumPad" class="control-label">Use Touch Numpads</label>
+                                <select class="form-control" id="useNumPad">
+                                    <option>Enable</option>
+                                    <option>Disable</option>
+                                </select>
+
+                                <label for="useVideo" class="control-label">Use Video Overlay on Bed</label>
+                                <select class="form-control" id="useVideo">
+                                    <option>Disable</option>
+                                    <option>Enable</option>
+                                </select>
+
+
+                            <!-- </div> -->
+                          </p>
+                        </form>
+                    </div>
+
+                    <div id="menu4" class="tab-pane fade">
+                        Download a backup or restore settings from a backup file:
+                        <form class="form-horizontal">
+                            <!-- <div class="form-group"> -->
+                                <div class="btn-group input-group  btn-group-justified" role="group" id="jogx" aria-label="Backup">
+                                    <div class="btn-group" role="group">
+                                        <button id="backup" class="btn btn-lg btn-default btn-file" title="Take a backup" onclick="backupSettingsLocal()"><i class="fa fa-download fa-fw" aria-hidden="true"></i></i>Backup Settings</button>
+                                    </div>
+                                </div>
+                                <p>
+                            <!-- </div> -->
+                            <!-- <div class="form-group"> -->
+                                <div class="btn-group input-group  btn-group-justified" role="group" id="jogx" aria-label="Restore">
+                                    <div class="btn-group" role="group">
+                                        <span id="restore" class="btn btn-lg btn-default btn-file" title="Open a backup settings file"><i class="fa fa-upload  fa-fw" aria-hidden="true"></i>Restore from file<input id="jsonFile" type="file" accept=".json" /></span>
+                                    </div>
+                                </div>
+                                <p>
+                            <!-- </div> -->
+                        </form>
+                    </div>
+
+                    <button type="button" class="btn btn-lg btn-default" data-dismiss="modal" id="savesettings">Save</button>
+                    <button type="button" class="btn btn-lg btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+
+
+
+            <!-- End Tabs Content -->
+            <p>
+            <div class="btn-group btn-group-btn-group-justified" role="group" id="chatcntr" style="vertical-align: bottom; margin-left: 18px;">
+              <div class="btn-group  input-group" role="group" id="support" aria-label="Support" style="vertical-align: bottom;">
+                <div class="btn-group dropup" role="group">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <i class="fa fa-info fa-fw"></i>Support
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      <li><a target="_blank" href="https://plus.google.com/communities/115879488566665599508">Support Community</a></li>
+                      <li><a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb2/issues">Open a Bug Report</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb2">Fork Me!</a></li>
+                    </ul>
+                  </div>
+
+                <button type="button" data-title="Chat with Other User" class="btn btn-default js-gitter-toggle-chat-button"><i class="fa fa-comments-o fa-fw"></i>Chat</button>
+              </div>
+            </div>
+        </div>
+        <!-- End Sidebar Div -->
+
+        <!-- Main Body Right column-->
+        <div id="col2">
+
+            <!--Tabs for Layers-->
+            <ul class="nav nav-tabs" accesskey=""id="tabsLayers">
+              <li role="presentation" class="active"><a href="#">All Layers</a></li>
+              <li role="presentation"><a href="#">GCODE View</a></li>
+            </ul>
+
+
+            <!-- End Layers -->
+            <!-- 3D Viewer and DRO -->
+            <div id="renderArea"></div>
+            <p>
+            <div id="macro_container" style="display: none;">
+                <div class="bs-callout bs-callout-danger" id="macrostatus">
+                    <h4><i class="fa fa-fw fa-exclamation" aria-hidden="true"></i>No macros created yet</h4> Please click Edit to start creating your own Macro buttons
+                    <ul>
+                        <li>Maximum of 24 unique user assignable buttons</li>
+                        <li>Specify custom label text</li>
+                        <li>Specify the GCode/MCode to be sent to the machine when Macro button is pressed</li>
+                        <li>Specify a custom color for the button</li>
+                    </ul>
+                </div>
+                <!-- Macro Settings -->
+                <div class="container-fluid" id="macro_settings" style="display: none;">
+                    <h4 >Edit Macro Buttons</h4></a>
+                    Configure Labels and G-Code commands for up to 24 buttons:
+                    <div class="table-responsive settingstable">
+                        <table class="table" id="macroEdit">
+                            <thead>
+                                <tr>
+                                    <th data-formatter="runningFormatter">Button #</th>
+                                    <th>Label</th>
+                                    <th>G-Code</th>
+                                    <th>Color</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody id="macrostbody">
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-sm btn-default" id="addrow"><i class="fa fa-w fa-plus"></i></button>
+                    </div>
+
+                </div>
+                <!-- Macro Panel -->
+                <div class="container-fluid" id="macro_pad">
+                    <!-- Dynamically Populated by readMacros() -->
+                </div>
+                <!-- Edit/Save Macro Buttons -->
+                <p>
+                <div class="row">
+                      <center>
+                        <button type="button" class="btn btn-lg btn-default" id="savemacro" style="display: none;"><i class="fa fa-w fa-floppy-o"></i>&nbsp;Save</button>
+                        <button type="button" class="btn btn-lg btn-default" id="editmacro" ><i class="fa fa-w fa-pencil-square-o"></i>&nbsp;Edit</button>
+                        <button type="button" class="btn btn-lg btn-danger" id="closemacro" ><i class="fa fa-w fa-times"></i>&nbsp;Close</button>
+
+                      </center>
+
+                </div>
+            </div>
+            <!-- 3D End Macro Module -->
+
+
+            <!-- 3D Viewer Controls -->
+            <div id="viewer_container">
+
+
+
+                <div class="btn-group" role="group" id="transformcontrols" style="vertical-align: bottom; margin-left: 18px;">
+                    <div class="btn-group input-group  btn-group-vertical" role="group" aria-label="" style="vertical-align: bottom;">
+                      <button type="button" data-title="Move Object" class="btn btn-lg btn-default" id="rotLeftBtn"><span class="fa-stack fa-1x"><i class="fa fa-undo fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Rotate</strong><strong class="fa-stack-1x rotsizeval icon-bot-text">45&deg;</strong></span></button>
+                      <button type="button" data-title="Move Object" class="btn btn-lg btn-default" id="translateBtn"><span class="fa-stack fa-1x"><i class="fa fa-arrows fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Move</strong></span></button>
+                    </div>
+                    <div class="btn-group input-group  btn-group-vertical" role="group" aria-label="" style="vertical-align: bottom;">
+                      <button type="button" data-title="Move Object" class="btn btn-lg btn-default" id="rotRightBtn"><span class="fa-stack fa-1x"><i class="fa fa-repeat fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Rotate</strong><strong class="fa-stack-1x rotsizeval icon-bot-text">45&deg;</strong></span></i></button>
+                      <button type="button" data-title="Resize Object" class="btn btn-lg btn-default" id="resizeBtn"><span class="fa-stack fa-1x"><i class="fa fa-expand fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Resize</strong></span></button>
+                    </div>
+                    <div class="btn-group input-group  btn-group-vertical" role="group" ria-label="" style="vertical-align: bottom;">
+                      <button type="button" data-title="Link Aspect" class="btn btn-lg btn-default" id="resetRot"><span class="fa-stack fa-1x"><i class="fa fa-circle-o-notch fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Reset</strong><strong class="fa-stack-1x icon-bot-text">Rotation</strong></span></button>
+                      <button type="button" data-title="Link Aspect" class="btn btn-lg btn-default" id="linkAspectBtn"><span class="fa-stack fa-1x"><i id='linkAspect' class="fa fa-link fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Aspect</strong><strong class="fa-stack-1x icon-bot-text" id="linkval">Linked</strong></span></button>
+
+                    </div>
+                </div>
+
+                <div class="btn-group" role="group" id="viewcontrols" style="vertical-align: bottom; margin-left: 18px;">
+                  <!-- <div class="btn-group input-group  btn-group-vertical" role="group" aria-label="" style="vertical-align: bottom;">
+                    <button type="button" data-title="Reset Camera" class="btn btn-view btn-lg btn-default" id="togglemacro"><span class="fa-stack fa-1x"><i class="fa fa-search fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Macro</strong><strong class="fa-stack-1x icon-bot-text">Panel</strong></span></button>
+                    <button type="button" data-title="Reset Camera" class="btn btn-view btn-lg btn-default" id="viewReset"><span class="fa-stack fa-1x"><i class="fa fa-search fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Reset</strong><strong class="fa-stack-1x icon-bot-text">Zoom</strong></span></button>
+                  </div> -->
+                  <div class="btn-group input-group  btn-group-vertical" role="group" ria-label="" style="vertical-align: bottom;">
+                    <button type="button" data-title="Link Aspect" class="btn btn-lg btn-default" id="togglemacro"><span class="fa-stack fa-1x"><i class="fa fa-th fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Macro</strong><strong class="fa-stack-1x icon-bot-text">Panel</strong></span></button>
+                    <button type="button" data-title="Link Aspect" class="btn btn-lg btn-default" id="viewReset"><span class="fa-stack fa-1x"><i class="fa fa-search fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Reset</strong><strong class="fa-stack-1x icon-bot-text" id="linkval">View</strong></span></button>
+                  </div>
+
+                </div>
+
+                <div class="btn-group" role="group" id="pancontrols" style="vertical-align: bottom; margin-left: 18px;">
+                    <div class="btn-group input-group  btn-group-vertical" role="group" aria-label="" style="vertical-align: bottom;">
+                        <button onclick='jQuery.Event( "DOMMouseScroll",{delta: -650} );' type="button" data-title="Zoom Out" class="btn btn-view btn-lg btn-default" id="zoomout"><i class="fa fa-search-minus"></i></button>
+                        <button type="button" data-title="Pan Left" class="btn btn-view  btn-lg btn-default" id="panleft"><i class="fa fa-arrow-left"></i></button>
+                    </div>
+                    <div class="btn-group input-group  btn-group-vertical" role="group" aria-label="" style="vertical-align: bottom;">
+                        <button type="button" data-title="Pan Up" class="btn btn-view  btn-lg btn-default" id="panup"><i class="fa fa-arrow-up"></i></button>
+                        <button type="button" data-title="Pan Down" class="btn btn-view  btn-lg btn-default" id="pandown"><i class="fa fa-arrow-down"></i></button>
+                    </div>
+                    <div class="btn-group input-group  btn-group-vertical" role="group" aria-label="" style="vertical-align: bottom;">
+                        <button onclick='jQuery.Event( "DOMMouseScroll",{delta: +650} );' type="button" data-title="Zoom In" class="btn btn-view  btn-lg btn-default" id="zoomin"><i class="fa fa-search-plus"></i></button>
+                        <button type="button" data-title="Pan Right" class="btn btn-view  btn-lg btn-default" id="panright"><i class="fa fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+            <!-- End 3D Viewer Controls -->
+
+            <script>
+              ((window.gitter = {}).chat = {}).options = {
+                room: 'openhardwarecoza/LaserWeb2',
+                activationElement: false,
+              };
+            </script>
+            <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+
+        </div>
+        <!-- End of Main Body -->
+
+
+        <!-- Right Col -->
+        <div id="col3">
+            <p>
+            <ul class="nav nav-tabs nav-justified">
+                <li id="drotabtn" role="presentation" class="active"><a href="#">DRO</a></li>
+                <li id="gcodetabbtn" role="presentation"><a href="#">Gcode</a></li>
+            </ul>
+
+
+            <div id="drotab" style="height: 100%;">
+                <div id="mPosition" style="padding: 5px;">
+                    <div id="mX" class="dro">X: 0.000</div>
+                    <div id="mY" class="dro">Y: 0.000</div>
+                    <div id="mZ" class="dro">Z: 0.000</div>
+                </div>
+
+                <div style=" border-top: dashed 1px #aaa; padding: 5px; margin-top: 5px;">
+                    <!-- Command Console -->
+                    <span class="">Console:</span><span class="pull-right"><span class="badge badge-default badge-notify" title="Items in Queue" id="queueCnt" style="margin-right: 5px;">Queued: 0</span></span>
+
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-terminal fa-lg"></i></span>
+                        <input type="text" autocomplete="on" class="form-control numpadgcode" id="command">
+                        <span class="input-group-btn">
+                        <button id="sendCommand" class="btn btn-default" type="button"><i class="fa fa-play" style="margin-right: 10px;"></i>Send</button>
+                      </span>
+                    </div>
+                </div>
+                <div id="console"></div>
+
+            </div>
+
+            <div id="gcodetab" style="display: none;">
+                <textarea id="gcodepreview" style="width: 100%; height: 250px;"></textarea>
+                <button class="btn btn-lg btn-default btn-file" title="Export GCODE to a file" onclick="saveFile()"><i class="fa fa-save fa-fw"></i>Save</span>
+            </div>
+
+        </div>
+    </div>
+
+
+
+</div>
+<!-- End of Main Row -->
+</div>
+<!-- End of Container Fluid -->
+
+
+<!-- Hidden divs, used by components -->
+<video id="monitor" autoplay width="160" height="120" style="display: none; visibility: hidden; float:left;"></video>
+<canvas id="videoImage" width="160" height="120" style="display: none; visibility: hidden; float:left;"></canvas>
+<div id="work-area" style="display: none; visibility: hidden; float:left;">
+  <div id="svgpreview"></div>
+</div>
+<!-- End Hidden Divs -->
+
+
+<!-- SVG Size modal -->
+<div id="svgresize" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        <h4 class="modal-title">SVG: Import DPI</h4>
+      </div>
+      <div class="modal-body">
+        Please specify the DPI this file was saved in to scale it to the correct physical size.
+
+
+        <form class="form-horizontal">
+            <!-- <div class="form-group"> -->
+                <label class="control-label">Preset DPI:</label>
+
+                <div class="btn-group input-group  btn-group-justified">
+                  <span class="input-group-addon"><i class="fa fa-desktop"></i>&nbsp;Preset:</span>
+                  <div class="btn btn-default btn-sm" id="90dpi">90 dpi (Inkscape)</div>
+                  <div class="btn btn-default btn-sm" id="72dpi">72 dpi (Adobe)</div>
+                  <div class="btn btn-default btn-sm" id="customdpi">(Custom)</div>
+                </div>
+                <label class="control-label">Custom:</label>
+                <div class="input-group">
+                  <span class="input-group-addon">Custom: </span>
+                    <input type="number" class="form-control  numpad input-sm" value="300" id="dpiVal" style="text-align:right;">
+                    <span class="input-group-addon">dpi</span>
+                </div>
+
+
+            <!-- </div> -->
+        </form>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- End SVG Size Modal -->
+
+
+<!-- raster Size modal -->
+<div id="rasterresize" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        <h4 class="modal-title">Bitmap: Import DPI for Raster</h4>
+      </div>
+      <div class="modal-body">
+        Please specify the DPI this file was saved in to scale it to the correct physical size.
+
+
+        <form class="form-horizontal">
+            <!-- <div class="form-group"> -->
+                <label class="control-label">Preset DPI:</label>
+
+                <div class="btn-group input-group  btn-group-justified">
+                  <span class="input-group-addon"><i class="fa fa-desktop"></i>&nbsp;Preset:</span>
+                  <div class="btn btn-default btn-sm" id="ras72dpi">72 dpi </div>
+                  <div class="btn btn-default btn-sm" id="ras150dpi">150 dpi </div>
+                  <div class="btn btn-default btn-sm" id="ras300dpi">300 dpi </div>
+                  <div class="btn btn-default btn-sm" id="ras600dpi">600 dpi </div>
+                  <div class="btn btn-default btn-sm" id="customrasdpi">(Custom)</div>
+                </div>
+                <label class="control-label">Custom:</label>
+                <div class="input-group">
+                  <span class="input-group-addon">Custom: </span>
+                    <input type="number" class="form-control  numpad input-sm" value="100" id="rasterdpiVal" style="text-align:right;">
+                    <span class="input-group-addon">dpi</span>
+                </div>
+
+
+            <!-- </div> -->
+        </form>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- End raster Size Modal -->
+
+<div id="statusmodal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="statusTitle">Status Title</h4>
+      </div>
+      <div class="modal-body">
+          <div id="statusBody"></div>
+          <div id="statusBody2"></div>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-success" data-dismiss="modal">OK</button> -->
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- -->
+
+<!-- End Main Body Div -->
+
+
+
+</body>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-38524928-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</html>
