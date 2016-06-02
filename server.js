@@ -38,7 +38,7 @@ var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-var isConnected, port, isBlocked;
+var isConnected, port, isBlocked, lastsent = "", paused = false;
 
 console.log(chalk.green('***************************************************************'));
 console.log(chalk.green('*                        Notice:                              *'));
@@ -114,6 +114,9 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
         jumpQ('M114')
         send1Q();
 		  }, 1000);
+      setInterval(function(){
+               socket.emit('qCount', gcodeQueue.length)
+       },500);
     });
 
     port.on('error', function(err) { // open errors will be emitted as an error event
@@ -121,11 +124,19 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
       socket.emit("data", data);
     })
     port.on("data", function (data) {
-        socket.emit("data", data);
-        if( data.indexOf('ok') == 0) {
-          send1Q()
-        }
-        socket.emit('qCount', gcodeQueue.length)
+      console.log('Recv: ' + data)
+      if(data.indexOf("ok") != -1 || data == "start\r"){
+          socket.emit("data", data);
+          setTimeout(function(){
+               if(paused !== true){
+                   send1Q()
+               }
+           },50);
+
+
+       } else {
+           console.log("Nope")
+       }
 		});
   });
   socket.on('firstLoad', function(data) {
