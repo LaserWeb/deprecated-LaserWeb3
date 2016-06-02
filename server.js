@@ -1,6 +1,6 @@
 /*
 
-    AUTHOR:  Andrew Hodel with additional functionality by Peter van der Walt
+    AUTHOR:  Peter van der Walt openhardwarecoza.github.io/donate
 
     RepRapWeb - A Web Based 3d Printer Controller
     Copyright (C) 2015 Andrew Hodel
@@ -28,7 +28,6 @@
 */
 var config = require('./config');
 var serialport = require("serialport");
-var SerialPort = serialport.SerialPort; // localize object constructor
 var app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
   , fs = require('fs');
@@ -39,15 +38,7 @@ var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-
-// Debug Parameters in command line
-args = process.argv.slice(2);
-if (args[0]) {
-  if (args[0].indexOf('--debug') == 0) { // add --debug <firmwarestring>
-      console.log(chalk.yellow('WARN:'), chalk.blue('Forcing debug testing with specific Firmware String: '), chalk.yellow(args[1]));
-      var debugfirmware = args[1];
-  };
-};
+var isConnected, port, isBlocked;
 
 console.log(chalk.green('***************************************************************'));
 console.log(chalk.green('*                        Notice:                              *'));
@@ -70,9 +61,10 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log(chalk.green(' '));
 })
 
+
+// Webserver
 app.listen(config.webPort);
 var fileServer = new static.Server('./public');
-
 function handler (req, res) {
   	fileServer.serve(req, res, function (err, result) {
   		if (err) {
@@ -80,7 +72,6 @@ function handler (req, res) {
   		}
   	});
 }
-
 function ConvChar( str ) {
   c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;',
        '#':'&#035;' };
@@ -88,68 +79,94 @@ function ConvChar( str ) {
 }
 
 
-io.sockets.on('connection', function (socket) {
-
-  // When we open a WS connection, send the list of ports
+// Websocket <-> Serial
+io.sockets.on('connection', function (socket) { // When we open a WS connection, send the list of ports
   serialport.list(function (err, ports) {
     socket.emit("ports", ports);
   });
-
-  // Or when asked
-  socket.on('refreshPorts', function(data) {
+  socket.on('refreshPorts', function(data) { // Or when asked
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
       socket.emit("ports", ports);
     });
   });
-
-  // If a user picks a port to connect to, open a Node SerialPort Instance to it
-    socket.on('connectTo', function(data) {
-
-      data = data.split(',');
+  socket.on('connectTo', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
+    data = data.split(',');
     console.log(chalk.yellow('WARN:'), chalk.blue('Connecting to Port ' + data));
-        port = new SerialPort(data[0], {
-  			parser: serialport.parsers.readline("\n"),
-  			baudrate: parseInt(data[1])
-  		});
+    if (!isConnected) {
+      port = new serialport(data[0], {  parser: serialport.parsers.readline("\n"), baudrate: parseInt(data[1]) });
+    } else {
+      socket.emit("connectStatus", 'Already Connected');
+      port.write("?\n"); // Lets check if its LasaurGrbl?
+      port.write("M115\n"); // Lets check if its Marlin?
+      port.write("version\n"); // Lets check if its Smoothieware?
+      port.write("$fb\n"); // Lets check if its TinyG
+    }
 
-      port.on('open', function() {
-        port.write("?\n"); // Lets check if its LasaurGrbl?
-  			port.write("M115\n"); // Lets check if its Marlin?
-  			port.write("version\n"); // Lets check if its Smoothieware?
-        port.write("$fb\n"); // Lets check if its TinyG
-      });
-
-      // open errors will be emitted as an error event
-      port.on('error', function(err) {
-        console.log('Error: ', err.message);
-      })
-
-      port.on("data", function (data) {
-  				socket.emit("data", data);
-  		});
+    port.on('open', function() {
+      socket.emit("connectStatus", 'Connected');
+      port.write("?\n"); // Lets check if its LasaurGrbl?
+			port.write("M115\n"); // Lets check if its Marlin?
+			port.write("version\n"); // Lets check if its Smoothieware?
+      port.write("$fb\n"); // Lets check if its TinyG
+      isConnected = true;
+      setInterval(function() {
+        jumpQ('M114')
+        send1Q();
+		  }, 1000);
     });
 
-
+    port.on('error', function(err) { // open errors will be emitted as an error event
+      console.log('Error: ', err.message);
+      socket.emit("data", data);
+    })
+    port.on("data", function (data) {
+        socket.emit("data", data);
+        if( data.indexOf('ok') == 0) {
+          send1Q()
+        }
+        socket.emit('qCount', gcodeQueue.length)
+		});
+  });
   socket.on('firstLoad', function(data) {
 		socket.emit('config', config);
-    // if (args[0]) {
-    //   if (args[0].indexOf('--debug') == 0) {
-    //     socket.emit('firmware', debugfirmware);
-    //     console.log(chalk.yellow('WARN:'), chalk.blue('Forcing debug testing with specific Firmware String: '), chalk.yellow(args[1]));
-    //   };
-    // };
 	});
-
   socket.on('serialSend', function(data) {
-		port.write(data + '\n');
-    // if (args[0]) {
-    //   if (args[0].indexOf('--debug') == 0) {
-    //     socket.emit('firmware', debugfirmware);
-    //     console.log(chalk.yellow('WARN:'), chalk.blue('Forcing debug testing with specific Firmware String: '), chalk.yellow(args[1]));
-    //   };
-    // };
+    data = data.split('\n')
+    for (i=0; i<data.length; i++) {
+      addQ(data[i])
+    }
+
 	});
+// End Websocket <-> Serial
+
+// Queue
+
+gcodeQueue = [];
+
+function addQ(gcode) {
+  gcodeQueue.push(gcode);
+}
+
+function jumpQ(gcode) {
+  gcodeQueue.unshift(gcode)
+}
+
+function runQ() {
+
+}
+
+function send1Q() {
+  if (gcodeQueue.length > 0) {
+    var gcode = gcodeQueue.shift()
+    console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length)
+    lastSent = gcode
+    port.write(gcode + '\n');
+  }
+}
+
+
+// End Queue
 
 
 });
