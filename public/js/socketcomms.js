@@ -60,8 +60,8 @@ var socket, isConnected, playing;
 
 
         $('#machineStatus').html(t[0]);
-  		  setBullseyePosition(t[6], t[7], t[8]); // Also updates #mX #mY #mZ 
-      } else if (data =='ok') {
+  		  setBullseyePosition(t[6], t[7], t[8]); // Also updates #mX #mY #mZ
+        } else if (data =='ok') {
         printLog(data, '#cccccc')
         } else {
         printLog(data, msgcolor)
@@ -69,7 +69,6 @@ var socket, isConnected, playing;
     });
 
     socket.on('ports', function (data) {
-  		console.log(data);
       var options = $("#port");
       for (i = 0; i< data.length; i++) {
         options.append($("<option />").val(data[i].comName).text(data[i].comName));
@@ -101,7 +100,20 @@ var socket, isConnected, playing;
       isConnected = true;
       localStorage.setItem("lastUsedPort", portName);
       localStorage.setItem("lastUsedBaud", baudRate);
+      $('#closePort').removeClass('disabled')
     });
+
+    $('#closePort').on('click', function() {
+      socket.emit('closePort', 1);
+      isConnected = false;
+      $('#closePort').addClass('disabled')
+      $('#machineStatus').html('Not Connected');
+      $("#machineStatus").removeClass('badge-ok')
+      $("#machineStatus").addClass('badge-notify')
+      $("#machineStatus").removeClass('badge-warn')
+      $("#machineStatus").removeClass('badge-busy')
+    });
+
 
     $('#sendCommand').on('click', function() {
         var commandValue = $('#command').val();
