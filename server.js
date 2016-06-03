@@ -38,7 +38,7 @@ var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-var isConnected, port, isBlocked, lastsent = "", paused = false;
+var isConnected, port, isBlocked, lastsent = "", paused = false, blocked = false;
 
 console.log(chalk.green('***************************************************************'));
 console.log(chalk.green('*                        Notice:                              *'));
@@ -126,6 +126,9 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
     port.on("data", function (data) {
       console.log('Recv: ' + data)
       if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0){
+          if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
+            blocked = false;
+          }
           socket.emit("data", data);
           setTimeout(function(){
                if(paused !== true){
@@ -168,11 +171,12 @@ function runQ() {
 }
 
 function send1Q() {
-  if (gcodeQueue.length > 0) {
+  if (gcodeQueue.length > 0 && !blocked) {
     var gcode = gcodeQueue.shift()
     console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length)
     lastSent = gcode
     port.write(gcode + '\n');
+    blocked = true;
   }
 }
 
