@@ -22,7 +22,7 @@
     "chalk": "1.x.x",
     "dotenv": "2.x.x",
     "node-static": "0.7.x",
-    "serialport": "4.0.x",
+    "serialport": "4.0.0-beta3",
     "socket.io": "1.3.x"
   },
   "license": "AGPL-3.0"
