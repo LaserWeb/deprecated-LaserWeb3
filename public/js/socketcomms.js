@@ -5,17 +5,66 @@ var socket, isConnected, playing;
     socket.emit('firstLoad', 1);
 
     socket.on('data', function (data) {
-      if (data.indexOf('ok C: X:') == 0 || data.indexOf('C: X:') == 0) {
-        data = data.replace(/:/g,' ');
-  			data = data.replace(/X/g,' ');
-  			data = data.replace(/Y/g,' ');
-  			data = data.replace(/Z/g,' ');
-  			data = data.replace(/E/g,' ');
-  			var posArray = data.split(/(\s+)/);
-  			$('#mX').html('X: '+posArray[4]);
-  			$('#mY').html('Y: '+posArray[6]);
-  			$('#mZ').html('Z: '+posArray[8]);
-        setBullseyePosition(posArray[4], posArray[6], posArray[8]);
+      if ($('#console p').length > 300) {
+        // remove oldest if already at 300 lines
+        $('#console p').first().remove();
+      }
+      if (data.indexOf('<') == 0) {
+        // https://github.com/grbl/grbl/wiki/Configuring-Grbl-v0.8#---current-status
+        // remove first <
+        var t = data.substr(1);
+
+          // remove last >
+        t = t.substr(0,t.length-2);
+
+        // split on , and :
+        t = t.split(/,|:/);
+
+        //<Idle,MPos:26.7550,0.0850,0.0000,WPos:26.7550,0.0850,0.0000>
+        //0 status
+        //1 MPos
+        //2 mx
+        //3 my
+        //4 mz
+        //5 WPos
+        //6 wx
+        //7 wy
+        //8 wz
+        if (t[0] == 'Alarm') {
+          $("#machineStatus").removeClass('badge-ok')
+          $("#machineStatus").addClass('badge-notify')
+          $("#machineStatus").removeClass('badge-warn')
+          $("#machineStatus").removeClass('badge-busy')
+        } else if (t[0] == 'Home') {
+          $("#machineStatus").removeClass('badge-ok')
+          $("#machineStatus").removeClass('badge-notify')
+          $("#machineStatus").removeClass('badge-warn')
+          $("#machineStatus").addClass('badge-busy')
+        } else if (t[0] == 'Hold') {
+          $("#machineStatus").removeClass('badge-ok')
+          $("#machineStatus").removeClass('badge-notify')
+          $("#machineStatus").addClass('badge-warn')
+          $("#machineStatus").removeClass('badge-busy')
+        } else if (t[0] == 'Idle') {
+          $("#machineStatus").addClass('badge-ok')
+          $("#machineStatus").removeClass('badge-notify')
+          $("#machineStatus").removeClass('badge-warn')
+          $("#machineStatus").removeClass('badge-busy')
+        } else if (t[0] == 'Run') {
+          $("#machineStatus").removeClass('badge-ok')
+          $("#machineStatus").removeClass('badge-notify')
+          $("#machineStatus").removeClass('badge-warn')
+          $("#machineStatus").addClass('badge-busy')
+        }
+
+
+
+        $('#machineStatus').html(t[0]);
+  			$('#mX').html('X: '+t[6]);
+  			$('#mY').html('Y: '+t[7]);
+  			$('#mZ').html('Z: '+t[8]);
+        //console.log('Status: ' + t[0] + ' X ' + t[6] + ' Y ' + t[7] + ' Z ' + t[8]+ ' ')
+        setBullseyePosition(t[6], t[7], t[8]);
       } else if (data =='ok') {
         printLog(data, '#cccccc')
         } else {
@@ -30,6 +79,12 @@ var socket, isConnected, playing;
         options.append($("<option />").val(data[i].comName).text(data[i].comName));
       }
       $('#connect').removeClass('disabled')
+      // Might as well pre-select the last-used port and buffer
+      var lastUsed = localStorage.getItem("lastUsedPort");
+      var lastBaud = localStorage.getItem("lastUsedBaud");
+      $("#port option:contains(" + lastUsed + ")").attr('selected', 'selected');
+      $("#baud option:contains(" + lastBaud + ")").attr('selected', 'selected');
+
   	});
 
     socket.on('connectStatus', function (data) {
@@ -48,6 +103,8 @@ var socket, isConnected, playing;
       var baudRate = $('#baud').val();
       socket.emit('connectTo', portName + ',' + baudRate);
       isConnected = true;
+      localStorage.setItem("lastUsedPort", portName);
+      localStorage.setItem("lastUsedBaud", baudRate);
     });
 
     $('#sendCommand').on('click', function() {
@@ -57,6 +114,7 @@ var socket, isConnected, playing;
     });
 
     socket.on('qCount', function (data) {
+      data = parseInt(data);
       $('#queueCnt').html('Queued: ' + data)
       if (data < 1) {
           $('#playicon').removeClass('fa-pause');

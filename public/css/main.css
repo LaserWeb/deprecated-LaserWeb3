@@ -247,8 +247,36 @@ touch-action: none;
 /* Badget over Glyphs */
 
 .badge-notify {
-    background-color: #cc0000;
-    position:relative;
+   background-color: #cc0000;
+   color: #fff;
+   position:relative;
+   bottom: 5px;
+   right: 0px;
+}
+
+
+.badge-ok {
+   background-color: #008800;
+   color: #fff;
+   position:relative;
+   bottom: 5px;
+   right: 0px;
+}
+
+
+.badge-warn {
+   background-color: #cc9900;
+   color: #fff;
+   position:relative;
+   bottom: 5px;
+   right: 0px;
+}
+
+
+.badge-busy {
+   background-color: #1568bc;
+   color: #fff;
+   position:relative;
    bottom: 5px;
    right: 0px;
 }

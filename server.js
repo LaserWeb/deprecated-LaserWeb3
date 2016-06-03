@@ -111,9 +111,9 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
       port.write("$fb\n"); // Lets check if its TinyG
       isConnected = true;
       setInterval(function() {
-        jumpQ('M114')
-        send1Q();
-		  }, 1000);
+          port.write('?');
+          send1Q()
+		  }, 100);
       setInterval(function(){
                socket.emit('qCount', gcodeQueue.length)
        },500);
@@ -125,7 +125,7 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
     })
     port.on("data", function (data) {
       console.log('Recv: ' + data)
-      if(data.indexOf("ok") != -1 || data == "start\r"){
+      if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0){
           socket.emit("data", data);
           setTimeout(function(){
                if(paused !== true){

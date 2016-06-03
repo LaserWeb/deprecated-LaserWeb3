@@ -21,7 +21,7 @@ containerHeight = window.innerHeight;
 var camvideo = document.getElementById('monitor');
 
 setBullseyePosition = function(x, y, z) {
-    console.log('Set Position: ', x, y, z)
+    //console.log('Set Position: ', x, y, z)
     if (x) {
         $('#mX').html('X: ' + x);
         bullseye.position.x = (parseInt(x, 10) - (laserxmax / 2));
@@ -32,7 +32,7 @@ setBullseyePosition = function(x, y, z) {
     };
     if (z) {
         $('#mZ').html('Z: ' + z);
-        bullseye.position.z = (parseInt(z, 10));
+        bullseye.position.z = (parseInt(z, 10) + 0.1);
     };
 }
 
