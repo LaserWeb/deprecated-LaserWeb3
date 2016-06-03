@@ -193,13 +193,28 @@ button:focus {outline:0 !important;}
     display: block;
 }
 
-.dro {
+.drolabel {
+    display:inline-block;
     background-color: #ffffff;
     text-align: left;
     padding-left: 15px;
     margin-bottom: 5px;
     font-size: 20px;
-    width: 98%;
+    width: 50px;
+    border: 1px solid #aaa;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.dro {
+    display:inline-block;
+    background-color: #ffffff;
+    text-align: left;
+    padding-left: 15px;
+    margin-bottom: 5px;
+    font-size: 20px;
+    width: calc(98% - 85px);
     border: 1px solid #aaa;
     font-weight: bold;
     margin-left: 5px;

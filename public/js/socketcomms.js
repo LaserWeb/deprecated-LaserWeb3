@@ -60,11 +60,7 @@ var socket, isConnected, playing;
 
 
         $('#machineStatus').html(t[0]);
-  			$('#mX').html('X: '+t[6]);
-  			$('#mY').html('Y: '+t[7]);
-  			$('#mZ').html('Z: '+t[8]);
-        //console.log('Status: ' + t[0] + ' X ' + t[6] + ' Y ' + t[7] + ' Z ' + t[8]+ ' ')
-        setBullseyePosition(t[6], t[7], t[8]);
+  		  setBullseyePosition(t[6], t[7], t[8]); // Also updates #mX #mY #mZ 
       } else if (data =='ok') {
         printLog(data, '#cccccc')
         } else {
