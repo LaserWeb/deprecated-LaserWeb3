@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>LaserWeb</title>
+
+    <meta name="description" content="Free Web Based Lasercutter Control Software for machines running on Grbl, Marlin, Smoothieware etc. Supports PNG/JPG/BMP Raster Engraving,  DXF/SVG Cutting">
+    <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator">
+    <meta name="google-site-verification" content="Q5N27jmbSMfsf_oC4UmRlNDVXKta7BP4DaDq1h0Ox5Y" />
+    <meta name="author" content="github.com/openhardwarecoza/LaserWeb2/">
+
+    <!--IE Compatibility modes-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!--Mobile first-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- Bootstrap and UX -->
+    <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css" id="theme_css" />
+    <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-callouts.css" />
+    <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-tour.min.css" />
+    <link type="text/css" rel="stylesheet" media="all" href="css/main.css" id="extra_css" />
+    <link type="text/css" rel="stylesheet" media="all" href="css/dro.css" id="extra_css" />
+
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/jquery/mindmup-editabletable.js"></script>
+
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap-filestyle.js"></script>
+    <script src="lib/bootstrap/js/bootstrap-tour.min.js"></script>
+    <script src="lib/bootstrap/js/dropdowns-enhancement.js"></script>
+
+    <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-colorselector.css" id="extra_css" />
+    <script src="lib/bootstrap/js/bootstrap-colorselector.js"></script>
+
+    <script src="lib/nprogress/nprogress.js"></script>
+    <link rel="stylesheet" href="lib/nprogress/nprogress.css" />
+
+    <link rel="stylesheet" href="lib/jquery/jquery-ui.css" />
+    <script src="lib/jquery/jquery-ui.js"></script>
+    <script src="lib/jquery/jquery.ui.touch-punch.min.js"></script>
+
+    <!-- https://github.com/kabachello/jQuery.NumPad -->
+    <script src="lib/jnumpad/jquery.numpad.js"></script>
+    <link rel="stylesheet" href="lib/jnumpad/jquery.numpad.css" />
+
+    <!-- Font -->
+    <link rel="stylesheet" href="css/font-awesome.css" />
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/socketcomms.js"></script>
+
+
+    <!-- ThreeJS -->
+    <script src="lib/threejs/three.min.js"></script>
+    <script src="lib/threejs/GridRect.js"></script>
+    <script src="lib/threejs/OrbitControls.js"></script>
+    <script src="lib/threejs/Projector.js"></script>
+    <script src="lib/threejs/CanvasRenderer.js"></script>
+    <script src="lib/threejs/TransformControls.js"></script>
+    <script src="lib/threejs/TweenMax.min.js"></script>
+
+    <script src="js/viewer.js"></script>
+
+    <!-- Jog Widget -->
+    <script type="text/javascript" src="js/jog.js"></script>
+
+
+    <script src="lib/gcode-viewer/gcode-parser.js"></script>
+    <script src="lib/gcode-viewer/ui.js"></script>
+
+    <script>
+    var msgcolor = '#000000';
+    var successcolor = '#00aa00';
+    var errorcolor = '#cc0000';
+    var warncolor = '#ff6600';
+
+    </script>
+
+
+
+  </head>
+
+  <body>
+
+<div style="height: 100%; width: 60%; display: inline-block">
+  <div id="renderArea"></div>
+</div>
+
+<div style="height: 100%; width: 30%; display: inline-block">
+      <div id="mPosition" style="padding: 5px;">
+          <div class="drolabel">X:</div><div id="mX" class="dro">0.000</div><br>
+          <div class="drolabel">Y:</div><div id="mY" class="dro">0.000</div><br>
+          <div class="drolabel">Z:</div><div id="mZ" class="dro">0.000</div><br>
+      </div>
+      <span class="pull-right"><span class="badge badge-default badge-notify" title="Items in Queue" id="machineStatus" style="margin-right: 5px;">Not Connected</span><span class="badge badge-default badge-notify" title="Items in Queue" id="queueCnt" style="margin-right: 5px;">Queued: 0</span></span>
+      <div id="console"></div>
+</div>
+
+<!--slider menu-->
+    <div class="sidebar-menu">
+		  	<div class="logo"> <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="#"> <span id="logo" ></span>
+			      <!--<img id="logo" src="" alt="Logo"/>-->
+			  </a> </div>
+		    <div class="menu">
+		      <ul id="menu" >
+		        <li id="menu-home" ><a href="index.html"><i class="fa fa-tachometer"></i><span>Dashboard</span></a></li>
+		        <li><a href="#"><i class="fa fa-cogs"></i><span>Components</span><span class="fa fa-angle-right" style="float: right"></span></a>
+		          <ul>
+		            <li><a href="grids.html">Grids</a></li>
+		            <li><a href="portlet.html">Portlets</a></li>
+		          </ul>
+		        </li>
+		        <li id="menu-comunicacao" ><a href="#"><i class="fa fa-book nav_icon"></i><span>Element</span><span class="fa fa-angle-right" style="float: right"></span></a>
+		          <ul id="menu-comunicacao-sub" >
+		            <li id="menu-mensagens" style="width: 120px" ><a href="buttons.html">Buttons</a>
+		            </li>
+		            <li id="menu-arquivos" ><a href="typography.html">Typography</a></li>
+		            <li id="menu-arquivos" ><a href="icons.html">Icons</a></li>
+		          </ul>
+		        </li>
+		          <li><a href="maps.html"><i class="fa fa-map-marker"></i><span>Maps</span></a></li>
+		        <li id="menu-academico" ><a href="#"><i class="fa fa-file-text"></i><span>Pages</span><span class="fa fa-angle-right" style="float: right"></span></a>
+		          <ul id="menu-academico-sub" >
+		          	 <li id="menu-academico-boletim" ><a href="login.html">Login</a></li>
+		            <li id="menu-academico-avaliacoes" ><a href="signup.html">Sign Up</a></li>
+		          </ul>
+		        </li>
+
+		        <li><a href="charts.html"><i class="fa fa-bar-chart"></i><span>Charts</span></a></li>
+		        <li><a href="#"><i class="fa fa-envelope"></i><span>Mailbox</span><span class="fa fa-angle-right" style="float: right"></span></a>
+		        	 <ul id="menu-academico-sub" >
+			            <li id="menu-academico-avaliacoes" ><a href="inbox.html">Inbox</a></li>
+			            <li id="menu-academico-boletim" ><a href="inbox-details.html">Compose email</a></li>
+		             </ul>
+		        </li>
+		         <li><a href="#"><i class="fa fa-cog"></i><span>System</span><span class="fa fa-angle-right" style="float: right"></span></a>
+		         	 <ul id="menu-academico-sub" >
+			            <li id="menu-academico-avaliacoes" ><a href="404.html">404</a></li>
+			            <li id="menu-academico-boletim" ><a href="blank.html">Blank</a></li>
+		             </ul>
+		         </li>
+		         <li><a href="#"><i class="fa fa-shopping-cart"></i><span>E-Commerce</span><span class="fa fa-angle-right" style="float: right"></span></a>
+		         	<ul id="menu-academico-sub" >
+			            <li id="menu-academico-avaliacoes" ><a href="product.html">Product</a></li>
+			            <li id="menu-academico-boletim" ><a href="price.html">Price</a></li>
+		             </ul>
+		         </li>
+		      </ul>
+		    </div>
+	 </div>
+	<div class="clearfix"> </div>
+</div>
+<!--slide bar menu end here-->
+<script>
+var toggle = true;
+
+$(".sidebar-icon").click(function() {
+  if (toggle)
+  {
+    $(".page-container").addClass("sidebar-collapsed").removeClass("sidebar-collapsed-back");
+    $("#menu span").css({"position":"absolute"});
+  }
+  else
+  {
+    $(".page-container").removeClass("sidebar-collapsed").addClass("sidebar-collapsed-back");
+    setTimeout(function() {
+      $("#menu span").css({"position":"relative"});
+    }, 400);
+  }
+                toggle = !toggle;
+            });
+</script>
+
+<script>
+initSocket();
+init3D();
+animate();
+
+function printLog(text, color) {
+    $('#console').append('<p class="pf" style="color: ' + color + ';">' + text);
+    $('#console').scrollTop($("#console")[0].scrollHeight - $("#console").height());
+};
+
+</script>

@@ -382,26 +382,28 @@ function init3D() {
 
     // Webcam Texture
     useVideo = $('#useVideo').val()
-    if (useVideo.indexOf('Enable') == 0) {
-      initWebcam();
-      video = document.getElementById( 'monitor' );
+    if (useVideo) {
+      if (useVideo.indexOf('Enable') == 0) {
+        initWebcam();
+        video = document.getElementById( 'monitor' );
 
-    	videoImage = document.getElementById( 'videoImage' );
-    	videoImageContext = videoImage.getContext( '2d' );
-    	// background color if no video present
-    	videoImageContext.fillStyle = '#ffffff';
-    	videoImageContext.fillRect( 0, 0, videoImage.width, videoImage.height );
-    	videoTexture = new THREE.Texture( videoImage );
-    	videoTexture.minFilter = THREE.LinearFilter;
-    	videoTexture.magFilter = THREE.LinearFilter;
+      	videoImage = document.getElementById( 'videoImage' );
+      	videoImageContext = videoImage.getContext( '2d' );
+      	// background color if no video present
+      	videoImageContext.fillStyle = '#ffffff';
+      	videoImageContext.fillRect( 0, 0, videoImage.width, videoImage.height );
+      	videoTexture = new THREE.Texture( videoImage );
+      	videoTexture.minFilter = THREE.LinearFilter;
+      	videoTexture.magFilter = THREE.LinearFilter;
 
-    	var movieMaterial = new THREE.MeshBasicMaterial( { map: videoTexture, overdraw: true, side:THREE.DoubleSide } );
-    	// the geometry on which the movie will be displayed;
-    	// 		movie image will be scaled to fit these dimensions.
-    	var movieGeometry = new THREE.PlaneGeometry( laserxmax, laserymax, 1, 1 );
-    	var movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
-    	movieScreen.position.set(0,0,-0.2);
-    	scene.add(movieScreen);
+      	var movieMaterial = new THREE.MeshBasicMaterial( { map: videoTexture, overdraw: true, side:THREE.DoubleSide } );
+      	// the geometry on which the movie will be displayed;
+      	// 		movie image will be scaled to fit these dimensions.
+      	var movieGeometry = new THREE.PlaneGeometry( laserxmax, laserymax, 1, 1 );
+      	var movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
+      	movieScreen.position.set(0,0,-0.2);
+      	scene.add(movieScreen);
+      }
     }
 
 
@@ -410,15 +412,16 @@ function init3D() {
 function animate() {
 
   //useVideo = $('#useVideo').val()
-  if (useVideo.indexOf('Enable') == 0) {
-      if ( video.readyState === video.HAVE_ENOUGH_DATA )
-    	{
-    		videoImageContext.drawImage( video, 0, 0, videoImage.width, videoImage.height );
-    		if ( videoTexture )
-    			videoTexture.needsUpdate = true;
-    	}
+  if (useVideo) {
+    if (useVideo.indexOf('Enable') == 0) {
+        if ( video.readyState === video.HAVE_ENOUGH_DATA )
+      	{
+      		videoImageContext.drawImage( video, 0, 0, videoImage.width, videoImage.height );
+      		if ( videoTexture )
+      			videoTexture.needsUpdate = true;
+      	}
+      }
     }
-
     requestAnimationFrame(animate);
 
 

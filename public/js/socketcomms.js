@@ -82,6 +82,10 @@ var socket, isConnected, playing;
 
   	});
 
+    socket.on('activePorts', function (data) {
+      console.log('activePorts' + data)
+    });
+
     socket.on('connectStatus', function (data) {
   		console.log(data);
       $('#connectStatus').html(data)

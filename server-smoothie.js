@@ -87,7 +87,7 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
   socket.on('refreshPorts', function(data) { // Or when asked
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
-      socket.emit("ports", ports);
+    socket.emit("ports", ports);
     });
   });
   socket.on('connectTo', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
@@ -111,12 +111,19 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
 
     });
 
+    socket.on('areWeLive', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
+      socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
+    });
+
+
     port.on('open', function() {
+      socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
       socket.emit("connectStatus", 'opened:'+port.path);
       // port.write("?\n"); // Lets check if its LasaurGrbl?
 			// port.write("M115\n"); // Lets check if its Marlin?
 			port.write("version\n"); // Lets check if its Smoothieware?
       // port.write("$fb\n"); // Lets check if its TinyG
+      console.log('Connected to ' + port.path + 'at ' + port.options.baudRate)
       isConnected = true;
       connectedTo = port.path;
       queryLoop = setInterval(function() {
@@ -124,8 +131,9 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
           send1Q()
 		  }, 100);
       queueCounter = setInterval(function(){
-               socket.emit('qCount', gcodeQueue.length)
+               socket.broadcast.emit('qCount', gcodeQueue.length)
        },500);
+       socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
     });
 
     port.on('close', function(err) { // open errors will be emitted as an error event
@@ -146,7 +154,7 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
           if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
             blocked = false;
           }
-          socket.emit("data", data);
+          socket.broadcast.emit("data", data);
           setTimeout(function(){
                if(paused !== true){
                    send1Q()
