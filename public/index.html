@@ -16,6 +16,19 @@
     <!--Mobile first-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <script>
+    function detectmob() {
+       if(window.innerWidth <= 800 || window.innerHeight <= 600) {
+         return true;
+       } else {
+         return false;
+       }
+    }
+
+    if (detectmob()){
+      top.location.href="mobile.html";
+    }
+    </script>
 
     <!-- Bootstrap and UX -->
     <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css" id="theme_css" />
@@ -837,7 +850,7 @@
 
                 <div style=" border-top: dashed 1px #aaa; padding: 5px; margin-top: 5px;">
                     <!-- Command Console -->
-                    <span class="">Console:</span><span class="pull-right"><span class="badge badge-default badge-notify" title="Items in Queue" id="machineStatus" style="margin-right: 5px;">Not Connected</span><span class="badge badge-default badge-notify" title="Items in Queue" id="queueCnt" style="margin-right: 5px;">Queued: 0</span></span>
+                    <span class="">Console:</span><span class="pull-right"><span class="badge badge-default badge-warn" title="Items in Queue" id="syncstatus" style="margin-right: 5px;">Socket Closed</span><span class="badge badge-default badge-notify" title="Items in Queue" id="machineStatus" style="margin-right: 5px;">Not Connected</span><span class="badge badge-default badge-notify" title="Items in Queue" id="queueCnt" style="margin-right: 5px;">Queued: 0</span></span>
 
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-terminal fa-lg"></i></span>
@@ -1011,5 +1024,4 @@
   ga('send', 'pageview');
 
 </script>
-
 </html>

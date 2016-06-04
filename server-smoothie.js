@@ -81,15 +81,42 @@ function ConvChar( str ) {
 
 // Websocket <-> Serial
 io.sockets.on('connection', function (socket) { // When we open a WS connection, send the list of ports
+
+
   serialport.list(function (err, ports) {
     socket.emit("ports", ports);
   });
+
+  socket.on('firstLoad', function(data) {
+    socket.emit('config', config);
+  });
+
+  socket.on('serialSend', function(data) {
+    data = data.split('\n')
+    for (i=0; i<data.length; i++) {
+      addQ(data[i])
+    }
+  });
+
   socket.on('refreshPorts', function(data) { // Or when asked
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
     socket.emit("ports", ports);
     });
   });
+
+  socket.on('closePort', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
+    console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
+    socket.emit("connectStatus", 'closed:'+port.path);
+    port.close();
+
+  });
+
+  socket.on('areWeLive', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
+    socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
+  });
+
+
   socket.on('connectTo', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
     data = data.split(',');
     console.log(chalk.yellow('WARN:'), chalk.blue('Connecting to Port ' + data));
@@ -104,18 +131,6 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
       port.write("$fb\n"); // Lets check if its TinyG
     }
 
-    socket.on('closePort', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
-      console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
-      socket.emit("connectStatus", 'closed:'+port.path);
-      port.close();
-
-    });
-
-    socket.on('areWeLive', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
-      socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
-    });
-
-
     port.on('open', function() {
       socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
       socket.emit("connectStatus", 'opened:'+port.path);
@@ -127,6 +142,7 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
       isConnected = true;
       connectedTo = port.path;
       queryLoop = setInterval(function() {
+        // console.log('StatusChkc')
           port.write('?');
           send1Q()
 		  }, 100);
@@ -142,11 +158,11 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
       socket.emit("connectStatus", 'closed:'+port.path);
       isConnected = false;
       connectedTo = false;
-    })
+    });
 
     port.on('error', function(err) { // open errors will be emitted as an error event
       console.log('Error: ', err.message);
-      socket.emit("data", data);
+      socket.broadcast.emit("data", data);
     })
     port.on("data", function (data) {
       console.log('Recv: ' + data)
@@ -167,17 +183,14 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
        }
 		});
   });
-  socket.on('firstLoad', function(data) {
-		socket.emit('config', config);
-	});
-  socket.on('serialSend', function(data) {
-    data = data.split('\n')
-    for (i=0; i<data.length; i++) {
-      addQ(data[i])
-    }
 
-	});
+
+
+
+  }); // end sockets.on.connection
 // End Websocket <-> Serial
+
+
 
 // Queue
 
@@ -204,9 +217,3 @@ function send1Q() {
     blocked = true;
   }
 }
-
-
-// End Queue
-
-
-});

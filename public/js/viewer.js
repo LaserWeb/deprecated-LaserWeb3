@@ -23,15 +23,12 @@ var camvideo = document.getElementById('monitor');
 setBullseyePosition = function(x, y, z) {
     //console.log('Set Position: ', x, y, z)
     if (x) {
-        $('#mX').html(x);
         bullseye.position.x = (parseInt(x, 10) - (laserxmax / 2));
     };
     if (y) {
-        $('#mY').html(y);
         bullseye.position.y = (parseInt(y, 10) - (laserymax / 2));
     };
     if (z) {
-        $('#mZ').html(z);
         bullseye.position.z = (parseInt(z, 10) + 0.1);
     };
 }

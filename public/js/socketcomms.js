@@ -5,6 +5,9 @@ var socket, isConnected, playing;
     socket.emit('firstLoad', 1);
 
     socket.on('data', function (data) {
+
+      $('#syncstatus').html('Socket OK');
+      isConnected = true;
       if ($('#console p').length > 300) {
         // remove oldest if already at 300 lines
         $('#console p').first().remove();
@@ -58,9 +61,14 @@ var socket, isConnected, playing;
         }
 
 
-
+syncstatus
         $('#machineStatus').html(t[0]);
-  		  setBullseyePosition(t[6], t[7], t[8]); // Also updates #mX #mY #mZ
+        $('#mX').html(t[6]);
+        $('#mY').html(t[7]);
+        $('#mZ').html(t[8]);
+          if (bullseye) {
+            setBullseyePosition(t[6], t[7], t[8]); // Also updates #mX #mY #mZ
+          }
         } else if (data =='ok') {
         printLog(data, '#cccccc')
         } else {
@@ -69,6 +77,7 @@ var socket, isConnected, playing;
     });
 
     socket.on('ports', function (data) {
+      $('#syncstatus').html('Socket Init');
       var options = $("#port");
       for (i = 0; i< data.length; i++) {
         options.append($("<option />").val(data[i].comName).text(data[i].comName));
@@ -89,11 +98,14 @@ var socket, isConnected, playing;
     socket.on('connectStatus', function (data) {
   		console.log(data);
       $('#connectStatus').html(data)
+      $('#syncstatus').html('Socket OK');
   	});
 
     $('#refreshPort').on('click', function() {
         $('#port').find('option').remove().end()
         socket.emit('refreshPorts', 1);
+        $('#syncstatus').html('Socket Refreshed');
+
 
     });
 
@@ -140,6 +152,7 @@ var socket, isConnected, playing;
   }
 
 function sendGcode(gcode) {
+  console.log('Sending', gcode)
   socket.emit('serialSend', gcode);
 }
 

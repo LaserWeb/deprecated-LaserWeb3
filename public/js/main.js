@@ -29,11 +29,6 @@ $(document).ready(function() {
 
     // grbl = new Grbl();
 
-
-
-
-    //initRaster();
-
     // Responsive Sidebar width
     if ( screen.width < 800) {
       $('#maincolumn').addClass('col-md-offset-3');
@@ -81,7 +76,7 @@ $(document).ready(function() {
         resetView();
     });
 
-    
+
     $('#savesettings').on('click', function() {
         saveSettingsLocal();
     });
