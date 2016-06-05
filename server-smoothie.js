@@ -28,6 +28,7 @@
 */
 var config = require('./config');
 var serialport = require("serialport");
+var SerialPort = serialport.SerialPort
 var app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
   , fs = require('fs');
@@ -121,7 +122,7 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
     data = data.split(',');
     console.log(chalk.yellow('WARN:'), chalk.blue('Connecting to Port ' + data));
     if (!isConnected) {
-      port = new serialport(data[0], {  parser: serialport.parsers.readline("\n"), baudrate: parseInt(data[1]) });
+      port = new SerialPort(data[0], {  parser: serialport.parsers.readline("\n"), baudrate: parseInt(data[1]) });
       socket.emit("connectStatus", 'opening:'+port.path);
     } else {
       socket.emit("connectStatus", 'resume:'+port.path);
