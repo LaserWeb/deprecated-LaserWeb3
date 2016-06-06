@@ -39,7 +39,9 @@ var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-var isConnected, port, isBlocked, lastsent = "", paused = false, blocked = false, queryLoop, queueCounter;
+var isConnected, port, isBlocked, lastsent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
+var gcodeQueue; gcodeQueue = [];
+
 
 console.log(chalk.green('***************************************************************'));
 console.log(chalk.green('*                        Notice:                              *'));
@@ -81,8 +83,12 @@ function ConvChar( str ) {
 
 
 // Websocket <-> Serial
-io.sockets.on('connection', function (socket) { // When we open a WS connection, send the list of ports
+io.sockets.on('connection', handleConnection);
 
+
+function handleConnection (socket) { // When we open a WS connection, send the list of ports
+
+  connections.push(socket);
 
   serialport.list(function (err, ports) {
     socket.emit("ports", ports);
@@ -90,6 +96,23 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
 
   socket.on('firstLoad', function(data) {
     socket.emit('config', config);
+  });
+
+  socket.on('stop', function(data) {
+    socket.emit("connectStatus", 'stopped:'+port.path);
+    gcodeQueue.length = 0; // dump the queye
+  });
+
+  socket.on('pause', function(data) {
+    console.log(chalk.red('PAUSE'));
+    socket.emit("connectStatus", 'paused:'+port.path);
+    paused = true;
+  });
+
+  socket.on('unpause', function(data) {
+    socket.emit("connectStatus", 'unpaused:'+port.path);
+    paused = false;
+    send1Q()
   });
 
   socket.on('serialSend', function(data) {
@@ -124,6 +147,67 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
     if (!isConnected) {
       port = new SerialPort(data[0], {  parser: serialport.parsers.readline("\n"), baudrate: parseInt(data[1]) });
       socket.emit("connectStatus", 'opening:'+port.path);
+      port.on('open', function() {
+        socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
+        socket.emit("connectStatus", 'opened:'+port.path);
+        // port.write("?\n"); // Lets check if its LasaurGrbl?
+        // port.write("M115\n"); // Lets check if its Marlin?
+        port.write("version\n"); // Lets check if its Smoothieware?
+        // port.write("$fb\n"); // Lets check if its TinyG
+        console.log('Connected to ' + port.path + 'at ' + port.options.baudRate)
+        isConnected = true;
+        connectedTo = port.path;
+        queryLoop = setInterval(function() {
+          // console.log('StatusChkc')
+            port.write('?');
+            send1Q()
+        }, 100);
+        queueCounter = setInterval(function(){
+                 for (i in connections) {   // iterate over the array of connections
+                   connections[i].emit('qCount', gcodeQueue.length)
+                 };
+         },500);
+         for (i in connections) {   // iterate over the array of connections
+           connections[i].emit("activePorts", port.path + ',' + port.options.baudRate);
+         };
+      });
+
+      port.on('close', function(err) { // open errors will be emitted as an error event
+        clearInterval(queueCounter);
+        clearInterval(queryLoop);
+        socket.emit("connectStatus", 'closed:'+port.path);
+        isConnected = false;
+        connectedTo = false;
+      });
+
+      port.on('error', function(err) { // open errors will be emitted as an error event
+        console.log('Error: ', err.message);
+        socket.broadcast.emit("data", data);
+      })
+      port.on("data", function (data) {
+        console.log('Recv: ' + data)
+        if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0){
+            if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
+              blocked = false;
+            }
+            for (i in connections) {   // iterate over the array of connections
+              connections[i].emit("data", data);
+            };
+            // setTimeout(function(){
+                 if(paused !== true){
+                     send1Q()
+                 } else {
+                   for (i in connections) {   // iterate over the array of connections
+                     connections[i].emit("data", 'paused...');
+                   };
+                 }
+            //  },1);
+
+
+         } else {
+             console.log("Nope")
+         }
+      });
     } else {
       socket.emit("connectStatus", 'resume:'+port.path);
       port.write("?\n"); // Lets check if its LasaurGrbl?
@@ -131,82 +215,21 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
       port.write("version\n"); // Lets check if its Smoothieware?
       port.write("$fb\n"); // Lets check if its TinyG
     }
-
-    port.on('open', function() {
-      socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
-      socket.emit("connectStatus", 'opened:'+port.path);
-      // port.write("?\n"); // Lets check if its LasaurGrbl?
-			// port.write("M115\n"); // Lets check if its Marlin?
-			port.write("version\n"); // Lets check if its Smoothieware?
-      // port.write("$fb\n"); // Lets check if its TinyG
-      console.log('Connected to ' + port.path + 'at ' + port.options.baudRate)
-      isConnected = true;
-      connectedTo = port.path;
-      queryLoop = setInterval(function() {
-        // console.log('StatusChkc')
-          port.write('?');
-          send1Q()
-		  }, 100);
-      queueCounter = setInterval(function(){
-               socket.broadcast.emit('qCount', gcodeQueue.length)
-       },500);
-       socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
-    });
-
-    port.on('close', function(err) { // open errors will be emitted as an error event
-      clearInterval(queueCounter);
-      clearInterval(queryLoop);
-      socket.emit("connectStatus", 'closed:'+port.path);
-      isConnected = false;
-      connectedTo = false;
-    });
-
-    port.on('error', function(err) { // open errors will be emitted as an error event
-      console.log('Error: ', err.message);
-      socket.broadcast.emit("data", data);
-    })
-    port.on("data", function (data) {
-      console.log('Recv: ' + data)
-      if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0){
-          if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
-            blocked = false;
-          }
-          socket.broadcast.emit("data", data);
-          // setTimeout(function(){
-               if(paused !== true){
-                   send1Q()
-               }
-          //  },1);
-
-
-       } else {
-           console.log("Nope")
-       }
-		});
   });
 
 
-
-
-  }); // end sockets.on.connection
+  };
 // End Websocket <-> Serial
 
 
 
 // Queue
-
-gcodeQueue = [];
-
 function addQ(gcode) {
   gcodeQueue.push(gcode);
 }
 
 function jumpQ(gcode) {
   gcodeQueue.unshift(gcode)
-}
-
-function runQ() {
-
 }
 
 function send1Q() {

@@ -8,10 +8,7 @@ var socket, isConnected, playing;
 
       $('#syncstatus').html('Socket OK');
       isConnected = true;
-      if ($('#console p').length > 300) {
-        // remove oldest if already at 300 lines
-        $('#console p').first().remove();
-      }
+      
       if (data.indexOf('<') == 0) {
         // https://github.com/grbl/grbl/wiki/Configuring-Grbl-v0.8#---current-status
         // remove first <

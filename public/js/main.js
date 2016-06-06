@@ -562,8 +562,12 @@ function invokeSaveAsDialog(file, fileName) {
     }
 }
 function printLog(text, color) {
-    $('#console').append('<p class="pf" style="color: ' + color + ';">' + text);
-    $('#console').scrollTop($("#console")[0].scrollHeight - $("#console").height());
+  if ($('#console p').length > 300) {
+    // remove oldest if already at 300 lines
+    $('#console p').first().remove();
+  }
+  $('#console').append('<p class="pf" style="color: ' + color + ';">' + text);
+  $('#console').scrollTop($("#console")[0].scrollHeight - $("#console").height());
 };
 
 
