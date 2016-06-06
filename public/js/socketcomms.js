@@ -8,7 +8,7 @@ var socket, isConnected, playing;
 
       $('#syncstatus').html('Socket OK');
       isConnected = true;
-      
+
       if (data.indexOf('<') == 0) {
         // https://github.com/grbl/grbl/wiki/Configuring-Grbl-v0.8#---current-status
         // remove first <
@@ -157,15 +157,20 @@ function playpauseMachine() {
     if (isConnected) {
         if (playing) {
             if (paused) {
-                sendGcode('~');
+                // sendGcode('~');
+                socket.emit('unpause', 1);
                 paused = false;
                 $('#playicon').removeClass('fa-play');
                 $('#playicon').addClass('fa-pause');
             } else {
                 var laseroffcmd;
                 laseroffcmd = document.getElementById('laseroff').value;
-                sendGcode(laseroffcmd);
-                sendGcode('!');
+                if (laseroffcmd) {
+                  socket.emit('pause', laseroffcmd);
+                } else {
+                  socket.emit('pause', 0);
+                }
+
                 paused = true;
                 $('#playicon').removeClass('fa-pause');
                 $('#playicon').addClass('fa-play');
