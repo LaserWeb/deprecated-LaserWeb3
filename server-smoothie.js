@@ -101,6 +101,13 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   socket.on('stop', function(data) {
     socket.emit("connectStatus", 'stopped:'+port.path);
     gcodeQueue.length = 0; // dump the queye
+    if (data == 0) {
+      port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
+      console.log('PAUSING:  Sending Laser Off Command as ' + data)
+    } else {
+      port.write(M5+"\n")  //  Hopefully M5!
+      console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!')
+    }
   });
 
   socket.on('pause', function(data) {
@@ -113,7 +120,6 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!')
     }
     socket.emit("connectStatus", 'paused:'+port.path);
-
     paused = true;
   });
 

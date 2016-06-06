@@ -153,6 +153,16 @@ function sendGcode(gcode) {
   socket.emit('serialSend', gcode);
 }
 
+function stopMachine () {
+  var laseroffcmd;
+  laseroffcmd = document.getElementById('laseroff').value;
+  if (laseroffcmd) {
+    socket.emit('stop', laseroffcmd);
+  } else {
+    socket.emit('stop', 0);
+  }
+}
+
 function playpauseMachine() {
     if (isConnected) {
         if (playing) {

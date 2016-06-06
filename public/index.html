@@ -194,7 +194,7 @@
                     <div class="btn-group btn-group-justified" role="group" aria-label="controljob">
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="homeBtn" onclick="homeMachine();"><span class="fa-stack fa-1x"><i class="fa fa-home fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">home</strong><strong class="fa-stack-1x icon-bot-text">laser</strong></span></button></div>
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="playBtn" onclick="playpauseMachine();"><span class="fa-stack fa-1x"><i id="playicon" class="fa fa-play fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">run</strong><strong class="fa-stack-1x icon-bot-text">gcode</strong></span></button></div>
-                      <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="stopBtn" onclick="socket.emit('stop', 1);"><span class="fa-stack fa-1x"><i class="fa fa-stop fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">abort</strong><strong class="fa-stack-1x icon-bot-text">job</strong></span></button></div>
+                      <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="stopBtn" onclick="stopMachine();"><span class="fa-stack fa-1x"><i class="fa fa-stop fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">abort</strong><strong class="fa-stack-1x icon-bot-text">job</strong></span></button></div>
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="zeroBtn" onclick="sendGcode('G92 X0 Y0 Z0');"><span class="fa-stack fa-1x"><i class="fa fa-bullseye fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">set</strong><strong class="fa-stack-1x icon-bot-text">zero</strong></span></button></div>
                     </div>
                   </td>
@@ -804,33 +804,10 @@
                         <button type="button" data-title="Pan Right" class="btn btn-view  btn-lg btn-default" id="panright"><i class="fa fa-arrow-right"></i></button>
                     </div>
                 </div>
-
-
-
-
-
             </div>
-            <!-- End 3D Viewer Controls -->
-
-            <script>
-              ((window.gitter = {}).chat = {}).options = {
-                room: 'openhardwarecoza/LaserWeb2',
-                activationElement: false,
-              };
-            </script>
-            <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
-
         </div>
         <!-- End of Main Body -->
-
-
-
-
-
     </div>
-
-
-
 </div>
 <!-- End of Main Row -->
 <!--slider menu-->
@@ -847,7 +824,6 @@
             <li id="console-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-list"></i><span>Console</span></a></li>
             <li id="gdrive-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-google"></i><span>Google Drive</span></a></li>
             <li id="settings-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-cogs"></i><span>Settings</span></a></li>
-            <li id="settings-menu"  class="leftmenuitem"><a href="#" class="js-gitter-toggle-chat-button"><i class="fa fa-comments-o"></i><span>Chat</span></li>
 		      </ul>
 		    </div>
 	 </div>
