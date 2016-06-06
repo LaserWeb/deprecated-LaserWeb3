@@ -172,11 +172,11 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
             blocked = false;
           }
           socket.broadcast.emit("data", data);
-          setTimeout(function(){
+          // setTimeout(function(){
                if(paused !== true){
                    send1Q()
                }
-           },50);
+          //  },1);
 
 
        } else {
