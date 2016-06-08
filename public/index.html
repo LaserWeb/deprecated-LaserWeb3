@@ -145,8 +145,6 @@
     <!-- Product tour -->
     <script src="js/tour.js"></script>
 
-
-
 </head>
 
 <body>
@@ -163,6 +161,68 @@
             <form class="navbar-form navbar-left" role="form">
                 <span class="btn btn-default btn-file" title="Open a png, .jpg, .jpeg, .bmp, .gcode, .svg, .dxf, or .stl file" id="openbutton"><i class="fa fa-folder-open fa-fw"></i>Open<input id="file" type="file" accept=".png,.jpg,.jpeg,.bmp,.gcode,.g,.svg,.dxf,.stl" /></span>
             </form>
+
+            <form class="navbar-form navbar-left" role="form">
+              <label for="connectVia" class="control-label  icon-white"><i class="fa fa-2x fa-plug"></i></label>
+              <select class="form-control" id="connectVia">
+                <option>USB</option>
+                <option>Ethernet</option>
+              </select>
+            </form>
+
+            <div class="navbar-form navbar-left" id="usbConnect">
+              <form role="form"> <!-- USB -->
+                <label for="port" class="control-label  icon-white"><i class="fa fa-2x fa-usb"></i></label>
+                <select id="port" class="form-control">
+                    <option value="no">Select port</option>
+                </select>
+                <label for="baud" class="control-label  icon-white"><i class="fa fa-2x fa-tty"></i></label>
+                <select id="baud" class="form-control">
+                    <option value="250000">250000</option>
+                    <option value="230400">230400</option>
+                    <option value="115200" selected="selected">115200</option>
+                    <option value="57600">57600</option>
+                    <option value="38400">38400</option>
+                    <option value="19200">19200</option>
+                    <option value="9600">9600</option>
+                </select>
+                  <a class="btn btn-success disabled" id="connect" href="#"><span id="connectStatus">Connect</span></a>
+                  <a class="btn btn-danger disabled" id="closePort" href="#"><span id="closePort"><i class="fa fa-times" aria-hidden="true"></i></span></a>
+                  <a class="btn btn-default" id="refreshPort" href="#"><i class="fa fa-refresh"></i></a>
+              </form>
+            </div>
+
+            <div class="navbar-form navbar-left" id="ethernetConnect" style="display: none;">
+              <form role="form"> <!-- Smoothie Ethernet -->
+                <label for="smoothieIp" class="control-label  icon-white"><i class="fa fa-2x fa-wifi"></i></label>
+                    <input type="text" class="form-control numpad" id="smoothieIp" maxlength="16" placeholder="192.168.137.22" style="width: 140px;">
+
+                    <div class="btn-group">
+                      <a class="btn btn-success" id="connect" href="#"><span id="connectStatus">Connect</span></a>
+
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Scan
+                        <span class="caret"></span>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-right form-login stop-propagation" role="menu">
+                        <div class="form-group">
+                          <h4>Scan network</h4>
+                          Specify the subnet in <code>0.0.0.*</code> format<br>
+
+                          <div class="input-group" style="width: 95%;">
+                            <input style="border-right: none;" type="text" class="form-control" maxlength="16" id="subnet1" placeholder="192" style="width: 60px;"><span style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon" id="basic-addon2">.</span>
+                            <input style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" id="subnet2" placeholder="168" style="width: 60px;"><span style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon" id="basic-addon2">.</span>
+                            <input style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" id="subnet3" placeholder="137" style="width: 60px;"><span style="border-left: none;  background: #fff; cursur: arrow;" class="input-group-addon" id="basic-addon2">. &nbsp; <b>*</b></span>
+                          </div>
+                          <button class="btn btn-default" id="scansubnet" onclick="scanSubnet()">Scan</button>
+                          <hr>
+                          <div id="foundIp"></div>
+                        </div>
+                      </div>
+                    </div>
+                </form>
+            </div>
+
 
             <form class="navbar-form navbar-right" role="form">
                 <a data-placement="bottom" data-original-title="Fullscreen" data-toggle="tooltip" class="btn btn-default" id="toggleFullScreen" onclick="toggleFullScreen();">
@@ -181,6 +241,7 @@
         <div id="col1">
           <!-- jog -->
           <div id="jog-menu-panel" class="mobtab">
+
             <span class="badge badge-default badge-warn" title="Items in Queue" id="syncstatus" style="margin-right: 5px;">Socket Closed</span><span class="badge badge-default badge-notify" title="Items in Queue" id="machineStatus" style="margin-right: 5px;">Not Connected</span><span class="badge badge-default badge-notify" title="Items in Queue" id="queueCnt" style="margin-right: 5px;">Queued: 0</span></span>
             <div id="mPosition" style="padding: 5px;">
                 <div class="drolabel">X:</div><div id="mX" class="dro">0.000</div><br>
@@ -235,29 +296,15 @@
                 </tr>
               </table>
             </center>
+
           </div>
           <!-- end jog -->
           <!-- connect -->
           <div id="connect-menu-panel" class="mobtab" style="display: none;">
-            <form class="navbar-form navbar-left" role="form">
-                    <label for="port"><i class="fa fa-usb icon-white"></i></label>
-                    <select id="port" class="form-control">
-                        <option value="no">Select port</option>
-                    </select>
-                    <label for="baud"><i class="fa fa-tty icon-white"></i></label>
-                    <select id="baud" class="form-control">
-                        <option value="250000">250000</option>
-                        <option value="230400">230400</option>
-                        <option value="115200" selected="selected">115200</option>
-                        <option value="57600">57600</option>
-                        <option value="38400">38400</option>
-                        <option value="19200">19200</option>
-                        <option value="9600">9600</option>
-                    </select>
-                <a class="btn btn-success disabled" id="connect" href="#"><span id="connectStatus">Connect</span></a>
-                <a class="btn btn-danger disabled" id="closePort" href="#"><span id="closePort"><i class="fa fa-times" aria-hidden="true"></i></span></a>
-                <a class="btn btn-default" id="refreshPort" href="#"><i class="fa fa-refresh"></i></a>
-            </form>
+
+
+
+
           </div>
           <!-- end connect -->
           <!-- cam -->
@@ -818,7 +865,7 @@
 		    <div class="menu">
 		      <ul id="menu" >
 		        <li id="jog-menu" class="leftmenuitem active" ><a href="#"><i class="fa fa-arrows-alt"></i><span>Jog</span></a></li>
-            <li id="connect-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-usb"></i><span>Connect</span></a></li>
+            <li id="connect-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-wifi"></i><span>Connect</span></a></li>
             <li id="cam-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-pencil-square-o"></i><span>CAM</span></a></li>
             <li id="gcode-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-file-code-o"></i><span>GCode</span></a></li>
             <li id="console-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-list"></i><span>Console</span></a></li>

@@ -1,4 +1,4 @@
-var socket, isConnected, playing;
+var socket, isConnected, playing, connectVia;
 
   function initSocket() {
     socket = io.connect(''); // socket.io init

@@ -317,3 +317,9 @@ d-grid {border: none; padding: 20px;}
 {
     opacity:0.1 !important;
 }
+
+
+.form-login{
+  padding: 1em;
+  min-width: 320px;
+}

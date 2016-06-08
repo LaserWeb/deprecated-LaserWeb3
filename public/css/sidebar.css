@@ -106,7 +106,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 #menu li {
   position: relative;
@@ -136,8 +136,11 @@
   /*transition: color 250ms ease-in-out, background-color 250ms ease-in-out;*/
 }
 #menu li.active > a {
-  background-color: #2b303a;
-  color: #fdbb30;
+  background-color: #ffffff;
+  color: #000000;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  border-left: solid 6px #68AE00;
 }
 #menu ul li { background-color:#202121; }
 #menu ul {

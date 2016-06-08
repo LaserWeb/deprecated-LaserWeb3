@@ -26,6 +26,7 @@ $(document).ready(function() {
     svgInit();
     initSocket();
     initTour();
+    initSmoothie();
 
     // grbl = new Grbl();
 

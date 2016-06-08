@@ -9,3 +9,8 @@ body {
     height: 60px;
     background-color: #f5f5f5;
 }
+
+.form-login{
+  padding: 1em;
+  min-width: 280px;
+}
