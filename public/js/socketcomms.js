@@ -110,6 +110,7 @@ function stopMachine () {
       runCommand('abort');
       runCommand(laseroffcmd);
       runCommand('\030');
+      runCommand('$X');
       runCommand(laseroffcmd);
     } else {
       runCommand('abort');
