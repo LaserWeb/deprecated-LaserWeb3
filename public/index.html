@@ -214,7 +214,7 @@
                             <input style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" id="subnet2" placeholder="168" style="width: 60px;"><span style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon" id="basic-addon2">.</span>
                             <input style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" id="subnet3" placeholder="137" style="width: 60px;"><span style="border-left: none;  background: #fff; cursur: arrow;" class="input-group-addon" id="basic-addon2">. &nbsp; <b>*</b></span>
                           </div>
-                          <button class="btn btn-default" id="scansubnet" onclick="scanSubnet()">Scan</button>
+                          <button class="btn btn-default" id="scansubnet">Scan</button><div id="scannumber"></div>
                           <hr>
                           <div id="foundIp"></div>
                         </div>
@@ -300,12 +300,12 @@
           </div>
           <!-- end jog -->
           <!-- connect -->
-          <div id="connect-menu-panel" class="mobtab" style="display: none;">
+          <!-- <div id="connect-menu-panel" class="mobtab" style="display: none;">
 
 
 
 
-          </div>
+          </div> -->
           <!-- end connect -->
           <!-- cam -->
           <div id="cam-menu-panel" class="mobtab" style="display: none;">
@@ -865,7 +865,7 @@
 		    <div class="menu">
 		      <ul id="menu" >
 		        <li id="jog-menu" class="leftmenuitem active" ><a href="#"><i class="fa fa-arrows-alt"></i><span>Jog</span></a></li>
-            <li id="connect-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-wifi"></i><span>Connect</span></a></li>
+            <!-- <li id="connect-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-wifi"></i><span>Connect</span></a></li> -->
             <li id="cam-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-pencil-square-o"></i><span>CAM</span></a></li>
             <li id="gcode-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-file-code-o"></i><span>GCode</span></a></li>
             <li id="console-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-list"></i><span>Console</span></a></li>
@@ -1060,12 +1060,12 @@ $("#gcode-menu").click(function() {
   $('#gcode-menu-panel').show();
   $("#gcode-menu").addClass('active')
 });
-$("#connect-menu").click(function() {
-  $('.mobtab').hide();
-  $('.leftmenuitem').removeClass('active');
-  $('#connect-menu-panel').show();
-  $("#connect-menu").addClass('active')
-});
+// $("#connect-menu").click(function() {
+//   $('.mobtab').hide();
+//   $('.leftmenuitem').removeClass('active');
+//   $('#connect-menu-panel').show();
+//   $("#connect-menu").addClass('active')
+// });
 $("#console-menu").click(function() {
   $('.mobtab').hide();
   $('.leftmenuitem').removeClass('active');
