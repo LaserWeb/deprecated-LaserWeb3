@@ -1,10 +1,15 @@
+var queryLoop;
+var connectMode;
+
 function initSmoothie() {
   $('#connectVia').change(function() {
     var connectVia = $('#connectVia').val()
     if (connectVia == "USB") {
+        connectMode = "USB";
         $('#usbConnect').show();
         $('#ethernetConnect').hide();
     } else if (connectVia == "Ethernet") {
+      connectMode = "ETH";
       $('#usbConnect').hide();
       $('#ethernetConnect').show();
     }
@@ -12,7 +17,32 @@ function initSmoothie() {
 
   $('.stop-propagation').on('click', function (e) {
     e.stopPropagation();
-});
+  });
+
+  $('#ethConnect').on('click', function() {
+    var smoothieIp = $('#smoothieIp').val();
+
+    $.ajax({
+     type: 'GET',
+        url: 'http://' +smoothieIp + '/',
+        success: function(data, textStatus, XMLHttpRequest) {
+          console.log(data, textStatus, XMLHttpRequest);
+          if (textStatus = '200') {
+            // alert('Found board at' + ip)
+            printLog('Got response from  '+smoothieIp, successcolor)
+            isConnected = true;
+            $('#ethConnectStatus').html("Ethernet OK")
+            $('#syncstatus').html('Eth Connected');
+            queryLoop = setInterval(function(){ runCommand('M114') }, 300);
+          }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          $('#ethConnectStatus').html("Connect")
+          $('#syncstatus').html('Eth Failed');
+        }
+    });
+
+  });
 
 };
 
@@ -46,7 +76,10 @@ function scanSubnet() {
     var ip = subnet + ctr
     var result = scanIP(ip)
   }
-  saveSettingsLocal();
+  localStorage.setItem("subnet1", subnet1);
+  localStorage.setItem("subnet2", subnet2);
+  localStorage.setItem("subnet3", subnet3);
+
 
 };
 
@@ -84,7 +117,7 @@ function  scanIP(ip) {
       });
     });
   // $.ajax({
-  //  type: 'POST',
+  //  type: 'GET',
   //     url: 'http://' +ip + '/command',
   //     data: "version",
   //     success: function(data, textStatus, XMLHttpRequest) {
