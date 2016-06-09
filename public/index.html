@@ -481,7 +481,7 @@
                                     <label for="laservariablespeedlbl">Feedrate for lightest (white) and darkest (black)</label>
                                     <br>
                                     <div id="laservariablespeedslider"></div>
-                                    <span id="laservariablespeed" style="border:0;  font-weight:bold; background: transparent;"></span><span>&nbsp;mm/min</span>
+                                    <span id="laservariablespeed" style="border:0;  font-weight:bold; background: transparent;"></span><span>&nbsp;mm/s</span>
                                 </center>
                             </div>
                         </form>
@@ -500,8 +500,8 @@
                             <!-- <div class="form-group"> -->
                                 <label for="inflateVal" class="control-label">Engrave (G1) Feedrate:</label>
                                 <div class="input-group">
-                                    <input type="text input-sm" class="form-control" value="2000" id="feedRate">
-                                    <span class="input-group-addon" style="width: 60px;">mm/min</span>
+                                    <input type="text input-sm" class="form-control" value="30" id="feedRate">
+                                    <span class="input-group-addon" style="width: 60px;">mm/s</span>
                                 </div>
                             <!-- </div> -->
                         </form>
@@ -510,8 +510,8 @@
                             <!-- <div class="form-group"> -->
                                 <label for="inflateVal" class="control-label">Rapid (G0) Feedrate:</label>
                                 <div class="input-group">
-                                    <input type="text input-sm" class="form-control" value="6000" id="rapidRate">
-                                    <span class="input-group-addon" style="width: 60px;">mm/min</span>
+                                    <input type="text input-sm" class="form-control" value="50" id="rapidRate">
+                                    <span class="input-group-addon" style="width: 60px;">mm/s</span>
                                 </div>
                             <!-- </div> -->
                         </form>
@@ -645,8 +645,8 @@
                               <textarea class="form-control numpadgcode" id="endgcode" placeholder="M81\nG28\n"></textarea>
                           <!-- </div>
                           <div class="form-group"> -->
-                              <label for="endgcode" class="control-label">Travel Moves (mm/min)</label>
-                              <textarea class="form-control numpad" id="rapidspeed" placeholder="2000"></textarea>
+                              <label for="endgcode" class="control-label">Travel Moves (mm/s)</label>
+                              <textarea class="form-control numpad" id="rapidspeed" placeholder="30"></textarea>
                           <!-- </div> -->
                         </p>
                       </form>

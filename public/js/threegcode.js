@@ -67,15 +67,15 @@ $(document).ready(function() {
         if (typeof(inflateGrp) != 'undefined' && inflateGrp != null) {
             console.log('looks like we are generating gcode for a Offset Path');
             pwr0 = $('#pwr0').val();
-            cutSpeed0 = $('#sp0').val();
-            rapidSpeed = document.getElementById('rapidspeed').value;
+            cutSpeed0 = parseInt($('#sp0').val()) * 60;
+            rapidSpeed = parseInt(document.getElementById('rapidspeed').value) * 60;
             g += generateGcode(inflateGrp, cutSpeed0, pwr0, rapidSpeed, laseron, laseroff);
 
         } else if (typeof(slicegroup) != 'undefined') {
             console.log('looks like we are generating gcode for a STL Slice Path');
             pwr0 = $('#pwr0').val();
-            cutSpeed0 = $('#sp0').val();
-            rapidSpeed = document.getElementById('rapidspeed').value;
+            cutSpeed0 = parseInt($('#sp0').val()) * 60;;
+            rapidSpeed = parseInt(document.getElementById('rapidspeed').value) * 60;;
             g += generateGcode(slicegroup, cutSpeed0, pwr0, rapidSpeed, laseron, laseroff);
 
         } else if (typeof(dxf2) != 'undefined') {
@@ -84,8 +84,8 @@ $(document).ready(function() {
                 var lay = layers.indexOf(dxf2.entities[c].layer);
                 console.log('Layer', lay);
                 pwr[c] = $('#pwr' + lay).val();
-                cutSpeed[c] = $('#sp' + lay).val();
-                rapidSpeed = document.getElementById('rapidspeed').value;
+                cutSpeed[c] = parseInt($('#sp' + lay).val()) * 60;;
+                rapidSpeed = parseInt(document.getElementById('rapidspeed').value) * 60;;
                 if (typeof(rapidSpeed) === 'undefined') {
                     rapidSpeed = 2000;
                 }
@@ -94,8 +94,8 @@ $(document).ready(function() {
         } else {
             console.log('looks like we are generating gcode for a SVG');
             pwr0 = $('#pwr0').val();
-            cutSpeed0 = $('#sp0').val();
-            rapidSpeed = document.getElementById('rapidspeed').value;
+            cutSpeed0 = parseInt($('#sp0').val()) * 60;;
+            rapidSpeed = parseInt(document.getElementById('rapidspeed').value) * 60;;
             g += generateGcode(fileObject, cutSpeed0, pwr0, rapidSpeed, laseron, laseroff);
         };
 
