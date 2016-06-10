@@ -460,6 +460,6 @@ fileParentGroup.add(fileObject);
 fileParentGroup.translateX((laserxmax / 2) * -1);
 fileParentGroup.translateY((laserymax / 2) * -1);
 scene.add(fileParentGroup);
-$('#layers').append('<form class="form-horizontal"><label class="control-label">SVG</label><div class="input-group"><input class="form-control numpad" name=sp0 id=sp0 value=3200><span class="input-group-addon">mm/m</span></div><div class="input-group"><input class="form-control numpad" name=pwr0 id=pwr0 value=100><span class="input-group-addon">%</span></div></form>');
+$('#layers').append('<form class="form-horizontal"><label class="control-label">SVG</label><div class="input-group"><input class="form-control numpad" name=sp0 id=sp0 value=3200><span class="input-group-addon">mm/s</span></div><div class="input-group"><input class="form-control numpad" name=pwr0 id=pwr0 value=100><span class="input-group-addon">%</span></div></form>');
 
 }
