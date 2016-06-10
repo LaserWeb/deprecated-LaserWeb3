@@ -107,10 +107,10 @@ function rasterInit() {
         var physwidth = (width / dpival) ;
         var spotSize = (physwidth / width);
         var spotSizeMul = parseFloat($('#spotSize').val());
-        var laserFeed = $('#feedRate').val();
-        var laserRapid = $('#rapidRate').val();
-        var blackspeed = $("#laservariablespeedslider").slider("values", 0) * laserRapid / 100.0;
-        var whitespeed = $("#laservariablespeedslider").slider("values", 1) * laserRapid / 100.0;
+        var laserFeed = $('#feedRate').val() * 60;
+        var laserRapid = $('#rapidRate').val() * 60;
+        var blackspeed = $("#laservariablespeedslider").slider("values", 0) * laserRapid / 100.0 * 60;
+        var whitespeed = $("#laservariablespeedslider").slider("values", 1) * laserRapid / 100.0 * 60;
         var useVariableSpeed = $('#useRasterBlackWhiteSpeeds').prop('checked');
         $('#rasterProgressShroud').hide();
         var xoffset = parseFloat($('#rasterxoffset').val());
