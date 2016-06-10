@@ -13,7 +13,7 @@ function svgInit() {
       var r = svgrows[i][0];
       var g = svgrows[i][1];
       var b = svgrows[i][2];
-      $('#svglinestable > tbody:last-child').append('<tr><td bgcolor="'+RGBToHex(r, g, b)+'"></td><td> <div class="input-group"><input style="text-align: right;" class ="form-control" name=svgf'+i+' id=sp'+i+' value=3200><span class="input-group-addon">mm/min</span></div><br><div class="input-group"><input style="text-align: right;" class=form-control name=svgpwr'+i+' id=pwr'+i+' value=100><span class="input-group-addon">%</span></div></td></tr>');
+      $('#svglinestable > tbody:last-child').append('<tr><td bgcolor="'+RGBToHex(r, g, b)+'"></td><td> <div class="input-group"><input style="text-align: right;" class ="form-control" name=svgf'+i+' id=sp'+i+' value=60><span class="input-group-addon">mm/sec</span></div><br><div class="input-group"><input style="text-align: right;" class=form-control name=svgpwr'+i+' id=pwr'+i+' value=100><span class="input-group-addon">%</span></div></td></tr>');
     };
     $('#processSVG').removeClass('disabled');
   });
