@@ -184,6 +184,12 @@ function playGcode() {
   }
 };
 
+function homeMachine() {
+    var homecommand;
+    homecommand = document.getElementById('homingseq').value;
+    sendGcode(homecommand);
+};
+
 function updateStatus(data) {
   // https://github.com/grbl/grbl/wiki/Configuring-Grbl-v0.8#---current-status
   // remove first <
