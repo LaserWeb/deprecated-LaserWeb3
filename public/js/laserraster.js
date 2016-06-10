@@ -96,11 +96,11 @@ function Rasterizer(config) {
         // '; Firmware: {0}',
         '; Laser Min: {0}%',
         '; Laser Max: {1}%',
-        '; Black Speed: {2}mm/min',
-        '; White Speed: {3}mm/min',
+        '; Black Speed: {2}mm/s',
+        '; White Speed: {3}mm/s',
         '; Resolution (mm per pixel): {4}mm',
         '; Laser Spot Size: {5}mm',
-        '; Laser Feedrate: {6}mm/min',
+        '; Laser Feedrate: {6}mm/s',
         '; X Offset: {8}mm',
         '; Y Offset: {9}mm \n',
         'G1 F{7}\n'
@@ -193,7 +193,7 @@ Rasterizer.prototype.init = function() {
     console.log('Height: {0}px, Width: {1}px'.format(this.config.imgheight, this.config.imgwidth));
     console.log('Spot Size: {0}mm'.format(this.config.spotSize1));
     console.log('Raster Width: {0} Height: {1}'.format(this.raster.width, this.raster.height));
-    console.log('G0: {0}mm/min, G1: {1}mm/min'.format(this.config.rapidRate, this.config.feedRate));
+    console.log('G0: {0}mm/s, G1: {1}mm/s'.format(this.config.rapidRate, this.config.feedRate));
     if (this.config.useVariableSpeed == "true") {
         console.log('Black speed: {0} Whitespeed: {1}'.format(this.config.blackRate, this.config.whiteRate));
     }
@@ -490,7 +490,7 @@ function G7Rasterizer(config) {
         // '; Firmware: {0}',
         '; Laser Max: {1}%',
         '; Laser Spot Size: {4}mm',
-        '; Engraving Feedrate: {5}mm/min \n',
+        '; Engraving Feedrate: {5}mm/s \n',
         //'G0 F{7}'
     ].join('\n').format(
         // this.config.firmware,
@@ -526,7 +526,7 @@ G7Rasterizer.prototype.init = function() {
     console.log('Height: {0}px, Width: {1}px'.format(this.config.imgheight, this.config.imgwidth));
     console.log('Spot Size: {0}mm'.format(this.config.spotSize1));
     console.log('Raster Width: {0} Height: {1}'.format(this.raster.width, this.raster.height));
-    console.log('G0: {0}mm/min, G1: {1}mm/min'.format(this.config.rapidRate, this.config.feedRate));
+    console.log('G0: {0}mm/s, G1: {1}mm/s'.format(this.config.rapidRate, this.config.feedRate));
     if (this.config.useVariableSpeed == "true") {
         console.log('Black speed: {0} Whitespeed: {1}'.format(this.config.blackRate, this.config.whiteRate));
     }
