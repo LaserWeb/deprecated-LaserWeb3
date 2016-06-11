@@ -289,6 +289,7 @@ function init3D() {
         scene.remove(axesgrp);
     }
     axesgrp = new THREE.Object3D();
+    axesgrp.name = "Grid System"
 
     var x = [];
     var y = [];

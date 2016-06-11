@@ -1,7 +1,7 @@
 var inflateGrp;
 var fileParentGroup;
 
-function drawDXF(file) {
+function drawDXF(file, fileName) {
     yflip = false;
     Array.prototype.unique = function() {
         var n = {},
@@ -65,7 +65,7 @@ function drawDXF(file) {
     fileObject.name = 'fileObject';
     //scene.add(fileObject);
     fileParentGroup = new THREE.Group();
-    fileParentGroup.name = "fileParentGroup";
+    fileParentGroup.name = fileName;
     fileParentGroup.add(fileObject);
     fileParentGroup.translateX((laserxmax / 2) * -1);
     fileParentGroup.translateY((laserymax / 2) * -1);

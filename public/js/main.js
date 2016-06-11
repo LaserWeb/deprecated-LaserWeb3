@@ -264,8 +264,7 @@ function readFile(evt) {
                 $('#cammodule').show();
                 // $('#svgnewway').hide();
                 $('#rastermodule').hide();
-                getSettings();
-                drawDXF(dxf);
+                drawDXF(dxf, f.name);
                 currentWorld();
                 printLog('DXF Opened', successcolor);
                 $('#cammodule').show();
@@ -290,7 +289,6 @@ function readFile(evt) {
                 $('#cammodule').show();
                 // $('#svgnewway').show();
                 $('#rastermodule').hide();
-                getSettings();
                 var svgfile = $('#svgpreview').html();
                 // var colors = pullcolors(svgfile).unique();
                 // var layers = []
@@ -301,7 +299,7 @@ function readFile(evt) {
                 //   //var colorval = RGBToHex(r, g, b)
                 //   layers.push(colors[i]);
                 // };
-                svg2three(svgfile);
+                svg2three(svgfile, f.name);
                 currentWorld();
                 printLog('SVG Opened', successcolor);
                 $('#cammodule').show();
@@ -395,7 +393,7 @@ function readFile(evt) {
                 imgtag.title = evt.target.files[0].name;
                 imgtag.src = event.target.result;
                 setImgDims();
-                drawRaster();
+                drawRaster(f.name);
                 printLog('Bitmap Opened', successcolor);
                 $('#cammodule').hide();
                 $('#rastermodule').show();

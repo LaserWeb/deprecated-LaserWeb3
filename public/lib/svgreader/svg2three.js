@@ -285,13 +285,13 @@ function svg2gcode(svg, settings) {
 }
 
 
-function svg2three(svgfile, settings) {
+function svg2three(svgfile, fileName, settings) {
 
   if (typeof(fileParentGroup) !== 'undefined') {
     scene.remove(fileParentGroup);
   };
   fileParentGroup = new THREE.Group();
-  fileParentGroup.name = "fileParentGroup";
+  fileParentGroup.name = fileName;
 
   if (typeof(fileObject) !== 'undefined') {
     scene.remove(fileObject);
