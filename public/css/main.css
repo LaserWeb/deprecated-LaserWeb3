@@ -22,6 +22,12 @@ button:focus {outline:0 !important;}
     border-radius: 4px;
 }
 
+.btn-sd {
+    padding: 15px 48px;
+    border-radius: 4px;
+}
+
+
 .btn-jog {
     padding: 15px 11px;
     border-radius: 4px;
