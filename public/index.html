@@ -16,7 +16,7 @@
     <!--Mobile first-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script>
+    <!-- <script>
     function detectmob() {
        if(window.innerWidth <= 800 || window.innerHeight <= 600) {
          return true;
@@ -28,7 +28,7 @@
     if (detectmob()){
       top.location.href="mobile.html";
     }
-    </script>
+    </script> -->
 
     <!-- Bootstrap and UX -->
     <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css" id="theme_css" />
@@ -61,7 +61,6 @@
 
     <!-- Font -->
     <link rel="stylesheet" href="css/font-awesome.css" />
-    <link rel="stylesheet" href="css/CNCandReprap.css" />
 
 
     <!-- ThreeJS -->
@@ -252,9 +251,10 @@
               <table>
                 <tr>
                   <td colspan="5">
-                    <div class="btn-group btn-group-justified" role="group" aria-label="controljob">
+                    <div class="btn-group" role="group" aria-label="controljob">
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="homeBtn" onclick="homeMachine();"><span class="fa-stack fa-1x"><i class="fa fa-home fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">home</strong><strong class="fa-stack-1x icon-bot-text">laser</strong></span></button></div>
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="playBtn" onclick="playpauseMachine();"><span class="fa-stack fa-1x"><i id="playicon" class="fa fa-play fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">run</strong><strong class="fa-stack-1x icon-bot-text">gcode</strong></span></button></div>
+                      <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="uploadBtn" onclick="uploadSD();" style="display:none;"><span class="fa-stack fa-1x"><i class="fa fa-hdd-o fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">upload</strong><strong class="fa-stack-1x icon-bot-text">to SD</strong></span></button></div>
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="stopBtn" onclick="stopMachine();"><span class="fa-stack fa-1x"><i class="fa fa-stop fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">abort</strong><strong class="fa-stack-1x icon-bot-text">job</strong></span></button></div>
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="zeroBtn" onclick="sendGcode('G92 X0 Y0 Z0');"><span class="fa-stack fa-1x"><i class="fa fa-bullseye fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">set</strong><strong class="fa-stack-1x icon-bot-text">zero</strong></span></button></div>
                     </div>
@@ -278,10 +278,22 @@
                   <td><button type="button" data-title="Jog X+" class="btn btn-ctl btn-default" id="zM"><span class="fa-stack fa-1x"><i class="fa fa-arrow-down fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Z-</strong><strong class="fa-stack-1x stepsizeval icon-bot-text">0.1mm</strong></span></button></button></td>
                 </tr>
                 <tr>
-                  <td colspan="5">&nbsp;</td>
+                  <td colspan="5">
+                    <form class="form-horizontal">
+                      &nbsp;<br>
+                      <div class="input-group">
+                        <span class="input-group-addon">X/Y</span>
+                        <input type="text" class="form-control numpad input-sm" id="jogfeedxy" placeholder="20">
+                        <span class="input-group-addon">Z</span>
+                        <input type="text" class="form-control numpad  input-sm" id="jogfeedz" placeholder="5">
+                        <span class="input-group-addon">mm/s</span>
+                      </div>
+                    </form>
+                  </td>
                 </tr>
                 <tr>
                   <td colspan=5>
+                    &nbsp;<br>
                     <form id="stepsize">
                       <!-- <div class="form-group"> -->
                         <div data-toggle="buttons">
@@ -299,14 +311,14 @@
 
           </div>
           <!-- end jog -->
-          <!-- connect -->
-          <!-- <div id="connect-menu-panel" class="mobtab" style="display: none;">
+          <!-- quote -->
+          <div id="quote-menu-panel" class="mobtab" style="display: none;">
 
 
 
 
-          </div> -->
-          <!-- end connect -->
+          </div>
+          <!-- end quote -->
           <!-- cam -->
           <div id="cam-menu-panel" class="mobtab" style="display: none;">
             <div class="bs-callout bs-callout-danger" id="filestatus">
@@ -329,7 +341,6 @@
                 <div class="tab-content">
                     <div class="tab-pane active" id="preptab">
                         <form class="form-horizontal">
-                            <!-- <div class="form-group"> -->
                                 <label for="inflateVal" class="control-label">Tool Offset:</label>
                                 <div class="input-group">
                                     <input type="number" step="0.1" class="form-control numpad input-sm" value="1" id="inflateVal" style="text-align:right;">
@@ -558,6 +569,7 @@
           <!-- end cam -->
           <!-- gcode -->
           <div id="gcode-menu-panel" class="mobtab" style="display: none;">
+            <h4>G-CODE</h4>
             <textarea id="gcodepreview" style="width: 100%; height: 250px;"></textarea>
             <button class="btn btn-lg btn-default btn-file" title="Export GCODE to a file" onclick="saveFile()"><i class="fa fa-save fa-fw"></i>Save</span>
           </div>
@@ -643,11 +655,6 @@
                           <div class="form-group"> -->
                               <label for="endgcode" class="control-label">End G-Code</label>
                               <textarea class="form-control numpadgcode" id="endgcode" placeholder="M81\nG28\n"></textarea>
-                          <!-- </div>
-                          <div class="form-group"> -->
-                              <label for="endgcode" class="control-label">Travel Moves (mm/s)</label>
-                              <textarea class="form-control numpad" id="rapidspeed" placeholder="30"></textarea>
-                          <!-- </div> -->
                         </p>
                       </form>
                   </div>
@@ -657,6 +664,12 @@
                       Configure how the application works, turn on/off features:
                       <form class="form-horizontal">
                           <!-- <div class="form-group"> -->
+
+                              <label for="autoClose" class="control-label">Auto Close Shapes</label>
+                                <select class="form-control" id="autoClose">
+                                  <option>No</option>
+                                  <option>Yes</option>
+                                </select>
                               <label for="endgcode" class="control-label">Experimental: Tool Offset </label>
                               <select class="form-control" id="useOffset">
                                   <option>Enable</option>
@@ -865,7 +878,7 @@
 		    <div class="menu">
 		      <ul id="menu" >
 		        <li id="jog-menu" class="leftmenuitem active" ><a href="#"><i class="fa fa-arrows-alt"></i><span>Jog</span></a></li>
-            <!-- <li id="connect-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-wifi"></i><span>Connect</span></a></li> -->
+            <li id="quote-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-money"></i><span>Quote</span></a></li>
             <li id="cam-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-pencil-square-o"></i><span>CAM</span></a></li>
             <li id="gcode-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-file-code-o"></i><span>GCode</span></a></li>
             <li id="console-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-list"></i><span>Console</span></a></li>
@@ -924,9 +937,6 @@
                     <input type="number" class="form-control  numpad input-sm" value="300" id="dpiVal" style="text-align:right;">
                     <span class="input-group-addon">dpi</span>
                 </div>
-
-
-            <!-- </div> -->
         </form>
 
 
@@ -1060,12 +1070,12 @@ $("#gcode-menu").click(function() {
   $('#gcode-menu-panel').show();
   $("#gcode-menu").addClass('active')
 });
-// $("#connect-menu").click(function() {
-//   $('.mobtab').hide();
-//   $('.leftmenuitem').removeClass('active');
-//   $('#connect-menu-panel').show();
-//   $("#connect-menu").addClass('active')
-// });
+$("#quote-menu").click(function() {
+  $('.mobtab').hide();
+  $('.leftmenuitem').removeClass('active');
+  $('#quote-menu-panel').show();
+  $("#quote-menu").addClass('active')
+});
 $("#console-menu").click(function() {
   $('.mobtab').hide();
   $('.leftmenuitem').removeClass('active');

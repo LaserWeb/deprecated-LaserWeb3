@@ -4,7 +4,7 @@ function initLocalStorage() {
 }
 
 
-localParams = ['subnet1', 'subnet2', 'subnet3',  'smoothieIp', 'laserXMax', 'laserYMax', 'spotSize', 'rapidspeed', 'startgcode', 'laseron', 'laseroff', 'lasermultiply', 'homingseq', 'endgcode', 'useOffset', 'imagePosition', 'useNumPad', 'useVideo'];
+localParams = ['subnet1', 'subnet2', 'subnet3',  'smoothieIp', 'laserXMax', 'laserYMax', 'spotSize', 'startgcode', 'laseron', 'laseroff', 'lasermultiply', 'homingseq', 'endgcode', 'useOffset', 'imagePosition', 'useNumPad', 'useVideo'];
 
 function saveSettingsLocal() {
     for (i = 0; i < localParams.length; i++) {
@@ -39,13 +39,20 @@ function checkSettingsLocal() {
   var anywarn = false;
   printLog('<hr><b>Checking whether you have configured LaserWeb :</b><p>', msgcolor);
   for (i = 0; i < localParams.length; i++) {
+    field = localParams[i]
     var val = $('#' + localParams[i]).val(); // Read the value from form
     if(val) {
-      printLog('Checking : ' + localParams[i] + ' : ' + val, successcolor);
+      if (field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0) {
+        // Dont print these, just saved as easy reference, not critical in the least
+      } else {
+        printLog('Checking : ' + localParams[i] + ' : ' + val, successcolor);
+      };
     } else {
-      field = localParams[i]
-      if (field.indexOf('laseron') == 0 || field.indexOf('laseroff') == 0 ) {
+      if (field.indexOf('laseron') == 0 || field.indexOf('laseroff') == 0 || field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0) {
         printLog('Checking : ' + localParams[i] + ' : OPTIONAL ' + val, warncolor);
+        anywarn = true;
+      } else if (field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0) {
+        printLog('Checking : ' + localParams[i] + ' : Optional ETHERNET ' + val, warncolor);
         anywarn = true;
       } else {
         printLog('Checking : ' + localParams[i] + ' : NOT SET ' + val, errorcolor);

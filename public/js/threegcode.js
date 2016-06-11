@@ -29,6 +29,7 @@ var fileInflatePath;
 var i, il, y, yl, shape, lines, line;
 
 $(document).ready(function() {
+
     $('#generategcode').on('click', function() { // DXF job Params to MC
 
         if (typeof(fileObject) == 'undefined') {
@@ -124,7 +125,6 @@ $(document).ready(function() {
 
 
 var options = {};
-
 
 function generateGcode(threeGroup, cutSpeed, laserPwr, rapidSpeed, laseron, laseroff) {
 

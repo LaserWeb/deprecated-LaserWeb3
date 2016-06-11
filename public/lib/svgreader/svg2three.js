@@ -404,6 +404,7 @@ function svg2three(svgfile, settings) {
 		// 	'; Seek to 0'
     // ].join(' '));
 	  svgShape = new THREE.Shape();
+
     svgShape.moveTo( path[0].x,(path[0].y * -1));
 
     var pathcolor = paths[pathIdx].node.stroke;
@@ -422,6 +423,7 @@ function svg2three(svgfile, settings) {
 
     // keep track of the current path being cut, as we may need to reverse it
     // var localPath = [];
+    // svgShape.lineTo( 0, 0 );
     for (var segmentIdx=0, segmentLength = path.length; segmentIdx<segmentLength; segmentIdx++) {
       var segment = path[segmentIdx];
 
@@ -449,7 +451,13 @@ function svg2three(svgfile, settings) {
       // }
 
     }
-    //svgShape.autoClose = true;
+    var autoClose = $('#autoClose').val()
+    console.log('autoClose', autoClose)
+    if (autoClose == "yes") {
+      //  svgShape.lineTo( path[0].x,(path[0].y * -1));
+       svgShape.autoClose = true;
+    }
+
     svgGeom = new THREE.ShapeGeometry( svgShape );
     window["svgEntity" + pathIdx] = new THREE.Line( svgGeom, svgMaterial ) ;
 

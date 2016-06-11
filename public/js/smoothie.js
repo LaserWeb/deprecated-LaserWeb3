@@ -10,11 +10,13 @@ function initSmoothie() {
         $('#usbConnect').show();
         $('#ethernetConnect').hide();
         $('#playBtn').show();
+        $('#uploadBtn').hide();
     } else if (connectVia == "Ethernet") {
       connectMode = "ETH";
       $('#usbConnect').hide();
       $('#ethernetConnect').show();
       $('#playBtn').hide();
+      $('#uploadBtn').show();
     }
   });
 
