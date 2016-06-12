@@ -212,5 +212,6 @@ function gcodereceived() {
     openGCodeFromText();
     gCodeToSend = document.getElementById('gcodepreview').value;
     $('#viewReset').click();
+    $('#gcode-menu').click();
 
 };

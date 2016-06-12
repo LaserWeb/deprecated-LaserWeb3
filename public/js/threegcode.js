@@ -117,7 +117,7 @@ $(document).ready(function() {
         scene.remove(inflateGrp);
 
         printLog('Gcode Generated', successcolor);
-        $('#togglegcode').click();
+        $('#gcode-menu').click();
 
     });
 });

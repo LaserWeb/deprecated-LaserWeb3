@@ -75,19 +75,22 @@
     display: none;
 }
 .page-container.sidebar-collapsed-back #logo {
-  opacity: 1;
-  transition: all 200ms ease-in-out;
-  transition-delay: 300ms;
+  /*opacity: 1;*/
+  display: inline;
+  transition: all 50ms ease-in-out;
+  transition-delay: 10ms;
 }
 
 .page-container.sidebar-collapsed #menu span {
-  opacity: 0;
+  /*opacity: 0;*/
+  display: none;
   transition: all 50ms linear;
   position: absolute;
 }
 
 .page-container.sidebar-collapsed-back #menu span {
-  opacity: 1;
+  /*opacity: 1;*/
+  display: inline;
   transition: all 200ms linear;
   transition-delay: 300ms;
 }
@@ -175,7 +178,7 @@
   opacity: 1;
 }
 #menu .fa {
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
     font-size: 1.5em;
     display: block;
 }

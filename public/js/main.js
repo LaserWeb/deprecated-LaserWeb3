@@ -446,9 +446,8 @@ function readFile(evt) {
         }
     }
     $('#filestatus').hide();
-    if ($( "#togglefile" ).hasClass( "btn-default" )) {
-      $('#togglefile').click();
-    }
+    $('#cam-menu').click();
+    
 
 
 };

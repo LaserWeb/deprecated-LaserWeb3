@@ -302,7 +302,12 @@
                 </tr>
               </table>
             </center>
-
+            <nav>
+              <ul class="pager">
+                <li class="previous"><a href="#" onclick="$('#connectVia').click();"><span aria-hidden="true">&larr;</span> Connect</a></li>
+                <li class="next"><a href="#" onclick="$('#console-menu').click();">View Log <span aria-hidden="true">&rarr;</span></a></li>
+              </ul>
+            </nav>
           </div>
           <!-- end jog -->
           <!-- quote -->
@@ -348,7 +353,12 @@
 
             <div id="quoteresult"></div>
 
-
+            <nav>
+              <ul class="pager">
+                <li class="previous"><a href="#" onclick="$('#cam-menu').click();"><span aria-hidden="true">&larr;</span> Revise</a></li>
+                <li class="next"><a href="#" onclick="$('#jog-menu').click();">Process <span aria-hidden="true">&rarr;</span></a></li>
+              </ul>
+            </nav>
 
           </div>
           <!-- end quote -->
@@ -366,7 +376,7 @@
                     <li><a href="#stltab" id="stlopt" role="tab" data-toggle="tab" style="display: none;">STL</a></li>
                     <li class="active"><a href="#preptab" id="prepopt" role="tab" data-toggle="tab">Prepare</a>
                     </li>
-                    <li><a href="#convtab" role="tab" data-toggle="tab">Convert</a></li>
+                    <li><a id="converttab" href="#convtab" role="tab" data-toggle="tab">Convert</a></li>
                 </ul>
                 <!-- Tab panes -->
 
@@ -422,6 +432,13 @@
                                 </div>
                             <!-- </div> -->
                         </form>
+
+                        <nav>
+                          <ul class="pager">
+                            <!-- <li class="previous"><a href="#" onclick="$('#cam-menu').click();"><span aria-hidden="true">&larr;</span> Revise</a></li> -->
+                            <li class="next"><a href="#" onclick="$('#converttab').click();">Generate <span aria-hidden="true">&rarr;</span></a></li>
+                          </ul>
+                        </nav>
                     </div>
 
                     <!-- Tab 2 -->
@@ -597,14 +614,22 @@
                     <!-- rastershroud -->
 
                 </div>
-
             </div>
           <!-- end cam -->
           <!-- gcode -->
           <div id="gcode-menu-panel" class="mobtab" style="display: none;">
             <h4>G-CODE</h4>
             <textarea id="gcodepreview" style="width: 100%; height: 250px;"></textarea>
-            <button class="btn btn-lg btn-default btn-file" title="Export GCODE to a file" onclick="saveFile()"><i class="fa fa-save fa-fw"></i>Save</span>
+            <button class="btn btn-lg btn-default btn-file" title="Export GCODE to a file" onclick="saveFile()"><i class="fa fa-save fa-fw"></i>Save</span></button>
+
+              <nav>
+                <ul class="pager">
+                  <li class="previous"><a href="#" onclick="$('#cam-menu').click();"><span aria-hidden="true">&larr;</span> Revise</a></li>
+                  <li class="next"><a href="#" onclick="$('#quote-menu').click();">Costing <span aria-hidden="true">&rarr;</span></a></li>
+                  <li class="next"><a href="#" onclick="$('#jog-menu').click();">Process <span aria-hidden="true">&rarr;</span></a></li>
+                </ul>
+              </nav>
+
           </div>
           <!-- end gcode -->
           <!-- console -->
@@ -909,16 +934,15 @@
 <!--slider menu-->
     <div class="sidebar-menu">
 		  	<div class="logo"> <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="#"> <span id="logo" ></span>
-			      <!--<img id="logo" src="" alt="Logo"/>-->
 			  </a> </div>
 		    <div class="menu">
 		      <ul id="menu" >
 		        <li id="jog-menu" class="leftmenuitem active" ><a href="#"><i class="fa fa-arrows-alt"></i><span>Jog</span></a></li>
-            <li id="quote-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-money"></i><span>Quote</span></a></li>
             <li id="cam-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-pencil-square-o"></i><span>CAM</span></a></li>
             <li id="gcode-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-file-code-o"></i><span>GCode</span></a></li>
-            <li id="console-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-list"></i><span>Console</span></a></li>
+            <li id="quote-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-money"></i><span>Quote</span></a></li>
             <li id="gdrive-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-google"></i><span>Google Drive</span></a></li>
+            <li id="console-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-list"></i><span>Console Log</span></a></li>
             <li id="settings-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-cogs"></i><span>Settings</span></a></li>
 		      </ul>
 		    </div>
