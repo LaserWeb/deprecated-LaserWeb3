@@ -1264,7 +1264,16 @@ function drawobject() {
     printLog('Estimated Job Time: '+toTimeString(totaltimemax), successcolor)
 
     printLog('Estimated Distance: ' + (totalDist/1000).toFixed(1) + ' m', successcolor);
+    $("#lasertimeqty").val(totalDist.toFixed(1))
 
+    if (fileParentGroup) {
+       var bbox2 = new THREE.Box3().setFromObject(fileParentGroup);
+       console.log('bbox width: ', (bbox2.max.x - bbox2.min.x), 'height Y: ', (bbox2.max.y - bbox2.min.y) );
+       width = (bbox2.max.x - bbox2.min.x);
+       height = (bbox2.max.y - bbox2.min.y);
+       $('#quoteresult').html('Job cut length: ' + totalDist.toFixed(1) + ' mm<br> Width: ' + width.toFixed(1) + ' mm<br>Height: ' + height.toFixed(1) + ' mm<br>Material m<sup>2</sup>: ' + (width*height).toFixed(1));
+       $("#materialqty").val(((width*height) / 1000).toFixed(3));
+    }
     // store meta data in userData of object3d for later use like in animation
     // of toolhead
 //    newObject.userData.bbbox2 = bbbox2;

@@ -9,6 +9,7 @@
  var svgShape, svgGeom, svgLine;
  var gcode;
  var parsecolor;
+ var yflip;
 
   // Helper function
 	Array.prototype.unique = function()

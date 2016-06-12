@@ -307,7 +307,47 @@
           <!-- end jog -->
           <!-- quote -->
           <div id="quote-menu-panel" class="mobtab" style="display: none;">
+            <h4>Cost Estimate</h4>
 
+            <div class="bs-callout bs-callout-warning" id="quote warning">
+                <h4><i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i>NB First load/refresh GCode</h4>
+                <br> The cost calculator uses the final gcode length to calculate machine time
+            </div>
+
+            <form class="form-horizontal">
+              <label for="setupcost" class="control-label">Setup Cost (Once off)</label>
+              <div class="input-group">
+                  <span class="input-group-addon">$</span>
+                  <input type="text" class="form-control" value="0.00" id="setupcost">
+                  <span class="input-group-addon">=</span>
+              </div>
+              <label for="materialcost" class="control-label">Material Cost per cm<sup>2</sup> (each):</label>
+              <div class="input-group">
+                  <span class="input-group-addon">$</span>
+                  <input type="text" class="form-control" value="0.00" id="materialcost">
+                  <span class="input-group-addon">x</span>
+                  <input type="text" class="form-control" value="0" id="materialqty" disabled>
+                  <span class="input-group-addon">cm<sup>2</sup></span>
+              </div>
+              <label for="lasertime" class="control-label">Laser Cost per cut-mm (each):</label>
+              <div class="input-group">
+                  <span class="input-group-addon">$</span>
+                  <input type="text" class="form-control" value="0.05" id="lasertime">
+                  <span class="input-group-addon">x</span>
+                  <input type="text" class="form-control" value="0" id="lasertimeqty" disabled>
+                  <span class="input-group-addon">mm</span>
+              </div>
+              <label for="qtycut" class="control-label">Quantity</label>
+              <div class="input-group">
+                  <input type="text" class="form-control" value="1" id="qtycut">
+                  <span class="input-group-addon">units</span>
+              </div>
+              <br>
+              <button class="btn btn-block btn-success">Generate Quote</button>
+            </form>
+
+
+            <div id="quoteresult"></div>
 
 
 

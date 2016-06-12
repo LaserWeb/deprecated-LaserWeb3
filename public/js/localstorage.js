@@ -4,7 +4,7 @@ function initLocalStorage() {
 }
 
 
-localParams = ['autoClose', 'subnet1', 'subnet2', 'subnet3',  'smoothieIp', 'laserXMax', 'laserYMax', 'spotSize', 'startgcode', 'laseron', 'laseroff', 'lasermultiply', 'homingseq', 'endgcode', 'useOffset', 'imagePosition', 'useNumPad', 'useVideo'];
+localParams = ['rapidSpeed', 'autoClose', 'subnet1', 'subnet2', 'subnet3',  'smoothieIp', 'laserXMax', 'laserYMax', 'spotSize', 'startgcode', 'laseron', 'laseroff', 'lasermultiply', 'homingseq', 'endgcode', 'useOffset', 'imagePosition', 'useNumPad', 'useVideo'];
 
 function saveSettingsLocal() {
     for (i = 0; i < localParams.length; i++) {
