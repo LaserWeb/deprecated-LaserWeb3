@@ -1264,7 +1264,7 @@ function drawobject() {
     // printLog('Estimated Job Time: '+totaltimemax, successcolor)
 
     printLog('Estimated Distance: ' + (totalDist/1000).toFixed(1) + ' m', successcolor);
-    $("#lasertimeqty").val(totalDist.toFixed(1))
+    $("#lasertimeqty").val((totalDist.toFixed(1)) / 10)
 
     if (fileParentGroup) {
        var bbox2 = new THREE.Box3().setFromObject(fileParentGroup);
