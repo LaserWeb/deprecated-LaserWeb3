@@ -453,7 +453,7 @@ function svg2three(svgfile, fileName, settings) {
     }
     var autoClose = $('#autoClose').val()
     console.log('autoClose', autoClose)
-    if (autoClose == "yes") {
+    if (autoClose == "Yes") {
       //  svgShape.lineTo( path[0].x,(path[0].y * -1));
        svgShape.autoClose = true;
     }
