@@ -150,7 +150,7 @@ function getFileContent(fileId, fileName) {
   $('#statusTitle').html('Fetching file');
   $('#statusBody').empty();
   $('#statusBody2').empty();
-  $('#statusBody').html('Retrieving ' + fileName + 'from Google Drive<p>Please Wait....');
+  $('#statusBody').html('Retrieving ' + fileName + ' from Google Drive<p>Please Wait....');
   gapi.client.request({
   'path': '/drive/v2/files/'+fileId,
   'method': 'GET',
@@ -184,14 +184,15 @@ function getFileContent(fileId, fileName) {
 //              200=OK
                   //console.log( myXHR.response );
                   printLog('Successfully Fetched '+ fileName, successcolor)
+                  $('#tabsLayers').append('<li role="presentation" class="layerth" id="'+fileName+'-tab"><a href="#">'+fileName+'</a></li>')
                   if (fileName.match(/.dxf$/i)) {
                     dxf = myXHR.response
                     $('#togglefile').click();
                     $('#cammodule').show();
                     // $('#svgnewway').hide();
                     $('#rastermodule').hide();
-                    getSettings();
-                    drawDXF(dxf);
+                    // getSettings();
+                    drawDXF(dxf, fileName);
                     currentWorld();
                     printLog('DXF Opened', successcolor);
                     $('#cammodule').show();
@@ -211,7 +212,7 @@ function getFileContent(fileId, fileName) {
                     $('#cammodule').show();
                     // $('#svgnewway').show();
                     $('#rastermodule').hide();
-                    getSettings();
+                    // getSettings();
                     var svgfile = $('#svgpreview').html();
                     // var colors = pullcolors(svgfile).unique();
                     // var layers = []
@@ -222,7 +223,7 @@ function getFileContent(fileId, fileName) {
                     //   //var colorval = RGBToHex(r, g, b)
                     //   layers.push(colors[i]);
                     // };
-                    svg2three(svgfile);
+                    svg2three(svgfile, fileName);
                     currentWorld();
                     printLog('SVG Opened', successcolor);
                     $('#cammodule').show();
@@ -231,6 +232,7 @@ function getFileContent(fileId, fileName) {
                     $('#stlopt').show();
                     $('#prepopt').show();
                     $('#prepopt').click();
+                    $('#svgresize').modal('show');
                     attachTransformWidget();
                     $('#svgresize').modal('show');
                     printLog('Google Drive SVG File Opened', successcolor);
@@ -307,9 +309,8 @@ function getFileContent(fileId, fileName) {
                     printLog('Google Drive RASTER File Opened', successcolor);
                   }
                   $('#filestatus').hide();
-                  if ($( "#togglefile" ).hasClass( "btn-default" )) {
-                    $('#togglefile').click();
-                  }
+                  $('#cam-menu').click();
+
               }
               $('#statusmodal').modal('hide');
               $('#statusmodal').modal('hide');

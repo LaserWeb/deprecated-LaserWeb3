@@ -304,7 +304,7 @@
             </center>
             <nav>
               <ul class="pager">
-                <li class="previous"><a href="#" onclick="$('#connectVia').click();"><span aria-hidden="true">&larr;</span> Connect</a></li>
+                <!-- <li class="previous"><a href="#" onclick="$('#connectVia').click();"><span aria-hidden="true">&larr;</span> Connect</a></li> -->
                 <li class="next"><a href="#" onclick="$('#console-menu').click();">View Log <span aria-hidden="true">&rarr;</span></a></li>
               </ul>
             </nav>
@@ -649,9 +649,11 @@
             <!-- Google Drive Signin -->
             <table class="table"><tr><td><a class="user-link" href=""><img id="userpic" class="media-object img-thumbnail user-img" alt="User Picture" src="css/user64.gif" height="64" width="64"></a></td>
               <td><h5 id="fullname">Sign In:</h5><div id="gSignInWrapper">
-                <button class="btn btn-success customGPlusSignIn" id="g-login"><i class="fa fa-fw fa-google" aria-hidden="true"></i>Login<i class="fa fa-fw fa-sign-in" aria-hidden="true"></i></button>
-                <button class="btn btn-danger customGPlusSignIn" id="g-logout" onclick="signOut();" style="display:none;"><i class="fa fa-fw fa-google" aria-hidden="true"></i>Logout</button>
-                <button class="btn btn-default customGPlusSignIn" id="g-open" onclick="createPicker();" style="display:none;"><i class="fa fa-fw fa-folder" aria-hidden="true"></i>Open from Drive</button></div>
+                <button class="btn btn-block btn-success customGPlusSignIn" id="g-login"><i class="fa fa-fw fa-google" aria-hidden="true"></i>Login<i class="fa fa-fw fa-sign-in" aria-hidden="true"></i></button>
+                <p>
+                <button class="btn btn-block btn-danger customGPlusSignIn" id="g-logout" onclick="signOut();" style="display:none;"><i class="fa fa-fw fa-google" aria-hidden="true"></i>Logout</button>
+                <p>
+                <button class="btn btn-block btn-default customGPlusSignIn" id="g-open" onclick="createPicker();" style="display:none;"><i class="fa fa-fw fa-folder" aria-hidden="true"></i>Open from Drive</button></div>
             </td></tr></table>
           </div>
           <!-- end gdrive -->

@@ -447,7 +447,7 @@ function readFile(evt) {
     }
     $('#filestatus').hide();
     $('#cam-menu').click();
-    
+
 
 
 };
