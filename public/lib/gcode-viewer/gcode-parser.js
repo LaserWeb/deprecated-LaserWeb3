@@ -1256,12 +1256,12 @@ function drawobject() {
     var dZ = bbbox2.max.z-bbbox2.min.z;
 
     function toTimeString(seconds) {
-        //return (new Date(seconds * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
+        // return (new Date(seconds * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
     }
 
     console.log(totaltimemax +'  seconds estimated');
 
-    printLog('Estimated Job Time: '+toTimeString(totaltimemax), successcolor)
+    // printLog('Estimated Job Time: '+totaltimemax, successcolor)
 
     printLog('Estimated Distance: ' + (totalDist/1000).toFixed(1) + ' m', successcolor);
     $("#lasertimeqty").val(totalDist.toFixed(1))
@@ -1271,7 +1271,7 @@ function drawobject() {
        console.log('bbox width: ', (bbox2.max.x - bbox2.min.x), 'height Y: ', (bbox2.max.y - bbox2.min.y) );
        width = (bbox2.max.x - bbox2.min.x);
        height = (bbox2.max.y - bbox2.min.y);
-       $('#quoteresult').html('Job cut length: ' + totalDist.toFixed(1) + ' mm<br> Width: ' + width.toFixed(1) + ' mm<br>Height: ' + height.toFixed(1) + ' mm<br>Material m<sup>2</sup>: ' + (width*height).toFixed(1));
+       $('#quoteresult').html('Job moves length: ' + totalDist.toFixed(1) + ' mm<br> Width: ' + width.toFixed(1) + ' mm<br>Height: ' + height.toFixed(1) + ' mm<br>Material: ' + ((width*height) / 1000).toFixed(3) + 'cm<sup>2</sup>' );
        $("#materialqty").val(((width*height) / 1000).toFixed(3));
     }
     // store meta data in userData of object3d for later use like in animation
