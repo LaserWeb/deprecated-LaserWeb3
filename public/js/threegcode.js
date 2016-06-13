@@ -83,7 +83,7 @@ $(document).ready(function() {
             console.log('looks like we are generating gcode for a DXF');
             for (var c = 0; c < dxf2.entities.length; c++) {
                 var lay = layers.indexOf(dxf2.entities[c].layer);
-                console.log('Layer', lay);
+                console.log('Layer:', lay);
                 pwr[c] = $('#pwr' + lay).val();
                 cutSpeed[c] = parseInt($('#sp' + lay).val()) * 60;;
                 rapidSpeed = parseInt(document.getElementById('rapidspeed').value) * 60;;

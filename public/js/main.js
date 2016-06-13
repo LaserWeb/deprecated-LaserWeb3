@@ -28,19 +28,6 @@ $(document).ready(function() {
     initTour();
     initSmoothie();
 
-    // grbl = new Grbl();
-
-    // Responsive Sidebar width
-    // if ( screen.width < 800) {
-    //   $('#maincolumn').addClass('col-md-offset-3');
-    //   $('#maincolumn').addClass('col-md-10');
-    //   $('#sidebarcolumn').addClass('col-md-2');
-    // } else
-    //   $('#maincolumn').addClass('col-md-offset-3');
-    //   $('#maincolumn').addClass('col-md-9');
-    //   $('#sidebarcolumn').addClass('col-md-3');
-
-
     // Tooltips
     $(document).tooltip();
     $(document).click(function() {
@@ -82,23 +69,6 @@ $(document).ready(function() {
         saveSettingsLocal();
     });
 
-    //$('#macroEdit').editableTableWidget();
-
-    // // Show/Hide Macro Pad
-    // $('#togglemacro').on('click', function() {
-    //   printLog('Toggling Button Pad', msgcolor);
-    //   $('#macro_container').toggle();
-    //   $('#viewer_container').toggle();
-    //   $('#renderArea').toggle();
-    //   if ($( "#togglemacro" ).hasClass( "btn-primary" )) {
-    //     $( "#togglemacro" ).removeClass( "btn-primary" )
-    //     $( "#togglemacro" ).addClass( "btn-default" )
-    //   } else {
-    //     $( "#togglemacro" ).removeClass( "btn-default" )
-    //     $( "#togglemacro" ).addClass( "btn-primary" )
-    //   }
-    // });
-
     // Tabs on right side
     $('#drotabtn').on('click', function() {
       $('#drotab').show();
@@ -114,10 +84,6 @@ $(document).ready(function() {
       $("#drotabtn").removeClass("active");
       $("#gcodetabbtn").addClass("active");
     });
-
-
-
-
 
     // Show/Hide Macro Pad
     $('#toggleviewer').on('click', function() {
@@ -170,97 +136,131 @@ $(document).ready(function() {
         showSpinner: false
     });
 
-checkNumPad();
+    checkNumPad();
 
-checkSettingsLocal();
+    checkSettingsLocal();
 
-// Bind Quote System
-$('.quoteVar').keyup(function(){
-  var setupfee = ( parseFloat($("#setupcost").val()) ).toFixed(2);
-  var materialcost = ( parseFloat($("#materialcost").val()) * parseFloat($("#materialqty").val()) ).toFixed(2);
-  var timecost = ( parseFloat($("#lasertime").val()) * parseFloat($("#lasertimeqty").val()) ).toFixed(2);
-  var unitqty = ( parseFloat($("#qtycut").val()) ).toFixed(2);
-  var grandtot = (materialcost*unitqty) + (timecost*unitqty) + parseFloat(setupfee);
-  var grandtotal = grandtot.toFixed(2);
-  $("#quoteprice").empty();
-  $("#quoteprice").html('<div class="table-responsive"><table class="table table-condensed"><thead><tr><td class="text-center"><strong>Qty</strong></td><td class="text-center"><strong>Description</strong></td><td class="text-right"><strong>Unit</strong></td><td class="text-right"><strong>Total</strong></td></tr></thead><tbody><tr><td>1</td><td>Setup Cost</td><td class="text-right">'+setupfee+'</td><td class="text-right">'+setupfee+'</td></tr><tr><td>'+unitqty+'</td><td>Material</td><td class="text-right">'+materialcost+'</td><td class="text-right">'+(materialcost*unitqty).toFixed(2)+'</td></tr><tr><td>'+unitqty+'</td><td>Laser Time</td><td class="text-right">'+timecost+'</td><td class="text-right">'+(timecost*unitqty).toFixed(2)+'</td></tr><tr><td class="thick-line"></td><td class="thick"></td><td class="thick-line text-center"><strong>Total</strong></td><td class="thick-line text-right">'+ grandtotal +'</td></tr></tbody></table></div>' );
-});
-
-});
-// End of document.ready
-
-function checkNumPad() {
-
-  useNumPad = $('#useNumPad').val()
-  if (useNumPad.indexOf('Enable') == 0) {
-        $.fn.numpad.defaults.gridTpl = '<table class="table modal-content"></table>';
-        $.fn.numpad.defaults.backgroundTpl = '<div class="modal-backdrop in"></div>';
-        $.fn.numpad.defaults.displayTpl = '<input type="text" class="form-control" />';
-        $.fn.numpad.defaults.dblCellTpl = '<td colspan="2"></td>',
-        $.fn.numpad.defaults.buttonNumberTpl =  '<button type="button" class="btn btn-numpad btn-default" style="width: 100%;"></button>';
-        $.fn.numpad.defaults.buttonFunctionTpl = '<button type="button" class="btn  btn-numpad" style="width: 100%;"></button>';
-        //$.fn.numpad.defaults.onKeypadCreate = function(){$(this).find('.done').addClass('btn-primary');};
-        $('.numpad').numpad({
-        					decimalSeparator: '.',
-                  gcode: false,
-                  textDone: 'OK',
-              		textDelete: 'Del',
-              		textClear: 'Clear',
-              		textCancel: 'Cancel',
-                  headerText: 'Enter Number',
-        				});
-
-        $('.numpadgcode').numpad({
-                  decimalSeparator: '.',
-                  gcode: true,
-                  textDone: 'OK',
-              		textDelete: 'Del',
-              		textClear: 'Clear',
-              		textCancel: 'Cancel',
-                  headerText: 'Enter GCODE',
-                });
+    // Bind Quote System
+    $('.quoteVar').keyup(function(){
+      var setupfee = ( parseFloat($("#setupcost").val()) ).toFixed(2);
+      var materialcost = ( parseFloat($("#materialcost").val()) * parseFloat($("#materialqty").val()) ).toFixed(2);
+      var timecost = ( parseFloat($("#lasertime").val()) * parseFloat($("#lasertimeqty").val()) ).toFixed(2);
+      var unitqty = ( parseFloat($("#qtycut").val()) ).toFixed(2);
+      var grandtot = (materialcost*unitqty) + (timecost*unitqty) + parseFloat(setupfee);
+      var grandtotal = grandtot.toFixed(2);
+      $("#quoteprice").empty();
+      $("#quoteprice").html('<div class="table-responsive"><table class="table table-condensed"><thead><tr><td class="text-center"><strong>Qty</strong></td><td class="text-center"><strong>Description</strong></td><td class="text-right"><strong>Unit</strong></td><td class="text-right"><strong>Total</strong></td></tr></thead><tbody><tr><td>1</td><td>Setup Cost</td><td class="text-right">'+setupfee+'</td><td class="text-right">'+setupfee+'</td></tr><tr><td>'+unitqty+'</td><td>Material</td><td class="text-right">'+materialcost+'</td><td class="text-right">'+(materialcost*unitqty).toFixed(2)+'</td></tr><tr><td>'+unitqty+'</td><td>Laser Time</td><td class="text-right">'+timecost+'</td><td class="text-right">'+(timecost*unitqty).toFixed(2)+'</td></tr><tr><td class="thick-line"></td><td class="thick"></td><td class="thick-line text-center"><strong>Total</strong></td><td class="thick-line text-right">'+ grandtotal +'</td></tr></tbody></table></div>' );
+    });
 
 
+    // Layer Tabs
+    $('#allView').on('click', function() {
+      $(".layertab").removeClass('active');
+      $("#allView").addClass('active');
+    });
+
+    $('#gCodeView').on('click', function() {
+      $(".layertab").removeClass('active');
+      $("#gCodeView").addClass('active');
+    });
+
+
+    $('#tabsLayers').on('click','.close',function(){
+       var tabID = $(this).parents('a').attr('href');
+       $(this).parents('li').remove();
+       $(tabID).remove();
+
+       //display first tab
+       var tabFirst = $('#tabsLayers a:first');
+       tabFirst.tab('show');
+
+       var layerIndex = $(this).parents('a').attr('layerindex');
+       console.log('dumping ' + layerIndex + ' from objectsInScene')
+       objectsInScene.splice(layerIndex, 1)
+       fillLayerTabs();
+     });
+
+}); // End of document.ready
+
+function fillLayerTabs() {
+  $("#tabsLayers").empty();
+  $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>');
+  for (j = 5; j < scene.children.length; j++) {
+    scene.remove(scene.children[j])
   }
 
-}
+  for (i = 0; i < objectsInScene.length; i++) {
+    $("#tabsLayers").append('<li role="presentation" class="layertab" id="tab-'+objectsInScene[i].name+'"><a href="#" layerindex="'+i+'">'+objectsInScene[i].name+'<button class="close" type="button" title="Remove this page">×</button></a></li>');
+    scene.add(objectsInScene[i])
+  }
+};
 
-// From here down we can have the actual functions
+
+
+function checkNumPad() {
+  useNumPad = $('#useNumPad').val()
+  if (useNumPad.indexOf('Enable') == 0) {
+    $.fn.numpad.defaults.gridTpl = '<table class="table modal-content"></table>';
+    $.fn.numpad.defaults.backgroundTpl = '<div class="modal-backdrop in"></div>';
+    $.fn.numpad.defaults.displayTpl = '<input type="text" class="form-control" />';
+    $.fn.numpad.defaults.dblCellTpl = '<td colspan="2"></td>',
+    $.fn.numpad.defaults.buttonNumberTpl =  '<button type="button" class="btn btn-numpad btn-default" style="width: 100%;"></button>';
+    $.fn.numpad.defaults.buttonFunctionTpl = '<button type="button" class="btn  btn-numpad" style="width: 100%;"></button>';
+    //$.fn.numpad.defaults.onKeypadCreate = function(){$(this).find('.done').addClass('btn-primary');};
+    $('.numpad').numpad({
+			decimalSeparator: '.',
+      gcode: false,
+      textDone: 'OK',
+  		textDelete: 'Del',
+  		textClear: 'Clear',
+  		textCancel: 'Cancel',
+      headerText: 'Enter Number',
+		});
+    $('.numpadgcode').numpad({
+      decimalSeparator: '.',
+      gcode: true,
+      textDone: 'OK',
+  		textDelete: 'Del',
+  		textClear: 'Clear',
+  		textCancel: 'Cancel',
+      headerText: 'Enter GCODE',
+    });
+  }
+}
 
 // Error handling
 errorHandlerJS = function() {
-    window.onerror = function(message, url, line) {
-        message = message.replace(/^Uncaught /i, "");
-        //alert(message+"\n\n("+url+" line "+line+")");
-        console.log(message + "\n\n(" + url + " line " + line + ")");
-        if (message.indexOf('updateMatrixWorld') == -1 ) { // Ignoring threejs/google api messages, add more || as discovered
-            printLog(message + "\n(" + url + " on line " + line + ")", errorcolor);
-        }
-
-    };
+  window.onerror = function(message, url, line) {
+    message = message.replace(/^Uncaught /i, "");
+    //alert(message+"\n\n("+url+" line "+line+")");
+    console.log(message + "\n\n(" + url + " line " + line + ")");
+    if (message.indexOf('updateMatrixWorld') == -1 ) { // Ignoring threejs/google api messages, add more || as discovered
+        printLog(message + "\n(" + url + " on line " + line + ")", errorcolor);
+    }
+  };
 };
 
 // Function to execute when opening file (triggered by fileOpen.addEventListener('change', readFile, false); )
-
-
 function readFile(evt) {
   console.log(evt);
     // Close the menu
     $("#drop1").dropdown("toggle");
     cleanupThree();
-    if (typeof(fileName) !== 'undefined' ) {
-      axesgrp.remove(fileName)
-    }
 
-    fileName = makeSprite(scene, "webgl", {
-        x: (laserxmax / 2),
-        y: -30,
-        z: 0,
-        text: 'Filename : ' + evt.target.files[0].name,
-        color: "#000000"
-    });
+    // Display filename on the viewer
+    // if (typeof(fileName) !== 'undefined' ) {
+    //   axesgrp.remove(fileName)
+    // }
+    //
+    // fileName = makeSprite(scene, "webgl", {
+    //     x: (laserxmax / 2),
+    //     y: -30,
+    //     z: 0,
+    //     text: 'Filename : ' + evt.target.files[0].name,
+    //     color: "#000000"
+    // });
 
-    $('#tabsLayers').append('<li role="presentation" class="layerth" id="'+evt.target.files[0].name+'-tab"><a href="#">'+evt.target.files[0].name+'</a></li>')
+    // $('#tabsLayers').append('<li role="presentation" class="layerth" id="'+evt.target.files[0].name+'-tab"><a href="#">'+evt.target.files[0].name+'</a></li>')
     axesgrp.add(fileName);
     // Filereader
     var f = evt.target.files[0];
@@ -437,6 +437,7 @@ function readFile(evt) {
                 rastermesh.name = "rastermesh"
 
                 scene.add(rastermesh);
+                objectsInScene.push(rastermesh)
                 //  attachTransformWidget();
                 resetView();
                 setImgDims();
@@ -447,9 +448,7 @@ function readFile(evt) {
     }
     $('#filestatus').hide();
     $('#cam-menu').click();
-
-
-
+    setTimeout(function(){ fillLayerTabs(); }, 300);
 };
 
 
@@ -505,10 +504,7 @@ function cleanupThree() {
         controls.reset();
         //  boundingBox = null;
     }
-
-
 }
-
 
 function saveFile() {
     var textToWrite = document.getElementById("gcodepreview").value;
@@ -516,7 +512,6 @@ function saveFile() {
     invokeSaveAsDialog(blob, 'file.gcode');
 
 };
-
 
 /**
  * @param {Blob} file - File or Blob object. This parameter is required.

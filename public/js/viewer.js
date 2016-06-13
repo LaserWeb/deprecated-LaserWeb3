@@ -1,9 +1,9 @@
+// Global Vars
 var scene, camera, renderer;
 var geometry, material, mesh, helper, axes, axesgrp, light, bullseye;
 var projector, mouseVector, containerWidth, containerHeight;
 var raycaster = new THREE.Raycaster();
 
-// Global Vars
 var container, stats;
 var camera, controls, control, scene, renderer;
 var clock = new THREE.Clock();
@@ -14,6 +14,7 @@ var laserymax;
 var lineincrement = 50
 var camvideo;
 var video, videoImage, videoImageContext, videoTexture, useVideo;
+var objectsInScene = []; //array that holds all objects we added to the scene.
 
 containerWidth = window.innerWidth;
 containerHeight = window.innerHeight;

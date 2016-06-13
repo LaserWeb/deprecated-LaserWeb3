@@ -180,11 +180,12 @@ function GCodeParser(handlers) {
                 console.log('[GCODE PARSE] Done  ');
                 $('#renderprogressholder').hide();
                 object =  drawobject();
-		object.add(lineObjects);
+		              object.add(lineObjects);
                 object.translateX(laserxmax /2 * -1);
                 object.translateY(laserymax /2 * -1);
                 object.name = 'object';
                 scene.add(object);
+                objectsInScene.push(object)
             }
         }
         doChunk();
@@ -1268,6 +1269,13 @@ function drawobject() {
 
     if (fileParentGroup) {
        var bbox2 = new THREE.Box3().setFromObject(fileParentGroup);
+       console.log('bbox width: ', (bbox2.max.x - bbox2.min.x), 'height Y: ', (bbox2.max.y - bbox2.min.y) );
+       width = (bbox2.max.x - bbox2.min.x);
+       height = (bbox2.max.y - bbox2.min.y);
+       $('#quoteresult').html('Job moves length: ' + totalDist.toFixed(1) + ' mm<br> Width: ' + width.toFixed(1) + ' mm<br>Height: ' + height.toFixed(1) + ' mm<br>Material: ' + ((width*height) / 1000).toFixed(3) + 'cm<sup>2</sup>' );
+       $("#materialqty").val(((width*height) / 1000).toFixed(3));
+    } else if (rastermesh) {
+       var bbox2 = new THREE.Box3().setFromObject(rastermesh);
        console.log('bbox width: ', (bbox2.max.x - bbox2.min.x), 'height Y: ', (bbox2.max.y - bbox2.min.y) );
        width = (bbox2.max.x - bbox2.min.x);
        height = (bbox2.max.y - bbox2.min.y);

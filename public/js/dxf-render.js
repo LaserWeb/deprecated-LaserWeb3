@@ -70,6 +70,7 @@ function drawDXF(file, fileName) {
     fileParentGroup.translateX((laserxmax / 2) * -1);
     fileParentGroup.translateY((laserymax / 2) * -1);
     scene.add(fileParentGroup);
+    objectsInScene.push(fileParentGroup)
 
     // // Make a copy to show, because we need the original copy, untranslated, for the gcodewriter parsing
     // showDxf = fileObject.clone();

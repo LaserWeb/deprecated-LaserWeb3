@@ -144,6 +144,9 @@
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
   border-left: solid 6px #68AE00;
+  border-top: solid 6px #202121;
+  border-bottom: solid 6px #202121;
+  border-right: solid 6px #fff;
 }
 #menu ul li { background-color:#202121; }
 #menu ul {
