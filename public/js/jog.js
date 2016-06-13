@@ -11,7 +11,7 @@ function initJog() {
     $('#xP').on('click', function() {
        if (isConnected) {
          var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedxy').val()
+         var feedrate = $('#jogfeedxy').val() * 60
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' X'+ dist + '\nG90\n');
        }
@@ -20,7 +20,7 @@ function initJog() {
     $('#yP').on('click', function() {
        if (isConnected) {
          var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedxy').val()
+         var feedrate = $('#jogfeedxy').val() * 60
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' Y'+ dist + '\nG90\n');
        }
@@ -29,7 +29,7 @@ function initJog() {
     $('#zP').on('click', function() {
        if (isConnected) {
          var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedz').val()
+         var feedrate = $('#jogfeedz').val() * 60
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' Z'+ dist + '\nG90\n');
        }
@@ -38,7 +38,7 @@ function initJog() {
     $('#xM').on('click', function() {
        if (isConnected) {
          var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedxy').val()
+         var feedrate = $('#jogfeedxy').val() * 60
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' X-'+ dist + '\nG90\n');
        }
@@ -47,7 +47,7 @@ function initJog() {
     $('#yM').on('click', function() {
        if (isConnected) {
          var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedxy').val()
+         var feedrate = $('#jogfeedxy').val() * 60
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' Y-'+ dist + '\nG90\n');
        }
@@ -56,7 +56,7 @@ function initJog() {
     $('#zM').on('click', function() {
        if (isConnected) {
          var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedz').val()
+         var feedrate = $('#jogfeedz').val() * 60
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' Z-'+ dist + '\nG90\n');
        }
