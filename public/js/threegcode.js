@@ -62,7 +62,7 @@ $(document).ready(function() {
         pwr = [];
         cutSpeed = [];
 
-        for (j = 5; j < scene.children.length; j++) {
+        for (j = 6; j < scene.children.length; j++) {
                printLog('Processing ' + scene.children[j].name, msgcolor)
                var cutSpeed0 = 200;
                var pwr0 = 100;

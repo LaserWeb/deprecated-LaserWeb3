@@ -185,12 +185,12 @@ $(document).ready(function() {
             scene.add(objectsInScene[j])
           }
         } else if (tabName == "gCodeView") {
-          for (j = 5; j < scene.children.length; j++) {
+          for (j = 6; j < scene.children.length; j++) {
             scene.remove(scene.children[j])
           }
           scene.add(object)
         } else {
-          for (j = 5; j < scene.children.length; j++) {
+          for (j = 6; j < scene.children.length; j++) {
             scene.remove(scene.children[j])
           }
           var i = parseInt($(this).attr('layerindex'))
@@ -206,7 +206,7 @@ $(document).ready(function() {
 function fillLayerTabs() {
   $("#tabsLayers").empty();
   $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>');
-  for (j = 5; j < scene.children.length; j++) {
+  for (j = 6; j < scene.children.length; j++) {
     scene.remove(scene.children[j])
   }
 
