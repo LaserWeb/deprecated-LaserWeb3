@@ -100,6 +100,11 @@ function rasterInit() {
         // $('#rasterWidgetSendRasterToLaser').addClass('disabled');
         // var spotSize = $("#spotsizeslider").slider("values", 0) / 100;
 
+        rasterNow()
+
+    });
+    function rasterNow() {
+
         dpival = parseFloat($('#rasterDPI').val()) * 0.03937007874016;
         var img = document.getElementById('origImage');
         width = img.naturalWidth;
@@ -135,7 +140,7 @@ function rasterInit() {
             imagePos: [imagePosition],
             physicalHeight: [physheight]
         });
-    });
+    };
 
     $('#rasterDPI').bind('input propertychange change paste keyup', function() {
         if (this.value.length) {

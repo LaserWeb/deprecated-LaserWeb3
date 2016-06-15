@@ -153,16 +153,7 @@ $(document).ready(function() {
     });
 
 
-    // Layer Tabs
-    $('#allView').on('click', function() {
-      $(".layertab").removeClass('active');
-      $("#allView").addClass('active');
-    });
 
-    $('#gCodeView').on('click', function() {
-      $(".layertab").removeClass('active');
-      $("#gCodeView").addClass('active');
-    });
 
 
     $('#tabsLayers').on('click','.close',function(){
@@ -180,6 +171,36 @@ $(document).ready(function() {
        fillLayerTabs();
      });
 
+     $('#tabsLayers').on('click','a',function(){
+        console.log("selected object id: " + $(this).attr('layerindex'));
+        console.log("selected tab name: " + $(this).parents('li').attr('id'));
+        var tabName = $(this).parents('li').attr('id')
+
+        $(".layertab").removeClass('active');
+        $(this).parents('li').addClass('active');
+
+        if (tabName == "allView") {
+          for (j = 0; j < objectsInScene.length; j++) {
+            console.log('added object ' + j)
+            scene.add(objectsInScene[j])
+          }
+        } else if (tabName == "gCodeView") {
+          for (j = 5; j < scene.children.length; j++) {
+            scene.remove(scene.children[j])
+          }
+          scene.add(object)
+        } else {
+          for (j = 5; j < scene.children.length; j++) {
+            scene.remove(scene.children[j])
+          }
+          var i = parseInt($(this).attr('layerindex'))
+          scene.add(objectsInScene[i]);
+        };
+      });
+
+
+
+
 }); // End of document.ready
 
 function fillLayerTabs() {
@@ -190,7 +211,7 @@ function fillLayerTabs() {
   }
 
   for (i = 0; i < objectsInScene.length; i++) {
-    $("#tabsLayers").append('<li role="presentation" class="layertab" id="tab-'+objectsInScene[i].name+'"><a href="#" layerindex="'+i+'">'+objectsInScene[i].name+'<button class="close" type="button" title="Remove this page">×</button></a></li>');
+    $("#tabsLayers").append('<li role="presentation" class="layertab" id="'+objectsInScene[i].name+'"><a href="#" layerindex="'+i+'">'+objectsInScene[i].name+'<button class="close" type="button" title="Remove this page">×</button></a></li>');
     scene.add(objectsInScene[i])
   }
 };
@@ -434,7 +455,7 @@ function readFile(evt) {
 
                 rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
                 rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
-                rastermesh.name = "rastermesh"
+                rastermesh.name = f.name
 
                 scene.add(rastermesh);
                 objectsInScene.push(rastermesh)
@@ -454,56 +475,56 @@ function readFile(evt) {
 
 // Removed and null all object when a new file is loaded
 function cleanupThree() {
-    if (typeof(fileObject) !== 'undefined') {
-        scene.remove(fileObject);
-        fileObject = null;
-    };
-
-    if (typeof(rastermesh) !== 'undefined') {
-        scene.remove(rastermesh);
-        rastermesh = null;
-    };
-
-    if (typeof(inflateGrp) != 'undefined') {
-        scene.remove(inflateGrp);
-        inflateGrp = null;
-    }
-
-    if (typeof(slicegroup) != 'undefined') {
-        scene.remove(slicegroup);
-        slicegroup = null;
-    }
-
-    if (typeof(stl) != 'undefined') {
-        scene.remove(stl);
-        stl = null;
-    }
-
-    if (typeof(object) != 'undefined') {
-        scene.remove(object);
-        object = null;
-    }
-
-    if (typeof(fileParentGroup) != 'undefined') {
-        scene.remove(fileParentGroup);
-        fileParentGroup = null;
-    }
-
-    if (boundingBox) {
-        scene.remove(boundingBox);
-        boundingBox = null;
-    }
-
-    if (typeof(rastermesh) != 'undefined') {
-        scene.remove(rastermesh);
-        rastermesh = null;
-    }
-
-    if (control) {
-        scene.remove(control);
-        controls.reset();
-        //  boundingBox = null;
-    }
+    // if (typeof(fileObject) !== 'undefined') {
+    //     scene.remove(fileObject);
+    //     fileObject = null;
+    // };
+    //
+    // if (typeof(rastermesh) !== 'undefined') {
+    //     scene.remove(rastermesh);
+    //     rastermesh = null;
+    // };
+    //
+    // if (typeof(inflateGrp) != 'undefined') {
+    //     scene.remove(inflateGrp);
+    //     inflateGrp = null;
+    // }
+    //
+    // if (typeof(slicegroup) != 'undefined') {
+    //     scene.remove(slicegroup);
+    //     slicegroup = null;
+    // }
+    //
+    // if (typeof(stl) != 'undefined') {
+    //     scene.remove(stl);
+    //     stl = null;
+    // }
+    //
+    // if (typeof(object) != 'undefined') {
+    //     scene.remove(object);
+    //     object = null;
+    // }
+    //
+    // if (typeof(fileParentGroup) != 'undefined') {
+    //     scene.remove(fileParentGroup);
+    //     fileParentGroup = null;
+    // }
+    //
+    // if (boundingBox) {
+    //     scene.remove(boundingBox);
+    //     boundingBox = null;
+    // }
+    //
+    // if (typeof(rastermesh) != 'undefined') {
+    //     scene.remove(rastermesh);
+    //     rastermesh = null;
+    // }
+    //
+    // if (control) {
+    //     scene.remove(control);
+    //     controls.reset();
+    //     //  boundingBox = null;
+    // }
 }
 
 function saveFile() {
