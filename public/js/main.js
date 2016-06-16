@@ -180,20 +180,31 @@ $(document).ready(function() {
         $(this).parents('li').addClass('active');
 
         if (tabName == "allView") {
-          for (j = 0; j < objectsInScene.length; j++) {
+          for (var j = 0; j < objectsInScene.length; j++) {
             console.log('added object ' + j)
-            scene.add(objectsInScene[j])
+            scene.add(objectsInScene[j]);
           }
+          if (typeof(object) != 'undefined') {
+              scene.add(object);
+          }
+
         } else if (tabName == "gCodeView") {
-          for (j = 6; j < scene.children.length; j++) {
-            scene.remove(scene.children[j])
+          console.log('L: ', scene.children.length)
+          var total = scene.children.length
+          for (var j = 5; j < total; j++) {
+            console.log('Removed ', scene.children[5].name);
+            scene.remove(scene.children[5]);
           }
-          scene.add(object)
+          if (object) {
+            scene.add(object);
+          }
         } else {
-          for (j = 6; j < scene.children.length; j++) {
-            scene.remove(scene.children[j])
+          var total = scene.children.length
+          for (var j = 5; j < total; j++) {
+            console.log('Removed ', scene.children[5].name);
+            scene.remove(scene.children[5]);
           }
-          var i = parseInt($(this).attr('layerindex'))
+          var i = parseInt($(this).attr('layerindex'));
           scene.add(objectsInScene[i]);
         };
       });
@@ -205,13 +216,50 @@ $(document).ready(function() {
 
 function fillLayerTabs() {
   $("#tabsLayers").empty();
+  $("#layerprep").empty();
   $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>');
-  for (j = 6; j < scene.children.length; j++) {
-    scene.remove(scene.children[j])
+  for (j = 5; j < scene.children.length; j++) {
+    scene.remove(scene.children[5])
   }
-
   for (i = 0; i < objectsInScene.length; i++) {
+    var pwr = objectsInScene[i].pwr
+    var speed = objectsInScene[i].speed
+    if (!pwr) {
+      pwr = 100;
+    }
+    if (!speed) {
+      speed = 20;
+    }
     $("#tabsLayers").append('<li role="presentation" class="layertab" id="'+objectsInScene[i].name+'"><a href="#" layerindex="'+i+'">'+objectsInScene[i].name+'<button class="close" type="button" title="Remove this page">×</button></a></li>');
+
+    if (objectsInScene[i].type == 'Group') {
+      $("#layerprep").append('<hr><label class="control-label">'+objectsInScene[i].name+'</label><div class="input-group"><input type="number" class="form-control" value="'+speed+'" id="speed'+i+'"><span class="input-group-addon">mm/s</span><input type="number" class="form-control" value="'+pwr+'" id="power'+i+'"><span class="input-group-addon">%</span></div>');
+
+    } else {
+      var template = `
+      <hr>
+      <label class="control-label">`+objectsInScene[i].name+`</label>
+      <div class="input-group">
+        <span class="input-group-addon">mm/s</span>
+        <input type="number" class="form-control" id="feedRate`+i+`">
+        <span class="input-group-addon">DPI</span>
+        <input type="number" class="form-control" id="rasterDPI`+i+`">
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon">Min Pwr</span>
+        <input type="number" class="form-control" id="minpwr`+i+`">
+        <span class="input-group-addon">Max Pwr</span>
+        <input type="number" class="form-control" id="maxpwr`+i+`">
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon">X</span>
+        <input type="number" class="form-control" id="rasterxoffset`+i+`">
+        <span class="input-group-addon">Y</span>
+        <input type="number" class="form-control" id="rasteryoffset`+i+`">
+      </div>
+      `;
+      $("#layerprep").append(template);
+    };
     scene.add(objectsInScene[i])
   }
 };
@@ -266,23 +314,6 @@ function readFile(evt) {
   console.log(evt);
     // Close the menu
     $("#drop1").dropdown("toggle");
-    cleanupThree();
-
-    // Display filename on the viewer
-    // if (typeof(fileName) !== 'undefined' ) {
-    //   axesgrp.remove(fileName)
-    // }
-    //
-    // fileName = makeSprite(scene, "webgl", {
-    //     x: (laserxmax / 2),
-    //     y: -30,
-    //     z: 0,
-    //     text: 'Filename : ' + evt.target.files[0].name,
-    //     color: "#000000"
-    // });
-
-    // $('#tabsLayers').append('<li role="presentation" class="layerth" id="'+evt.target.files[0].name+'-tab"><a href="#">'+evt.target.files[0].name+'</a></li>')
-    axesgrp.add(fileName);
     // Filereader
     var f = evt.target.files[0];
     if (f) {
@@ -293,21 +324,11 @@ function readFile(evt) {
             r.readAsText(evt.target.files[0]);
             r.onload = function(e) {
                 dxf = r.result
-                $('#togglefile').click();
-                $('#cammodule').show();
-                // $('#svgnewway').hide();
-                $('#rastermodule').hide();
                 drawDXF(dxf, f.name);
                 currentWorld();
                 printLog('DXF Opened', successcolor);
-                $('#cammodule').show();
                 putFileObjectAtZero();
                 resetView()
-                $('#stlopt').hide();
-                $('#prepopt').show();
-                $('#prepopt').click();
-                attachTransformWidget();
-                activeObject = fileParentGroup
             };
 
         } else if (f.name.match(/.svg$/i)) {
@@ -317,58 +338,27 @@ function readFile(evt) {
                 svg = r.result
                 var svgpreview = document.getElementById('svgpreview');
                 svgpreview.innerHTML = r.result;
-                    // /console.log(svg);
-                $('#togglefile').click();
-                $('#cammodule').show();
-                // $('#svgnewway').show();
-                $('#rastermodule').hide();
                 var svgfile = $('#svgpreview').html();
-                // var colors = pullcolors(svgfile).unique();
-                // var layers = []
-                // for (i = 0; i < colors.length; i++) {
-                //   // var r = colors[i][0];
-                //   // var g = colors[i][1];
-                //   // var b = colors[i][2];
-                //   //var colorval = RGBToHex(r, g, b)
-                //   layers.push(colors[i]);
-                // };
                 svg2three(svgfile, f.name);
                 currentWorld();
                 printLog('SVG Opened', successcolor);
-                $('#cammodule').show();
-                putFileObjectAtZero();
                 resetView()
-                $('#stlopt').show();
-                $('#prepopt').show();
-                $('#prepopt').click();
                 $('#svgresize').modal('show');
-                attachTransformWidget();
-                activeObject = fileParentGroup
             };
             $('#svgresize').modal('show');
 
         } else if (f.name.match(/.gcode$/i)) {
-            cleanupThree();
             r.readAsText(evt.target.files[0]);
             r.onload = function(event) {
                 cleanupThree();
                 document.getElementById('gcodepreview').value = this.result;
                 openGCodeFromText();
                 printLog('GCODE Opened', successcolor);
-                $('#toggleviewer').click();
-                $('#cammodule').hide();
-                $('#rastermodule').hide();
-                //  putFileObjectAtZero();
                 resetView()
-                $('#stlopt').hide();
-                $('#prepopt').hide();
-                $("#transformcontrols").hide();
-                activeObject = object
             };
         } else if (f.name.match(/.stl$/i)) {
             //r.readAsText(evt.target.files[0]);
             // Remove the UI elements from last run
-            cleanupThree();
             var stlloader = new MeshesJS.STLLoader;
             r.onload = function(event) {
                 cleanupThree();
@@ -378,10 +368,8 @@ function readFile(evt) {
                     stlloader.loadString(r.result);
                     return;
                 }
-
                 // buffer reader
                 var view = new DataView(this.result);
-
                 // get faces number
                 try {
                     var faces = view.getUint32(80, true);
@@ -389,143 +377,39 @@ function readFile(evt) {
                     self.onError(error);
                     return;
                 }
-
                 // is binary ?
                 var binary = view.byteLength == (80 + 4 + 50 * faces);
-
                 if (!binary) {
                     // get the file contents as string
                     // (faster than convert array buffer)
                     r.readAsText(evt.target.files[0]);
                     return;
                 }
-
                 // parse binary STL
                 console.log("Inside STL.js Binary STL");
-                cleanupThree();
                 stlloader.loadBinaryData(view, faces, 100, window, evt.target.files[0]);
             };
             // start reading file as array buffer
             r.readAsArrayBuffer(evt.target.files[0]);
             printLog('STL Opened', successcolor);
-            //$('#cammodule').hide();
-            $('#cammodule').show();
-            $('#rastermodule').hide();
-            $('#togglefile').click();
-            $('#stlopt').show();
-            $('#prepopt').hide();
-            $('#stlopt').click();
-            $("#transformcontrols").hide();
-            activeObject = fileParentGroup
+            $('#stlslice').modal('show')
         } else {
             console.log(f.name + " is probably a Raster");
             $('#origImage').empty();
             r.readAsDataURL(evt.target.files[0]);
             r.onload = function(event) {
-                var imgtag = document.getElementById("origImage");
-                imgtag.title = evt.target.files[0].name;
-                imgtag.src = event.target.result;
-                setImgDims();
-                drawRaster(f.name);
-                printLog('Bitmap Opened', successcolor);
-                $('#cammodule').hide();
-                $('#rastermodule').show();
-                // putFileObjectAtZero();
-                $('#togglefile').click();
-                $('#stlopt').hide();
-                $('#prepopt').hide();
-                $("#transformcontrols").hide();
-
-                //tbfleming's threejs texture code
-                var img = document.getElementById('origImage');
-                var imgwidth = img.naturalWidth;
-                var imgheight = img.naturalHeight;
-
-                var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
-
-                var texture = new THREE.TextureLoader().load(event.target.result);
-                texture.minFilter = THREE.LinearFilter
-
-                var material = new THREE.MeshBasicMaterial({
-                    map: texture,
-                    transparent: true
-                });
-
-                rastermesh = new THREE.Mesh(geometry, material);
-
-                rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
-                rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
-                rastermesh.name = f.name
-
-                scene.add(rastermesh);
-                objectsInScene.push(rastermesh)
-                //  attachTransformWidget();
-                resetView();
-                setImgDims();
-                $('#rasterresize').modal('show')
-                activeObject = rastermesh
+                drawRaster(evt);
             };
         }
     }
     $('#filestatus').hide();
     $('#cam-menu').click();
+    if (control) {
+        scene.remove(control);
+        controls.reset();
+    }
     setTimeout(function(){ fillLayerTabs(); }, 300);
 };
-
-
-// Removed and null all object when a new file is loaded
-function cleanupThree() {
-    // if (typeof(fileObject) !== 'undefined') {
-    //     scene.remove(fileObject);
-    //     fileObject = null;
-    // };
-    //
-    // if (typeof(rastermesh) !== 'undefined') {
-    //     scene.remove(rastermesh);
-    //     rastermesh = null;
-    // };
-    //
-    // if (typeof(inflateGrp) != 'undefined') {
-    //     scene.remove(inflateGrp);
-    //     inflateGrp = null;
-    // }
-    //
-    // if (typeof(slicegroup) != 'undefined') {
-    //     scene.remove(slicegroup);
-    //     slicegroup = null;
-    // }
-    //
-    // if (typeof(stl) != 'undefined') {
-    //     scene.remove(stl);
-    //     stl = null;
-    // }
-    //
-    // if (typeof(object) != 'undefined') {
-    //     scene.remove(object);
-    //     object = null;
-    // }
-    //
-    // if (typeof(fileParentGroup) != 'undefined') {
-    //     scene.remove(fileParentGroup);
-    //     fileParentGroup = null;
-    // }
-    //
-    // if (boundingBox) {
-    //     scene.remove(boundingBox);
-    //     boundingBox = null;
-    // }
-    //
-    // if (typeof(rastermesh) != 'undefined') {
-    //     scene.remove(rastermesh);
-    //     rastermesh = null;
-    // }
-    //
-    // if (control) {
-    //     scene.remove(control);
-    //     controls.reset();
-    //     //  boundingBox = null;
-    // }
-}
 
 function saveFile() {
     var textToWrite = document.getElementById("gcodepreview").value;

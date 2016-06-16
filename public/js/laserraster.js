@@ -178,14 +178,16 @@ Rasterizer.prototype.figureSpeed = function(passedGrey) {
     return calcspeed;
 };
 
-Rasterizer.prototype.init = function() {
+Rasterizer.prototype.init = function(div) {
+    console.log('INIT Container: ', this.config.div)
     this.startTime = Date.now();
 
     // Initialise
     project.clear();
 
     // Create a raster item using the image tag 'origImage'
-    this.raster = new Raster('origImage');
+    var container = this.config.div;
+    this.raster = new Raster(container);
     this.raster.visible = false;
 
     // Log it as a sanity check
@@ -200,11 +202,12 @@ Rasterizer.prototype.init = function() {
 
     // As the web is asynchronous, we need to wait for the raster to load before we can perform any operation on its pixels.
     this.raster.on('load', this.onRasterLoaded.bind(this));
+    console.log('Raster: ', this.raster)
 };
 
 
 Rasterizer.prototype.rasterRow = function(y) {
-    //console.log('[Rasterizer] rasterRow', y);
+    console.log('[Rasterizer] rasterRow', y);
 
     // Calculate where to move to to start the first and next rows - G0 Yxx move between lines
 
@@ -255,7 +258,7 @@ Rasterizer.prototype.rasterRow = function(y) {
 	lumaGray = alpha * lumaGray + (1-alpha)*1.0;
 	this.grayLevel = lumaGray.toFixed(3);
 	this.graLevel = lumaGray.toFixed(1);
-	
+
 	var speed = this.config.feedRate;
         if (lastGrey != this.grayLevel) {
             intensity = this.figureIntensity();
@@ -377,7 +380,7 @@ Rasterizer.prototype.rasterInterval = function() {
 };
 
 Rasterizer.prototype.onRasterLoaded = function() {
-    //console.log('[Rasterizer] onRasterLoaded');
+    console.log('[Rasterizer] onRasterLoaded');
     var rasterSendToLaserButton = document.getElementById("rasterWidgetSendRasterToLaser");
     //if (rasterSendToLaserButton.style.display == "none") {  // Raster Mode
     $('#rasterparams').hide();
@@ -426,9 +429,10 @@ Rasterizer.prototype.onFinish = function() {
 this.RasterNow = function(config) {
     console.time("Process Raster");
     printLog('Process Raster', msgcolor)
-
+    var div = config.div;
     var rasterizer = new Rasterizer(config);
-    rasterizer.init();
+    console.log('from Container: ', div)
+    rasterizer.init(div);
 };
 
 this.G7RasterNow = function(config) {
@@ -506,7 +510,7 @@ function G7Rasterizer(config) {
     this.result += '; Start GCode\n'
     this.result += G7startgcode
     this.result += '\n';
-    
+
     this.result += 'M649 S{0} B2 D0 R{1}\n'.format(this.config.maxIntensity, this.config.spotSize1);
     this.result += 'G0 X{0} Y{1} F{2}\nG1 F{3}\n'.format(this.config.xOffset, this.config.yOffset, this.config.rapidRate, this.config.feedRate);
 }
@@ -684,5 +688,3 @@ G7Rasterizer.prototype.onFinish = function() {
         this.config.completed();
     }
 };
-
-

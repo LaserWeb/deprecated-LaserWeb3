@@ -16,10 +16,6 @@ function drawDXF(file, fileName) {
     }
 
 
-
-    // Remove the UI elements from last run
-    cleanupThree();
-
     // Empty File Prep Table
     $("#layers").empty();
     // if (typeof(showDxf) !== 'undefined') {

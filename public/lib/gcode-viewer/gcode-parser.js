@@ -185,7 +185,7 @@ function GCodeParser(handlers) {
                 object.translateY(laserymax /2 * -1);
                 object.name = 'object';
                 scene.add(object);
-                objectsInScene.push(object)
+                // objectsInScene.push(object)
             }
         }
         doChunk();
@@ -1290,7 +1290,9 @@ function drawobject() {
 //    newObject.userData.center2 = center2;
 //    newObject.userData.extraObjects = extraObjects;
 //    newObject.userData.threeObjs = new3dObj;
+
     return newObject;
+
 };
 
 function convertLineGeometryToBufferGeometry(lineGeometry, color) {

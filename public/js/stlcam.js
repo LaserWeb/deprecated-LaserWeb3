@@ -123,7 +123,7 @@ function slicegrid(step) {
             group = new THREE.Group();
             //for(var i = 0; i < stlzsize; i+= step) {
             (function(i) {
-                drawSlice(i);
+                drawSlice(i*step);
             })(i);
             i++
             //}
@@ -148,10 +148,16 @@ function slicegrid(step) {
     slicegroup.translateX(-laserxmax / 2)
     slicegroup.translateY(-laserymax / 2)
 
+    var total = scene.children.length
+    
     scene.add(slicegroup);
     fileParentGroup = slicegroup;
+    slicegroup.name = "Sliced STL"+step+'mm'
+
+    objectsInScene.push(slicegroup)
     fileobject = slicegroup;
     viewExtents(slicegroup);
+    fillLayerTabs();
 }
 
 function allSlice(maxheight, step) {

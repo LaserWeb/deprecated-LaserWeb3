@@ -187,12 +187,10 @@ function init3D() {
     //controls.mouseButtons = { PAN: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, ORBIT: THREE.MOUSE.RIGHT }; // swapping left and right buttons
     // /var STATE = { NONE : - 1, ROTATE : 0, DOLLY : 1, PAN : 2, TOUCH_ROTATE : 3, TOUCH_DOLLY : 4, TOUCH_PAN : 5 };
 
-    control = new THREE.TransformControls(camera, renderer.domElement);
-    //control.addEventListener('change', currentWorld);
-    // control.addEventListener('objectChange', cancelAnimation);
-    //control.attach(model);
-    scene.add(control);
-    control.setMode("translate");
+    // control = new THREE.TransformControls(camera, renderer.domElement);
+    //
+    // scene.add(control);
+    // control.setMode("translate");
 
     var light = new THREE.DirectionalLight(0xffffff);
     light.position.set(-500, -500, 1).normalize();
@@ -487,51 +485,53 @@ viewExtents = function(objecttosee) {
     if (isNaN(fov)) {
         console.log("giving up on viewing extents because fov could not be calculated");
         return;
+    } else {
+      controls.object.fov = fov;
+      //this.controls.object.setRotationFromEuler(THREE.Euler(0.5,0.5,0.5));
+      //this.controls.object.rotation.set(0.5,0.5,0.5,"XYZ");
+      //this.controls.object.rotateX(2);
+      //this.controls.object.rotateY(0.5);
+
+      var L = dist;
+      var camera = controls.object;
+      var vector = controls.target.clone();
+      var l = (new THREE.Vector3()).subVectors(camera.position, vector).length();
+      var up = camera.up.clone();
+      var quaternion = new THREE.Quaternion();
+
+      // Zoom correction
+      camera.translateZ(L - l);
+      console.log("up:", up);
+      up.y = 1;
+      up.x = 0;
+      up.z = 0;
+      quaternion.setFromAxisAngle(up, 0);
+      //camera.position.applyQuaternion(quaternion);
+      up.y = 0;
+      up.x = 1;
+      up.z = 0;
+      quaternion.setFromAxisAngle(up, 0);
+      camera.position.applyQuaternion(quaternion);
+      up.y = 0;
+      up.x = 0;
+      up.z = 1;
+      quaternion.setFromAxisAngle(up, 0);
+      //camera.position.applyQuaternion(quaternion);
+
+      camera.lookAt(vector);
+
+      //this.camera.rotateX(90);
+
+      controls.object.updateProjectionMatrix();
+      containerWidth = window.innerWidth;
+      containerHeight = window.innerHeight;
+      //this.controls.enabled = true;
+      //this.scaleInView();
+      //this.controls.rotateCamera(0.5);
+      //this.controls.noRoll = true;
+      //this.controls.noRotate = true;
     }
-    controls.object.fov = fov;
-    //this.controls.object.setRotationFromEuler(THREE.Euler(0.5,0.5,0.5));
-    //this.controls.object.rotation.set(0.5,0.5,0.5,"XYZ");
-    //this.controls.object.rotateX(2);
-    //this.controls.object.rotateY(0.5);
 
-    var L = dist;
-    var camera = controls.object;
-    var vector = controls.target.clone();
-    var l = (new THREE.Vector3()).subVectors(camera.position, vector).length();
-    var up = camera.up.clone();
-    var quaternion = new THREE.Quaternion();
-
-    // Zoom correction
-    camera.translateZ(L - l);
-    console.log("up:", up);
-    up.y = 1;
-    up.x = 0;
-    up.z = 0;
-    quaternion.setFromAxisAngle(up, 0);
-    //camera.position.applyQuaternion(quaternion);
-    up.y = 0;
-    up.x = 1;
-    up.z = 0;
-    quaternion.setFromAxisAngle(up, 0);
-    camera.position.applyQuaternion(quaternion);
-    up.y = 0;
-    up.x = 0;
-    up.z = 1;
-    quaternion.setFromAxisAngle(up, 0);
-    //camera.position.applyQuaternion(quaternion);
-
-    camera.lookAt(vector);
-
-    //this.camera.rotateX(90);
-
-    controls.object.updateProjectionMatrix();
-    containerWidth = window.innerWidth;
-    containerHeight = window.innerHeight;
-    //this.controls.enabled = true;
-    //this.scaleInView();
-    //this.controls.rotateCamera(0.5);
-    //this.controls.noRoll = true;
-    //this.controls.noRotate = true;
   }
 };
 
@@ -614,7 +614,9 @@ $(window).on('resize', function() {
     camera.aspect = sceneWidth / sceneHeight;
     camera.updateProjectionMatrix();
     controls.reset();
-    $('#viewReset').click();
+    setTimeout(function(){ $('#viewReset').click(); }, 100);
+    // setTimeout(function(){ $('#tabsLayers a[href="#allView"]').trigger('click'); }, 100);
+
 
 });
 

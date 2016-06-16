@@ -288,7 +288,7 @@ d-grid {border: none; padding: 20px;}
 			  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 }
 
-.form-login{
+.form-scan{
   padding: 1em;
   min-width: 0px;
 }
