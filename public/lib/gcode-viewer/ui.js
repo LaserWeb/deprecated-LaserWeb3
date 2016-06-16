@@ -9,6 +9,7 @@
 function createObject(gcode) {
   if (typeof(object) != 'undefined') {
         scene.remove(object);
+        object = null;
     }
 
 	//Create the object

@@ -87,78 +87,6 @@ function rasterInit() {
 
     // Raster support
     var paperscript = {};
-
-    // $("#laserpwrslider").slider({
-    //     range: true,
-    //     min: 0,
-    //     max: 100,
-    //     values: [0, 100],
-    //     slide: function(event, ui) {
-    //         minpwr = [ui.values[0]];
-    //         maxpwr = [ui.values[1]];
-    //         $('#rasterNow').removeClass('disabled');
-    //         $('#laserpwr').html($("#laserpwrslider").slider("values", 0) + '% - ' + $("#laserpwrslider").slider("values", 1) + '%');
-    //         setImgDims()
-    //     }
-    // });
-    // $('#laserpwr').html($("#laserpwrslider").slider("values", 0) + '% - ' + $("#laserpwrslider").slider("values", 1) + '%');
-    // minpwr = $("#laserpwrslider").slider("values", 0);
-    // maxpwr = $("#laserpwrslider").slider("values", 1);
-    //
-    // $("#laservariablespeedslider").slider({
-    //     range: true,
-    //     min: 0,
-    //     max: 100,
-    //     values: [20, 80],
-    //     slide: function(event, ui) {
-    //         $('#rasterNow').removeClass('disabled');
-    //         laserRapid = $('#rapidRate').val();
-    //         $('#laservariablespeed').html($("#laservariablespeedslider").slider("values", 0) * laserRapid / 100.0 + ' - ' + $("#laservariablespeedslider").slider("values", 1) * laserRapid / 100.0);
-    //     }
-    // });
-    // $('#laservariablespeed').html($("#laservariablespeedslider").slider("values", 0) * $('#rapidRate').val() / 100.0 + ' - ' + $("#laservariablespeedslider").slider("values", 1) * $('#rapidRate').val() / 100.0);
-    //
-    // $("#useRasterBlackWhiteSpeeds").change(function() {
-    //     if ($('#useRasterBlackWhiteSpeeds').prop('checked')) {
-    //         $("#blackwhitespeedsection").show();
-    //     } else {
-    //         $("#blackwhitespeedsection").hide();
-    //     }
-    // });
-
-    // $("#rapidRate").change(function() {
-    //     $('#laservariablespeed').html($("#laservariablespeedslider").slider("values", 0) * $('#rapidRate').val() / 100.0 + ' - ' + $("#laservariablespeedslider").slider("values", 1) * $('#rapidRate').val() / 100.0);
-    // });
-
-    // $('#spotsize').html(':  ' + ($("#spotsizeslider").slider("values", 0) / 100) + 'mm ');
-    // spotSizeMul = $("#spotsizeslider").slider("values", 0) / 100;
-    // spotSizeMul = parseFloat($('#spotSize').val()) / 100;
-
-    // $('#rasterNow').on('click', function() {
-    //     // $('#rasterWidgetSendRasterToLaser').addClass('disabled');
-    //     // var spotSize = $("#spotsizeslider").slider("values", 0) / 100;
-    //     var toRaster = 'origImage';
-    //     rasterNow(toRaster)
-    //
-    // });
-
-    // $('#rasterDPI').bind('input propertychange change paste keyup', function() {
-    //     if (this.value.length) {
-    //         setImgDims();
-    //     }
-    // });
-    //
-    // $('#rasterxoffset').bind('input propertychange change paste keyup', function() {
-    //     if (this.value.length) {
-    //         setImgDims();
-    //     }
-    // });
-    //
-    // $('#rasteryoffset').bind('input propertychange change paste keyup', function() {
-    //     if (this.value.length) {
-    //         setImgDims();
-    //     }
-    // });
 }
 
 function runRaster(index) {
@@ -266,7 +194,12 @@ function gcodereceived() {
     $('#rasterProgressShroud').hide();
     $('#rasterparams').show();
     console.log('New Gcode');
-    // openGCodeFromText();
+    var total = scene.children.length
+    for (var j = 5; j < total; j++) {
+      console.log('Removed ', scene.children[5].name);
+      scene.remove(scene.children[5]);
+    }
+    openGCodeFromText();
     // gCodeToSend = document.getElementById('gcodepreview').value;
     // $('#viewReset').click();
     // $('#gcode-menu').click();

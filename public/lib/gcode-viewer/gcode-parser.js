@@ -7,10 +7,11 @@
 
 // This is a simplified and updated version of http://gcode.joewalnes.com/ that works with the latest version of Three.js (v68).
 // Updated with code from http://chilipeppr.com/tinyg's 3D viewer to support more CNC type Gcode
-var tototaltimemax = '';
+var totaltimemax = '';
 totaltimemax = 0;
 
 var lineObjects = new THREE.Object3D();
+lineObjects.name = 'LineObjects'
 
 function GCodeParser(handlers) {
     handlers = handlers || {};
@@ -151,10 +152,10 @@ function GCodeParser(handlers) {
     this.parse = function(gcode) {
         $('#renderprogressholder').show();
         $("#gcodelinestbody").empty();
-        lines = gcode.split(/\r{0,1}\n/);
-        count = lines.length;
-        maxTimePerChunk = 500;
-        index = 0;
+        var lines = gcode.split(/\r{0,1}\n/);
+        var count = lines.length;
+        var maxTimePerChunk = 500;
+        var index = 0;
 
         function now() {
             return new Date().getTime();
@@ -167,11 +168,11 @@ function GCodeParser(handlers) {
             NProgress.set(progress);
             var startTime = now();
             while (index < count && (now() - startTime) <= maxTimePerChunk) {
-		parseLine(lines[index], index);
-                tbody += '<tr id="tr'+[index]+'"><td>'+[index]+'</td><td>'+lines[index]+'</td></tr>';//code here using lines[i] which will give you each line
+		            parseLine(lines[index], index);
+                // tbody += '<tr id="tr'+[index]+'"><td>'+[index]+'</td><td>'+lines[index]+'</td></tr>';//code here using lines[i] which will give you each line
                 ++index;
             }
-	    closeLineSegment();
+	          closeLineSegment();
             if (index < count) {
                 setTimeout(doChunk, 1);  // set Timeout for async iteration
             } else {
@@ -179,8 +180,9 @@ function GCodeParser(handlers) {
                 NProgress.remove();
                 console.log('[GCODE PARSE] Done  ');
                 $('#renderprogressholder').hide();
-                object =  drawobject();
-		              object.add(lineObjects);
+                var object =  drawobject();
+		            object.add(lineObjects);
+                console.log('Line Objects', lineObjects)
                 object.translateX(laserxmax /2 * -1);
                 object.translateY(laserymax /2 * -1);
                 object.name = 'object';
@@ -230,7 +232,8 @@ createObjectFromGCode = function (gcode, indxMax) {
     // its own userData info
     // G2/G3 moves are their own child of lots of lines so
     // that even the simulator can follow along better
-    new3dObj = new THREE.Group();
+    var new3dObj = new THREE.Group();
+    new3dObj.name = 'newobj';
     plane = "G17"; //set default plane to G17 - Assume G17 if no plane specified in gcode.
     layers3d = [];
     layer = undefined;
@@ -1200,6 +1203,7 @@ function drawobject() {
     isUnitsMm = parser.isUnitsMm;
 
     var newObject = new THREE.Object3D();
+    newObject.name = 'newObject'
 
     // old approach of monolithic line segment
     for (var lid in layers3d) {
