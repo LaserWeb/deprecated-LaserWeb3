@@ -260,7 +260,7 @@ function fillLayerTabs() {
       </div>
       <div class="input-group">
         <span class="input-group-addon">DPI</span>
-        <input type="number" class="form-control" value="72" id="rasterDPI`+seq+`">
+        <input type="number" class="form-control" value="25.4" id="rasterDPI`+seq+`">
       </div>
       `;
       $("#layerprep").append(template);

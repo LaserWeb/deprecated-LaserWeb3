@@ -27,7 +27,7 @@ if (!String.prototype.format) {
 
 function drawRaster(evt) {
 
-    var currentIdx = objectsInScene.length;
+    var currentIdx = objectsInScene.length + 100;
 
     var div = document.createElement("img");
     div.style.display = "none";
@@ -72,6 +72,7 @@ function drawRaster(evt) {
 
     rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
     rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
+    rastermesh.position.z = -0.9;
     rastermesh.name = evt.target.files[0].name
 
     scene.add(rastermesh);

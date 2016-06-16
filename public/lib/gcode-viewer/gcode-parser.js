@@ -180,7 +180,7 @@ function GCodeParser(handlers) {
                 NProgress.remove();
                 console.log('[GCODE PARSE] Done  ');
                 $('#renderprogressholder').hide();
-                var object =  drawobject();
+                object =  drawobject();
 		            object.add(lineObjects);
                 console.log('Line Objects', lineObjects)
                 object.translateX(laserxmax /2 * -1);
