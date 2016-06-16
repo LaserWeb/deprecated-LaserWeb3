@@ -235,27 +235,32 @@ function fillLayerTabs() {
     if (objectsInScene[i].type == 'Group') {
       $("#layerprep").append('<hr><label class="control-label">'+objectsInScene[i].name+'</label><div class="input-group"><input type="number" class="form-control" value="'+speed+'" id="speed'+i+'"><span class="input-group-addon">mm/s</span><input type="number" class="form-control" value="'+pwr+'" id="power'+i+'"><span class="input-group-addon">%</span></div>');
 
-    } else {
+    } else if (objectsInScene[i].type == 'Mesh') {
+      var seq = objectsInScene[i].userData.seq;
       var template = `
       <hr>
       <label class="control-label">`+objectsInScene[i].name+`</label>
       <div class="input-group">
-        <span class="input-group-addon">mm/s</span>
-        <input type="number" class="form-control" id="feedRate`+i+`">
-        <span class="input-group-addon">DPI</span>
-        <input type="number" class="form-control" id="rasterDPI`+i+`">
+        <span class="input-group-addon">Light mm/s</span>
+        <input type="number" class="form-control"  value="20" id="feedRateW`+seq+`">
+        <span class="input-group-addon">Light mm/s</span>
+        <input type="number" class="form-control"  value="20" id="feedRateB`+seq+`">
       </div>
       <div class="input-group">
         <span class="input-group-addon">Min Pwr</span>
-        <input type="number" class="form-control" id="minpwr`+i+`">
+        <input type="number" class="form-control" value="0" id="minpwr`+seq+`">
         <span class="input-group-addon">Max Pwr</span>
-        <input type="number" class="form-control" id="maxpwr`+i+`">
+        <input type="number" class="form-control" value="100" id="maxpwr`+seq+`">
       </div>
       <div class="input-group">
         <span class="input-group-addon">X</span>
-        <input type="number" class="form-control" id="rasterxoffset`+i+`">
+        <input type="number" class="form-control" value="0" id="rasterxoffset`+seq+`">
         <span class="input-group-addon">Y</span>
-        <input type="number" class="form-control" id="rasteryoffset`+i+`">
+        <input type="number" class="form-control" value="0" id="rasteryoffset`+seq+`">
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon">DPI</span>
+        <input type="number" class="form-control" value="72" id="rasterDPI`+seq+`">
       </div>
       `;
       $("#layerprep").append(template);
@@ -350,7 +355,7 @@ function readFile(evt) {
         } else if (f.name.match(/.gcode$/i)) {
             r.readAsText(evt.target.files[0]);
             r.onload = function(event) {
-                cleanupThree();
+                // cleanupThree();
                 document.getElementById('gcodepreview').value = this.result;
                 openGCodeFromText();
                 printLog('GCODE Opened', successcolor);
@@ -361,7 +366,7 @@ function readFile(evt) {
             // Remove the UI elements from last run
             var stlloader = new MeshesJS.STLLoader;
             r.onload = function(event) {
-                cleanupThree();
+                // cleanupThree();
                 // Parse ASCII STL
                 if (typeof r.result === 'string') {
                     console.log("Inside STL.js Found ASCII");
