@@ -4,19 +4,19 @@ var oldxscale = 0;
 var oldyscale = 0;
 
 function attachTransformWidget() {
-    $("#transformcontrols").show();
-    if (rastermesh) {
-        control.attach(rastermesh);
-        control.setMode("translate");
-        $("#resizeBtn").hide();
-        $("#linkAspectBtn").hide();
-    } else {
-        control.attach(fileParentGroup);
-        control.setMode("translate");
-        $("#resizeBtn").show();
-        $("#linkAspectBtn").show();
-    }
-    control.addEventListener('change', currentWorld);
+    // $("#transformcontrols").show();
+    // if (rastermesh) {
+    //     control.attach(rastermesh);
+    //     control.setMode("translate");
+    //     $("#resizeBtn").hide();
+    //     $("#linkAspectBtn").hide();
+    // } else {
+    //     control.attach(fileParentGroup);
+    //     control.setMode("translate");
+    //     $("#resizeBtn").show();
+    //     $("#linkAspectBtn").show();
+    // }
+    // control.addEventListener('change', currentWorld);
 
 };
 
@@ -326,21 +326,34 @@ function scaleChange() {
 }
 
 function resetView() {
-    if (activeObject) {
-      viewExtents(activeObject);
+    // if (activeObject) {
+    //   viewExtents(activeObject);
+    // } else {
+    //   if (typeof(object) != 'undefined') {
+    //     viewExtents(object);
+    //   } else if (typeof(rastermesh) != 'undefined') {
+    //     viewExtents(rastermesh);
+    //   } else if (typeof(inflateGrp) != 'undefined') {
+    //     viewExtents(inflateGrp);
+    //   } else if (typeof(fileParentGroup) != 'undefined') {
+    //     viewExtents(fileParentGroup);
+    //   } else {
+    //     viewExtents(helper);
+    //   };
+    // }
+    if (objectsInScene.length > 0) {
+      var insceneGrp = new THREE.Group()
+      for (i = 0; i < objectsInScene.length; i++) {
+        var object = objectsInScene[i].clone();
+        insceneGrp.add(object)
+      }
+      // scene.add(insceneGrp)
+      viewExtents(insceneGrp);
+      // scene.remove(insceneGrp)
     } else {
-      if (typeof(object) != 'undefined') {
-        viewExtents(object);
-      } else if (typeof(rastermesh) != 'undefined') {
-        viewExtents(rastermesh);
-      } else if (typeof(inflateGrp) != 'undefined') {
-        viewExtents(inflateGrp);
-      } else if (typeof(fileParentGroup) != 'undefined') {
-        viewExtents(fileParentGroup);
-      } else {
-        viewExtents(helper);
-      };
+      viewExtents(helper);
     }
+
 }
 
 

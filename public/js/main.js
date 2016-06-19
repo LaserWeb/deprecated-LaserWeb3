@@ -28,19 +28,6 @@ $(document).ready(function() {
     initTour();
     initSmoothie();
 
-    // grbl = new Grbl();
-
-    // Responsive Sidebar width
-    // if ( screen.width < 800) {
-    //   $('#maincolumn').addClass('col-md-offset-3');
-    //   $('#maincolumn').addClass('col-md-10');
-    //   $('#sidebarcolumn').addClass('col-md-2');
-    // } else
-    //   $('#maincolumn').addClass('col-md-offset-3');
-    //   $('#maincolumn').addClass('col-md-9');
-    //   $('#sidebarcolumn').addClass('col-md-3');
-
-
     // Tooltips
     $(document).tooltip();
     $(document).click(function() {
@@ -82,23 +69,6 @@ $(document).ready(function() {
         saveSettingsLocal();
     });
 
-    //$('#macroEdit').editableTableWidget();
-
-    // // Show/Hide Macro Pad
-    // $('#togglemacro').on('click', function() {
-    //   printLog('Toggling Button Pad', msgcolor);
-    //   $('#macro_container').toggle();
-    //   $('#viewer_container').toggle();
-    //   $('#renderArea').toggle();
-    //   if ($( "#togglemacro" ).hasClass( "btn-primary" )) {
-    //     $( "#togglemacro" ).removeClass( "btn-primary" )
-    //     $( "#togglemacro" ).addClass( "btn-default" )
-    //   } else {
-    //     $( "#togglemacro" ).removeClass( "btn-default" )
-    //     $( "#togglemacro" ).addClass( "btn-primary" )
-    //   }
-    // });
-
     // Tabs on right side
     $('#drotabtn').on('click', function() {
       $('#drotab').show();
@@ -114,10 +84,6 @@ $(document).ready(function() {
       $("#drotabtn").removeClass("active");
       $("#gcodetabbtn").addClass("active");
     });
-
-
-
-
 
     // Show/Hide Macro Pad
     $('#toggleviewer').on('click', function() {
@@ -170,98 +136,189 @@ $(document).ready(function() {
         showSpinner: false
     });
 
-checkNumPad();
+    checkNumPad();
 
-checkSettingsLocal();
+    checkSettingsLocal();
 
-// Bind Quote System
-$('.quoteVar').keyup(function(){
-  var setupfee = ( parseFloat($("#setupcost").val()) ).toFixed(2);
-  var materialcost = ( parseFloat($("#materialcost").val()) * parseFloat($("#materialqty").val()) ).toFixed(2);
-  var timecost = ( parseFloat($("#lasertime").val()) * parseFloat($("#lasertimeqty").val()) ).toFixed(2);
-  var unitqty = ( parseFloat($("#qtycut").val()) ).toFixed(2);
-  var grandtot = (materialcost*unitqty) + (timecost*unitqty) + parseFloat(setupfee);
-  var grandtotal = grandtot.toFixed(2);
-  $("#quoteprice").empty();
-  $("#quoteprice").html('<div class="table-responsive"><table class="table table-condensed"><thead><tr><td class="text-center"><strong>Qty</strong></td><td class="text-center"><strong>Description</strong></td><td class="text-right"><strong>Unit</strong></td><td class="text-right"><strong>Total</strong></td></tr></thead><tbody><tr><td>1</td><td>Setup Cost</td><td class="text-right">'+setupfee+'</td><td class="text-right">'+setupfee+'</td></tr><tr><td>'+unitqty+'</td><td>Material</td><td class="text-right">'+materialcost+'</td><td class="text-right">'+(materialcost*unitqty).toFixed(2)+'</td></tr><tr><td>'+unitqty+'</td><td>Laser Time</td><td class="text-right">'+timecost+'</td><td class="text-right">'+(timecost*unitqty).toFixed(2)+'</td></tr><tr><td class="thick-line"></td><td class="thick"></td><td class="thick-line text-center"><strong>Total</strong></td><td class="thick-line text-right">'+ grandtotal +'</td></tr></tbody></table></div>' );
-});
+    // Bind Quote System
+    $('.quoteVar').keyup(function(){
+      var setupfee = ( parseFloat($("#setupcost").val()) ).toFixed(2);
+      var materialcost = ( parseFloat($("#materialcost").val()) * parseFloat($("#materialqty").val()) ).toFixed(2);
+      var timecost = ( parseFloat($("#lasertime").val()) * parseFloat($("#lasertimeqty").val()) ).toFixed(2);
+      var unitqty = ( parseFloat($("#qtycut").val()) ).toFixed(2);
+      var grandtot = (materialcost*unitqty) + (timecost*unitqty) + parseFloat(setupfee);
+      var grandtotal = grandtot.toFixed(2);
+      $("#quoteprice").empty();
+      $("#quoteprice").html('<div class="table-responsive"><table class="table table-condensed"><thead><tr><td class="text-center"><strong>Qty</strong></td><td class="text-center"><strong>Description</strong></td><td class="text-right"><strong>Unit</strong></td><td class="text-right"><strong>Total</strong></td></tr></thead><tbody><tr><td>1</td><td>Setup Cost</td><td class="text-right">'+setupfee+'</td><td class="text-right">'+setupfee+'</td></tr><tr><td>'+unitqty+'</td><td>Material</td><td class="text-right">'+materialcost+'</td><td class="text-right">'+(materialcost*unitqty).toFixed(2)+'</td></tr><tr><td>'+unitqty+'</td><td>Laser Time</td><td class="text-right">'+timecost+'</td><td class="text-right">'+(timecost*unitqty).toFixed(2)+'</td></tr><tr><td class="thick-line"></td><td class="thick"></td><td class="thick-line text-center"><strong>Total</strong></td><td class="thick-line text-right">'+ grandtotal +'</td></tr></tbody></table></div>' );
+    });
 
-});
-// End of document.ready
+
+
+
+
+    $('#tabsLayers').on('click','.close',function(){
+       var tabID = $(this).parents('a').attr('href');
+       $(this).parents('li').remove();
+       $(tabID).remove();
+
+       //display first tab
+       var tabFirst = $('#tabsLayers a:first');
+       tabFirst.tab('show');
+
+       var layerIndex = $(this).parents('a').attr('layerindex');
+       console.log('dumping ' + layerIndex + ' from objectsInScene')
+       objectsInScene.splice(layerIndex, 1)
+       fillLayerTabs();
+     });
+
+     $('#tabsLayers').on('click','a',function(){
+        console.log("selected object id: " + $(this).attr('layerindex'));
+        console.log("selected tab name: " + $(this).parents('li').attr('id'));
+        var tabName = $(this).parents('li').attr('id')
+
+        $(".layertab").removeClass('active');
+        $(this).parents('li').addClass('active');
+
+        if (tabName == "allView") {
+          for (var j = 0; j < objectsInScene.length; j++) {
+            console.log('added object ' + j)
+            scene.add(objectsInScene[j]);
+          }
+          if (typeof(object) != 'undefined') {
+              scene.add(object);
+          }
+
+        } else if (tabName == "gCodeView") {
+          console.log('L: ', scene.children.length)
+          var total = scene.children.length
+          for (var j = 5; j < total; j++) {
+            console.log('Removed ', scene.children[5].name);
+            scene.remove(scene.children[5]);
+          }
+          if (object) {
+            scene.add(object);
+          }
+        } else {
+          var total = scene.children.length
+          for (var j = 5; j < total; j++) {
+            console.log('Removed ', scene.children[5].name);
+            scene.remove(scene.children[5]);
+          }
+          var i = parseInt($(this).attr('layerindex'));
+          scene.add(objectsInScene[i]);
+        };
+      });
+
+
+
+
+}); // End of document.ready
+
+function fillLayerTabs() {
+  $("#tabsLayers").empty();
+  $("#layerprep").empty();
+  $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>');
+  for (j = 5; j < scene.children.length; j++) {
+    scene.remove(scene.children[5])
+  }
+  for (i = 0; i < objectsInScene.length; i++) {
+    var pwr = objectsInScene[i].pwr
+    var speed = objectsInScene[i].speed
+    if (!pwr) {
+      pwr = 100;
+    }
+    if (!speed) {
+      speed = 20;
+    }
+    $("#tabsLayers").append('<li role="presentation" class="layertab" id="'+objectsInScene[i].name+'"><a href="#" layerindex="'+i+'">'+objectsInScene[i].name+'<button class="close" type="button" title="Remove this page">×</button></a></li>');
+
+    if (objectsInScene[i].type == 'Group') {
+      $("#layerprep").append('<hr><label class="control-label">'+objectsInScene[i].name+'</label><div class="input-group"><input type="number" class="form-control" value="'+speed+'" id="speed'+i+'"><span class="input-group-addon">mm/s</span><input type="number" class="form-control" value="'+pwr+'" id="power'+i+'"><span class="input-group-addon">%</span></div>');
+
+    } else if (objectsInScene[i].type == 'Mesh') {
+      var seq = objectsInScene[i].userData.seq;
+      var template = `
+      <hr>
+      <label class="control-label">`+objectsInScene[i].name+`</label>
+      <div class="input-group">
+        <span class="input-group-addon">Light mm/s</span>
+        <input type="number" class="form-control"  value="20" id="feedRateW`+seq+`">
+        <span class="input-group-addon">Light mm/s</span>
+        <input type="number" class="form-control"  value="20" id="feedRateB`+seq+`">
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon">Min Pwr</span>
+        <input type="number" class="form-control" value="0" id="minpwr`+seq+`">
+        <span class="input-group-addon">Max Pwr</span>
+        <input type="number" class="form-control" value="100" id="maxpwr`+seq+`">
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon">X</span>
+        <input type="number" class="form-control" value="0" id="rasterxoffset`+seq+`">
+        <span class="input-group-addon">Y</span>
+        <input type="number" class="form-control" value="0" id="rasteryoffset`+seq+`">
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon">DPI</span>
+        <input type="number" class="form-control" value="25.4" id="rasterDPI`+seq+`">
+      </div>
+      `;
+      $("#layerprep").append(template);
+    };
+    scene.add(objectsInScene[i])
+  }
+};
+
+
 
 function checkNumPad() {
-
   useNumPad = $('#useNumPad').val()
   if (useNumPad.indexOf('Enable') == 0) {
-        $.fn.numpad.defaults.gridTpl = '<table class="table modal-content"></table>';
-        $.fn.numpad.defaults.backgroundTpl = '<div class="modal-backdrop in"></div>';
-        $.fn.numpad.defaults.displayTpl = '<input type="text" class="form-control" />';
-        $.fn.numpad.defaults.dblCellTpl = '<td colspan="2"></td>',
-        $.fn.numpad.defaults.buttonNumberTpl =  '<button type="button" class="btn btn-numpad btn-default" style="width: 100%;"></button>';
-        $.fn.numpad.defaults.buttonFunctionTpl = '<button type="button" class="btn  btn-numpad" style="width: 100%;"></button>';
-        //$.fn.numpad.defaults.onKeypadCreate = function(){$(this).find('.done').addClass('btn-primary');};
-        $('.numpad').numpad({
-        					decimalSeparator: '.',
-                  gcode: false,
-                  textDone: 'OK',
-              		textDelete: 'Del',
-              		textClear: 'Clear',
-              		textCancel: 'Cancel',
-                  headerText: 'Enter Number',
-        				});
-
-        $('.numpadgcode').numpad({
-                  decimalSeparator: '.',
-                  gcode: true,
-                  textDone: 'OK',
-              		textDelete: 'Del',
-              		textClear: 'Clear',
-              		textCancel: 'Cancel',
-                  headerText: 'Enter GCODE',
-                });
-
-
+    $.fn.numpad.defaults.gridTpl = '<table class="table modal-content"></table>';
+    $.fn.numpad.defaults.backgroundTpl = '<div class="modal-backdrop in"></div>';
+    $.fn.numpad.defaults.displayTpl = '<input type="text" class="form-control" />';
+    $.fn.numpad.defaults.dblCellTpl = '<td colspan="2"></td>',
+    $.fn.numpad.defaults.buttonNumberTpl =  '<button type="button" class="btn btn-numpad btn-default" style="width: 100%;"></button>';
+    $.fn.numpad.defaults.buttonFunctionTpl = '<button type="button" class="btn  btn-numpad" style="width: 100%;"></button>';
+    //$.fn.numpad.defaults.onKeypadCreate = function(){$(this).find('.done').addClass('btn-primary');};
+    $('.numpad').numpad({
+			decimalSeparator: '.',
+      gcode: false,
+      textDone: 'OK',
+  		textDelete: 'Del',
+  		textClear: 'Clear',
+  		textCancel: 'Cancel',
+      headerText: 'Enter Number',
+		});
+    $('.numpadgcode').numpad({
+      decimalSeparator: '.',
+      gcode: true,
+      textDone: 'OK',
+  		textDelete: 'Del',
+  		textClear: 'Clear',
+  		textCancel: 'Cancel',
+      headerText: 'Enter GCODE',
+    });
   }
-
 }
-
-// From here down we can have the actual functions
 
 // Error handling
 errorHandlerJS = function() {
-    window.onerror = function(message, url, line) {
-        message = message.replace(/^Uncaught /i, "");
-        //alert(message+"\n\n("+url+" line "+line+")");
-        console.log(message + "\n\n(" + url + " line " + line + ")");
-        if (message.indexOf('updateMatrixWorld') == -1 ) { // Ignoring threejs/google api messages, add more || as discovered
-            printLog(message + "\n(" + url + " on line " + line + ")", errorcolor);
-        }
-
-    };
+  window.onerror = function(message, url, line) {
+    message = message.replace(/^Uncaught /i, "");
+    //alert(message+"\n\n("+url+" line "+line+")");
+    console.log(message + "\n\n(" + url + " line " + line + ")");
+    if (message.indexOf('updateMatrixWorld') == -1 ) { // Ignoring threejs/google api messages, add more || as discovered
+        printLog(message + "\n(" + url + " on line " + line + ")", errorcolor);
+    }
+  };
 };
 
 // Function to execute when opening file (triggered by fileOpen.addEventListener('change', readFile, false); )
-
-
 function readFile(evt) {
   console.log(evt);
     // Close the menu
     $("#drop1").dropdown("toggle");
-    cleanupThree();
-    if (typeof(fileName) !== 'undefined' ) {
-      axesgrp.remove(fileName)
-    }
-
-    fileName = makeSprite(scene, "webgl", {
-        x: (laserxmax / 2),
-        y: -30,
-        z: 0,
-        text: 'Filename : ' + evt.target.files[0].name,
-        color: "#000000"
-    });
-
-    $('#tabsLayers').append('<li role="presentation" class="layerth" id="'+evt.target.files[0].name+'-tab"><a href="#">'+evt.target.files[0].name+'</a></li>')
-    axesgrp.add(fileName);
     // Filereader
     var f = evt.target.files[0];
     if (f) {
@@ -272,21 +329,11 @@ function readFile(evt) {
             r.readAsText(evt.target.files[0]);
             r.onload = function(e) {
                 dxf = r.result
-                $('#togglefile').click();
-                $('#cammodule').show();
-                // $('#svgnewway').hide();
-                $('#rastermodule').hide();
                 drawDXF(dxf, f.name);
                 currentWorld();
                 printLog('DXF Opened', successcolor);
-                $('#cammodule').show();
                 putFileObjectAtZero();
                 resetView()
-                $('#stlopt').hide();
-                $('#prepopt').show();
-                $('#prepopt').click();
-                attachTransformWidget();
-                activeObject = fileParentGroup
             };
 
         } else if (f.name.match(/.svg$/i)) {
@@ -296,71 +343,38 @@ function readFile(evt) {
                 svg = r.result
                 var svgpreview = document.getElementById('svgpreview');
                 svgpreview.innerHTML = r.result;
-                    // /console.log(svg);
-                $('#togglefile').click();
-                $('#cammodule').show();
-                // $('#svgnewway').show();
-                $('#rastermodule').hide();
                 var svgfile = $('#svgpreview').html();
-                // var colors = pullcolors(svgfile).unique();
-                // var layers = []
-                // for (i = 0; i < colors.length; i++) {
-                //   // var r = colors[i][0];
-                //   // var g = colors[i][1];
-                //   // var b = colors[i][2];
-                //   //var colorval = RGBToHex(r, g, b)
-                //   layers.push(colors[i]);
-                // };
                 svg2three(svgfile, f.name);
                 currentWorld();
                 printLog('SVG Opened', successcolor);
-                $('#cammodule').show();
-                putFileObjectAtZero();
                 resetView()
-                $('#stlopt').show();
-                $('#prepopt').show();
-                $('#prepopt').click();
                 $('#svgresize').modal('show');
-                attachTransformWidget();
-                activeObject = fileParentGroup
             };
             $('#svgresize').modal('show');
 
         } else if (f.name.match(/.gcode$/i)) {
-            cleanupThree();
             r.readAsText(evt.target.files[0]);
             r.onload = function(event) {
-                cleanupThree();
+                // cleanupThree();
                 document.getElementById('gcodepreview').value = this.result;
                 openGCodeFromText();
                 printLog('GCODE Opened', successcolor);
-                $('#toggleviewer').click();
-                $('#cammodule').hide();
-                $('#rastermodule').hide();
-                //  putFileObjectAtZero();
                 resetView()
-                $('#stlopt').hide();
-                $('#prepopt').hide();
-                $("#transformcontrols").hide();
-                activeObject = object
             };
         } else if (f.name.match(/.stl$/i)) {
             //r.readAsText(evt.target.files[0]);
             // Remove the UI elements from last run
-            cleanupThree();
             var stlloader = new MeshesJS.STLLoader;
             r.onload = function(event) {
-                cleanupThree();
+                // cleanupThree();
                 // Parse ASCII STL
                 if (typeof r.result === 'string') {
                     console.log("Inside STL.js Found ASCII");
                     stlloader.loadString(r.result);
                     return;
                 }
-
                 // buffer reader
                 var view = new DataView(this.result);
-
                 // get faces number
                 try {
                     var faces = view.getUint32(80, true);
@@ -368,147 +382,39 @@ function readFile(evt) {
                     self.onError(error);
                     return;
                 }
-
                 // is binary ?
                 var binary = view.byteLength == (80 + 4 + 50 * faces);
-
                 if (!binary) {
                     // get the file contents as string
                     // (faster than convert array buffer)
                     r.readAsText(evt.target.files[0]);
                     return;
                 }
-
                 // parse binary STL
                 console.log("Inside STL.js Binary STL");
-                cleanupThree();
                 stlloader.loadBinaryData(view, faces, 100, window, evt.target.files[0]);
             };
             // start reading file as array buffer
             r.readAsArrayBuffer(evt.target.files[0]);
             printLog('STL Opened', successcolor);
-            //$('#cammodule').hide();
-            $('#cammodule').show();
-            $('#rastermodule').hide();
-            $('#togglefile').click();
-            $('#stlopt').show();
-            $('#prepopt').hide();
-            $('#stlopt').click();
-            $("#transformcontrols").hide();
-            activeObject = fileParentGroup
+            $('#stlslice').modal('show')
         } else {
             console.log(f.name + " is probably a Raster");
             $('#origImage').empty();
             r.readAsDataURL(evt.target.files[0]);
             r.onload = function(event) {
-                var imgtag = document.getElementById("origImage");
-                imgtag.title = evt.target.files[0].name;
-                imgtag.src = event.target.result;
-                setImgDims();
-                drawRaster(f.name);
-                printLog('Bitmap Opened', successcolor);
-                $('#cammodule').hide();
-                $('#rastermodule').show();
-                // putFileObjectAtZero();
-                $('#togglefile').click();
-                $('#stlopt').hide();
-                $('#prepopt').hide();
-                $("#transformcontrols").hide();
-
-                //tbfleming's threejs texture code
-                var img = document.getElementById('origImage');
-                var imgwidth = img.naturalWidth;
-                var imgheight = img.naturalHeight;
-
-                var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
-
-                var texture = new THREE.TextureLoader().load(event.target.result);
-                texture.minFilter = THREE.LinearFilter
-
-                var material = new THREE.MeshBasicMaterial({
-                    map: texture,
-                    transparent: true
-                });
-
-                rastermesh = new THREE.Mesh(geometry, material);
-
-                rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
-                rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
-                rastermesh.name = "rastermesh"
-
-                scene.add(rastermesh);
-                //  attachTransformWidget();
-                resetView();
-                setImgDims();
-                $('#rasterresize').modal('show')
-                activeObject = rastermesh
+                drawRaster(evt);
             };
         }
     }
     $('#filestatus').hide();
     $('#cam-menu').click();
-
-
-
-};
-
-
-// Removed and null all object when a new file is loaded
-function cleanupThree() {
-    if (typeof(fileObject) !== 'undefined') {
-        scene.remove(fileObject);
-        fileObject = null;
-    };
-
-    if (typeof(rastermesh) !== 'undefined') {
-        scene.remove(rastermesh);
-        rastermesh = null;
-    };
-
-    if (typeof(inflateGrp) != 'undefined') {
-        scene.remove(inflateGrp);
-        inflateGrp = null;
-    }
-
-    if (typeof(slicegroup) != 'undefined') {
-        scene.remove(slicegroup);
-        slicegroup = null;
-    }
-
-    if (typeof(stl) != 'undefined') {
-        scene.remove(stl);
-        stl = null;
-    }
-
-    if (typeof(object) != 'undefined') {
-        scene.remove(object);
-        object = null;
-    }
-
-    if (typeof(fileParentGroup) != 'undefined') {
-        scene.remove(fileParentGroup);
-        fileParentGroup = null;
-    }
-
-    if (boundingBox) {
-        scene.remove(boundingBox);
-        boundingBox = null;
-    }
-
-    if (typeof(rastermesh) != 'undefined') {
-        scene.remove(rastermesh);
-        rastermesh = null;
-    }
-
     if (control) {
         scene.remove(control);
         controls.reset();
-        //  boundingBox = null;
     }
-
-
-}
-
+    setTimeout(function(){ fillLayerTabs(); }, 300);
+};
 
 function saveFile() {
     var textToWrite = document.getElementById("gcodepreview").value;
@@ -516,7 +422,6 @@ function saveFile() {
     invokeSaveAsDialog(blob, 'file.gcode');
 
 };
-
 
 /**
  * @param {Blob} file - File or Blob object. This parameter is required.
