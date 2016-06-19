@@ -45,7 +45,7 @@ function openGCodeFromText() {
 	var currentTime = Date.now();
 	var elapsed = (currentTime - startTime);
 
-  printLog('3D Render completed in '+elapsed, successcolor)
+  printLog('3D Render completed in '+elapsed + ' ms', successcolor)
 
 	// Pretty Gcode Viewer
 	//$("#gcodelinestbody").empty();

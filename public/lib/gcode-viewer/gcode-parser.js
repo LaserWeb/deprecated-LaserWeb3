@@ -2,6 +2,7 @@
 
   AUTHOR:  John Lauer
   -- S??? (laser intensity) Parameter Handling added by AUTHOR: Peter van der Walt
+  v19/6/2016
 
 */
 
@@ -21,6 +22,7 @@ function GCodeParser(handlers) {
     isUnitsMm = true;
 
     parseLine = function (text, info) {
+        // console.log('Parsing: ',text)
         var origtext = text;
 
         if (text.match(/^N/i)) {                   // remove line numbers if exist
@@ -168,11 +170,13 @@ function GCodeParser(handlers) {
             NProgress.set(progress);
             var startTime = now();
             while (index < count && (now() - startTime) <= maxTimePerChunk) {
-		            parseLine(lines[index], index);
+                // console.log('parsing ' + lines[index])
+                parseLine(lines[index], index);
                 // tbody += '<tr id="tr'+[index]+'"><td>'+[index]+'</td><td>'+lines[index]+'</td></tr>';//code here using lines[i] which will give you each line
                 ++index;
             }
 	          closeLineSegment();
+            // console.log('done parsing ')
             if (index < count) {
                 setTimeout(doChunk, 1);  // set Timeout for async iteration
             } else {
@@ -275,7 +279,7 @@ createObjectFromGCode = function (gcode, indxMax) {
     };
 
     getLineGroup = function (line, args) {
-        //console.log("getLineGroup:", line);
+        console.log("getLineGroup:", line);
         if (layer == undefined) newLayer(line);
         var speed = Math.round(line.e / 1000);
         var opacity = line.s;
@@ -287,7 +291,6 @@ createObjectFromGCode = function (gcode, indxMax) {
 
         if(typeof line.s === 'undefined'){
             opacity = 0.3;
-            console.log('No Line Type ' + opacity+', '+line.x);
         } else {
             var lasermultiply = $("#lasermultiply").val() || 100;
             opacity = line.s / lasermultiply;
@@ -464,7 +467,7 @@ createObjectFromGCode = function (gcode, indxMax) {
     };
 
     addSegment = function (p1, p2, args) {
-	closeLineSegment();
+	     closeLineSegment();
         //console.log("");
         //console.log("addSegment p2:", p2);
         // add segment to array for later use
@@ -810,18 +813,19 @@ createObjectFromGCode = function (gcode, indxMax) {
 
 	var col;
 	var intensity;
+  var lasermultiply = $("#lasermultiply").val() || 100;
 	if (p2.g0) {          // g0
 	    col = {r: 0, g:1, b:0};
-	    intensity = 1.0-p2.s/100.0; // lasermultiply
+	    intensity = 1.0-p2.s/lasermultiply; // lasermultiply
 	} else if (p2.g1) {   // g1
 	    col = {r: 0.7, g:0, b:0};
-	    intensity = 1.0-p2.s/100.0; // lasermultiply
+	    intensity = 1.0-p2.s/lasermultiply; // lasermultiply
 	} else if (p2.g7) {   // g7
 	    col = {r: 0, g:0, b:1};
-	    intensity = 1.0-p2.s/255.0; // lasermultiply
+	    intensity = 1.0-p2.s/lasermultiply; // lasermultiply
 	} else {
 	    col = {r: 0, g:1, b:1};
-	    intensity = 1.0-p2.s/255.0; // lasermultiply
+	    intensity = 1.0-p2.s/lasermultiply; // lasermultiply
 	}
 
         lineObject.colorBuf[i+0] = col.r + (1-col.r)*intensity;        // Colors
@@ -1181,10 +1185,13 @@ createObjectFromGCode = function (gcode, indxMax) {
             cofg.addFakeSegment(args);
 	},
     });
+    // console.log("Just before parser.parse: "+ gcode)
     parser.parse(gcode);
 };
 
 function drawobject() {
+
+  // console.log("INSIDE DRAWOBJECT");
     // set what units we're using in the gcode
     isUnitsMm = parser.isUnitsMm;
 
@@ -1193,11 +1200,12 @@ function drawobject() {
 
     // old approach of monolithic line segment
     for (var lid in layers3d) {
+      console.log('processing Layer ' + lid)
         var layer = layers3d[lid];
         for (var tid in layer.type) {
             var type = layer.type[tid];
             var bufferGeo = convertLineGeometryToBufferGeometry( type.geometry, type.color );
-	    newObject.add(new THREE.Line(bufferGeo, type.material, THREE.LinePieces));
+	          newObject.add(new THREE.Line(bufferGeo, type.material, THREE.LinePieces));
         }
     }
     newObject.add(new THREE.Object3D());
