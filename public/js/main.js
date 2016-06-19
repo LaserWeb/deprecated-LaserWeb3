@@ -241,9 +241,9 @@ function fillLayerTabs() {
       <hr>
       <label class="control-label">`+objectsInScene[i].name+`</label>
       <div class="input-group">
-        <span class="input-group-addon">Light mm/s</span>
-        <input type="number" class="form-control"  value="20" id="feedRateW`+seq+`">
         <span class="input-group-addon">Dark mm/s</span>
+        <input type="number" class="form-control"  value="20" id="feedRateW`+seq+`">
+        <span class="input-group-addon">Light mm/s</span>
         <input type="number" class="form-control"  value="20" id="feedRateB`+seq+`">
       </div>
       <div class="input-group">
