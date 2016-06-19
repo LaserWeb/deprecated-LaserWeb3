@@ -287,25 +287,11 @@ createObjectFromGCode = function (gcode, indxMax) {
 
         if(typeof line.s === 'undefined'){
             opacity = 0.3;
+            console.log('No Line Type ' + opacity+', '+line.x);
         } else {
-            // if (firmware.indexOf('Grbl') == 0) {
-            //   opacity = line.s / 255;
-            // } else if (firmware.indexOf('Smooth') == 0) {
-            //   opacity = line.s;
-            //   //console.log(opacity+', '+line.x);
-            //   //console.log(opacity);
-            // } else if (firmware.indexOf('Lasaur') == 0) {
-            //   opacity = line.s / 255;
-            //   //console.log(opacity+', '+line.x);
-            // } else {
-
-            var lasermultiply = $('#lasermultiply').val() || 100;
-            //console.log('Laser Multiplier', lasermultiply);
-            //var laserPwrVal = laserPwr * ( lasermultiply / 100);
-
-	    //            opacity = line.s / lasermultiply;
-	    opacity = line.s / 100;
-            //console.log(opacity+', '+line.x);
+            var lasermultiply = $("#lasermultiply").val() || 100;
+            opacity = line.s / lasermultiply;
+            console.log(opacity+', '+line.x);
             // }
         }
         //console.log(opacity);
