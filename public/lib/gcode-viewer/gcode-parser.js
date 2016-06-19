@@ -2,15 +2,17 @@
 
   AUTHOR:  John Lauer
   -- S??? (laser intensity) Parameter Handling added by AUTHOR: Peter van der Walt
+  v19/6/2016
 
 */
 
 // This is a simplified and updated version of http://gcode.joewalnes.com/ that works with the latest version of Three.js (v68).
 // Updated with code from http://chilipeppr.com/tinyg's 3D viewer to support more CNC type Gcode
-var tototaltimemax = '';
+var totaltimemax = '';
 totaltimemax = 0;
 
 var lineObjects = new THREE.Object3D();
+lineObjects.name = 'LineObjects'
 
 function GCodeParser(handlers) {
     handlers = handlers || {};
@@ -20,6 +22,7 @@ function GCodeParser(handlers) {
     isUnitsMm = true;
 
     parseLine = function (text, info) {
+        // console.log('Parsing: ',text)
         var origtext = text;
 
         if (text.match(/^N/i)) {                   // remove line numbers if exist
@@ -151,10 +154,10 @@ function GCodeParser(handlers) {
     this.parse = function(gcode) {
         $('#renderprogressholder').show();
         $("#gcodelinestbody").empty();
-        lines = gcode.split(/\r{0,1}\n/);
-        count = lines.length;
-        maxTimePerChunk = 500;
-        index = 0;
+        var lines = gcode.split(/\r{0,1}\n/);
+        var count = lines.length;
+        var maxTimePerChunk = 500;
+        var index = 0;
 
         function now() {
             return new Date().getTime();
@@ -167,11 +170,13 @@ function GCodeParser(handlers) {
             NProgress.set(progress);
             var startTime = now();
             while (index < count && (now() - startTime) <= maxTimePerChunk) {
-		parseLine(lines[index], index);
-                tbody += '<tr id="tr'+[index]+'"><td>'+[index]+'</td><td>'+lines[index]+'</td></tr>';//code here using lines[i] which will give you each line
+                // console.log('parsing ' + lines[index])
+                parseLine(lines[index], index);
+                // tbody += '<tr id="tr'+[index]+'"><td>'+[index]+'</td><td>'+lines[index]+'</td></tr>';//code here using lines[i] which will give you each line
                 ++index;
             }
-	    closeLineSegment();
+	          closeLineSegment();
+            // console.log('done parsing ')
             if (index < count) {
                 setTimeout(doChunk, 1);  // set Timeout for async iteration
             } else {
@@ -180,11 +185,13 @@ function GCodeParser(handlers) {
                 console.log('[GCODE PARSE] Done  ');
                 $('#renderprogressholder').hide();
                 object =  drawobject();
-		object.add(lineObjects);
+		            object.add(lineObjects);
+                console.log('Line Objects', lineObjects)
                 object.translateX(laserxmax /2 * -1);
                 object.translateY(laserymax /2 * -1);
                 object.name = 'object';
                 scene.add(object);
+                // objectsInScene.push(object)
             }
         }
         doChunk();
@@ -229,7 +236,8 @@ createObjectFromGCode = function (gcode, indxMax) {
     // its own userData info
     // G2/G3 moves are their own child of lots of lines so
     // that even the simulator can follow along better
-    new3dObj = new THREE.Group();
+    var new3dObj = new THREE.Group();
+    new3dObj.name = 'newobj';
     plane = "G17"; //set default plane to G17 - Assume G17 if no plane specified in gcode.
     layers3d = [];
     layer = undefined;
@@ -271,7 +279,7 @@ createObjectFromGCode = function (gcode, indxMax) {
     };
 
     getLineGroup = function (line, args) {
-        //console.log("getLineGroup:", line);
+        console.log("getLineGroup:", line);
         if (layer == undefined) newLayer(line);
         var speed = Math.round(line.e / 1000);
         var opacity = line.s;
@@ -284,24 +292,9 @@ createObjectFromGCode = function (gcode, indxMax) {
         if(typeof line.s === 'undefined'){
             opacity = 0.3;
         } else {
-            // if (firmware.indexOf('Grbl') == 0) {
-            //   opacity = line.s / 255;
-            // } else if (firmware.indexOf('Smooth') == 0) {
-            //   opacity = line.s;
-            //   //console.log(opacity+', '+line.x);
-            //   //console.log(opacity);
-            // } else if (firmware.indexOf('Lasaur') == 0) {
-            //   opacity = line.s / 255;
-            //   //console.log(opacity+', '+line.x);
-            // } else {
-
-            var lasermultiply = $('#lasermultiply').val() || 100;
-            //console.log('Laser Multiplier', lasermultiply);
-            //var laserPwrVal = laserPwr * ( lasermultiply / 100);
-
-	    //            opacity = line.s / lasermultiply;
-	    opacity = line.s / 100;
-            //console.log(opacity+', '+line.x);
+            var lasermultiply = $("#lasermultiply").val() || 100;
+            opacity = line.s / lasermultiply;
+            console.log(opacity+', '+line.x);
             // }
         }
         //console.log(opacity);
@@ -474,7 +467,7 @@ createObjectFromGCode = function (gcode, indxMax) {
     };
 
     addSegment = function (p1, p2, args) {
-	closeLineSegment();
+	     closeLineSegment();
         //console.log("");
         //console.log("addSegment p2:", p2);
         // add segment to array for later use
@@ -820,18 +813,19 @@ createObjectFromGCode = function (gcode, indxMax) {
 
 	var col;
 	var intensity;
+  var lasermultiply = $("#lasermultiply").val() || 100;
 	if (p2.g0) {          // g0
 	    col = {r: 0, g:1, b:0};
-	    intensity = 1.0-p2.s/100.0; // lasermultiply
+	    intensity = 1.0-p2.s/lasermultiply; // lasermultiply
 	} else if (p2.g1) {   // g1
 	    col = {r: 0.7, g:0, b:0};
-	    intensity = 1.0-p2.s/100.0; // lasermultiply
+	    intensity = 1.0-p2.s/lasermultiply; // lasermultiply
 	} else if (p2.g7) {   // g7
 	    col = {r: 0, g:0, b:1};
-	    intensity = 1.0-p2.s/255.0; // lasermultiply
+	    intensity = 1.0-p2.s/lasermultiply; // lasermultiply
 	} else {
 	    col = {r: 0, g:1, b:1};
-	    intensity = 1.0-p2.s/255.0; // lasermultiply
+	    intensity = 1.0-p2.s/lasermultiply; // lasermultiply
 	}
 
         lineObject.colorBuf[i+0] = col.r + (1-col.r)*intensity;        // Colors
@@ -1191,22 +1185,27 @@ createObjectFromGCode = function (gcode, indxMax) {
             cofg.addFakeSegment(args);
 	},
     });
+    // console.log("Just before parser.parse: "+ gcode)
     parser.parse(gcode);
 };
 
 function drawobject() {
+
+  // console.log("INSIDE DRAWOBJECT");
     // set what units we're using in the gcode
     isUnitsMm = parser.isUnitsMm;
 
     var newObject = new THREE.Object3D();
+    newObject.name = 'newObject'
 
     // old approach of monolithic line segment
     for (var lid in layers3d) {
+      console.log('processing Layer ' + lid)
         var layer = layers3d[lid];
         for (var tid in layer.type) {
             var type = layer.type[tid];
             var bufferGeo = convertLineGeometryToBufferGeometry( type.geometry, type.color );
-	    newObject.add(new THREE.Line(bufferGeo, type.material, THREE.LinePieces));
+	          newObject.add(new THREE.Line(bufferGeo, type.material, THREE.LinePieces));
         }
     }
     newObject.add(new THREE.Object3D());
@@ -1273,6 +1272,13 @@ function drawobject() {
        height = (bbox2.max.y - bbox2.min.y);
        $('#quoteresult').html('Job moves length: ' + totalDist.toFixed(1) + ' mm<br> Width: ' + width.toFixed(1) + ' mm<br>Height: ' + height.toFixed(1) + ' mm<br>Material: ' + ((width*height) / 1000).toFixed(3) + 'cm<sup>2</sup>' );
        $("#materialqty").val(((width*height) / 1000).toFixed(3));
+    } else if (rastermesh) {
+       var bbox2 = new THREE.Box3().setFromObject(rastermesh);
+       console.log('bbox width: ', (bbox2.max.x - bbox2.min.x), 'height Y: ', (bbox2.max.y - bbox2.min.y) );
+       width = (bbox2.max.x - bbox2.min.x);
+       height = (bbox2.max.y - bbox2.min.y);
+       $('#quoteresult').html('Job moves length: ' + totalDist.toFixed(1) + ' mm<br> Width: ' + width.toFixed(1) + ' mm<br>Height: ' + height.toFixed(1) + ' mm<br>Material: ' + ((width*height) / 1000).toFixed(3) + 'cm<sup>2</sup>' );
+       $("#materialqty").val(((width*height) / 1000).toFixed(3));
     }
     // store meta data in userData of object3d for later use like in animation
     // of toolhead
@@ -1282,7 +1288,9 @@ function drawobject() {
 //    newObject.userData.center2 = center2;
 //    newObject.userData.extraObjects = extraObjects;
 //    newObject.userData.threeObjs = new3dObj;
+
     return newObject;
+
 };
 
 function convertLineGeometryToBufferGeometry(lineGeometry, color) {

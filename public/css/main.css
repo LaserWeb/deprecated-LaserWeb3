@@ -288,7 +288,17 @@ d-grid {border: none; padding: 20px;}
 			  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 }
 
-.form-login{
+.form-scan{
   padding: 1em;
   min-width: 0px;
 }
+
+
+.close{
+  margin-left: 7px;
+  float: right;
+  font-size: 21;
+  font-weight: 700;
+  text-shadow: 0 1px 0 #fff;
+  opacity: 0.2;
+ }
