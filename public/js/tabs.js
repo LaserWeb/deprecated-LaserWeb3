@@ -136,10 +136,11 @@ function fillLayerTabs() {
       $("#layerprep").append(template);
       var objname = objectsInScene[i].name
       if (objname.indexOf('.svg') != -1) {
+        var svgscale = objectsInScene[i].scale.x
         var templatedpi = `
         <div class="input-group">
           <span class="input-group-addon">DPI</span>
-          <input type="number" class="form-control" value="25.4" id="svgdpi`+i+`" objectseq="`+i+`">
+          <input type="number" class="form-control" value="`+(25.4/svgscale)+`" id="svgdpi`+i+`" objectseq="`+i+`">
 
         </div>
         `
@@ -153,6 +154,7 @@ function fillLayerTabs() {
       var xpos = objectsInScene[i].position.x
       var ypos = objectsInScene[i].position.y
       // var seq = objectsInScene[i].userData.seq;
+      var scale = objectsInScene[i].scale.y;
       var template = `
       <hr>
       <label class="control-label">`+objectsInScene[i].name+`</label>
@@ -176,7 +178,7 @@ function fillLayerTabs() {
       </div>
       <div class="input-group">
         <span class="input-group-addon">DPI</span>
-        <input type="number" class="form-control" value="25.4" id="rasterDPI`+i+`" objectseq="`+i+`">
+        <input type="number" class="form-control" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
       </div>
       `;
       $("#layerprep").append(template);
