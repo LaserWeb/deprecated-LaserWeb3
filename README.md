@@ -24,12 +24,13 @@ If you want to help develop or test, this is the right place to be. BUT... If yo
 
 Note: Ever changing.  See the Issues tab above for details.
 
-| Tables        | Supported by LW3 | Raster Grayscale  |Realtime Feedback  |
-| ------------- |------------------| :----------------:|:-----------------:|
-| Smoothieware  | Fully            |   Yes             |   Yes             |
-| Marlin        | In Alpha         |   No              |   No              |
-| Repetier      | not planned      |   No              |   No              |
-| Grbl          | planned          |   No              |   No              |
+| Tables        | Supported by LW3 | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
+| ------------- |------------------| :----------------:|:-----------------:|:----------------------:|
+| Smoothieware  | Fully            |   Yes             |   Yes             | Yes - improvements     |
+| Marlin        | In Alpha         |   No              |   No              | Yes - test and improve | 
+| Grbl          | planned          |   No              |   No              | Yes - please           |
+| TinyG         | not planned      |   No              |   Yes             | Yes - please           |
+| Repetier      | not planned      |   No              |   No              | Yes                    |
 
 Long story short:  Smoothieware wins on all fronts.  its the ONLY open source firmware which automatically modulates its laser power output according to the realtime acceleration values - ensuring that (de)acceleration does not cause larger kerf / darker engraves - which the other firmwares causes.   This is a MUST for good Raster engraving, and is needed for Raster Grayscale!
 
