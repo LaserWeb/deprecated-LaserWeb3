@@ -117,6 +117,9 @@ function fillLayerTabs() {
     if (objectsInScene[i].type == 'Group') {
       var xoffset = objectsInScene[i].userData.offsetX
       var yoffset = objectsInScene[i].userData.offsetY
+      var xpos = objectsInScene[i].position.x
+      var ypos = objectsInScene[i].position.y
+      
       var template = `
       <hr>
       <label class="control-label">`+objectsInScene[i].name+`</label>
@@ -128,9 +131,9 @@ function fillLayerTabs() {
       </div>
       <div class="input-group">
         <span class="input-group-addon">X</span>
-        <input type="number" class="form-control" xoffset="`+xoffset+`" value="0" id="rasterxoffset`+i+`" objectseq="`+i+`">
+        <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
         <span class="input-group-addon">Y</span>
-        <input type="number" class="form-control" yoffset="`+yoffset+`" value="0" id="rasteryoffset`+i+`" objectseq="`+i+`">
+        <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
       </div>
       `
       $("#layerprep").append(template);
