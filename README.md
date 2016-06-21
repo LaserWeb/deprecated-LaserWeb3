@@ -14,7 +14,7 @@ If you want to help develop or test, this is the right place to be. BUT... If yo
 * Smoothieware Ethernet support
 * 
 
-![Screenshot](https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/screenshot.jpg)
+![Screenshot](https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/screenshot.png)
 
 ## Install Instructions
 
