@@ -8,11 +8,11 @@ If you want to help develop or test, this is the right place to be. BUT... If yo
 
 ## What's new / planned for LaserWeb 3
 
-* A ground up rewrite of the serial comms layer
-* A new tabbed multilayer CAM system that allows you to load dxfs, svgs, stls and rasters into the SAME job!
-* A cnew costing estimate module - for those of you who make money out of your lasers - should help you qoute just a little more accurate
-* Smoothieware Ethernet support
-* 
+* A ground up rewrite of the serial comms layer (In progress:  Smoothieware support is done, Marlin support is available for testing and further development, and Grbl support needs to be written next) 
+* A new tabbed multilayer CAM system that allows you to load dxfs, svgs, stls and rasters into the SAME job! (Implemented, needs testing)
+* A new costing estimate module - for those of you who make money out of your lasers - should help you qoute just a little more accurate (Already implemented)
+* Smoothieware Ethernet support (nearly done)
+* Rotary Axis Support (planned)
 
 ![Screenshot](https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/screenshot.png)
 
