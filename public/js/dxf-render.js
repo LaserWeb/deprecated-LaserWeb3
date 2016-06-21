@@ -65,6 +65,7 @@ function drawDXF(file, fileName) {
     fileParentGroup.add(fileObject);
     fileParentGroup.translateX((laserxmax / 2) * -1);
     fileParentGroup.translateY((laserymax / 2) * -1);
+    putFileObjectAtZero(fileParentGroup);
     scene.add(fileParentGroup);
     objectsInScene.push(fileParentGroup)
 

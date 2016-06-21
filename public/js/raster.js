@@ -91,7 +91,8 @@ function rasterInit() {
 }
 
 function runRaster(index) {
-  var toRaster = 'origImage'+index;
+  var seq = objectsInScene[index].userData.seq;
+  var toRaster = 'origImage'+seq;
   var spotSizeMul = parseFloat($('#spotSize').val());
   var laserRapid = $('#rapidRate').val() * 60;
   var imagePosition = $('#imagePosition').val()

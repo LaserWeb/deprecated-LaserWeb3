@@ -80,8 +80,9 @@ $(document).ready(function() {
             if (objectsInScene[j].name != 'object') {
               if (objectsInScene[j].type == "Mesh") {
                 console.log('Object '+j+' is a Raster')
-                runRaster(objectsInScene[j].userData.seq)
+                runRaster(j)
               } else {
+                console.log('Object '+j+' is a Vector')
                 var cutSpeed0 = parseFloat( $("#speed"+(j)).val() ) * 60;
                 var pwr0 = parseFloat( $("#power"+(j)).val() );
                 rapidSpeed = parseFloat(document.getElementById('rapidspeed').value) * 60;

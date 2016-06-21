@@ -256,6 +256,7 @@ function svg2three(svgfile, fileName, settings) {
 fileParentGroup.add(fileObject);
 fileParentGroup.translateX((laserxmax / 2) * -1);
 fileParentGroup.translateY((laserymax / 2) * -1);
+putFileObjectAtZero(fileParentGroup)
 scene.add(fileParentGroup);
 fileObject.name = fileName + idx
 objectsInScene.push(fileParentGroup)

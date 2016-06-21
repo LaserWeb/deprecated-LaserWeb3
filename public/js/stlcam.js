@@ -149,7 +149,8 @@ function slicegrid(step) {
     slicegroup.translateY(-laserymax / 2)
 
     var total = scene.children.length
-    
+
+    putFileObjectAtZero(slicegroup);    
     scene.add(slicegroup);
     fileParentGroup = slicegroup;
     slicegroup.name = "Sliced STL"+step+'mm'

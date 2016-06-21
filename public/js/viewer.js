@@ -187,10 +187,10 @@ function init3D() {
     //controls.mouseButtons = { PAN: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, ORBIT: THREE.MOUSE.RIGHT }; // swapping left and right buttons
     // /var STATE = { NONE : - 1, ROTATE : 0, DOLLY : 1, PAN : 2, TOUCH_ROTATE : 3, TOUCH_DOLLY : 4, TOUCH_PAN : 5 };
 
-    // control = new THREE.TransformControls(camera, renderer.domElement);
-    //
-    // scene.add(control);
-    // control.setMode("translate");
+    control = new THREE.TransformControls(camera, renderer.domElement);
+
+    scene.add(control);
+    control.setMode("translate");
 
     var light = new THREE.DirectionalLight(0xffffff);
     light.position.set(-500, -500, 1).normalize();
@@ -646,7 +646,8 @@ function onMouseClick(e) {
             obj = intersection.object;
         if (obj.name && obj.name != "bullseye" && obj.name != "rastermesh" && obj.name != "XY") {
             printLog('Clicked on : ' + obj.name, successcolor)
-            obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
+            // obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
+            attachBB(obj)
         }
 
         bullseye.position.set(intersects[i].point.x, intersects[i].point.y, intersects[i].point.z);
@@ -692,4 +693,28 @@ function onMouseClick(e) {
         }
 
 
+}
+
+function attachBB(object) {
+  if (typeof(boundingBox) != 'undefined') {
+      scene.remove(boundingBox);
+  }
+
+  var bbox2 = new THREE.Box3().setFromObject(object);
+  console.log('bbox for Clicked Obj: '+ object +' Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
+
+  BBmaterial =  new THREE.LineDashedMaterial( { color: 0xaaaaaa, dashSize: 5, gapSize: 4, linewidth: 2 } );
+  BBgeometry = new THREE.Geometry();
+  BBgeometry.vertices.push(
+    new THREE.Vector3(  bbox2.min.x, bbox2.min.y, 0 ),
+    new THREE.Vector3(  bbox2.min.x, (bbox2.max.y + 1) , 0 ),
+    new THREE.Vector3( (bbox2.max.x + 1), (bbox2.max.y +1), 0 ),
+    new THREE.Vector3( (bbox2.max.x + 1), bbox2.min.y, 0 ),
+    new THREE.Vector3(  bbox2.min.x, bbox2.min.y, 0 )
+  );
+  BBgeometry.computeLineDistances();  //  NB If not computed, dashed lines show as solid
+  boundingBox= new THREE.Line( BBgeometry, BBmaterial );
+  // boundingBox.translateX(laserxmax /2 * -1);
+  // boundingBox.translateY(laserymax /2 * -1);
+  scene.add( boundingBox );
 }

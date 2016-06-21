@@ -383,13 +383,17 @@ function currentWorld() {
 
 }
 
-function putFileObjectAtZero() {
+function putFileObjectAtZero(object) {
     // var hex  = 0xff0000;
     // var bbox = new THREE.BoundingBoxHelper( fileParentGroup, hex );
     // bbox.update();
     // scene.add( bbox );
-    if (fileParentGroup) {
-        var bbox2 = new THREE.Box3().setFromObject(fileParentGroup);
+    if (object) {
+
+    } else {
+      object = fileParentGroup
+    }
+        var bbox2 = new THREE.Box3().setFromObject(object);
         console.log('bbox for putFileObjectAtZero: Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
         Xtofix = -(bbox2.min.x + (laserxmax / 2));
         imagePosition = $('#imagePosition').val()
@@ -403,10 +407,34 @@ function putFileObjectAtZero() {
         console.log('Y Offset', Ytofix)
         fileParentGroup.translateX(Xtofix);
         fileParentGroup.translateY(Ytofix);
-        currentWorld();
+        // currentWorld();
+        calcZeroOffset(object);
+        fillLayerTabs();
+}
+
+
+function calcZeroOffset(object) {
+      if (object) {
+        var bbox2 = new THREE.Box3().setFromObject(object);
+        console.log('bbox for object: Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
+        xfromzero = -(bbox2.min.x + (laserxmax / 2));
+        imagePosition = $('#imagePosition').val()
+        console.log('ImagePosition', imagePosition)
+        if (imagePosition == "TopLeft") {
+            yfromzero = (laserymax / 2) - bbox2.max.y;
+        } else {
+            yfromzero = -(bbox2.min.y + (laserymax / 2));
+        }
+        var xoffset = ( object.position.x - xfromzero )
+        var yoffset = ( object.position.y - yfromzero )
+        console.log('X Offset', xoffset )
+        console.log('Y Offset', yoffset )
+        object.userData.offsetX = xoffset
+        object.userData.offsetY = yoffset
     }
 
 }
+
 
 function putInflateGrpAtZero() {
     if (yflip == true) {

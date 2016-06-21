@@ -18,6 +18,7 @@ $(document).ready(function() {
     init3D();
     animate();
     filePrepInit();
+    initTabs();
     initJog();
     errorHandlerJS();
     var paperscript = {};
@@ -27,6 +28,7 @@ $(document).ready(function() {
     initSocket();
     initTour();
     initSmoothie();
+
 
     // Tooltips
     $(document).tooltip();
@@ -152,122 +154,8 @@ $(document).ready(function() {
       $("#quoteprice").html('<div class="table-responsive"><table class="table table-condensed"><thead><tr><td class="text-center"><strong>Qty</strong></td><td class="text-center"><strong>Description</strong></td><td class="text-right"><strong>Unit</strong></td><td class="text-right"><strong>Total</strong></td></tr></thead><tbody><tr><td>1</td><td>Setup Cost</td><td class="text-right">'+setupfee+'</td><td class="text-right">'+setupfee+'</td></tr><tr><td>'+unitqty+'</td><td>Material</td><td class="text-right">'+materialcost+'</td><td class="text-right">'+(materialcost*unitqty).toFixed(2)+'</td></tr><tr><td>'+unitqty+'</td><td>Laser Time</td><td class="text-right">'+timecost+'</td><td class="text-right">'+(timecost*unitqty).toFixed(2)+'</td></tr><tr><td class="thick-line"></td><td class="thick"></td><td class="thick-line text-center"><strong>Total</strong></td><td class="thick-line text-right">'+ grandtotal +'</td></tr></tbody></table></div>' );
     });
 
-
-
-
-
-    $('#tabsLayers').on('click','.close',function(){
-       var tabID = $(this).parents('a').attr('href');
-       $(this).parents('li').remove();
-       $(tabID).remove();
-
-       //display first tab
-       var tabFirst = $('#tabsLayers a:first');
-       tabFirst.tab('show');
-
-       var layerIndex = $(this).parents('a').attr('layerindex');
-       console.log('dumping ' + layerIndex + ' from objectsInScene')
-       objectsInScene.splice(layerIndex, 1)
-       fillLayerTabs();
-     });
-
-     $('#tabsLayers').on('click','a',function(){
-        console.log("selected object id: " + $(this).attr('layerindex'));
-        console.log("selected tab name: " + $(this).parents('li').attr('id'));
-        var tabName = $(this).parents('li').attr('id')
-
-        $(".layertab").removeClass('active');
-        $(this).parents('li').addClass('active');
-
-        if (tabName == "allView") {
-          for (var j = 0; j < objectsInScene.length; j++) {
-            console.log('added object ' + j)
-            scene.add(objectsInScene[j]);
-          }
-          if (typeof(object) != 'undefined') {
-              scene.add(object);
-          }
-
-        } else if (tabName == "gCodeView") {
-          console.log('L: ', scene.children.length)
-          var total = scene.children.length
-          for (var j = 5; j < total; j++) {
-            console.log('Removed ', scene.children[5].name);
-            scene.remove(scene.children[5]);
-          }
-          if (object) {
-            scene.add(object);
-          }
-        } else {
-          var total = scene.children.length
-          for (var j = 5; j < total; j++) {
-            console.log('Removed ', scene.children[5].name);
-            scene.remove(scene.children[5]);
-          }
-          var i = parseInt($(this).attr('layerindex'));
-          scene.add(objectsInScene[i]);
-        };
-      });
-
-
-
-
 }); // End of document.ready
 
-function fillLayerTabs() {
-  $("#tabsLayers").empty();
-  $("#layerprep").empty();
-  $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>');
-  for (j = 5; j < scene.children.length; j++) {
-    scene.remove(scene.children[5])
-  }
-  for (i = 0; i < objectsInScene.length; i++) {
-    var pwr = objectsInScene[i].pwr
-    var speed = objectsInScene[i].speed
-    if (!pwr) {
-      pwr = 100;
-    }
-    if (!speed) {
-      speed = 20;
-    }
-    $("#tabsLayers").append('<li role="presentation" class="layertab" id="'+objectsInScene[i].name+'"><a href="#" layerindex="'+i+'">'+objectsInScene[i].name+'<button class="close" type="button" title="Remove this page">×</button></a></li>');
-
-    if (objectsInScene[i].type == 'Group') {
-      $("#layerprep").append('<hr><label class="control-label">'+objectsInScene[i].name+'</label><div class="input-group"><input type="number" class="form-control" value="'+speed+'" id="speed'+i+'"><span class="input-group-addon">mm/s</span><input type="number" class="form-control" value="'+pwr+'" id="power'+i+'"><span class="input-group-addon">%</span></div>');
-
-    } else if (objectsInScene[i].type == 'Mesh') {
-      var seq = objectsInScene[i].userData.seq;
-      var template = `
-      <hr>
-      <label class="control-label">`+objectsInScene[i].name+`</label>
-      <div class="input-group">
-        <span class="input-group-addon">Light mm/s</span>
-        <input type="number" class="form-control"  value="20" id="feedRateW`+seq+`">
-        <span class="input-group-addon">Light mm/s</span>
-        <input type="number" class="form-control"  value="20" id="feedRateB`+seq+`">
-      </div>
-      <div class="input-group">
-        <span class="input-group-addon">Min Pwr</span>
-        <input type="number" class="form-control" value="0" id="minpwr`+seq+`">
-        <span class="input-group-addon">Max Pwr</span>
-        <input type="number" class="form-control" value="100" id="maxpwr`+seq+`">
-      </div>
-      <div class="input-group">
-        <span class="input-group-addon">X</span>
-        <input type="number" class="form-control" value="0" id="rasterxoffset`+seq+`">
-        <span class="input-group-addon">Y</span>
-        <input type="number" class="form-control" value="0" id="rasteryoffset`+seq+`">
-      </div>
-      <div class="input-group">
-        <span class="input-group-addon">DPI</span>
-        <input type="number" class="form-control" value="25.4" id="rasterDPI`+seq+`">
-      </div>
-      `;
-      $("#layerprep").append(template);
-    };
-    scene.add(objectsInScene[i])
-  }
-};
 
 
 
