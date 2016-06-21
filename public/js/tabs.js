@@ -119,7 +119,7 @@ function fillLayerTabs() {
       var yoffset = objectsInScene[i].userData.offsetY
       var xpos = objectsInScene[i].position.x
       var ypos = objectsInScene[i].position.y
-      
+
       var template = `
       <hr>
       <label class="control-label">`+objectsInScene[i].name+`</label>
@@ -162,10 +162,11 @@ function fillLayerTabs() {
       <hr>
       <label class="control-label">`+objectsInScene[i].name+`</label>
       <div class="input-group">
-        <span class="input-group-addon">Light mm/s</span>
+        <span class="input-group-addon">Light</span>
         <input type="number" class="form-control"  value="20" id="feedRateW`+i+`" objectseq="`+i+`">
-        <span class="input-group-addon">Dark mm/s</span>
+        <span class="input-group-addon">Dark</span>
         <input type="number" class="form-control"  value="20" id="feedRateB`+i+`" objectseq="`+i+`">
+        <span class="input-group-addon">mm/s</span>
       </div>
       <div class="input-group">
         <span class="input-group-addon">Min Pwr</span>
