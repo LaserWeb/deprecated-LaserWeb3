@@ -16,20 +16,6 @@
     <!--Mobile first-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- <script>
-    function detectmob() {
-       if(window.innerWidth <= 800 || window.innerHeight <= 600) {
-         return true;
-       } else {
-         return false;
-       }
-    }
-
-    if (detectmob()){
-      top.location.href="mobile.html";
-    }
-    </script> -->
-
     <!-- Bootstrap and UX -->
     <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css" id="theme_css" />
     <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-callouts.css" />
@@ -62,7 +48,6 @@
     <!-- Font -->
     <link rel="stylesheet" href="css/font-awesome.css" />
 
-
     <!-- ThreeJS -->
     <script src="lib/threejs/three.min.js"></script>
     <script src="lib/threejs/GridRect.js"></script>
@@ -74,13 +59,9 @@
 
     <script src="js/viewer.js"></script>
 
-    <!-- Serial Port JSON -->
-    <!-- <script src="js/spjs.js"></script> -->
-
     <!-- Socket.io -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/socketcomms.js"></script>
-
 
     <!-- DXF Library -->
     <script type="text/javascript" src="lib/dxf/dxf-parser.js"></script>
@@ -384,239 +365,8 @@
             </div>
 
 
-            <!-- Module CAM -->
-              <div id="cammodule" style="display:none;">
-                <!-- Nav tabs -->
-                <ul class="nav nav-pills" role="tablist">
-                    <li><a href="#stltab" id="stlopt" role="tab" data-toggle="tab" style="display: none;">STL</a></li>
-                    <li class="active"><a href="#preptab" id="prepopt" role="tab" data-toggle="tab">Prepare</a>
-                    </li>
-                    <li><a id="converttab" href="#convtab" role="tab" data-toggle="tab">Convert</a></li>
-                </ul>
-                <!-- Tab panes -->
 
-                <!-- Tab 1 -->
-                <div class="tab-content">
-                    <div class="tab-pane active" id="preptab">
-                        <form class="form-horizontal">
-                                <label for="inflateVal" class="control-label">Tool Offset:</label>
-                                <div class="input-group">
-                                    <input type="number" step="0.1" class="form-control numpad input-sm" value="1" id="inflateVal" style="text-align:right;">
-                                    <span class="input-group-addon">mm</span>
-                                    <span class="input-group-btn">
-                                <button id="stepinfup" class="btn btn-default btn-sm" type="button"><i class="fa fa-caret-up"></i></button>
-                                <button id="stepinfdn" class="btn btn-default btn-sm" type="button"><i class="fa fa-caret-down"></i></button>
-                                <button id="removeInflateGrp" class="btn btn-default btn-sm" type="button"><i class="fa fa-times"></i></button>
-                              </span>
-                                </div>
-                            <!-- </div> -->
-                        </form>
-
-                        <form class="form-horizontal">
-                            <!-- <div class="form-group"> -->
-                                <label for="inflateVal" class="control-label">Scale:</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control  numpad input-sm" value="100" id="scaleFactor" style="text-align:right;">
-                                    <span class="input-group-addon">%</span>
-                                    <span class="input-group-btn">
-                                      <button id="stepscaleup" class="btn btn-default btn-sm" type="button"><i class="fa fa-caret-up"></i></button>
-                                      <button id="stepscaledn" class="btn btn-default btn-sm" type="button"><i class="fa fa-caret-down"></i></button>
-                                    </span>
-                                </div>
-                            <!-- </div> -->
-                        </form>
-
-                        <form class="form-horizontal">
-                            <!-- <div class="form-group"> -->
-                                <label class="control-label">Position:</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control  numpad input-sm" value="0" id="xpos" style="text-align:right;">
-                                    <span class="input-group-addon">X</span>
-                                    <input type="number" class="form-control  numpad input-sm" value="0" id="ypos" style="text-align:right;">
-                                    <span class="input-group-addon">Y</span>
-                                </div>
-                            <!-- </div> -->
-                        </form>
-
-                        <form class="form-horizontal">
-                            <!-- <div class="form-group"> -->
-                                <label class="control-label">Angle:</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control  numpad input-sm" value="0" id="rotationval" style="text-align:right;">
-                                    <span class="input-group-addon">&deg;</span>
-                                </div>
-                            <!-- </div> -->
-                        </form>
-
-                        <nav>
-                          <ul class="pager">
-                            <!-- <li class="previous"><a href="#" onclick="$('#cam-menu').click();"><span aria-hidden="true">&larr;</span> Revise</a></li> -->
-                            <li class="next"><a href="#" onclick="$('#converttab').click();">Generate <span aria-hidden="true">&rarr;</span></a></li>
-                          </ul>
-                        </nav>
-                    </div>
-
-                    <!-- Tab 2 -->
-                    <div class="tab-pane" id="convtab">
-                        <p>
-
-                            <div id="layers"> <!-- DXF -->
-                            </div>
-                            <div id="svgnewway" style="display: none;"> <!-- SVG -->
-                              <div class="btn btn-warning btn-xs" id="pullcolors">Per stroke (Click to pull from SVG)</div>
-
-                              <table class="table table-condensed" id="svglinestable">
-                                <caption>Per-color parameters</caption>
-                                <thead>
-                                    <tr>
-                                      <th style="text-align: center;">Color</th>
-                                      <th style="text-align: center;">Speed</th>
-                                      <th style="text-align: center;">% Power</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="svglinestbody">
-                                </tbody>
-                              </table>
-                            </div>
-                    </div>
-                    <!-- Tab 3 -->
-                    <div class="tab-pane" id="stltab">
-                        <p>
-
-                            <form class="form-horizontal">
-                                <!-- <div class="form-group"> -->
-                                    <label for="inflateVal" class="control-label">Original STL:</label>
-                                    <div class="btn-group btn-group-justified" role="group" aria-label="stltab">
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-default" id="showstl" onclick="window.showstl()">Show</button>
-                                        </div>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-default" id="hidestl" onclick="window.hidestl()">Hide</button>
-                                        </div>
-                                    </div>
-
-                                <!-- </div> -->
-                            </form>
-
-                            <form class="form-horizontal">
-                                <!-- <div class="form-group"> -->
-                                    Configure thickness per layer - usually this equates to the thickness of the material you'll be cutting the slices from:
-                                    <br>
-
-                            </form>
-                            <!-- </div> -->
-                    </div>
-                  </div> <!-- End of tabcontent-->
-
-                <!-- Hiddel div for raster CAM - never shown, but needs to be in DOM -->
-              </div>
-
-                <div class="canvas" id="rasterOutput" style="display: none;">
-                    <canvas id="canvas-1"></canvas>
-                </div>
-
-                <!-- Module Raster -->
-                <div class="list-group" id="rastermodule" style="display: none;">
-
-
-                    <div class="" id="rasterparams">
-                      <p>
-                      <form class="form-horizontal">
-                        <center>
-                            <a class="btn btn-sm btn-default" id="rasterNow"><i class="fa fa-square-o fa-lg" style="margin-right: 3px;"></i>Prepare Raster G-CODE</a>
-                            <!-- button type="button" class="btn btn-danger disabled" id="rasterWidgetSendRasterToLaser"><i class="fa fa-fire" style="margin-right: 8px;"></i>Send to Laser</button -->
-                        </center>
-                      </form>
-
-                        <form class="form-horizontal">
-                            <label for="laserpwrsliderlbl">Constrain Laser Power:</label>
-                            <br>
-                            <span id="laserpwr" style="border:0;  font-weight:bold; background: transparent;"></span>
-                            <div id="laserpwrslider"></div>
-                        </form>
-                        <hr>
-                        <form class="form-horizontal">
-                            <input type="checkbox" value="1" id="useRasterBlackWhiteSpeeds" /> Enable Adaptive Feedrate Grayscale Control
-                            <div class="" id="blackwhitespeedsection" style="display: none;">
-                                <span style="font-size: 10px; font-color: #ccc">This feature allows you to fine tune the grayscale for linearity based on the material in use. </span>
-                                <hr>
-                                <center>
-                                    <label for="laservariablespeedlbl">Feedrate for lightest (white) and darkest (black)</label>
-                                    <br>
-                                    <div id="laservariablespeedslider"></div>
-                                    <span id="laservariablespeed" style="border:0;  font-weight:bold; background: transparent;"></span><span>&nbsp;mm/s</span>
-                                </center>
-                            </div>
-                        </form>
-                        <form class="form-horizontal">
-                            <!-- <div class="form-group"> -->
-                                <label for="inflateVal" class="control-label">Resolution:</label>
-                                <div class="input-group">
-                                    <input type="text input-sm" class="form-control" value="72" id="rasterDPI">
-                                    <span class="input-group-addon" style="width: 60px;">dpi</span>
-                                </div>
-                                Imported Image Dimensions: <span id="dims">0px x 0 px</span>
-                                <br> Engraved Image Dimensions: <span id="physdims">0mm x 0 mm</span>
-                            <!-- </div> -->
-                        </form>
-                        <form class="form-horizontal">
-                            <!-- <div class="form-group"> -->
-                                <label for="inflateVal" class="control-label">Engrave (G1) Feedrate:</label>
-                                <div class="input-group">
-                                    <input type="text input-sm" class="form-control" value="30" id="feedRate">
-                                    <span class="input-group-addon" style="width: 60px;">mm/s</span>
-                                </div>
-                            <!-- </div> -->
-                        </form>
-
-                        <form class="form-horizontal">
-                            <!-- <div class="form-group"> -->
-                                <label for="inflateVal" class="control-label">Rapid (G0) Feedrate:</label>
-                                <div class="input-group">
-                                    <input type="text input-sm" class="form-control" value="50" id="rapidRate">
-                                    <span class="input-group-addon" style="width: 60px;">mm/s</span>
-                                </div>
-                            <!-- </div> -->
-                        </form>
-
-                        <form class="form-horizontal">
-                            <!-- <div class="form-group"> -->
-                                <label for="inflateVal" class="control-label">Offset:</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon" style="width: 60px;">X</span>
-                                    <input type="text input-sm" class="form-control" value="0" id="rasterxoffset">
-                                    <span class="input-group-addon" style="width: 60px;">Y</span>
-                                    <input type="text input-sm" class="form-control" value="0" id="rasteryoffset">
-                                    <span class="input-group-addon" style="width: 60px;">mm</span>
-                                </div>
-                            <!-- </div> -->
-                        </form>
-
-
-                        <center>
-
-                            <br>
-                            <div style="display: none;">
-                              <img id="origImage" style="border: 1px solid #555;  max-width:300px;">
-                          </div>
-                        </center>
-                        <hr>
-                        <div class="canvas" id="rasterOutput" style="display: none;">
-                            <canvas id="canvas-1"></canvas>
-                        </div>
-                    </div>
-                    <!-- rasterparams -->
-                    <div id="rasterProgressShroud">
-
-                        <center>
-                            <h3>Converting...</h3>
-                            <span id="rasterProgressPerc"></span>
-                        </center>
-                    </div>
-                    <!-- rastershroud -->
-
-                </div>
-            </div>
+          </div>
           <!-- end cam -->
           <!-- gcode -->
           <div id="gcode-menu-panel" class="mobtab" style="display: none;">
@@ -904,15 +654,10 @@
                 </div>
 
                 <div class="btn-group" role="group" id="viewcontrols" style="vertical-align: bottom; margin-left: 18px;">
-                  <!-- <div class="btn-group input-group  btn-group-vertical" role="group" aria-label="" style="vertical-align: bottom;">
-                    <button type="button" data-title="Reset Camera" class="btn btn-view btn-lg btn-default" id="togglemacro"><span class="fa-stack fa-1x"><i class="fa fa-search fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Macro</strong><strong class="fa-stack-1x icon-bot-text">Panel</strong></span></button>
-                    <button type="button" data-title="Reset Camera" class="btn btn-view btn-lg btn-default" id="viewReset"><span class="fa-stack fa-1x"><i class="fa fa-search fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Reset</strong><strong class="fa-stack-1x icon-bot-text">Zoom</strong></span></button>
-                  </div> -->
                   <div class="btn-group input-group  btn-group-vertical" role="group" ria-label="" style="vertical-align: bottom;">
                     <button type="button" data-title="Link Aspect" class="btn btn-lg btn-default" id="togglemacro"><span class="fa-stack fa-1x"><i class="fa fa-th fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Macro</strong><strong class="fa-stack-1x icon-bot-text">Panel</strong></span></button>
                     <button type="button" data-title="Link Aspect" class="btn btn-lg btn-default" id="viewReset"><span class="fa-stack fa-1x"><i class="fa fa-search fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Reset</strong><strong class="fa-stack-1x icon-bot-text" id="linkval">View</strong></span></button>
                   </div>
-
                 </div>
 
                 <div class="btn-group" role="group" id="pancontrols" style="vertical-align: bottom; margin-left: 18px;">
@@ -933,86 +678,44 @@
         </div>
         <!-- End of Main Body -->
     </div>
-</div>
-<!-- End of Main Row -->
-<!--slider menu-->
-    <div class="sidebar-menu">
-		  	<div class="logo"> <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="#"> <span id="logo" ></span>
-			  </a> </div>
-		    <div class="menu">
-		      <ul id="menu" >
-		        <li id="jog-menu" class="leftmenuitem active" ><a href="#"><i class="fa fa-arrows-alt"></i><span>Jog</span></a></li>
-            <li id="cam-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-pencil-square-o"></i><span>CAM</span></a></li>
-            <li id="gcode-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-file-code-o"></i><span>GCode</span></a></li>
-            <li id="quote-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-money"></i><span>Quote</span></a></li>
-            <li id="gdrive-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-google"></i><span>Google Drive</span></a></li>
-            <li id="console-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-list"></i><span>Console Log</span></a></li>
-            <li id="settings-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-cogs"></i><span>Settings</span></a></li>
-		      </ul>
-		    </div>
-	 </div>
-	<div class="clearfix"> </div>
-</div>
-
-<!--slide bar menu end here-->
-
+  </div>
+  <!-- End of Main Row -->
+  <!--slider menu-->
+      <div class="sidebar-menu">
+  		  	<div class="logo"> <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="#"> <span id="logo" ></span>
+  			  </a> </div>
+  		    <div class="menu">
+  		      <ul id="menu" >
+  		        <li id="jog-menu" class="leftmenuitem active" ><a href="#"><i class="fa fa-arrows-alt"></i><span>Jog</span></a></li>
+              <li id="cam-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-pencil-square-o"></i><span>CAM</span></a></li>
+              <li id="gcode-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-file-code-o"></i><span>GCode</span></a></li>
+              <li id="quote-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-money"></i><span>Quote</span></a></li>
+              <li id="gdrive-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-google"></i><span>Google Drive</span></a></li>
+              <li id="console-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-list"></i><span>Console Log</span></a></li>
+              <li id="settings-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-cogs"></i><span>Settings</span></a></li>
+  		      </ul>
+  		    </div>
+  	 </div>
+  	<div class="clearfix"> </div>
+  </div>
+  <!--slide bar menu end here-->
 </div><!-- End of page-container -->
-</div>
-<!-- End of Container Fluid -->
+</div><!-- End of Container Fluid -->
 
 
 <!-- Hidden divs, used by components -->
 <video id="monitor" autoplay width="160" height="120" style="display: none; visibility: hidden; float:left;"></video>
+
 <canvas id="videoImage" width="160" height="120" style="display: none; visibility: hidden; float:left;"></canvas>
+
 <div id="work-area" style="display: none; visibility: hidden; float:left;">
   <div id="svgpreview"></div>
 </div>
-<!-- End Hidden Divs -->
 
-
-<!-- SVG Size modal -->
-<div id="svgresize" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-
-        <h4 class="modal-title">SVG: Import DPI</h4>
-      </div>
-      <div class="modal-body">
-        Please specify the DPI this file was saved in to scale it to the correct physical size.
-
-
-        <form class="form-horizontal">
-            <!-- <div class="form-group"> -->
-                <label class="control-label">Preset DPI:</label>
-
-                <div class="btn-group input-group  btn-group-justified">
-                  <span class="input-group-addon"><i class="fa fa-desktop"></i>&nbsp;Preset:</span>
-                  <div class="btn btn-default btn-sm" id="90dpi">90 dpi (Inkscape)</div>
-                  <div class="btn btn-default btn-sm" id="72dpi">72 dpi (Adobe)</div>
-                  <div class="btn btn-default btn-sm" id="customdpi">(Custom)</div>
-                </div>
-                <label class="control-label">Custom:</label>
-                <div class="input-group">
-                  <span class="input-group-addon">Custom: </span>
-                    <input type="number" class="form-control  numpad input-sm" value="300" id="dpiVal" style="text-align:right;">
-                    <span class="input-group-addon">dpi</span>
-                </div>
-        </form>
-
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
-      </div>
-    </div>
-
-  </div>
+<div class="canvas" id="rasterOutput" style="display: none;">
+  <canvas id="canvas-1"></canvas>
 </div>
-<!-- End SVG Size Modal -->
+<!-- End Hidden Divs -->
 
 <!-- STL Slice modal -->
 <div id="stlslice" class="modal fade" role="dialog">
@@ -1058,57 +761,6 @@
 </div>
 <!-- End STL Slice Modal -->
 
-
-<!-- raster Size modal -->
-<div id="rasterresize" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-
-        <h4 class="modal-title">Bitmap: Import DPI for Raster</h4>
-      </div>
-      <div class="modal-body">
-        Please specify the DPI this file was saved in to scale it to the correct physical size.
-
-
-        <form class="form-horizontal">
-            <!-- <div class="form-group"> -->
-                <label class="control-label">Preset DPI:</label>
-
-                <div class="btn-group input-group  btn-group-justified">
-                  <span class="input-group-addon"><i class="fa fa-desktop"></i>&nbsp;Preset:</span>
-                  <div class="btn btn-default btn-sm" id="ras72dpi">72 dpi </div>
-                  <div class="btn btn-default btn-sm" id="ras150dpi">150 dpi </div>
-                  <div class="btn btn-default btn-sm" id="ras300dpi">300 dpi </div>
-                  <div class="btn btn-default btn-sm" id="ras600dpi">600 dpi </div>
-                  <div class="btn btn-default btn-sm" id="customrasdpi">(Custom)</div>
-                </div>
-                <label class="control-label">Custom:</label>
-                <div class="input-group">
-                  <span class="input-group-addon">Custom: </span>
-                    <input type="number" class="form-control  numpad input-sm" value="100" id="rasterdpiVal" style="text-align:right;">
-                    <span class="input-group-addon">dpi</span>
-                </div>
-
-
-            <!-- </div> -->
-        </form>
-
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-<!-- End raster Size Modal -->
-
-
 <!-- SD Upload modal -->
 <div id="sdupload" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -1117,13 +769,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-
         <h4 class="modal-title">SD Card: Upload (and run File)</h4>
       </div>
       <div class="modal-body">
-
-
-
         <form class="form-horizontal">
           <label class="control-label">Filename to save-as on the SD Card:</label>
           <div class="input-group">
@@ -1133,17 +781,12 @@
           </div>
           &nbsp;<br>
         </form>
-
-
       </div>
       <div class="modal-footer">
-        <!-- <button type="button" class="btn btn-success" data-dismiss="modal">OK</button> -->
         <div class="btn-group"><button type="button" class="btn btn-sd btn-default " id="uploadsdbtn" ><span class="fa-stack fa-1x"><i class="fa fa-upload fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Upload</strong><strong class="fa-stack-1x icon-bot-text">to SD</strong></span></button></div>
         <div class="btn-group"><button type="button" class="btn btn-sd btn-default" id="playsdbtn"><span class="fa-stack fa-1x"><i class="fa fa-play fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">Upload</strong><strong class="fa-stack-1x icon-bot-text">and Run</strong></span></button></div>
-
       </div>
     </div>
-
   </div>
 </div>
 <!-- End SD Upload Modal -->
@@ -1151,7 +794,6 @@
 
 <div id="statusmodal" class="modal fade" role="dialog">
   <div class="modal-dialog">
-
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">

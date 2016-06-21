@@ -236,9 +236,8 @@ function readFile(evt) {
                 currentWorld();
                 printLog('SVG Opened', successcolor);
                 resetView()
-                $('#svgresize').modal('show');
             };
-            $('#svgresize').modal('show');
+
 
         } else if (f.name.match(/.gcode$/i)) {
             r.readAsText(evt.target.files[0]);

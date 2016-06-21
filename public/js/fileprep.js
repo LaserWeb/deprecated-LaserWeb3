@@ -405,11 +405,11 @@ function putFileObjectAtZero(object) {
         }
         console.log('X Offset', Xtofix)
         console.log('Y Offset', Ytofix)
-        fileParentGroup.translateX(Xtofix);
-        fileParentGroup.translateY(Ytofix);
+        object.translateX(Xtofix);
+        object.translateY(Ytofix);
         // currentWorld();
         calcZeroOffset(object);
-        fillLayerTabs();
+        // fillLayerTabs();
 }
 
 

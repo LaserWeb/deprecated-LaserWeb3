@@ -5,15 +5,34 @@ function initTabs() {
     var newval = parseFloat(newval, 3)
     var id = $(this).attr('id');
     var objectseq = $(this).attr('objectseq');
-
+    console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
     if ( id.indexOf('rasterxoffset') == 0 ) {
       objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + parseFloat(newval, 3);
-      console.log('Moving ' +objectsInScene[objectseq].name+ ' to X:'+newval);
+      console.log('Moving ' +objectsInScene[objectseq].name+ ' to X: '+newval);
     } else if ( id.indexOf('rasteryoffset') == 0 ) {
       objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + parseFloat(newval, 3);
-      console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y:'+newval);
+      console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y: '+newval);
+    } else if ( id.indexOf('rasterDPI') == 0 ) {
+
+      var bboxpre = new THREE.Box3().setFromObject(objectsInScene[objectseq]);
+      console.log('bbox for BEFORE SCALE: Min X: ', (bboxpre.min.x + (laserxmax / 2)), '  Max X:', (bboxpre.max.x + (laserxmax / 2)), 'Min Y: ', (bboxpre.min.y + (laserymax / 2)), '  Max Y:', (bboxpre.max.y + (laserymax / 2)));
+      console.log('Scaling ' +objectsInScene[objectseq].name+ ' to: '+scale);
+      var scale = (25.4 / parseFloat(newval, 3) );
+      objectsInScene[objectseq].scale.x = scale;
+      objectsInScene[objectseq].scale.y = scale;
+      objectsInScene[objectseq].scale.z = scale;
+      putFileObjectAtZero(objectsInScene[0]);
+      $("#rasterxoffset"+objectseq).val('0')
+      $("#rasteryoffset"+objectseq).val('0')
+    } else if ( id.indexOf('svgdpi') == 0 ) {
+      var svgscale = (25.4 / parseFloat(newval, 3) );
+      objectsInScene[objectseq].scale.x = svgscale;
+      objectsInScene[objectseq].scale.y = svgscale;
+      objectsInScene[objectseq].scale.z = svgscale;
+      putFileObjectAtZero();
     }
-    console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
+
+
   });
 
 
@@ -120,7 +139,7 @@ function fillLayerTabs() {
         var templatedpi = `
         <div class="input-group">
           <span class="input-group-addon">DPI</span>
-          <input type="number" class="form-control" value="25.4" id="DPI`+i+`" objectseq="`+i+`">
+          <input type="number" class="form-control" value="25.4" id="svgdpi`+i+`" objectseq="`+i+`">
 
         </div>
         `
