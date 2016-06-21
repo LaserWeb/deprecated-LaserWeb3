@@ -99,49 +99,6 @@ function signOut() {
   $("#userpic").attr("src", 'css/user64.gif');
 }
 
-/**
-* Print files.
-*/
-// function listFiles() {
-//  $('#fileList').empty();
-//  var request = gapi.client.drive.files.list({
-//      'fields': "nextPageToken, files(id, name)"
-//    });
-//
-//    request.execute(function(resp) {
-//
-//     //  $('#fileList').append('<B>Google Drive Files:</b><p>');
-//      var files = resp.files;
-//      if (files && files.length > 0) {
-//        for (var i = 0; i < files.length; i++) {
-//          var file = files[i];
-//          console.log('GDrive: Found ', file)
-//          if (file.name.match(/.dxf$/i) || file.name.match(/.svg$/i) || file.name.match(/.gcode$/i) || file.name.match(/.png$/i) || file.name.match(/.jpg$/i) || file.name.match(/.jpeg$/i) || file.name.match(/.bmp$/i)  || file.name.match(/.jpg$/i) ) {
-//            var idstring = String(file.id)
-//            // Filetype Icons
-//            if (file.name.match(/.dxf$/i)) {
-//               $('#fileList').append("<span class='fa-stack'><i class='fa fa-file-o fa-stack-1x'></i><strong class='fa-stack-1x icon-text'>DX</strong></span>");
-//            } else if (file.name.match(/.svg$/i)) {
-//               $('#fileList').append("<span class='fa-stack'><i class='fa fa-file-o fa-stack-1x'></i><strong class='fa-stack-1x icon-text'>SV</strong></span>");
-//            } else if (file.name.match(/.gcode$/i)) {
-//               $('#fileList').append("<span class='fa-stack'><i class='fa fa-file-o fa-stack-1x'></i><strong class='fa-stack-1x icon-text'>GC</strong></span>");
-//            } else if (file.name.match(/.png$/i) || file.name.match(/.jpg$/i) || file.name.match(/.jpeg$/i) || file.name.match(/.bmp$/i)  || file.name.match(/.jpg$/i)) {
-//               $('#fileList').append("<span class='fa-stack'><i class='fa fa-file-image-o fa-stack-1x'></i></span>");
-//            }
-//            $('#fileList').append("<a href='#' onclick='getFileContent(\""+file.id+"\",\""+file.name+"\")'>"+file.name+"</a><br/>");
-//            $('#fileList').scrollTop($("#console")[0].scrollHeight - $("#console").height());
-//          }
-//
-//          //appendPre(file.name + ' (' + file.id + ')<br>');
-//         //  getFileContent(file.id);
-//        }
-//      } else {
-//        printLog('No files found.', warncolor);
-//      }
-//    });
-// }
-
-
 function getFileContent(fileId, fileName) {
   console.log('fetching ', fileId)
   printLog('Fetching '+ fileName, msgcolor)
