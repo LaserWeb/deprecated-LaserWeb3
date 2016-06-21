@@ -1,9 +1,18 @@
 function initTabs() {
 
   $('#layerprep').on('keyup','input', function() {
-    newval = $(this).val();
-    id = $(this).attr('id');
-    objectseq = $(this).attr('objectseq');
+    var newval = $(this).val();
+    var newval = parseFloat(newval, 3)
+    var id = $(this).attr('id');
+    var objectseq = $(this).attr('objectseq');
+
+    if ( id.indexOf('rasterxoffset') == 0 ) {
+      objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + parseFloat(newval, 3);
+      console.log('Moving ' +objectsInScene[objectseq].name+ ' to X:'+newval);
+    } else if ( id.indexOf('rasteryoffset') == 0 ) {
+      objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + parseFloat(newval, 3);
+      console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y:'+newval);
+    }
     console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
   });
 
@@ -101,9 +110,9 @@ function fillLayerTabs() {
       </div>
       <div class="input-group">
         <span class="input-group-addon">X</span>
-        <input type="number" class="form-control" value="`+xoffset+`" id="rasterxoffset`+i+`" objectseq="`+i+`">
+        <input type="number" class="form-control" xoffset="`+xoffset+`" value="0" id="rasterxoffset`+i+`" objectseq="`+i+`">
         <span class="input-group-addon">Y</span>
-        <input type="number" class="form-control" value="`+yoffset+`" id="rasteryoffset`+i+`" objectseq="`+i+`">
+        <input type="number" class="form-control" yoffset="`+yoffset+`" value="0" id="rasteryoffset`+i+`" objectseq="`+i+`">
       </div>
       `
       $("#layerprep").append(template);
@@ -142,9 +151,9 @@ function fillLayerTabs() {
       </div>
       <div class="input-group">
         <span class="input-group-addon">X</span>
-        <input type="text" class="form-control" value="`+xoffset+`" id="rasterxoffset`+i+`" objectseq="`+i+`">
+        <input type="text" class="form-control" xoffset="`+xoffset+`" value="0" id="rasterxoffset`+i+`" objectseq="`+i+`">
         <span class="input-group-addon">Y</span>
-        <input type="text" class="form-control" value="`+yoffset+`" id="rasteryoffset`+i+`" objectseq="`+i+`">
+        <input type="text" class="form-control" yoffset="`+yoffset+`" value="0" id="rasteryoffset`+i+`" objectseq="`+i+`">
       </div>
       <div class="input-group">
         <span class="input-group-addon">DPI</span>
