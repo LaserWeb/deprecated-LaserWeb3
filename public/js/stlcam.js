@@ -150,8 +150,9 @@ function slicegrid(step) {
 
     var total = scene.children.length
 
-    putFileObjectAtZero(slicegroup);    
+    putFileObjectAtZero(slicegroup);
     scene.add(slicegroup);
+    calcZeroOffset(slicegroup)
     fileParentGroup = slicegroup;
     slicegroup.name = "Sliced STL"+step+'mm'
 

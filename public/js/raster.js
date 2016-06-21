@@ -76,6 +76,7 @@ function drawRaster(evt) {
     rastermesh.name = evt.target.files[0].name
 
     scene.add(rastermesh);
+    calcZeroOffset(rastermesh)
     rastermesh.userData.seq = currentIdx;
     objectsInScene.push(rastermesh)
     // resetView();

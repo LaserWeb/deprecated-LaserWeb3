@@ -67,6 +67,7 @@ function drawDXF(file, fileName) {
     fileParentGroup.translateY((laserymax / 2) * -1);
     putFileObjectAtZero(fileParentGroup);
     scene.add(fileParentGroup);
+    calcZeroOffset(fileParentGroup)
     objectsInScene.push(fileParentGroup)
 
     // // Make a copy to show, because we need the original copy, untranslated, for the gcodewriter parsing

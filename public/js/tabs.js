@@ -96,7 +96,6 @@ function fillLayerTabs() {
     $("#tabsLayers").append('<li role="presentation" class="layertab" id="'+objectsInScene[i].name+'"><a href="#" layerindex="'+i+'">'+objectsInScene[i].name+'<button class="close" type="button" title="Remove this page">×</button></a></li>');
 
     if (objectsInScene[i].type == 'Group') {
-      calcZeroOffset(objectsInScene[i])
       var xoffset = objectsInScene[i].userData.offsetX
       var yoffset = objectsInScene[i].userData.offsetY
       var template = `
@@ -130,9 +129,10 @@ function fillLayerTabs() {
       }
 
     } else if (objectsInScene[i].type == 'Mesh') {
-      calcZeroOffset(objectsInScene[i])
       var xoffset = objectsInScene[i].userData.offsetX
       var yoffset = objectsInScene[i].userData.offsetY
+      var xpos = objectsInScene[i].position.x
+      var ypos = objectsInScene[i].position.y
       // var seq = objectsInScene[i].userData.seq;
       var template = `
       <hr>
@@ -151,9 +151,9 @@ function fillLayerTabs() {
       </div>
       <div class="input-group">
         <span class="input-group-addon">X</span>
-        <input type="text" class="form-control" xoffset="`+xoffset+`" value="0" id="rasterxoffset`+i+`" objectseq="`+i+`">
+        <input type="text" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`" id="rasterxoffset`+i+`" objectseq="`+i+`">
         <span class="input-group-addon">Y</span>
-        <input type="text" class="form-control" yoffset="`+yoffset+`" value="0" id="rasteryoffset`+i+`" objectseq="`+i+`">
+        <input type="text" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`" id="rasteryoffset`+i+`" objectseq="`+i+`">
       </div>
       <div class="input-group">
         <span class="input-group-addon">DPI</span>
