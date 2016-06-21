@@ -21,7 +21,7 @@ function initTabs() {
       objectsInScene[objectseq].scale.x = scale;
       objectsInScene[objectseq].scale.y = scale;
       objectsInScene[objectseq].scale.z = scale;
-      putFileObjectAtZero(objectsInScene[0]);
+      putFileObjectAtZero(objectsInScene[objectseq]);
       $("#rasterxoffset"+objectseq).val('0')
       $("#rasteryoffset"+objectseq).val('0')
     } else if ( id.indexOf('svgdpi') == 0 ) {
@@ -29,7 +29,7 @@ function initTabs() {
       objectsInScene[objectseq].scale.x = svgscale;
       objectsInScene[objectseq].scale.y = svgscale;
       objectsInScene[objectseq].scale.z = svgscale;
-      putFileObjectAtZero();
+      putFileObjectAtZero(objectsInScene[objectseq]);
     }
 
 

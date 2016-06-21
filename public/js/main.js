@@ -218,7 +218,6 @@ function readFile(evt) {
             r.onload = function(e) {
                 dxf = r.result
                 drawDXF(dxf, f.name);
-                currentWorld();
                 printLog('DXF Opened', successcolor);
                 putFileObjectAtZero();
                 resetView()
@@ -233,7 +232,6 @@ function readFile(evt) {
                 svgpreview.innerHTML = r.result;
                 var svgfile = $('#svgpreview').html();
                 svg2three(svgfile, f.name);
-                currentWorld();
                 printLog('SVG Opened', successcolor);
                 resetView()
             };
