@@ -288,7 +288,9 @@ function readFile(evt) {
             $('#origImage').empty();
             r.readAsDataURL(evt.target.files[0]);
             r.onload = function(event) {
-                drawRaster(evt);
+                var name = evt.target.files[0].name;
+                var data = event.target.result;
+                drawRaster(name, data);
             };
         }
     }

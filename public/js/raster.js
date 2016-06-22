@@ -25,7 +25,9 @@ if (!String.prototype.format) {
     };
 }
 
-function drawRaster(evt) {
+function drawRaster(name, data) {
+
+    console.log('inside drawRaster')
 
     var currentIdx = objectsInScene.length + 100;
 
@@ -36,8 +38,8 @@ function drawRaster(evt) {
 
     var imgtag = document.getElementById("origImage"+currentIdx);
 
-    imgtag.title = evt.target.files[0].name;
-    imgtag.src = event.target.result;
+    imgtag.title = name;
+    imgtag.src = data;
     setImgDims();
 
     $('#rasterProgressShroud').hide();
@@ -60,7 +62,7 @@ function drawRaster(evt) {
 
     var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
 
-    var texture = new THREE.TextureLoader().load(event.target.result);
+    var texture = new THREE.TextureLoader().load(data);
     texture.minFilter = THREE.LinearFilter
 
     var material = new THREE.MeshBasicMaterial({
@@ -73,9 +75,10 @@ function drawRaster(evt) {
     rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
     rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
     rastermesh.position.z = -0.9;
-    rastermesh.name = evt.target.files[0].name
+    rastermesh.name = name
 
     scene.add(rastermesh);
+    putFileObjectAtZero(rastermesh);
     calcZeroOffset(rastermesh)
     rastermesh.userData.seq = currentIdx;
     objectsInScene.push(rastermesh)

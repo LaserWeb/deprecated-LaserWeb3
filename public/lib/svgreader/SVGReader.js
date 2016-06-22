@@ -177,6 +177,7 @@ SVGReader = {
 
 
   parseChildren : function(domNode, parentNode) {
+    // console.log(domNode)
     var childNodes = []
     for (var i=0; i<domNode.childNodes.length; i++) {
       var tag = domNode.childNodes[i]
@@ -619,6 +620,11 @@ SVGReader = {
     },
 
     image : function(parser, tag, node) {
+      console.log('IMAGE:')
+      console.log(tag.href.baseVal);
+      var name = 'Embedded raster';
+      var data = tag.href.baseVal;
+      drawRaster(name, data);
       // not supported
       // has transform and style attributes
     },
