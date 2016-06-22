@@ -20,6 +20,7 @@
     <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css" id="theme_css" />
     <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-callouts.css" />
     <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-tour.min.css" />
+    <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-pincode-input.css" />
     <link type="text/css" rel="stylesheet" media="all" href="css/main.css" id="extra_css" />
     <link type="text/css" rel="stylesheet" media="all" href="css/sidebar.css" id="extra_css" />
 
@@ -33,6 +34,8 @@
 
     <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-colorselector.css" id="extra_css" />
     <script src="lib/bootstrap/js/bootstrap-colorselector.js"></script>
+
+    <script src="lib/bootstrap/js/bootstrap-pincode-input.js"></script>
 
     <script src="lib/nprogress/nprogress.js"></script>
     <link rel="stylesheet" href="lib/nprogress/nprogress.css" />
@@ -231,7 +234,29 @@
               <table>
                 <tr>
                   <td colspan="5">
-                    <div class="btn-group" role="group" aria-label="controljob">
+
+                    <div class="panel panel-danger" id="armmachine">
+                      <div class="panel-heading">Machine Control Disabled</div>
+                      <div class="panel-body">
+                        <table>
+                          <tr>
+                            <td style="width: 250px;">  Enter Pin </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <input type="text" id="armpin"><br>
+                              <a href="#" onclick="javascript:$('#armpin').pincodeInput().data('plugin_pincodeInput').clear()" class="btn btn-sm btn-danger">clear</a>
+                              <a href="#" onclick="javascript:$('#pinresetmodal').modal('show')" class="btn btn-sm btn-warning">set pin</a><br/>
+                              <span id="armerror"></span>
+                            </td>
+                            <!-- <td></td> -->
+                          </tr>
+                        </table>
+
+
+                      </div>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="controljob" id="controlmachine">
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="homeBtn" onclick="homeMachine();"><span class="fa-stack fa-1x"><i class="fa fa-home fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">home</strong><strong class="fa-stack-1x icon-bot-text">laser</strong></span></button></div>
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="playBtn" onclick="playpauseMachine();"><span class="fa-stack fa-1x"><i id="playicon" class="fa fa-play fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">run</strong><strong class="fa-stack-1x icon-bot-text">gcode</strong></span></button></div>
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="uploadBtn" onclick="$('#sdupload').modal('show');" style="display:none;"><span class="fa-stack fa-1x"><i class="fa fa-hdd-o fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">upload</strong><strong class="fa-stack-1x icon-bot-text">to SD</strong></span></button></div>
@@ -359,7 +384,7 @@
                     <button type="button" class="btn btn-success btn-block" id="generategcode">Generate G-Code</button>
                 </div>
             </div>
-            
+
             <div id="layerprep">
 
             </div>
@@ -791,7 +816,7 @@
 </div>
 <!-- End SD Upload Modal -->
 
-
+<!-- Status Messages for G Drive -->
 <div id="statusmodal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
@@ -811,7 +836,32 @@
 
   </div>
 </div>
-<!-- -->
+<!-- End Status -->
+
+<!-- Pin Reset -->
+<div id="pinresetmodal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Reset Arm/Disarm Pin</h4>
+      </div>
+      <div class="modal-body">
+        Enter the new PIN<br>
+        <input type="text" id="setarmpin"><br>
+        <span id="setpinmsg"><span>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-success" data-dismiss="modal">OK</button> -->
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- End Pin Reset -->
+
+
 
 <!-- End Main Body Div -->
 
