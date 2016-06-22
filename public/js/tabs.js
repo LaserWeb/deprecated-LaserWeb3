@@ -63,6 +63,11 @@ function initTabs() {
         for (var j = 0; j < objectsInScene.length; j++) {
           console.log('added object ' + j)
           scene.add(objectsInScene[j]);
+          if (objectsInScene[j].userData) {
+            if (objectsInScene[j].userData.inflated) {
+              scene.add(objectsInScene[j].userData.inflated);
+            }
+          };
         }
         if (typeof(object) != 'undefined') {
             scene.add(object);
@@ -89,6 +94,11 @@ function initTabs() {
         var i = parseInt($(this).attr('layerindex'));
         scene.add(objectsInScene[i]);
         attachBB(objectsInScene[i]);
+        if (objectsInScene[j].userData) {
+          if (objectsInScene[j].userData.inflated) {
+            scene.add(objectsInScene[j].userData.inflated);
+          }
+        };
       };
     });
 
@@ -98,10 +108,12 @@ function initTabs() {
 function fillLayerTabs() {
   $("#tabsLayers").empty();
   $("#layerprep").empty();
+  $("#tooloptions").empty();
   $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>');
-  for (j = 5; j < scene.children.length; j++) {
-    scene.remove(scene.children[5])
+  for (j = 5; j < scene.children.length+1; j++) {
+    scene.remove(scene.children[j])
   }
+  var hasTools = false;
   for (i = 0; i < objectsInScene.length; i++) {
 
     var pwr = objectsInScene[i].pwr
@@ -119,6 +131,7 @@ function fillLayerTabs() {
       var yoffset = objectsInScene[i].userData.offsetY
       var xpos = objectsInScene[i].position.x
       var ypos = objectsInScene[i].position.y
+      cncMode = $('#cncMode').val()
 
       var template = `
       <hr>
@@ -137,6 +150,26 @@ function fillLayerTabs() {
       </div>
       `
       $("#layerprep").append(template);
+
+      if (cncMode == "Enable") {
+        var cnctemplate = `
+        <div class="input-group">
+          <span class="input-group-addon">Operation</span>
+          <select class="form-control" id="operation`+i+`">
+              <option>Laser (no offset)</option>
+              <option>Inside</option>
+              <option>Outside</option>
+              <option>Pocket</option>
+          </select>
+          <div class = "input-group-btn"><button class="btn btn-default" onclick="addOperation('`+i+`', $('#operation`+i+`').val())">Add</button></div>
+        </div>`
+        $("#layerprep").append(cnctemplate);
+        if (objectsInScene[i].userData.operation) {
+            $("#operation"+i).val(objectsInScene[i].userData.operation);
+          }
+        hasTools = true;
+      }
+
       var objname = objectsInScene[i].name
       if (objname.indexOf('.svg') != -1) {
         var svgscale = objectsInScene[i].scale.x
@@ -188,5 +221,26 @@ function fillLayerTabs() {
       $("#layerprep").append(template);
     };
     scene.add(objectsInScene[i])
+    if (objectsInScene[i].userData) {
+      if (objectsInScene[i].userData.inflated) {
+        scene.add(objectsInScene[i].userData.inflated);
+      }
+    };
+  }
+
+
+  if (cncMode == "Enable") {
+    if (hasTools) {
+      var tools = `
+      <label class="control-label">Tool Options</label>
+      <div class="input-group">
+        <span class="input-group-addon">Tool Diameter</span>
+        <input type="number" class="form-control" value="3.175" id="tooldia">
+        <span class="input-group-addon">mm</span>
+
+      </div>
+      `
+      $("#tooloptions").append(tools);
+    }
   }
 };

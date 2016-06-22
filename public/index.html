@@ -385,9 +385,8 @@
                 </div>
             </div>
 
-            <div id="layerprep">
-
-            </div>
+            <div id="tooloptions"></div>
+            <div id="layerprep"></div>
 
 
 
@@ -504,6 +503,11 @@
                       Configure how the application works, turn on/off features:
                       <form class="form-horizontal">
                           <!-- <div class="form-group"> -->
+                              <label for="cncMode" class="control-label">Enable CNC Cam</label>
+                              <select class="form-control" id="cncMode">
+                                  <option>Disable</option>
+                                  <option>Enable</option>
+                              </select>
 
                               <label for="autoClose" class="control-label">Auto Close SVG Shapes</label>
                                 <select class="form-control" id="autoClose">

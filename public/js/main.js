@@ -39,9 +39,6 @@ $(document).ready(function() {
         }).off("focusin focusout");
     });
 
-    $('#inflateVal').change(onInflateChange.bind(this));
-
-
     $('#g-open').on('click', function() {
       $('#googledrive').modal('show');
     });

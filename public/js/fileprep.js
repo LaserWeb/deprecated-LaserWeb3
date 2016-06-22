@@ -97,22 +97,6 @@ function filePrepInit() {
       }
   });
 
-  $('#stepinfup').on('click', function() {
-    var oldValue = parseFloat($('#inflateVal').val());
-    var newVal = oldValue + 0.1;
-    var newVal = newVal.toFixed(1)
-    $("#inflateVal").val(newVal);
-    onInflateChange();
-  });
-
-  $('#stepinfdn').on('click', function() {
-    var oldValue = parseFloat($('#inflateVal').val());
-    var newVal = oldValue - 0.1;
-    var newVal = newVal.toFixed(1)
-    $("#inflateVal").val(newVal);
-    onInflateChange();
-  });
-
   $('#stepscaleup').on('click', function() {
     var oldValue = $("#scaleFactor").val();
     var newVal = parseFloat(oldValue) + 1;
