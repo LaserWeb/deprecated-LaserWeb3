@@ -136,6 +136,7 @@ function generateGcode(threeGroup, cutSpeed, laserPwr, rapidSpeed, laseron, lase
                     var xpos = (parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2)).toFixed(3);
                     var ypos = (parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2)).toFixed(3);
                 };
+                var zpos = parseFloat(worldPt.z.toFixed(3));
                 // First Move To
                 if (i == 0) {
                     // first point in line where we start lasering/milling
@@ -153,7 +154,7 @@ function generateGcode(threeGroup, cutSpeed, laserPwr, rapidSpeed, laseron, lase
 
                     }
                     g += "G0" + seekrate;
-                    g += " X" + xpos + " Y" + ypos + "\n";
+                    g += " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
                 // Else Cut move
                 } else {
                     // we are in a non-first line so this is normal moving
@@ -183,6 +184,7 @@ function generateGcode(threeGroup, cutSpeed, laserPwr, rapidSpeed, laseron, lase
                     g += "G1" + feedrate;
                     g += " X" + xpos;
                     g += " Y" + ypos;
+                    g += " Z" + zpos;
                     g += " S" + laserPwrVal + "\n";
                     var xpos = parseFloat(worldPt.x.toFixed(3));
                     var ypos = parseFloat(worldPt.y.toFixed(3));
@@ -210,7 +212,7 @@ function generateGcode(threeGroup, cutSpeed, laserPwr, rapidSpeed, laseron, lase
     return g;
 };
 
-addOperation = function(index, operation) {
+addOperation = function(index, operation, zstep, zdepth) {
 
   if (operation == "Laser (no offset)") {
     objectsInScene[index].userData.inflated = false;
@@ -218,17 +220,17 @@ addOperation = function(index, operation) {
   }
 
   if (operation == "Inside") {
-    objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], -($("#tooldia").val()/2) );
+    objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], -($("#tooldia").val()/2), zstep, zdepth );
     objectsInScene[index].userData.operation = operation;
   }
 
   if (operation == "Outside") {
-    objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], ($("#tooldia").val()/2) );
+    objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], ($("#tooldia").val()/2), zstep, zdepth );
     objectsInScene[index].userData.operation = operation;
   }
 
   if (operation == "Pocket") {
-    objectsInScene[index].userData.inflated = pocketPath(objectsInScene[index], ($("#tooldia").val()/2) );
+    objectsInScene[index].userData.inflated = pocketPath(objectsInScene[index], ($("#tooldia").val()/2), zstep, zdepth );
     objectsInScene[index].userData.operation = operation;
   }
 
@@ -236,7 +238,10 @@ addOperation = function(index, operation) {
 
 }
 
-inflatePath = function(infobject, inflateVal) {
+inflatePath = function(infobject, inflateVal, zstep, zdepth) {
+    var zstep = parseFloat(zstep, 2);
+    var zdepth = parseFloat(zdepth, 2);
+    var inflateGrpZ = new THREE.Group();
     if (typeof(inflateGrp) != 'undefined') {
         scene.remove(inflateGrp);
         inflateGrp = null;
@@ -287,16 +292,22 @@ inflatePath = function(infobject, inflateVal) {
 
         // get the inflated/deflated path
         var inflatedPaths = getInflatePath(newClipperPaths, inflateVal);
-        inflateGrp = drawClipperPaths(inflatedPaths, 0xff00ff, 0.8, 0.01, 0, true, "inflatedGroup"); // (paths, color, opacity, z, zstep, isClosed, isAddDirHelper, name, inflateVal)
-        inflateGrp.name = 'inflateGrp';
-        inflateGrp.position = infobject.position;
-        return inflateGrp
+
+        for (i = 1; i < zdepth; i += zstep) {
+            inflateGrp = drawClipperPaths(inflatedPaths, 0xff00ff, 0.8, -i, true, "inflatedGroup"); // (paths, color, opacity, z, zstep, isClosed, isAddDirHelper, name, inflateVal)
+            inflateGrp.name = 'inflateGrp';
+            inflateGrp.position = infobject.position;
+            console.log(i)
+            inflateGrpZ.add(inflateGrp)
+        }
+        return inflateGrpZ
     }
 };
 
 
-pocketPath = function(infobject, inflateVal) {
-
+pocketPath = function(infobject, inflateVal, zstep, zdepth) {
+    var zstep = parseFloat(zstep, 2);
+    var zdepth = parseFloat(zdepth, 2);
     var pocketGrp = new THREE.Group();
     if (typeof(inflateGrp) != 'undefined') {
         scene.remove(inflateGrp);
@@ -346,20 +357,21 @@ pocketPath = function(infobject, inflateVal) {
             printLog('Clipper Simplification Failed!', errorcolor)
         }
 
-        // get the inflated/deflated path
-        var run;
-        var index = 1;
-        for (i = 1; i < 100; i++) {  // Rather 100 than a while loop, just in case
-          inflateValUsed = inflateVal * i;
-          var inflatedPaths = getInflatePath(newClipperPaths, -inflateValUsed);
-          inflateGrp = drawClipperPaths(inflatedPaths, 0xff00ff, 0.8, 0.01, 0, true, "inflatedGroup"); // (paths, color, opacity, z, zstep, isClosed, isAddDirHelper, name, inflateVal)
-          if (inflateGrp.children.length) {
-            inflateGrp.name = 'inflateGrp';
-            inflateGrp.position = infobject.position;
-            pocketGrp.add(inflateGrp)
-          } else {
-            console.log('Pocket already done after ' + i + ' iterations')
-            break;
+        for (j = 1; j < zdepth; j += zstep) {
+            // get the inflated/deflated path
+
+          for (i = 1; i < 100; i++) {  // Rather 100 than a while loop, just in case
+            inflateValUsed = inflateVal * i;
+            var inflatedPaths = getInflatePath(newClipperPaths, -inflateValUsed);
+            inflateGrp = drawClipperPaths(inflatedPaths, 0xff00ff, 0.8, -j, true, "inflatedGroup"); // (paths, color, opacity, z, zstep, isClosed, isAddDirHelper, name, inflateVal)
+            if (inflateGrp.children.length) {
+              inflateGrp.name = 'inflateGrp';
+              inflateGrp.position = infobject.position;
+              pocketGrp.add(inflateGrp)
+            } else {
+              console.log('Pocket already done after ' + i + ' iterations')
+              break;
+            }
           }
         }
         return pocketGrp
@@ -396,7 +408,7 @@ getInflatePath = function(paths, delta, joinType) {
     return offsetted_paths;
 };
 
-drawClipperPaths = function(paths, color, opacity, z, zstep, isClosed, name) {
+drawClipperPaths = function(paths, color, opacity, z, isClosed, name) {
     console.log("drawClipperPaths");
 
     var lineUnionMat = new THREE.LineBasicMaterial({
@@ -408,9 +420,6 @@ drawClipperPaths = function(paths, color, opacity, z, zstep, isClosed, name) {
     if (z === undefined || z == null)
         z = 0;
 
-    if (zstep === undefined || zstep == null)
-        zstep = 0;
-
     if (isClosed === undefined || isClosed == null)
         isClosed = true;
 
@@ -420,10 +429,7 @@ drawClipperPaths = function(paths, color, opacity, z, zstep, isClosed, name) {
     for (var i = 0; i < paths.length; i++) {
         var lineUnionGeo = new THREE.Geometry();
         for (var j = 0; j < paths[i].length; j++) {
-            var actualZ = z;
-            if (zstep != 0) actualZ += zstep * j;
-            lineUnionGeo.vertices.push(new THREE.Vector3(paths[i][j].X, paths[i][j].Y, actualZ));
-
+            lineUnionGeo.vertices.push(new THREE.Vector3(paths[i][j].X, paths[i][j].Y, z));
         }
         // close it by connecting last point to 1st point
         if (isClosed) lineUnionGeo.vertices.push(new THREE.Vector3(paths[i][0].X, paths[i][0].Y, z));

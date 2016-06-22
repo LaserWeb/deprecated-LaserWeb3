@@ -161,8 +161,15 @@ function fillLayerTabs() {
               <option>Outside</option>
               <option>Pocket</option>
           </select>
-          <div class = "input-group-btn"><button class="btn btn-default" onclick="addOperation('`+i+`', $('#operation`+i+`').val())">Add</button></div>
-        </div>`
+          <div class = "input-group-btn"><button class="btn btn-default" onclick="addOperation('`+i+`', $('#operation`+i+`').val(), $('#zstep`+i+`').val(), $('#zdepth`+i+`').val())">Add</button></div>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon">Z Pass</span>
+          <input type="number" class="form-control" value="1"  id="zstep`+i+`">
+          <span class="input-group-addon">Z Depth</span>
+          <input type="number" class="form-control" value="1"  id="zdepth`+i+`">
+        </div>
+        `
         $("#layerprep").append(cnctemplate);
         if (objectsInScene[i].userData.operation) {
             $("#operation"+i).val(objectsInScene[i].userData.operation);
