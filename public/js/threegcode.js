@@ -61,7 +61,7 @@ $(document).ready(function() {
 
                 var cutSpeed0 = parseFloat( $("#speed"+(j)).val() ) * 60;
                 var pwr0 = parseFloat( $("#power"+(j)).val() );
-                var plungeSpeed0 = parseFloat( $("#plungespeed"+(j)).val() );
+                var plungeSpeed0 = parseFloat( $("#plungespeed"+(j)).val() ) * 60;
                 rapidSpeed = parseFloat(document.getElementById('rapidspeed').value) * 60;
                 g += "; \n";
                 g += "; "+objectsInScene[j].name + "\n";
