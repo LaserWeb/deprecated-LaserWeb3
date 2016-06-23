@@ -196,6 +196,11 @@ $(document).ready(function() {
       }
     });
 
+    cncMode = $('#cncMode').val()
+    if (cncMode == "Enable") {
+      document.title = "CNCWeb";
+    };
+
 
 }); // End of document.ready
 

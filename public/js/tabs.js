@@ -124,35 +124,47 @@ function fillLayerTabs() {
     if (!speed) {
       speed = 20;
     }
-    $("#tabsLayers").append('<li role="presentation" class="layertab" id="'+objectsInScene[i].name+'"><a href="#" layerindex="'+i+'">'+objectsInScene[i].name+'<button class="close" type="button" title="Remove this page">×</button></a></li>');
+
+    if (objectsInScene[i].userData.operation) {
+      var template = `
+      <li role="presentation" class="dropdown layertab" id="`+objectsInScene[i].name+`'">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" layerindex="`+i+`">`+objectsInScene[i].name+`<button class="close" type="button" title="Remove this page">×</button></a>
+        <ul class="dropdown-menu">
+          <li><a href="#">`+objectsInScene[i].name+`-`+objectsInScene[i].userData.operation+`</a></li>
+
+        </ul>
+      </li>
+      `
+    } else {
+      var template = `
+      <li role="presentation" class="layertab" id="`+objectsInScene[i].name+`'">
+        <a href="#" layerindex="`+i+`">`+objectsInScene[i].name+`<button class="close" type="button" title="Remove this page">×</button></a>
+      </li>
+      `
+    }
+
+    $("#tabsLayers").append(template);
+
+
 
     if (objectsInScene[i].type == 'Group') {
-      var xoffset = objectsInScene[i].userData.offsetX
-      var yoffset = objectsInScene[i].userData.offsetY
-      var xpos = objectsInScene[i].position.x
-      var ypos = objectsInScene[i].position.y
+      var xoffset = objectsInScene[i].userData.offsetX;
+      var yoffset = objectsInScene[i].userData.offsetY;
+      var xpos = objectsInScene[i].position.x;
+      var ypos = objectsInScene[i].position.y;
+      var zstep = objectsInScene[i].userData.zstep;
+      var zdepth = objectsInScene[i].userData.zdepth;
+      if (!zstep) {
+        zstep = 1;
+      };
+      if (!zdepth) {
+        zdepth = 1;
+      };
       cncMode = $('#cncMode').val()
-
-      var template = `
-      <hr>
-      <label class="control-label">`+objectsInScene[i].name+`</label>
-      <div class="input-group">
-        <input type="number" class="form-control" value="`+speed+`" id="speed`+i+`" objectseq="`+i+`">
-        <span class="input-group-addon">mm/s</span>
-        <input type="number" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
-        <span class="input-group-addon">%</span>
-      </div>
-      <div class="input-group">
-        <span class="input-group-addon">X</span>
-        <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
-        <span class="input-group-addon">Y</span>
-        <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
-      </div>
-      `
-      $("#layerprep").append(template);
-
       if (cncMode == "Enable") {
         var cnctemplate = `
+        <label class="control-label">`+objectsInScene[i].name+`</label>
+
         <div class="input-group">
           <span class="input-group-addon">Operation</span>
           <select class="form-control" id="operation`+i+`">
@@ -161,13 +173,29 @@ function fillLayerTabs() {
               <option>Outside</option>
               <option>Pocket</option>
           </select>
-          <div class = "input-group-btn"><button class="btn btn-default" onclick="addOperation('`+i+`', $('#operation`+i+`').val(), $('#zstep`+i+`').val(), $('#zdepth`+i+`').val())">Add</button></div>
+          <div class = "input-group-btn"><button class="btn btn-success" onclick="addOperation('`+i+`', $('#operation`+i+`').val(), $('#zstep`+i+`').val(), $('#zdepth`+i+`').val())">Add</button></div>
         </div>
         <div class="input-group">
-          <span class="input-group-addon">Z Pass</span>
-          <input type="number" class="form-control" value="1"  id="zstep`+i+`">
-          <span class="input-group-addon">Z Depth</span>
-          <input type="number" class="form-control" value="1"  id="zdepth`+i+`">
+          <span class="input-group-addon">Incr</span>
+          <input type="number" class="form-control" value="`+zstep+`"  id="zstep`+i+`">
+          <span class="input-group-addon">Depth</span>
+          <input type="number" class="form-control" value="`+zdepth+`"  id="zdepth`+i+`">
+          <span class="input-group-addon">mm</span>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon">Cut</span>
+          <input type="number" class="form-control" value="`+speed+`" id="speed`+i+`" objectseq="`+i+`">
+          <span class="input-group-addon">Plunge</span>
+          <input type="number" class="form-control" value="20" id="plungespeed`+i+`" objectseq="`+i+`">
+          <span class="input-group-addon">mm/s</span>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon">%</span>
+          <input type="number" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`" style="width: 115px;">
+          <span class="input-group-addon">Tool</span>
+          <select class="form-control" id="tool`+i+`">
+                <option>default</option>
+          </select>
         </div>
         `
         $("#layerprep").append(cnctemplate);
@@ -175,6 +203,24 @@ function fillLayerTabs() {
             $("#operation"+i).val(objectsInScene[i].userData.operation);
           }
         hasTools = true;
+      } else {
+        var template = `
+        <hr>
+        <label class="control-label">`+objectsInScene[i].name+`</label>
+        <div class="input-group">
+          <input type="number" class="form-control" value="`+speed+`" id="speed`+i+`" objectseq="`+i+`">
+          <span class="input-group-addon">mm/s</span>
+          <input type="number" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
+          <span class="input-group-addon">%</span>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon">X</span>
+          <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
+          <span class="input-group-addon">Y</span>
+          <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
+        </div>
+        `
+        $("#layerprep").append(template);
       }
 
       var objname = objectsInScene[i].name

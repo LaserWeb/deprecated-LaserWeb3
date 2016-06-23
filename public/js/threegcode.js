@@ -217,21 +217,29 @@ addOperation = function(index, operation, zstep, zdepth) {
   if (operation == "Laser (no offset)") {
     objectsInScene[index].userData.inflated = false;
     objectsInScene[index].userData.operation = operation;
+    objectsInScene[index].userData.zstep = zstep;
+    objectsInScene[index].userData.zdepth = zdepth;
   }
 
   if (operation == "Inside") {
     objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], -($("#tooldia").val()/2), zstep, zdepth );
     objectsInScene[index].userData.operation = operation;
+    objectsInScene[index].userData.zstep = zstep;
+    objectsInScene[index].userData.zdepth = zdepth;
   }
 
   if (operation == "Outside") {
     objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], ($("#tooldia").val()/2), zstep, zdepth );
     objectsInScene[index].userData.operation = operation;
+    objectsInScene[index].userData.zstep = zstep;
+    objectsInScene[index].userData.zdepth = zdepth;
   }
 
   if (operation == "Pocket") {
     objectsInScene[index].userData.inflated = pocketPath(objectsInScene[index], ($("#tooldia").val()/2), zstep, zdepth );
     objectsInScene[index].userData.operation = operation;
+    objectsInScene[index].userData.zstep = zstep;
+    objectsInScene[index].userData.zdepth = zdepth;
   }
 
   setTimeout(function(){ fillLayerTabs(); }, 100);
