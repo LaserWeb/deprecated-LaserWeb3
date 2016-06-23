@@ -165,13 +165,14 @@ function generateGcode(threeGroup, cutSpeed, plungeSpeed, laserPwr, rapidSpeed, 
                     cncMode = $('#cncMode').val()
                     if (cncMode == "Enable") {
                       if (!isAtClearanceHeight) {
-                        g += "G0 Z" + clearanceHeight + "\n";
+                        g += "G0 Z" + clearanceHeight + "\n"; // Position Before Plunge!
                       }
                     };
                     g += "G0" + seekrate;
                     g += " X" + xpos + " Y" + ypos + "\n";
                     if (cncMode == "Enable") {
-                      g += "G1 Z" + zpos + "\n";
+                      g += "G0 Z1\n";  // G0 to Z0 then Plunge!
+                      g += "G1 F"+plungeSpeed+" Z" + zpos + "\n";  // Plunge!!!!
                     } else {
                       g += " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
                     };
