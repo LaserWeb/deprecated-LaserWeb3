@@ -18,6 +18,14 @@ $(document).ready(function() {
         var lasermultiply = document.getElementById('lasermultiply').value;
         var homingseq = document.getElementById('homingseq').value;
         var endgcode = document.getElementById('endgcode').value;
+        cncMode = $('#cncMode').val()
+        if (cncMode == "Enable") {
+          var clearanceHeight = document.getElementById('clearanceHeight').value;
+        } else {
+          var clearanceHeight = 0
+        }
+
+
         // Remove old Gcode
         document.getElementById('gcodepreview').value = "";
         lineObjects = null;
@@ -53,14 +61,15 @@ $(document).ready(function() {
 
                 var cutSpeed0 = parseFloat( $("#speed"+(j)).val() ) * 60;
                 var pwr0 = parseFloat( $("#power"+(j)).val() );
+                var plungeSpeed0 = parseFloat( $("#plungespeed"+(j)).val() );
                 rapidSpeed = parseFloat(document.getElementById('rapidspeed').value) * 60;
                 g += "; \n";
                 g += "; "+objectsInScene[j].name + "\n";
                 g += "; \n";
                 if (objectsInScene[j].userData.inflated) {
-                  g += generateGcode(objectsInScene[j].userData.inflated, cutSpeed0, pwr0, rapidSpeed, laseron, laseroff);
+                  g += generateGcode(objectsInScene[j].userData.inflated, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                 } else {
-                  g += generateGcode(objectsInScene[j], cutSpeed0, pwr0, rapidSpeed, laseron, laseroff);
+                  g += generateGcode(objectsInScene[j], cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                 }
 
               }
@@ -81,13 +90,13 @@ $(document).ready(function() {
     });
 });
 
-function generateGcode(threeGroup, cutSpeed, laserPwr, rapidSpeed, laseron, laseroff) {
+function generateGcode(threeGroup, cutSpeed, plungeSpeed, laserPwr, rapidSpeed, laseron, laseroff, clearanceHeight) {
 
     var laserPwrVal = 0.0;
     console.log('inside generateGcode')
     console.log('Group', threeGroup);
     console.log('CutSpeed', cutSpeed);
-    console.log('RapidSpeed', rapidSpeed);
+    console.log('plungeSpeed', plungeSpeed);
     console.log('Laser Power %', laserPwr);
     var lasermultiply = $('#lasermultiply').val();
     console.log('Laser Multiplier', lasermultiply);
@@ -153,8 +162,20 @@ function generateGcode(threeGroup, cutSpeed, laserPwr, rapidSpeed, laseron, lase
                         }
 
                     }
+                    cncMode = $('#cncMode').val()
+                    if (cncMode == "Enable") {
+                      if (!isAtClearanceHeight) {
+                        g += "G0 Z" + clearanceHeight + "\n";
+                      }
+                    };
                     g += "G0" + seekrate;
-                    g += " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
+                    g += " X" + xpos + " Y" + ypos + "\n";
+                    if (cncMode == "Enable") {
+                      g += "G1 Z" + zpos + "\n";
+                    } else {
+                      g += " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
+                    };
+                    isAtClearanceHeight = false;
                 // Else Cut move
                 } else {
                     // we are in a non-first line so this is normal moving
@@ -195,6 +216,8 @@ function generateGcode(threeGroup, cutSpeed, laserPwr, rapidSpeed, laseron, lase
                 }
             }
 
+
+
             // make feedrate have to get specified again on next line if there is one
             isFeedrateSpecifiedAlready = false;
             isLaserOn = false;
@@ -205,6 +228,12 @@ function generateGcode(threeGroup, cutSpeed, laserPwr, rapidSpeed, laseron, lase
             } else {
                 // Nothing - most of the firmware used G0 = move, G1 = cut and doesnt need a laseron/laseroff command
             }
+            // if (cncMode == "Enable") {
+            //   if (!isAtClearanceHeight) {
+            //     g += "G0 Z" + clearanceHeight + "\n";
+            //     isAtClearanceHeight = true;
+            //   }
+            // };
         }
     });
     console.log("generated gcode. length:", g.length);

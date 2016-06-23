@@ -49,59 +49,57 @@ function initTabs() {
      console.log('dumping ' + layerIndex + ' from objectsInScene')
      objectsInScene.splice(layerIndex, 1)
      fillLayerTabs();
-   });
+  });
 
-   $('#tabsLayers').on('click','a',function(){
-      console.log("selected object id: " + $(this).attr('layerindex'));
-      console.log("selected tab name: " + $(this).parents('li').attr('id'));
-      var tabName = $(this).parents('li').attr('id')
+  $('#tabsLayers').on('click','a',function(){
+    console.log("selected object id: " + $(this).attr('layerindex'));
+    console.log("selected tab name: " + $(this).parents('li').attr('id'));
 
-      $(".layertab").removeClass('active');
-      $(this).parents('li').addClass('active');
+    var tabName = $(this).parents('li').attr('id')
 
-      if (tabName == "allView") {
-        for (var j = 0; j < objectsInScene.length; j++) {
-          console.log('added object ' + j)
-          scene.add(objectsInScene[j]);
-          if (objectsInScene[j].userData) {
-            if (objectsInScene[j].userData.inflated) {
-              scene.add(objectsInScene[j].userData.inflated);
-            }
-          };
-        }
-        if (typeof(object) != 'undefined') {
-            scene.add(object);
-        }
-        scene.remove(boundingBox)
-
-      } else if (tabName == "gCodeView") {
-        console.log('L: ', scene.children.length)
-        var total = scene.children.length
-        for (var j = 5; j < total; j++) {
-          console.log('Removed ', scene.children[5].name);
-          scene.remove(scene.children[5]);
-        }
-        if (object) {
-          scene.add(object);
-          attachBB(object);
-        }
-      } else {
-        var total = scene.children.length
-        for (var j = 5; j < total; j++) {
-          console.log('Removed ', scene.children[5].name);
-          scene.remove(scene.children[5]);
-        }
-        var i = parseInt($(this).attr('layerindex'));
-        scene.add(objectsInScene[i]);
-        attachBB(objectsInScene[i]);
+    $(".layertab").removeClass('active');
+    $(this).parents('li').addClass('active');
+    if (tabName == "allView") {
+      for (var j = 0; j < objectsInScene.length; j++) {
+        console.log('added object ' + j)
+        scene.add(objectsInScene[j]);
         if (objectsInScene[j].userData) {
           if (objectsInScene[j].userData.inflated) {
             scene.add(objectsInScene[j].userData.inflated);
           }
         };
+      }
+      if (typeof(object) != 'undefined') {
+          scene.add(object);
+      }
+      scene.remove(boundingBox)
+    } else if (tabName == "gCodeView") {
+      console.log('L: ', scene.children.length)
+      var total = scene.children.length
+      for (var j = 5; j < total; j++) {
+        console.log('Removed ', scene.children[5].name);
+        scene.remove(scene.children[5]);
+      }
+        if (typeof(object) != 'undefined') {
+        scene.add(object);
+        attachBB(object);
+      }
+    } else {
+      var total = scene.children.length
+      for (var j = 5; j < total; j++) {
+        console.log('Removed ', scene.children[5].name);
+        scene.remove(scene.children[5]);
+      }
+      var i = parseInt($(this).attr('layerindex'));
+      scene.add(objectsInScene[i]);
+      attachBB(objectsInScene[i]);
+      if (typeof(objectsInScene[i].userData) !== 'undefined') {
+        if (objectsInScene[i].userData.inflated) {
+          scene.add(objectsInScene[i].userData.inflated);
+        }
       };
-    });
-
+    };
+  });
 } // End init
 
 
@@ -130,7 +128,7 @@ function fillLayerTabs() {
       <li role="presentation" class="dropdown layertab" id="`+objectsInScene[i].name+`'">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" layerindex="`+i+`">`+objectsInScene[i].name+`<button class="close" type="button" title="Remove this page">×</button></a>
         <ul class="dropdown-menu">
-          <li><a href="#">`+objectsInScene[i].name+`-`+objectsInScene[i].userData.operation+`</a></li>
+          <li id="`+objectsInScene[i].name+`'"><a href="#" layerindex="`+i+`">`+objectsInScene[i].name+`-`+objectsInScene[i].userData.operation+`</a></li>
 
         </ul>
       </li>
@@ -138,7 +136,7 @@ function fillLayerTabs() {
     } else {
       var template = `
       <li role="presentation" class="layertab" id="`+objectsInScene[i].name+`'">
-        <a href="#" layerindex="`+i+`">`+objectsInScene[i].name+`<button class="close" type="button" title="Remove this page">×</button></a>
+        <a href="#">`+objectsInScene[i].name+`<button class="close" type="button" title="Remove this page">×</button></a>
       </li>
       `
     }
@@ -196,6 +194,12 @@ function fillLayerTabs() {
           <select class="form-control" id="tool`+i+`">
                 <option>default</option>
           </select>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon">X</span>
+          <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
+          <span class="input-group-addon">Y</span>
+          <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
         </div>
         `
         $("#layerprep").append(cnctemplate);
@@ -289,6 +293,12 @@ function fillLayerTabs() {
       <div class="input-group">
         <span class="input-group-addon">Tool Diameter</span>
         <input type="number" class="form-control" value="3.175" id="tooldia">
+        <span class="input-group-addon">mm</span>
+
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon">Z Safe Height</span>
+        <input type="number" class="form-control" value="10" id="clearanceHeight">
         <span class="input-group-addon">mm</span>
 
       </div>
