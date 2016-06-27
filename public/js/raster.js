@@ -103,8 +103,8 @@ function runRaster(index) {
 
   // var laserFeed = $('#feedRate'+index).val() * 60;
   var rasterDPI = parseFloat($('#rasterDPI'+index).val());
-  var blackspeed = $("#feedRateW"+index).val();
-  var whitespeed = $("#feedRateB"+index).val();
+  var blackspeed = $("#feedRateW"+index).val() * 60;
+  var whitespeed = $("#feedRateB"+index).val() * 60;
   var useVariableSpeed = $('#useRasterBlackWhiteSpeeds'+index).prop('checked');
   var xoffset = parseFloat($('#rasterxoffset'+index).val());
   var yoffset = parseFloat($('#rasteryoffset'+index).val());
