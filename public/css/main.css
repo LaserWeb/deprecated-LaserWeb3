@@ -302,3 +302,15 @@ d-grid {border: none; padding: 20px;}
   text-shadow: 0 1px 0 #fff;
   opacity: 0.2;
  }
+ 
+ .panel-heading .accordion-toggle:after {
+     /* symbol for "opening" panels */
+     font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
+     content: "\e114";    /* adjust as needed, taken from bootstrap.css */
+     float: right;        /* adjust as needed */
+     color: grey;         /* adjust as needed */
+ }
+ .panel-heading .accordion-toggle.collapsed:after {
+     /* symbol for "collapsed" panels */
+     content: "\e080";    /* adjust as needed, taken from bootstrap.css */
+ }

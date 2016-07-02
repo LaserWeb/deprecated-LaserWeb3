@@ -696,25 +696,33 @@ function onMouseClick(e) {
 }
 
 function attachBB(object) {
-  if (typeof(boundingBox) != 'undefined') {
-      scene.remove(boundingBox);
+
+  console.log(object.type);
+
+  if (object.type == "Mesh" ) {
+ // dont  BB
+  } else {
+    if (typeof(boundingBox) != 'undefined') {
+        scene.remove(boundingBox);
+    }
+
+      var bbox2 = new THREE.Box3().setFromObject(object);
+    console.log('bbox for Clicked Obj: '+ object +' Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
+
+    BBmaterial =  new THREE.LineDashedMaterial( { color: 0xaaaaaa, dashSize: 5, gapSize: 4, linewidth: 2 } );
+    BBgeometry = new THREE.Geometry();
+    BBgeometry.vertices.push(
+      new THREE.Vector3(  bbox2.min.x, bbox2.min.y, 0 ),
+      new THREE.Vector3(  bbox2.min.x, (bbox2.max.y + 1) , 0 ),
+      new THREE.Vector3( (bbox2.max.x + 1), (bbox2.max.y +1), 0 ),
+      new THREE.Vector3( (bbox2.max.x + 1), bbox2.min.y, 0 ),
+      new THREE.Vector3(  bbox2.min.x, bbox2.min.y, 0 )
+    );
+    BBgeometry.computeLineDistances();  //  NB If not computed, dashed lines show as solid
+    boundingBox= new THREE.Line( BBgeometry, BBmaterial );
+    // boundingBox.translateX(laserxmax /2 * -1);
+    // boundingBox.translateY(laserymax /2 * -1);
+    scene.add( boundingBox );
   }
 
-  var bbox2 = new THREE.Box3().setFromObject(object);
-  console.log('bbox for Clicked Obj: '+ object +' Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
-
-  BBmaterial =  new THREE.LineDashedMaterial( { color: 0xaaaaaa, dashSize: 5, gapSize: 4, linewidth: 2 } );
-  BBgeometry = new THREE.Geometry();
-  BBgeometry.vertices.push(
-    new THREE.Vector3(  bbox2.min.x, bbox2.min.y, 0 ),
-    new THREE.Vector3(  bbox2.min.x, (bbox2.max.y + 1) , 0 ),
-    new THREE.Vector3( (bbox2.max.x + 1), (bbox2.max.y +1), 0 ),
-    new THREE.Vector3( (bbox2.max.x + 1), bbox2.min.y, 0 ),
-    new THREE.Vector3(  bbox2.min.x, bbox2.min.y, 0 )
-  );
-  BBgeometry.computeLineDistances();  //  NB If not computed, dashed lines show as solid
-  boundingBox= new THREE.Line( BBgeometry, BBmaterial );
-  // boundingBox.translateX(laserxmax /2 * -1);
-  // boundingBox.translateY(laserymax /2 * -1);
-  scene.add( boundingBox );
 }

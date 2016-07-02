@@ -244,7 +244,7 @@ function generateGcode(threeGroup, cutSpeed, plungeSpeed, laserPwr, rapidSpeed, 
 
 addOperation = function(index, operation, zstep, zdepth) {
 
-  if (operation == "Laser (no offset)") {
+  if (operation == "Laser (no path offset)") {
     objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], 0, zstep, zdepth );
     objectsInScene[index].userData.operation = operation;
     objectsInScene[index].userData.zstep = zstep;

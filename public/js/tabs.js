@@ -107,6 +107,11 @@ function fillLayerTabs() {
   $("#tabsLayers").empty();
   $("#layerprep").empty();
   $("#tooloptions").empty();
+
+  // Instead of appending for each, we build a string and append at the end
+  var layerprep = `<hr><div class="panel-group" id="accordion">`
+
+
   $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>');
   for (j = 5; j < scene.children.length+1; j++) {
     scene.remove(scene.children[j])
@@ -136,7 +141,7 @@ function fillLayerTabs() {
     } else {
       var template = `
       <li role="presentation" class="layertab" id="`+objectsInScene[i].name+`'">
-        <a href="#">`+objectsInScene[i].name+`<button class="close" type="button" title="Remove this page">×</button></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" layerindex="`+i+`">`+objectsInScene[i].name+`<button class="close" type="button" title="Remove this page">×</button></a>
       </li>
       `
     }
@@ -161,86 +166,128 @@ function fillLayerTabs() {
       cncMode = $('#cncMode').val()
       if (cncMode == "Enable") {
         var cnctemplate = `
-        <label class="control-label">`+objectsInScene[i].name+`</label>
+        <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a class="accordion-toggle"  data-toggle="collapse" data-parent="#accordion" href="#collapse`+i+`">`+objectsInScene[i].name+`</a>
+          </h4>
+        </div>
+        <div id="collapse`+i+`" class="panel-collapse collapse">
+          <div class="panel-body" id="panel`+i+`">
+            <div class="form-group">
+              <label >Position Offset</label>
+              <div class="input-group">
+                <span class="input-group-addon">X</span>
+                <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">Y</span>
+                <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">mm</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Operation</label>
+                <div class="input-group" >
+                  <select class="form-control" id="operation`+i+`">
+                    <option>Laser (no path offset)</option>
+                    <option>Inside</option>
+                    <option>Outside</option>
+                    <option>Pocket</option>
+                  </select>
+                  <div class = "input-group-btn"><button class="btn btn-success" onclick="addOperation('`+i+`', $('#operation`+i+`').val(), $('#zstep`+i+`').val(), $('#zdepth`+i+`').val())">Add</button></div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label >Cut Depth per pass</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" value="`+zstep+`"  id="zstep`+i+`">
+                  <span class="input-group-addon">mm</span>
+                </div>
+                <label>Final Depth</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" value="`+zdepth+`"  id="zdepth`+i+`">
+                  <span class="input-group-addon">mm</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Feedrate: Cut</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" value="`+speed+`" id="speed`+i+`" objectseq="`+i+`">
+                  <span class="input-group-addon">mm/s</span>
+                </div>
+                <label>Feedrate: Plunge</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" value="20" id="plungespeed`+i+`" objectseq="`+i+`">
+                  <span class="input-group-addon">mm/s</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label >Tool</label>
+                  <select class="form-control" id="tool`+i+`">
+                    <option>default</option>
+                  </select>
+                <div class="form-group">
+                  <label >Spindle RPM (0-100%)</label>
+                  <div class="input-group">
+                  <input type="number" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
+                  <span class="input-group-addon">RPM %</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <div class="input-group">
-          <span class="input-group-addon">Operation</span>
-          <select class="form-control" id="operation`+i+`">
-              <option>Laser (no offset)</option>
-              <option>Inside</option>
-              <option>Outside</option>
-              <option>Pocket</option>
-          </select>
-          <div class = "input-group-btn"><button class="btn btn-success" onclick="addOperation('`+i+`', $('#operation`+i+`').val(), $('#zstep`+i+`').val(), $('#zdepth`+i+`').val())">Add</button></div>
-        </div>
-        <div class="input-group">
-          <span class="input-group-addon">Incr</span>
-          <input type="number" class="form-control" value="`+zstep+`"  id="zstep`+i+`">
-          <span class="input-group-addon">Depth</span>
-          <input type="number" class="form-control" value="`+zdepth+`"  id="zdepth`+i+`">
-          <span class="input-group-addon">mm</span>
-        </div>
-        <div class="input-group">
-          <span class="input-group-addon">Cut</span>
-          <input type="number" class="form-control" value="`+speed+`" id="speed`+i+`" objectseq="`+i+`">
-          <span class="input-group-addon">Plunge</span>
-          <input type="number" class="form-control" value="20" id="plungespeed`+i+`" objectseq="`+i+`">
-          <span class="input-group-addon">mm/s</span>
-        </div>
-        <div class="input-group">
-          <span class="input-group-addon">%</span>
-          <input type="number" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`" style="width: 115px;">
-          <span class="input-group-addon">Tool</span>
-          <select class="form-control" id="tool`+i+`">
-                <option>default</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <span class="input-group-addon">X</span>
-          <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
-          <span class="input-group-addon">Y</span>
-          <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
-        </div>
+
+
+
+
         `
-        $("#layerprep").append(cnctemplate);
+        //$("#layerprep").append(cnctemplate);
+        layerprep += cnctemplate
         if (objectsInScene[i].userData.operation) {
             $("#operation"+i).val(objectsInScene[i].userData.operation);
           }
         hasTools = true;
       } else {
         var template = `
-        <hr>
-        <label class="control-label">`+objectsInScene[i].name+`</label>
-        <div class="input-group">
-          <input type="number" class="form-control" value="`+speed+`" id="speed`+i+`" objectseq="`+i+`">
-          <span class="input-group-addon">mm/s</span>
-          <input type="number" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
-          <span class="input-group-addon">%</span>
+        <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a class="accordion-toggle"  data-toggle="collapse" data-parent="#accordion" href="#collapse`+i+`">`+objectsInScene[i].name+`</a>
+          </h4>
         </div>
-        <div class="input-group">
-          <span class="input-group-addon">X</span>
-          <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
-          <span class="input-group-addon">Y</span>
-          <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
+        <div id="collapse`+i+`" class="panel-collapse collapse">
+          <div class="panel-body" id="panel`+i+`">
+            <div class="form-group">
+              <label >Laser Power (0-100%)</label>
+              <div class="input-group">
+              <input type="number" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">%</span>
+            </div>
+            <div class="form-group">
+              <label>Feedrate: Cut</label>
+              <div class="input-group">
+                <input type="number" class="form-control" value="`+speed+`" id="speed`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">mm/s</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label >Position Offset</label>
+              <div class="input-group">
+                <span class="input-group-addon">X</span>
+                <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">Y</span>
+                <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">mm</span>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
         `
-        $("#layerprep").append(template);
+        // $("#layerprep").append(template);
+        layerprep += template;
       }
-
-      var objname = objectsInScene[i].name
-      if (objname.indexOf('.svg') != -1) {
-        var svgscale = objectsInScene[i].scale.x
-        var templatedpi = `
-        <div class="input-group">
-          <span class="input-group-addon">DPI</span>
-          <input type="number" class="form-control" value="`+(25.4/svgscale)+`" id="svgdpi`+i+`" objectseq="`+i+`">
-
-        </div>
-        `
-        $("#layerprep").append(templatedpi);
-
-      }
-
     } else if (objectsInScene[i].type == 'Mesh') {
       var xoffset = objectsInScene[i].userData.offsetX
       var yoffset = objectsInScene[i].userData.offsetY
@@ -249,33 +296,60 @@ function fillLayerTabs() {
       // var seq = objectsInScene[i].userData.seq;
       var scale = objectsInScene[i].scale.y;
       var template = `
-      <hr>
-      <label class="control-label">`+objectsInScene[i].name+`</label>
-      <div class="input-group">
-        <span class="input-group-addon">Light</span>
-        <input type="number" class="form-control"  value="20" id="feedRateW`+i+`" objectseq="`+i+`">
-        <span class="input-group-addon">Dark</span>
-        <input type="number" class="form-control"  value="20" id="feedRateB`+i+`" objectseq="`+i+`">
-        <span class="input-group-addon">mm/s</span>
+      <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a class="accordion-toggle"  data-toggle="collapse" data-parent="#accordion" href="#collapse`+i+`">`+objectsInScene[i].name+`</a>
+        </h4>
       </div>
-      <div class="input-group">
-        <span class="input-group-addon">Min Pwr</span>
-        <input type="number" class="form-control" value="0" id="minpwr`+i+`" objectseq="`+i+`">
-        <span class="input-group-addon">Max Pwr</span>
-        <input type="number" class="form-control" value="100" id="maxpwr`+i+`" objectseq="`+i+`">
+      <div id="collapse`+i+`" class="panel-collapse collapse">
+        <div class="panel-body" id="panel`+i+`">
+          <div class="form-group">
+            <label >Raster: Proportional Feedrate</label>
+            <div class="input-group">
+              <span class="input-group-addon">Light</span>
+              <input type="number" class="form-control"  value="20" id="feedRateW`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">mm/s</span>
+            </div><br>
+            <div class="input-group">
+              <span class="input-group-addon">Dark</span>
+              <input type="number" class="form-control"  value="20" id="feedRateB`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">mm/s</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Laser Power Contraints</label>
+            <div class="input-group">
+              <span class="input-group-addon">Min</span>
+              <input type="number" class="form-control" value="0" id="minpwr`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">Max</span>
+              <input type="number" class="form-control" value="100" id="maxpwr`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">%</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label >Position Offset</label>
+            <div class="input-group">
+              <span class="input-group-addon">X</span>
+              <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">Y</span>
+              <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">mm</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Bitmap Resolution</label>
+            <div class="input-group">
+              <input type="number" class="form-control" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">DPI</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="input-group">
-        <span class="input-group-addon">X</span>
-        <input type="text" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`" id="rasterxoffset`+i+`" objectseq="`+i+`">
-        <span class="input-group-addon">Y</span>
-        <input type="text" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`" id="rasteryoffset`+i+`" objectseq="`+i+`">
-      </div>
-      <div class="input-group">
-        <span class="input-group-addon">DPI</span>
-        <input type="number" class="form-control" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
-      </div>
+    </div>
       `;
-      $("#layerprep").append(template);
+      // $("#layerprep").append(template);
+      layerprep += template;
     };
     scene.add(objectsInScene[i])
     if (objectsInScene[i].userData) {
@@ -306,4 +380,28 @@ function fillLayerTabs() {
       $("#tooloptions").append(tools);
     }
   }
+
+
+  layerprep += "</div>"
+  $("#layerprep").append(layerprep);
+
+  for (i = 0; i < objectsInScene.length; i++) {
+    var objname = objectsInScene[i].name
+    if (objname.indexOf('.svg') != -1) {
+      var svgscale = objectsInScene[i].scale.x
+      var templatedpi = `
+      <div class="form-group">
+        <label>SVG Resolution</label>
+        <div class="input-group">
+          <input type="number" class="form-control" value="`+(25.4/svgscale)+`" id="svgdpi`+i+`" objectseq="`+i+`">
+          <span class="input-group-addon">DPI</span>
+
+        </div>
+      </div>
+      `
+      $("#panel"+i).prepend(templatedpi);
+      // layerprep += templatedpi
+    }
+  };
+
 };
