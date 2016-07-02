@@ -331,7 +331,7 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
         // get the inflated/deflated path
         var inflatedPaths = getInflatePath(newClipperPaths, inflateVal);
 
-        for (i = 1; i < zdepth; i += zstep) {
+        for (i = 0; i < zdepth; i += zstep) {
             inflateGrp = drawClipperPaths(inflatedPaths, 0xff00ff, 0.8, -i, true, "inflatedGroup"); // (paths, color, opacity, z, zstep, isClosed, isAddDirHelper, name, inflateVal)
             inflateGrp.name = 'inflateGrp';
             inflateGrp.position = infobject.position;
@@ -395,7 +395,7 @@ pocketPath = function(infobject, inflateVal, zstep, zdepth) {
             printLog('Clipper Simplification Failed!', errorcolor)
         }
 
-        for (j = 1; j < zdepth; j += zstep) {
+        for (j = 0; j < zdepth; j += zstep) {
             // get the inflated/deflated path
 
           for (i = 1; i < 100; i++) {  // Rather 100 than a while loop, just in case
