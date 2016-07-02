@@ -404,7 +404,7 @@ Rasterizer.prototype.onFinish = function() {
 
     // Populate the GCode textarea
     var existinggcode =  document.getElementById('gcodepreview').value
-    document.getElementById('gcodepreview').value = this.result + existinggcode ;
+    document.getElementById('gcodepreview').value = existinggcode + this.result;
     console.log('Optimized by number of line: ', this.skip);
     // Some Post-job Stats and Cleanup
     console.log('Number of GCode Moves: ', this.moveCount);
