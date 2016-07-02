@@ -1,3 +1,5 @@
+console.log("%c%s","color: #000; background: green; font-size: 24px;",
+"STARTING LASERWEB")
 // colors for the consolelog
 var msgcolor = '#000000';
 var successcolor = '#00aa00';

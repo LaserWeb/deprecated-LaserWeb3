@@ -245,7 +245,7 @@ function generateGcode(threeGroup, cutSpeed, plungeSpeed, laserPwr, rapidSpeed, 
 addOperation = function(index, operation, zstep, zdepth) {
 
   if (operation == "Laser (no offset)") {
-    objectsInScene[index].userData.inflated = false;
+    objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], 0, zstep, zdepth );
     objectsInScene[index].userData.operation = operation;
     objectsInScene[index].userData.zstep = zstep;
     objectsInScene[index].userData.zdepth = zdepth;
@@ -284,7 +284,7 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
         scene.remove(inflateGrp);
         inflateGrp = null;
     }
-    if (inflateVal != 0) {
+    // if (inflateVal != 0) {
         console.log("user wants to inflate. val:", inflateVal);
         infobject.updateMatrix();
         var grp = infobject;
@@ -339,7 +339,7 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
             inflateGrpZ.add(inflateGrp)
         }
         return inflateGrpZ
-    }
+    // }
 };
 
 
