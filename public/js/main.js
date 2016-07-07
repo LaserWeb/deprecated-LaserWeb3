@@ -132,7 +132,7 @@ $(document).ready(function() {
 
 
     // Progressbar
-    //NProgress.configure({ parent: '#consolemodule' });
+    // NProgress.configure({ parent: '#gcode-menu-panel' });
     NProgress.configure({
         showSpinner: false
     });
@@ -291,6 +291,7 @@ function readFile(evt) {
             r.readAsText(evt.target.files[0]);
             r.onload = function(event) {
                 // cleanupThree();
+                $("#gcodefile").show();
                 document.getElementById('gcodepreview').value = this.result;
                 openGCodeFromText();
                 printLog('GCODE Opened', successcolor);
@@ -354,7 +355,7 @@ function readFile(evt) {
 };
 
 function saveFile() {
-    var textToWrite = document.getElementById("gcodepreview").value;
+    var textToWrite = prepgcodefile();
     var blob = new Blob([textToWrite], {type: "text/plain"});
     invokeSaveAsDialog(blob, 'file.gcode');
 

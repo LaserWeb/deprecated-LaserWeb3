@@ -395,8 +395,25 @@
           <!-- gcode -->
           <div id="gcode-menu-panel" class="mobtab" style="display: none;">
             <h4>G-CODE</h4>
-            <textarea id="gcodepreview" spellcheck="false" style="width: 100%; height: 250px;"></textarea>
-            <button class="btn btn-lg btn-default btn-file" title="Export GCODE to a file" onclick="saveFile()"><i class="fa fa-save fa-fw"></i>Save</span></button>
+
+            <button class="btn btn-lg btn-default btn-file" title="Export GCODE to a file" onclick="saveFile()"><i class="fa fa-save fa-fw"></i>Save / Export</span></button>
+            <form class="form-horizontal">
+              <label for="startgcodefinal" class="control-label">Start GCODE</label>
+              <textarea id="startgcodefinal" spellcheck="false" style="width: 100%; height: 80px;"></textarea>
+            </form>
+
+            <form class="form-horizontal" id="gcodefile" style="display: none;">
+              <label for="gcodepreview" class="control-label">GCODE opened from File</label>
+              <textarea id="gcodepreview" spellcheck="false" style="width: 100%; height: 80px;"></textarea>
+            </form>
+
+            <div id="gcodejobs"></div>
+
+            <form class="form-horizontal">
+              <label for="endgcodefinal" class="control-label">End GCODE</label>
+              <textarea id="endgcodefinal" spellcheck="false" style="width: 100%; height: 80px;"></textarea>
+            </form>
+
 
               <nav>
                 <ul class="pager">
@@ -481,7 +498,7 @@
                               <input type="text" class="form-control numpadgcode" id="laseroff" placeholder="M5 / blank for firmwares that support G1"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
-                              <label for="laseroff" class="control-label">PWM Max S</label>
+                              <label for="laseroff" class="control-label">PWM Max S value</label>
                               <input type="text" class="form-control  numpad" id="lasermultiply" placeholder="255"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->

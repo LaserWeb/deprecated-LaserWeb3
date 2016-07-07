@@ -171,7 +171,7 @@ function playGcode() {
   if (connectVia == "USB") {
     if (isConnected) {
       var g;
-      g = document.getElementById('gcodepreview').value;
+      g = prepgcodefile();
       sendGcode(g);
       playing = true;
       $('#playicon').removeClass('fa-play');

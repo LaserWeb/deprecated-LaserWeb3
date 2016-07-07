@@ -403,8 +403,12 @@ Rasterizer.prototype.onFinish = function() {
     // }
 
     // Populate the GCode textarea
-    var existinggcode =  document.getElementById('gcodepreview').value
-    document.getElementById('gcodepreview').value = existinggcode + this.result;
+    var seq = this.config.objectid;
+    // console.log("%c%s","color: #000; background: green; font-size: 24px;",seq)
+
+    objectsInScene[seq].userData.gcode = this.result;
+    // var existinggcode =  document.getElementById('gcodepreview').value
+    // document.getElementById('gcodepreview').value = existinggcode + this.result;
     console.log('Optimized by number of line: ', this.skip);
     // Some Post-job Stats and Cleanup
     console.log('Number of GCode Moves: ', this.moveCount);
@@ -419,7 +423,7 @@ Rasterizer.prototype.onFinish = function() {
         .scrollTop($("#console")[0].scrollHeight - $("#console").height());
 
     if (this.config.completed) {
-        this.config.completed();
+        this.config.completed(this.config.objectid);
     }
 };
 

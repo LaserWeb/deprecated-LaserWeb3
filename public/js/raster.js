@@ -10,6 +10,14 @@ var BBgeometry;
 var intensity;
 var rastermesh; // see main.js - image shown on three canvas of raster
 
+function rasterInit() {
+    // printLog('Raster module Activated', msgcolor)
+
+    // Raster support
+    var paperscript = {};
+}
+
+
 
 // add MAP function to the Numbers function
 Number.prototype.map = function(in_min, in_max, out_min, out_max) {
@@ -40,7 +48,7 @@ function drawRaster(name, data) {
 
     imgtag.title = name;
     imgtag.src = data;
-    setImgDims();
+
 
     $('#rasterProgressShroud').hide();
     $('#rasterparams').show();
@@ -87,13 +95,6 @@ function drawRaster(name, data) {
     $('#rasterresize').modal('show')
 };
 
-function rasterInit() {
-    // printLog('Raster module Activated', msgcolor)
-
-    // Raster support
-    var paperscript = {};
-}
-
 function runRaster(index) {
   var seq = objectsInScene[index].userData.seq;
   var toRaster = 'origImage'+seq;
@@ -110,11 +111,11 @@ function runRaster(index) {
   var yoffset = parseFloat($('#rasteryoffset'+index).val());
   var minpwr = $("#minpwr"+index).val();;
   var maxpwr = $("#maxpwr"+index).val();;
-  rasterNow(toRaster, rasterDPI, spotSizeMul, laserRapid, blackspeed, whitespeed, xoffset, yoffset, imagePosition, minpwr, maxpwr )
+  rasterNow(toRaster, index, rasterDPI, spotSizeMul, laserRapid, blackspeed, whitespeed, xoffset, yoffset, imagePosition, minpwr, maxpwr )
 }
 
 
-function rasterNow(toRaster, rasterDPI, spotSizeMul, laserRapid, blackspeed, whitespeed, xoffset, yoffset, imagePosition, minpwr, maxpwr ) {
+function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, blackspeed, whitespeed, xoffset, yoffset, imagePosition, minpwr, maxpwr ) {
 
     dpival = rasterDPI * 0.03937007874016;
     var img = document.getElementById(toRaster);
@@ -129,6 +130,7 @@ function rasterNow(toRaster, rasterDPI, spotSizeMul, laserRapid, blackspeed, whi
 
 
     paper.RasterNow({
+        objectid: objectid,
         completed: gcodereceived,
         minIntensity: [minpwr],
         maxIntensity: [maxpwr],
@@ -149,65 +151,23 @@ function rasterNow(toRaster, rasterDPI, spotSizeMul, laserRapid, blackspeed, whi
     });
 };
 
-function setImgDims(index) {
-    // Rate of inch to mm = 0.03937007874016 from http://www.translatorscafe.com/cafe/EN/units-converter/digital-image-resolution/3-2/dot%2Finch-dot%2Fmillimeter/
-    // printLog('Changing size: Clearing GCODE', msgcolor)
-    // if (typeof(object) !== 'undefined') {
-    //   scene.remove(object)
-    // }
-    // document.getElementById('gcodepreview').value = '';
-    // dpival = parseFloat($('#rasterDPI').val()) * 0.03937007874016;
-    // minpwr = $("#laserpwrslider").slider("values", 0);
-    // maxpwr = $("#laserpwrslider").slider("values", 1);
-    // var img = document.getElementById('origImage'+index);
-    // width = img.naturalWidth;
-    // height = img.naturalHeight;
-    // $("#dims").text(width + 'px x ' + height + 'px');
-    // $('#canvas-1').prop('width', (width * 2));
-    // $('#canvas-1').prop('height', (height * 2));
-    // var physwidth = (width / dpival) ;
-    // var physheight = (height / dpival ) ;
-    // $("#physdims").text(physwidth.toFixed(1) + 'mm x ' + physheight.toFixed(1) + 'mm');
-    // var xoffset = parseFloat($('#rasterxoffset').val());
-    // var yoffset = parseFloat($('#rasteryoffset').val()) * -1;
-    // if (rastermesh) {
-    //     rastermesh.scale.x = (physwidth / width)  ;
-    //     rastermesh.scale.y = (physheight / height) ;
-    //
-    //     var bbox2 = new THREE.Box3().setFromObject(rastermesh);
-    //     console.log('bbox for rastermesh: Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
-    //     var Xtofix = -(bbox2.min.x + (laserxmax / 2)) + xoffset;
-    //     var imagePosition = $('#imagePosition').val()
-    //     console.log('ImagePosition', imagePosition)
-    //
-    //     imagePosition = $('#imagePosition').val()
-    //     if (imagePosition == "TopLeft") {
-    //         Ytofix = (laserymax / 2) - bbox2.max.y + yoffset;
-    //     } else {
-    //         Ytofix = -(bbox2.min.y + (laserymax / 2) + yoffset);
-    //     }
-    //     console.log('X Offset', Xtofix)
-    //     console.log('Y Offset', Ytofix)
-    //     rastermesh.translateX(Xtofix);
-    //     rastermesh.translateY(Ytofix);
-    //     currentWorld();
-    //
-    // }
-};
 
-function gcodereceived() {
-    printLog('Raster Completed', msgcolor)
-    $('#rasterProgressShroud').hide();
-    $('#rasterparams').show();
-    console.log('New Gcode');
-    var total = scene.children.length
-    for (var j = 5; j < total; j++) {
-      console.log('Removed ', scene.children[5].name);
-      scene.remove(scene.children[5]);
-    }
+function gcodereceived(i) {
+    printLog('Raster Completed for <b>' + objectsInScene[i].name + '</b>' , msgcolor)
+    var template = `
+    <form class="form-horizontal">
+      <label for="startgcodefinal" class="control-label">`+objectsInScene[i].name+`</label>
+      <textarea id="gcode`+i+`" spellcheck="false" style="width: 100%; height: 80px;" placeholder="processing..."></textarea>
+    </form>`
+
+    $('#gcodejobs').append(template);
+
+    $('#gcode'+i).val(objectsInScene[i].userData.gcode);
+
+    var startgcode = document.getElementById('startgcode').value;
+    var endgcode = document.getElementById('endgcode').value;
+
+    $('#startgcodefinal').val(startgcode)
+    $('#endgcodefinal').val(endgcode);
     openGCodeFromText();
-    // gCodeToSend = document.getElementById('gcodepreview').value;
-    // $('#viewReset').click();
-    // $('#gcode-menu').click();
-
 };
