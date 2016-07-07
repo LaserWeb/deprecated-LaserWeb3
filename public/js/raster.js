@@ -160,7 +160,7 @@ function gcodereceived(i) {
       <textarea id="gcode`+i+`" spellcheck="false" style="width: 100%; height: 80px;" placeholder="processing..."></textarea>
     </form>`
 
-    $('#gcodejobs').append(template);
+    $('#gcodejobs').prepend(template);
 
     $('#gcode'+i).val(objectsInScene[i].userData.gcode);
 
