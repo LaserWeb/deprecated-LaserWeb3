@@ -722,9 +722,9 @@ function attachBB(object) {
     boundingBoxLines= new THREE.Line( BBgeometry, BBmaterial );
     boundingBox = new THREE.Group();
     boundingBox.add(boundingBoxLines)
+
     var bwidth = parseFloat(bbox2.max.x - bbox2.min.x).toFixed(2);
     var bheight = parseFloat(bbox2.max.y - bbox2.min.y).toFixed(2);
-
 
     widthlabel = this.makeSprite(this.scene, "webgl", {
         x: (bbox2.max.x + 30),
@@ -744,8 +744,6 @@ function attachBB(object) {
         color: "#aaaaaa"
     });
     boundingBox.add(heightlabel)
-    // boundingBox.translateX(laserxmax /2 * -1);
-    // boundingBox.translateY(laserymax /2 * -1);
     scene.add( boundingBox );
   // }
 

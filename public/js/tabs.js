@@ -1,6 +1,6 @@
 function initTabs() {
 
-  $('#layerprep').on('keyup','input', function() {
+  $('#layerprep').on('keyup change','input', function() {
     var newval = $(this).val();
     var newval = parseFloat(newval, 3)
     var id = $(this).attr('id');
@@ -9,11 +9,12 @@ function initTabs() {
     if ( id.indexOf('rasterxoffset') == 0 ) {
       objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + parseFloat(newval, 3);
       console.log('Moving ' +objectsInScene[objectseq].name+ ' to X: '+newval);
+      attachBB(objectsInScene[objectseq]);
     } else if ( id.indexOf('rasteryoffset') == 0 ) {
       objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + parseFloat(newval, 3);
       console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y: '+newval);
+      attachBB(objectsInScene[objectseq]);
     } else if ( id.indexOf('rasterDPI') == 0 ) {
-
       var bboxpre = new THREE.Box3().setFromObject(objectsInScene[objectseq]);
       console.log('bbox for BEFORE SCALE: Min X: ', (bboxpre.min.x + (laserxmax / 2)), '  Max X:', (bboxpre.max.x + (laserxmax / 2)), 'Min Y: ', (bboxpre.min.y + (laserymax / 2)), '  Max Y:', (bboxpre.max.y + (laserymax / 2)));
       console.log('Scaling ' +objectsInScene[objectseq].name+ ' to: '+scale);
@@ -22,6 +23,7 @@ function initTabs() {
       objectsInScene[objectseq].scale.y = scale;
       objectsInScene[objectseq].scale.z = scale;
       putFileObjectAtZero(objectsInScene[objectseq]);
+      attachBB(objectsInScene[objectseq]);
       $("#rasterxoffset"+objectseq).val('0')
       $("#rasteryoffset"+objectseq).val('0')
     } else if ( id.indexOf('svgdpi') == 0 ) {
@@ -30,6 +32,7 @@ function initTabs() {
       objectsInScene[objectseq].scale.y = svgscale;
       objectsInScene[objectseq].scale.z = svgscale;
       putFileObjectAtZero(objectsInScene[objectseq]);
+      attachBB(objectsInScene[objectseq]);
     }
 
 

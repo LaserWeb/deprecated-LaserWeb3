@@ -151,6 +151,8 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
     console.log(rapidSpeed)
     console.log(cutSpeed);
 
+    txtGrp.updateMatrixWorld();
+
     txtGrp.traverse(function(child) {
         console.log(child);
         if (child.type == "Line") {
@@ -199,6 +201,16 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                       g += "G0 Z1\n";  // G0 to Z0 then Plunge!
                       g += "G1 F"+plungeSpeed+" Z" + zpos + "\n";  // Plunge!!!!
                     } else {
+                      if (isFeedrateSpecifiedAlready) {
+                      } else {
+                          console.log('Cut Speed: ', cutSpeed);
+                          if (cutSpeed) {
+                              feedrate = " F" + cutSpeed;
+                              isFeedrateSpecifiedAlready = true;
+                          } else {
+                              feedrate = "";
+                          }
+                      }
                       g +=  "G1" + feedrate + " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
                     };
                     isAtClearanceHeight = false;

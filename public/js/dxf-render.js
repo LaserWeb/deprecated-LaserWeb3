@@ -22,32 +22,20 @@ function drawDXF(file, fileName) {
     //   scene.remove(showDxf);
     // };
 
-    if (typeof(tool_offset) !== 'undefined') {
-        scene.remove(tool_offset);
-        toolPath = null;
-    };
     fileObject = new THREE.Group();
 
     row = [];
     pwr = [];
     cutSpeed = [];
 
-    // $('#console').append('<p class="pf" style="color: #000000;"><b>Parsing DXF:...</b></p>');
-    // $('#console').scrollTop($("#console")[0].scrollHeight - $("#console").height());
-
     //NEW Dxf  -- experimental
     parser2 = new window.DxfParser();
     dxf2 = parser2.parseSync(file);
-    //console.log('DXF Data', dxf2);
-    //cadCanvas = new processDXF(dxf2);
 
     for (i = 0; i < dxf2.entities.length; i++) {
-        //console.log('Layer: ', dxf2.entities[i].layer);
         row[i] = dxf2.entities[i].layer
         drawEntity(i, dxf2.entities[i]);
     };
-
-
 
     // Make the 'geometry' object disappear
     // for (i=0; i<fileObject.children.length; i++) {
