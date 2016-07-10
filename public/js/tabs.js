@@ -77,15 +77,17 @@ function initTabs() {
       }
       scene.remove(boundingBox)
     } else if (tabName == "gCodeView") {
-      console.log('L: ', scene.children.length)
-      var total = scene.children.length
-      for (var j = 5; j < total; j++) {
-        console.log('Removed ', scene.children[5].name);
-        scene.remove(scene.children[5]);
-      }
-        if (typeof(object) != 'undefined') {
-        scene.add(object);
-        attachBB(object);
+      if (objectsInScene.length > 0) {
+        console.log('L: ', scene.children.length)
+        var total = scene.children.length
+        for (var j = 5; j < total; j++) {
+          console.log('Removed ', scene.children[5].name);
+          scene.remove(scene.children[5]);
+        }
+          if (typeof(object) != 'undefined') {
+          scene.add(object);
+          attachBB(object);
+        }
       }
     } else {
       var total = scene.children.length
