@@ -699,9 +699,9 @@ function attachBB(object) {
 
   console.log(object.type);
 
-  if (object.type == "Mesh" ) {
- // dont  BB
-  } else {
+ //  if (object.type == "Mesh" ) {
+ // // dont  BB
+ //  } else {
     if (typeof(boundingBox) != 'undefined') {
         scene.remove(boundingBox);
     }
@@ -712,17 +712,41 @@ function attachBB(object) {
     BBmaterial =  new THREE.LineDashedMaterial( { color: 0xaaaaaa, dashSize: 5, gapSize: 4, linewidth: 2 } );
     BBgeometry = new THREE.Geometry();
     BBgeometry.vertices.push(
-      new THREE.Vector3(  bbox2.min.x, bbox2.min.y, 0 ),
-      new THREE.Vector3(  bbox2.min.x, (bbox2.max.y + 1) , 0 ),
-      new THREE.Vector3( (bbox2.max.x + 1), (bbox2.max.y +1), 0 ),
-      new THREE.Vector3( (bbox2.max.x + 1), bbox2.min.y, 0 ),
-      new THREE.Vector3(  bbox2.min.x, bbox2.min.y, 0 )
+      new THREE.Vector3(  (bbox2.min.x - 1), (bbox2.min.y - 1), 0 ),
+      new THREE.Vector3(  (bbox2.min.x - 1), (bbox2.max.y + 1) , 0 ),
+      new THREE.Vector3( (bbox2.max.x + 1), (bbox2.max.y + 1), 0 ),
+      new THREE.Vector3( (bbox2.max.x + 1), (bbox2.min.y - 1), 0 ),
+      new THREE.Vector3(  (bbox2.min.x - 1), (bbox2.min.y - 1), 0 )
     );
     BBgeometry.computeLineDistances();  //  NB If not computed, dashed lines show as solid
-    boundingBox= new THREE.Line( BBgeometry, BBmaterial );
+    boundingBoxLines= new THREE.Line( BBgeometry, BBmaterial );
+    boundingBox = new THREE.Group();
+    boundingBox.add(boundingBoxLines)
+    var bwidth = parseFloat(bbox2.max.x - bbox2.min.x).toFixed(2);
+    var bheight = parseFloat(bbox2.max.y - bbox2.min.y).toFixed(2);
+
+
+    widthlabel = this.makeSprite(this.scene, "webgl", {
+        x: (bbox2.max.x + 30),
+        y: ((bbox2.max.y - ((bbox2.max.y - bbox2.min.y) / 2)) + 10),
+        z: 0,
+        text: "W: " + bwidth + "mm",
+        color: "#aaaaaa"
+    });
+
+    boundingBox.add(widthlabel)
+
+    heightlabel = this.makeSprite(this.scene, "webgl", {
+        x: ((bbox2.max.x - ((bbox2.max.x - bbox2.min.x) / 2)) + 10),
+        y: (bbox2.max.y + 10),
+        z: 0,
+        text: "H: " + bheight + "mm",
+        color: "#aaaaaa"
+    });
+    boundingBox.add(heightlabel)
     // boundingBox.translateX(laserxmax /2 * -1);
     // boundingBox.translateY(laserymax /2 * -1);
     scene.add( boundingBox );
-  }
+  // }
 
 }
