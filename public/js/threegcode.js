@@ -199,7 +199,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                       g += "G0 Z1\n";  // G0 to Z0 then Plunge!
                       g += "G1 F"+plungeSpeed+" Z" + zpos + "\n";  // Plunge!!!!
                     } else {
-                      g += " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
+                      g +=  "G1" + feedrate + " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
                     };
                     isAtClearanceHeight = false;
                 // Else Cut move
