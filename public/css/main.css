@@ -100,7 +100,7 @@ button:focus {outline:0 !important;}
 #col2 {
       float:left;
       width:calc(100% - 300px);
-      height: calc(100% - 160px);
+      height: calc(100% - 210px);
       padding: 10px;
 }
 
@@ -195,8 +195,7 @@ button:focus {outline:0 !important;}
     /*font-family: '8bit';*/
 }
 #console {
-    height: calc(100% - 210px);
-    max-height: calc(100% - 210px);
+    height: 110px;
     width: 100%;
     overflow-y: auto;
     overflow-x: none;
@@ -204,12 +203,30 @@ button:focus {outline:0 !important;}
     background-color: #fff;
     padding: 5px;
     font-size: 10px;
+    padding-left: 20px;
     /*word-break: break-all;*/
     white-space:normal;
-    border-top: dashed 1px #aaa;
-    border-bottom: dashed 1px #aaa;
+    border-left: dashed 1px #aaa;*/
+    /*border-top: dashed 1px #aaa;*/
+    /*border-bottom: dashed 1px #aaa;*/
     margin-top: 5px;
 }
+
+.rotate {
+  /* FF3.5+ */
+  -moz-transform: rotate(-90.0deg);
+  /* Opera 10.5 */
+  -o-transform: rotate(-90.0deg);
+  /* Saf3.1+, Chrome */
+  -webkit-transform: rotate(-90.0deg);
+  /* IE6,IE7 */
+  filter: progid: DXImageTransform.Microsoft.BasicImage(rotation=0.083);
+  /* IE8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)";
+  /* Standard */
+  transform: rotate(-90.0deg);
+}
+
 .pf {
   margin-top: -8px;
 }
