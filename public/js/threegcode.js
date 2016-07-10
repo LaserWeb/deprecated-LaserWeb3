@@ -40,12 +40,18 @@ $(document).ready(function() {
           scene.add(objectsInScene[j]);
         }
 
+
+
+
+        scene.updateMatrixWorld();
+
         scene.updateMatrixWorld();
         pwr = [];
         cutSpeed = [];
         for (j = 0; j < objectsInScene.length; j++) {
             printLog('Processing ' + objectsInScene[j].name, msgcolor)
             // This step converts each object in objectsInScene, to gcode and puts that gcode into objectsInScene[j].userData.gcode - to be later assembled into a gcode file with proper sequence
+            objectsInScene[j].updateMatrix();
             if (objectsInScene[j].name != 'object') {
               if (objectsInScene[j].type == "Mesh") {
                 console.log('Object '+j+' is a Raster')
@@ -145,13 +151,13 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
     var isAtClearanceHeight = false;
     var isFeedrateSpecifiedAlready = false;
     var isSeekrateSpecifiedAlready = false;
-    var subj_paths = [];
-    var subj_path2 = [];
+    // var subj_path2 = [];
+    // var subj_paths = [];
     console.log(txtGrp);
     console.log(rapidSpeed)
     console.log(cutSpeed);
 
-    txtGrp.updateMatrixWorld();
+    // txtGrp.updateMatrixWorld();
 
     txtGrp.traverse(function(child) {
         console.log(child);
@@ -162,17 +168,33 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                 // Convert to World Coordinates
                 var localPt = child.geometry.vertices[i];
                 var worldPt = grp.localToWorld(localPt.clone());
-                if (stl) {
-                    var xpos = (parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2) + child.parent.position.x).toFixed(3);
-                    var ypos = (parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2) + child.parent.position.y).toFixed(3);
-                } else if (yflip == true && !inflateGrp) {
-                    var xpos = (parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2)).toFixed(3);
-                    var ypos = (-1 * parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2)).toFixed(3);
-                } else {
-                    var xpos = (parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2)).toFixed(3);
-                    var ypos = (parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2)).toFixed(3);
-                };
+                // if (stl) {
+                //     var xpos = (parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2) + child.parent.position.x).toFixed(3);
+                //     var ypos = (parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2) + child.parent.position.y).toFixed(3);
+                // } else if (yflip == true && !inflateGrp) {
+                //     var xpos = (parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2)).toFixed(3);
+                //     var ypos = (-1 * parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2)).toFixed(3);
+                // } else {
+                var xpos_offset = (parseFloat(child.position.x.toFixed(3)));
+                var ypos_offset = (parseFloat(child.position.y.toFixed(3)));
+                var xpos = parseFloat((parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2)).toFixed(3));
+                var ypos = parseFloat((parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2)).toFixed(3));
+                // };
+
+                if (child.geometry.type == "CircleGeometry") {
+
+                  console.log("Type Check:  xpos_offset:" + typeof(xpos_offset) + " xpos:" + typeof(xpos));
+                  console.log("Type Check:  ypos_offset:" + typeof(xpos_offset) + " ypos:" + typeof(xpos));
+                  console.log("Found Segment of circle - adjusting by parent position: X:" + xpos_offset + " Y:" + ypos_offset )
+                  console.log("Before Move: X:" + xpos + " Y:" + ypos);
+                  xpos = (xpos + xpos_offset);
+                  ypos = (ypos + ypos_offset);
+                  console.log("After Move: X:" + xpos + " Y:" + ypos);
+                }
+
+
                 var zpos = parseFloat(worldPt.z.toFixed(3));
+
                 // First Move To
                 if (i == 0) {
                     // first point in line where we start lasering/milling
@@ -245,12 +267,12 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                     g += " Y" + ypos;
                     g += " Z" + zpos;
                     g += " S" + laserPwrVal + "\n";
-                    var xpos = parseFloat(worldPt.x.toFixed(3));
-                    var ypos = parseFloat(worldPt.y.toFixed(3));
-                    subj_paths.push({
-                        X: xpos,
-                        Y: ypos
-                    });
+                    // var xpos = parseFloat(worldPt.x.toFixed(3));
+                    // var ypos = parseFloat(worldPt.y.toFixed(3));
+                    // subj_paths.push({
+                    //     X: xpos,
+                    //     Y: ypos
+                    // });
                 }
             }
 
