@@ -196,6 +196,7 @@ button:focus {outline:0 !important;}
 }
 #console {
     height: calc(100% - 210px);
+    max-height: calc(100% - 210px);
     width: 100%;
     overflow-y: auto;
     overflow-x: none;
@@ -302,7 +303,7 @@ d-grid {border: none; padding: 20px;}
   text-shadow: 0 1px 0 #fff;
   opacity: 0.2;
  }
- 
+
  .panel-heading .accordion-toggle:after {
      /* symbol for "opening" panels */
      font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
