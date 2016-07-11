@@ -215,7 +215,7 @@ $(document).ready(function() {
             }
         });
 
-
+    setTimeout(function(){ $('#viewReset').click(); }, 100);
 
 
 }); // End of document.ready

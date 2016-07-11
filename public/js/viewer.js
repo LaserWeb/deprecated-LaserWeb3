@@ -194,10 +194,12 @@ function init3D() {
 
     var light = new THREE.DirectionalLight(0xffffff);
     light.position.set(-500, -500, 1).normalize();
+    light.name = "Light1;"
     scene.add(light);
 
     var light2 = new THREE.DirectionalLight(0xffffff);
-    light.position.set(1, 0, 1).normalize();
+    light2.name = "Light2"
+    light2.position.set(1, 0, 1).normalize();
     scene.add(light2);
 
     // LaserWEB UI Grids
@@ -229,6 +231,7 @@ function init3D() {
     this.grid = helper;
     //this.sceneAdd(this.grid);
     //console.log('[VIEWER] - added Helpert');
+    helper.name = "GridHelper"
     scene.add(helper);
 
     // particleLight = new THREE.Mesh( new THREE.SphereBufferGeometry( 4, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
@@ -302,6 +305,7 @@ function init3D() {
         scene.remove(cursor);
     }
     cursor = new THREE.Object3D();
+    cursor.name ="cursor"
 
     // Mouse Cursor
     var cursorshape = new THREE.Shape();
@@ -811,6 +815,7 @@ function attachBB(object) {
         color: "#aaaaaa"
     });
     boundingBox.add(heightlabel)
+    boundingBox.name = "Bounding Box"
     scene.add( boundingBox );
   // }
 

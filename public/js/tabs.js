@@ -79,20 +79,25 @@ function initTabs() {
     } else if (tabName == "gCodeView") {
       if (objectsInScene.length > 0) {
         console.log('L: ', scene.children.length)
+        if (typeof(boundingBox) != 'undefined') {
+            scene.remove(boundingBox);
+        }
         var total = scene.children.length
         for (var j = 6; j < total; j++) {
-          console.log('Removed ', scene.children[j].name);
           scene.remove(scene.children[j]);
         }
           if (typeof(object) != 'undefined') {
           scene.add(object);
           attachBB(object);
+        } else {
+          if (typeof(boundingBox) != 'undefined') {
+              scene.remove(boundingBox);
+          }
         }
       }
     } else {
       var total = scene.children.length
       for (var j = 6; j < total; j++) {
-        console.log('Removed ', scene.children[j].name);
         scene.remove(scene.children[j]);
       }
       var i = parseInt($(this).attr('layerindex'));
