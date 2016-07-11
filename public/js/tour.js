@@ -59,11 +59,15 @@ function initTour() {
       onShow: function (tour) { $('#settings-menu').click()},
       onHide: function (tour) { $('#jog-menu').click()},
     },
-
+    {
+      element: "#togglemacro",
+      title: "Macro Panel",
+      content: "Macro mode allows you configure a few custom buttons",
+    },
     {
       element: "#viewcontrols",
       title: "View Controls",
-      content: "Macro mode allows you configure a few custom buttons, and Reset View zooms the loaded file into view"
+      content: "Reset View zooms the loaded file into view"
     },
     {
       element: "#pancontrols",
@@ -79,7 +83,7 @@ function initTour() {
     {
       element: "#command",
       title: "Manual Commands",
-      content: "Use to send custom M and G code commands to your machine",
+      content: "Use to send custom M and G code commands to your machine.  Press <kbd>up</kbd> and <kbd>down</kbd> to access command history",
       placement: 'left'
     },
     {
