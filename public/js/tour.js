@@ -8,7 +8,7 @@ function initTour() {
     {
       element: "#connect",
       title: "Setup connection",
-      content: "Note: You need Serial Port JSON Server running!<br>Select a Serial Port, Buffer and Baud rate, then connect.  "
+      content: "Connects this instance of LaserWeb to your Smoothieware powered controller.  Note, as of July 2016, ethernet support is not yet fully implemented. "
     },
     {
       element: "#openbutton",
@@ -16,38 +16,50 @@ function initTour() {
       content: "Use this button to open DXF or SVG files for cutting,  and Bitmap files (JPG, GIF, PNG, BMP) for Engraving"
     },
     {
-      element: "#userpic",
-      title: "Optional: Google Drive",
-      content: "You can sign in to your Google Drive and load job files directly from Google Drive"
+      element: "#mPosition",
+      title: "Digital Read Out",
+      content: "Shows current Machine Position",
+      onShow: function (tour) { $('#jog-menu').click()}
     },
     {
-      element: "#toggleviewer",
-      title: "Machine Control",
-      content: "On this tab you can start/stop jobs, jog the machine, zero out work coordinates, etc",
-      onShow: function (tour) { $('#toggleviewer').click()}
+      element: "#armmachine",
+      title: "Pin Controller Disarming",
+      content: "Set/Enter a PIN to enable the Laser Controls #safety",
     },
     {
-      element: "#togglefile",
-      title: "CAM -> Gcode Generator",
-      content: "On this tab, you convert an opened file, to GCODE that the machine can understand. Here you'll set per-job parameters like laser power, feedrate, etc",
-      onShow: function (tour) { $('#togglefile').click()}
+      element: "#yP",
+      title: "Jog Buttons",
+      content: "Used for manual positioning",
     },
     {
-      element: "#togglesettings",
-      title: "Configure LaserWeb",
-      content: "NB: Don't forget to configure LaserWeb to your specific machine! From the bed size, to Gcode commands, enabling features like touchscreen support and tool offset, camera overlays, etc.  Also quite critical, provide the IP address of the machine/device where you are running Serial Port JSON Server",
-      onShow: function (tour) { $('#togglesettings').click()}
+      element: "#cam-menu",
+      title: "CAM / Convert to GCODE",
+      content: "Used to configure feeds, speeds, operations for jobs",
+      onShow: function (tour) { $('#cam-menu').click()},
+      onHide: function (tour) { $('#jog-menu').click()}
     },
     {
-      element: "#dropdownMenu1",
-      title: "Help Me!",
-      content: "When you feel stuck, just hit this button and we'll try and help you out!"
+      element: "#gcode-menu",
+      title: "GCode Preview and Export",
+      content: "Checking and Exporting GCODE",
+      onShow: function (tour) { $('#gcode-menu').click()},
+      onHide: function (tour) { $('#jog-menu').click()},
     },
     {
-      element: "#transformcontrols",
-      title: "Transform Controls",
-      content: "Used for rotating, moving and scaling your files to prepare them for the job at hand"
+      element: "#quote-menu",
+      title: "Costing / Quote Estimate",
+      content: "Help you determine laser time and material cost",
+      onShow: function (tour) { $('#quote-menu').click()},
+      onHide: function (tour) { $('#jog-menu').click()},
     },
+    {
+      element: "#settings-menu",
+      title: "Settings Menu",
+      content: "NB:  Make sure you configure LaserWeb according to your specific needs first!",
+      onShow: function (tour) { $('#settings-menu').click()},
+      onHide: function (tour) { $('#jog-menu').click()},
+    },
+
     {
       element: "#viewcontrols",
       title: "View Controls",
@@ -59,23 +71,9 @@ function initTour() {
       content: "Adjust your viewpoint"
     },
     {
-      element: "#renderArea",
-      title: "The Viewer",
-      content: "Here you'll see your files opened as well as preview GCODE and machine moves"
-    },
-    {
-      element: "#drotabtn",
-      title: "DRO",
-      content: "The DRO displays realtime position feedback from the machine.  Useful for setting offsets, monitoring jobs, etc",
-      onShow: function (tour) { $('#drotabtn').click()},
-      placement: 'left'
-    },
-    {
-      element: "#gcodetabbtn",
-      title: "G Code Tab",
-      content: "View and Save the GCODE your generated",
-      onShow: function (tour) { $('#gcodetabbtn').click()},
-      onHide: function (tour) { $('#drotabtn').click()},
+      element: "#console",
+      title: "Log / Console",
+      content: "Displays feedback from the machine, as well as log output from LaserWeb itself",
       placement: 'left'
     },
     {
@@ -85,10 +83,19 @@ function initTour() {
       placement: 'left'
     },
     {
-      element: "#console",
-      title: "Log / Console",
-      content: "Displays feedback from the machine, as well as log output from LaserWeb itself",
-      placement: 'left'
+      element: "#allView",
+      title: "File/Layer Tabs",
+      content: "Manage individual files, remove layers from job.  Each file is seen as one layer/tab"
+    },
+    {
+      element: "#renderArea",
+      title: "The Viewer",
+      content: "Here you'll see your files opened as well as preview GCODE and machine moves"
+    },
+    {
+      element: "#dropdownMenu1",
+      title: "Need Help?",
+      content: "Opens a menu with links to the Support Community and Bug Reports"
     },
   ]});
 
