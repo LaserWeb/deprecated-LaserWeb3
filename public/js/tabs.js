@@ -80,9 +80,9 @@ function initTabs() {
       if (objectsInScene.length > 0) {
         console.log('L: ', scene.children.length)
         var total = scene.children.length
-        for (var j = 5; j < total; j++) {
-          console.log('Removed ', scene.children[5].name);
-          scene.remove(scene.children[5]);
+        for (var j = 6; j < total; j++) {
+          console.log('Removed ', scene.children[j].name);
+          scene.remove(scene.children[j]);
         }
           if (typeof(object) != 'undefined') {
           scene.add(object);
@@ -91,9 +91,9 @@ function initTabs() {
       }
     } else {
       var total = scene.children.length
-      for (var j = 5; j < total; j++) {
-        console.log('Removed ', scene.children[5].name);
-        scene.remove(scene.children[5]);
+      for (var j = 6; j < total; j++) {
+        console.log('Removed ', scene.children[j].name);
+        scene.remove(scene.children[j]);
       }
       var i = parseInt($(this).attr('layerindex'));
       scene.add(objectsInScene[i]);
@@ -118,7 +118,7 @@ function fillLayerTabs() {
 
 
   $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>');
-  for (j = 5; j < scene.children.length+1; j++) {
+  for (j = 6; j < scene.children.length+1; j++) {
     scene.remove(scene.children[j])
   }
   var hasTools = false;

@@ -1,6 +1,6 @@
 // Global Vars
 var scene, camera, renderer;
-var geometry, material, mesh, helper, axes, axesgrp, light, bullseye;
+var geometry, material, mesh, helper, axes, axesgrp, light, bullseye, cursor;
 var projector, mouseVector, containerWidth, containerHeight;
 var raycaster = new THREE.Raycaster();
 
@@ -251,29 +251,41 @@ function init3D() {
         color: 0xFF0000
     });
 
-    var radius = 3.5;
-    var segments = 32;
-    var circleGeometry = new THREE.CircleGeometry(radius, segments);
-    var circle = new THREE.Line(circleGeometry, material);
-    bullseye.add(circle);
+    // var radius = 3.5;
+    // var segments = 32;
+    // var circleGeometry = new THREE.CircleGeometry(radius, segments);
+    // var circle = new THREE.Line(circleGeometry, material);
+    // bullseye.add(circle);
+    //
+    // var geometryx = new THREE.Geometry();
+    // geometryx.vertices.push(
+    //     new THREE.Vector3(-6, 0, 0),
+    //     new THREE.Vector3(6, 0, 0)
+    // );
+    // var linex = new THREE.Line(geometryx, material);
+    // linex.position = (0, 0, 0)
+    // bullseye.add(linex);
+    //
+    // var geometryy = new THREE.Geometry();
+    // geometryy.vertices.push(
+    //     new THREE.Vector3(0, -6, 0),
+    //     new THREE.Vector3(0, 6, 0)
+    // );
+    // var liney = new THREE.Line(geometryy, material);
+    // liney.position = (0, 0, 0)
+    // bullseye.add(liney);
 
-    var geometryx = new THREE.Geometry();
-    geometryx.vertices.push(
-        new THREE.Vector3(-6, 0, 0),
-        new THREE.Vector3(6, 0, 0)
-    );
-    var linex = new THREE.Line(geometryx, material);
-    linex.position = (0, 0, 0)
-    bullseye.add(linex);
 
-    var geometryy = new THREE.Geometry();
-    geometryy.vertices.push(
-        new THREE.Vector3(0, -6, 0),
-        new THREE.Vector3(0, 6, 0)
-    );
-    var liney = new THREE.Line(geometryy, material);
-    liney.position = (0, 0, 0)
-    bullseye.add(liney);
+    var cone = new THREE.Mesh(new THREE.CylinderGeometry(0, 5, 40, 15, 1, false), new THREE.MeshNormalMaterial());
+            cone.overdraw = true;
+            cone.rotation.x = -90 * Math.PI / 180;
+            cone.position.z = 20;
+            //cylinder.position.z = 40;
+            cone.material.opacity = 0.3;
+            cone.material.transparent = true;
+            cone.castShadow = false;
+
+    bullseye.add(cone);
 
     bullseye.name = "Bullseye";
 
@@ -282,6 +294,62 @@ function init3D() {
     bullseye.position.y = -(laserymax / 2) + 50;
 
 
+    if (cursor) {
+        scene.remove(cursor);
+    }
+    cursor = new THREE.Object3D();
+
+    // Mouse Cursor
+    var cursorshape = new THREE.Shape();
+    cursorshape.moveTo( 0,0 );
+    cursorshape.lineTo( 0,  -25);
+    cursorshape.lineTo( 5.5,  -18);
+    cursorshape.lineTo( 8,  -26);
+    cursorshape.lineTo( 12, -24.5 );
+    cursorshape.lineTo( 9,  -17);
+    cursorshape.lineTo( 17, -17.5 );
+    cursorshape.lineTo( 0,  0);
+    var cursorGeom = new THREE.ShapeGeometry( cursorshape );
+    var cursorArrow = new THREE.Mesh( cursorGeom, new THREE.MeshBasicMaterial( { color: 0xeeeeee } ) ) ;
+
+    // cursor.add(cursorArrow);
+
+    var edges = new THREE.EdgesHelper(cursorArrow , '#000000');
+    edges.material.linewidth = 3;
+    edges.matrixAutoUpdate = true;
+    cursor.add(edges);
+
+
+    var cursormaterial = new THREE.MeshBasicMaterial({
+        color: 0xFF0000
+    });
+
+    var radius = 3.5;
+    var segments = 32;
+    var circleGeometry = new THREE.CircleGeometry(radius, segments);
+    var circle = new THREE.Line(circleGeometry, material);
+    cursor.add(circle);
+
+    var geometryx = new THREE.Geometry();
+    geometryx.vertices.push(
+        new THREE.Vector3(-6, 0, 0),
+        new THREE.Vector3(6, 0, 0)
+    );
+    var linex = new THREE.Line(geometryx, material);
+    linex.position = (0, 0, 0)
+    cursor.add(linex);
+
+    var geometryy = new THREE.Geometry();
+    geometryy.vertices.push(
+        new THREE.Vector3(0, -6, 0),
+        new THREE.Vector3(0, 6, 0)
+    );
+    var liney = new THREE.Line(geometryy, material);
+    liney.position = (0, 0, 0)
+    cursor.add(liney);
+
+
+    scene.add(cursor)
 
 
     if (axesgrp) {
@@ -642,18 +710,21 @@ function onMouseClick(e) {
     var intersects = raycaster.intersectObjects(scene.children, true)
 
     for (var i = 0; i < intersects.length; i++) {
+
         var intersection = intersects[i],
             obj = intersection.object;
+
         if (obj.name && obj.name != "bullseye" && obj.name != "rastermesh" && obj.name != "XY") {
             printLog('Clicked on : ' + obj.name, successcolor)
+            console.log('Clicked on : ' + obj.name);
             // obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
             attachBB(obj)
         }
 
-        bullseye.position.set(intersects[i].point.x, intersects[i].point.y, intersects[i].point.z);
-        bullseye.children[0].material.color.setRGB(1, 0, 0);
-        bullseye.children[1].material.color.setRGB(1, 0, 0);
-        bullseye.children[2].material.color.setRGB(1, 0, 0);
+        cursor.position.set(intersects[i].point.x, intersects[i].point.y, intersects[i].point.z);
+        // bullseye.children[0].material.color.setRGB(1, 0, 0);
+        // bullseye.children[1].material.color.setRGB(1, 0, 0);
+        // bullseye.children[2].material.color.setRGB(1, 0, 0);
 
     }
 
@@ -667,18 +738,9 @@ function onMouseClick(e) {
         mouseVector.x = ( ( e.clientX - offset.left ) / sceneWidth ) * 2 - 1;
         mouseVector.y = - ( ( e.clientY - offset.top ) / sceneHeight ) * 2 + 1
 
-        // mouseVector.x = (e.clientX / window.innerWidth) * 2 - 1;
-        // mouseVector.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
-
-
-
-        // var vector = mouseVector.clone().unproject( camera );
-        // var direction = new THREE.Vector3( 0, 0, -1 ).transformDirection( camera.matrixWorld );
-        // raycaster.set( vector, direction );
         raycaster.setFromCamera(mouseVector, camera);
         var intersects = raycaster.intersectObjects(scene.children, true)
-
         for (var i = 0; i < intersects.length; i++) {
             var intersection = intersects[i],
                 obj = intersection.object;
@@ -687,7 +749,7 @@ function onMouseClick(e) {
                 // obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
             }
 
-            bullseye.position.set(intersects[i].point.x, intersects[i].point.y, intersects[i].point.z);
+            cursor.position.set(intersects[i].point.x, intersects[i].point.y, intersects[i].point.z);
 
 
         }
@@ -697,7 +759,8 @@ function onMouseClick(e) {
 
 function attachBB(object) {
 
-  console.log(object.type);
+  // console.log(object);
+  // console.log(object.type);
 
  //  if (object.type == "Mesh" ) {
  // // dont  BB

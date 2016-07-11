@@ -31,9 +31,9 @@ $(document).ready(function() {
         lineObjects = null;
         lineObjects = new THREE.Object3D();
         var total = scene.children.length
-        for (var j = 5; j < total; j++) {
-          console.log('Removed ', scene.children[5].name);
-          scene.remove(scene.children[5]);
+        for (var j = 6; j < total; j++) {
+          console.log('Removed ', scene.children[j].name);
+          scene.remove(scene.children[j]);
         }
         for (var j = 0; j < objectsInScene.length; j++) {
           console.log('added object ' + j)
@@ -183,13 +183,13 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
 
                 if (child.geometry.type == "CircleGeometry") {
 
-                  console.log("Type Check:  xpos_offset:" + typeof(xpos_offset) + " xpos:" + typeof(xpos));
-                  console.log("Type Check:  ypos_offset:" + typeof(xpos_offset) + " ypos:" + typeof(xpos));
-                  console.log("Found Segment of circle - adjusting by parent position: X:" + xpos_offset + " Y:" + ypos_offset )
-                  console.log("Before Move: X:" + xpos + " Y:" + ypos);
+                  // console.log("Type Check:  xpos_offset:" + typeof(xpos_offset) + " xpos:" + typeof(xpos));
+                  // console.log("Type Check:  ypos_offset:" + typeof(xpos_offset) + " ypos:" + typeof(xpos));
+                  // console.log("Found Segment of circle - adjusting by parent position: X:" + xpos_offset + " Y:" + ypos_offset )
+                  // console.log("Before Move: X:" + xpos + " Y:" + ypos);
                   xpos = (xpos + xpos_offset);
                   ypos = (ypos + ypos_offset);
-                  console.log("After Move: X:" + xpos + " Y:" + ypos);
+                  // console.log("After Move: X:" + xpos + " Y:" + ypos);
                 }
 
 
