@@ -32,7 +32,6 @@ $(document).ready(function() {
         lineObjects = new THREE.Object3D();
         var total = scene.children.length
         for (var j = 6; j < total; j++) {
-          console.log('Removed ', scene.children[j].name);
           scene.remove(scene.children[j]);
         }
         for (var j = 0; j < objectsInScene.length; j++) {

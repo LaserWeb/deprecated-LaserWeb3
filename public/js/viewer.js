@@ -802,7 +802,8 @@ function attachBB(object) {
         y: ((bbox2.max.y - ((bbox2.max.y - bbox2.min.y) / 2)) + 10),
         z: 0,
         text: "W: " + bwidth + "mm",
-        color: "#aaaaaa"
+        color: "#aaaaaa",
+        size: 6
     });
 
     boundingBox.add(widthlabel)
@@ -812,7 +813,8 @@ function attachBB(object) {
         y: (bbox2.max.y + 10),
         z: 0,
         text: "H: " + bheight + "mm",
-        color: "#aaaaaa"
+        color: "#aaaaaa",
+        size: 6
     });
     boundingBox.add(heightlabel)
     boundingBox.name = "Bounding Box"
