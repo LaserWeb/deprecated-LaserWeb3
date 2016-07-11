@@ -276,12 +276,16 @@ function init3D() {
     // bullseye.add(liney);
 
 
-    var cone = new THREE.Mesh(new THREE.CylinderGeometry(0, 5, 40, 15, 1, false), new THREE.MeshNormalMaterial());
+    var cone = new THREE.Mesh(new THREE.CylinderGeometry(0, 5, 40, 15, 1, false), new THREE.MeshPhongMaterial( {
+        color: 0x0000ff,
+        specular: 0x0000ff,
+        shininess: 100
+    } ) );
             cone.overdraw = true;
             cone.rotation.x = -90 * Math.PI / 180;
             cone.position.z = 20;
             //cylinder.position.z = 40;
-            cone.material.opacity = 0.3;
+            cone.material.opacity = 0.6;
             cone.material.transparent = true;
             cone.castShadow = false;
 
