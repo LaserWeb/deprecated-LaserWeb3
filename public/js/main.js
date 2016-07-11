@@ -203,6 +203,16 @@ $(document).ready(function() {
       document.title = "CNCWeb";
     };
 
+    // Command Console History
+    $("#command").inputHistory({
+            enter: function () {
+              var commandValue = $('#command').val();
+              sendGcode(commandValue);
+            }
+        });
+
+
+
 
 }); // End of document.ready
 
