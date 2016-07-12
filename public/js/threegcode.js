@@ -71,7 +71,7 @@ $(document).ready(function() {
                   var template = `
                   <form class="form-horizontal">
                     <label for="startgcodefinal" class="control-label">`+objectsInScene[j].name+`</label>
-                    <textarea id="gcode`+i+`" spellcheck="false" style="width: 100%; height: 80px;" placeholder="processing..."></textarea>
+                    <textarea id="gcode`+i+`" spellcheck="false" style="width: 100%; height: 80px;" placeholder="processing..." disabled></textarea>
                   </form>`
 
                   $('#gcodejobs').append(template);

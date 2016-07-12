@@ -403,19 +403,19 @@
             <button class="btn btn-lg btn-default btn-file" title="Export GCODE to a file" onclick="saveFile()"><i class="fa fa-save fa-fw"></i>Save / Export</span></button>
             <form class="form-horizontal">
               <label for="startgcodefinal" class="control-label">Start GCODE</label>
-              <textarea id="startgcodefinal" spellcheck="false" style="width: 100%; height: 80px;"></textarea>
+              <textarea id="startgcodefinal" spellcheck="false" style="width: 100%; height: 80px;" disabled></textarea>
             </form>
 
             <form class="form-horizontal" id="gcodefile" style="display: none;">
               <label for="gcodepreview" class="control-label">GCODE opened from File</label>
-              <textarea id="gcodepreview" spellcheck="false" style="width: 100%; height: 80px;"></textarea>
+              <textarea id="gcodepreview" spellcheck="false" style="width: 100%; height: 80px;" disabled></textarea>
             </form>
 
             <div id="gcodejobs"></div>
 
             <form class="form-horizontal">
               <label for="endgcodefinal" class="control-label">End GCODE</label>
-              <textarea id="endgcodefinal" spellcheck="false" style="width: 100%; height: 80px;"></textarea>
+              <textarea id="endgcodefinal" spellcheck="false" style="width: 100%; height: 80px;" disabled></textarea>
             </form>
 
 
@@ -507,7 +507,7 @@
                               <textarea class="form-control numpadgcode" id="endgcode" placeholder="M81\nG28\n"></textarea>
 
                               <label for="rapidspeed" class="control-label">Travel Moves (mm/s)</label>
-                             <textarea class="form-control numpad" id="rapidspeed" placeholder="30"></textarea>
+                             <input class="form-control numpad" id="rapidspeed" placeholder="30"></input>
                         </p>
                       </form>
                   </div>

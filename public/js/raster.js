@@ -99,7 +99,8 @@ function runRaster(index) {
   var seq = objectsInScene[index].userData.seq;
   var toRaster = 'origImage'+seq;
   var spotSizeMul = parseFloat($('#spotSize').val());
-  var laserRapid = $('#rapidRate').val() * 60;
+  var laserRapid = parseFloat($('#rapidspeed').val()) * 60;
+  console.log("RAPIDSPEED", laserRapid)
   var imagePosition = $('#imagePosition').val()
 
   // var laserFeed = $('#feedRate'+index).val() * 60;
@@ -157,7 +158,7 @@ function gcodereceived(i) {
     var template = `
     <form class="form-horizontal">
       <label for="startgcodefinal" class="control-label">`+objectsInScene[i].name+`</label>
-      <textarea id="gcode`+i+`" spellcheck="false" style="width: 100%; height: 80px;" placeholder="processing..."></textarea>
+      <textarea id="gcode`+i+`" spellcheck="false" style="width: 100%; height: 80px;" placeholder="processing..." disabled></textarea>
     </form>`
 
     $('#gcodejobs').prepend(template);
