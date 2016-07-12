@@ -102,6 +102,7 @@ function prepgcodefile() {
   var endgcode = document.getElementById('endgcode').value;
   var g = ""
   g += startgcode;
+  g += "\n";
   var externalgcode = document.getElementById('gcodepreview').value;
   if (externalgcode) {
     g += externalgcode;
@@ -116,6 +117,7 @@ function prepgcodefile() {
        console.log(objectsInScene[j].name + ' does not have valid gcode yet')
      }
   }
+  g += "\n";
   g += endgcode;
   return g;
 }
