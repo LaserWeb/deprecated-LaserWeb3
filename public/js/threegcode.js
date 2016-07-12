@@ -213,13 +213,13 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                     cncMode = $('#cncMode').val()
                     if (cncMode == "Enable") {
                       if (!isAtClearanceHeight) {
-                        g += "G0 Z" + clearanceHeight + "\n"; // Position Before Plunge!
+                        g += "\nG0 Z" + clearanceHeight + "\n"; // Position Before Plunge!
                       }
                     };
-                    g += "G0" + seekrate;
+                    g += "\nG0" + seekrate;
                     g += " X" + xpos + " Y" + ypos + "\n";
                     if (cncMode == "Enable") {
-                      g += "G0 Z1\n";  // G0 to Z0 then Plunge!
+                      g += "\nG0 Z1\n";  // G0 to Z0 then Plunge!
                       g += "G1 F"+plungeSpeed+" Z" + zpos + "\n";  // Plunge!!!!
                     } else {
                       if (isFeedrateSpecifiedAlready) {
@@ -232,7 +232,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                               feedrate = "";
                           }
                       }
-                      g +=  "G1" + feedrate + " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
+                      // g +=  "G1" + feedrate + " X" + xpos + " Y" + ypos + " Z" + zpos + " ; Here\n";
                     };
                     isAtClearanceHeight = false;
                 // Else Cut move
