@@ -120,7 +120,7 @@ button:focus {outline:0 !important;}
     display:inline-block;
     min-width: 100% !important;
 	  min-height: 100% !important;
-    cursor: none;
+    /*cursor: none;*/
     border-bottom: dashed 1px #aaa;
 }
 

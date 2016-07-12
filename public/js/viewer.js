@@ -308,24 +308,24 @@ function init3D() {
     cursor.name ="cursor"
 
     // Mouse Cursor
-    var cursorshape = new THREE.Shape();
-    cursorshape.moveTo( 0,0 );
-    cursorshape.lineTo( 0,  -25);
-    cursorshape.lineTo( 5.5,  -18);
-    cursorshape.lineTo( 8,  -26);
-    cursorshape.lineTo( 12, -24.5 );
-    cursorshape.lineTo( 9,  -17);
-    cursorshape.lineTo( 17, -17.5 );
-    cursorshape.lineTo( 0,  0);
-    var cursorGeom = new THREE.ShapeGeometry( cursorshape );
-    var cursorArrow = new THREE.Mesh( cursorGeom, new THREE.MeshBasicMaterial( { color: 0xeeeeee } ) ) ;
-
-    // cursor.add(cursorArrow);
-
-    var edges = new THREE.EdgesHelper(cursorArrow , '#000000');
-    edges.material.linewidth = 3;
-    edges.matrixAutoUpdate = true;
-    cursor.add(edges);
+    // var cursorshape = new THREE.Shape();
+    // cursorshape.moveTo( 0,0 );
+    // cursorshape.lineTo( 0,  -25);
+    // cursorshape.lineTo( 5.5,  -18);
+    // cursorshape.lineTo( 8,  -26);
+    // cursorshape.lineTo( 12, -24.5 );
+    // cursorshape.lineTo( 9,  -17);
+    // cursorshape.lineTo( 17, -17.5 );
+    // cursorshape.lineTo( 0,  0);
+    // var cursorGeom = new THREE.ShapeGeometry( cursorshape );
+    // var cursorArrow = new THREE.Mesh( cursorGeom, new THREE.MeshBasicMaterial( { color: 0xeeeeee } ) ) ;
+    //
+    // // cursor.add(cursorArrow);
+    //
+    // var edges = new THREE.EdgesHelper(cursorArrow , '#000000');
+    // edges.material.linewidth = 3;
+    // edges.matrixAutoUpdate = true;
+    // cursor.add(edges);
 
 
     var cursormaterial = new THREE.MeshBasicMaterial({
