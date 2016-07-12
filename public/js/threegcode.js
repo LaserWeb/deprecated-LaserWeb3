@@ -232,7 +232,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                               feedrate = "";
                           }
                       }
-                      g +=  "G1" + feedrate + " X" + xpos + " Y" + ypos + " Z" + zpos + " ; Here\n";
+                      g +=  "G1" + feedrate + " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
                     };
                     isAtClearanceHeight = false;
                 // Else Cut move
