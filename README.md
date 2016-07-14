@@ -13,15 +13,15 @@ Note: Version 3 (this one) is currently in development phase!  Documentation is 
 [https://github.com/openhardwarecoza/LaserWeb3/wiki/Quick-Start](https://github.com/openhardwarecoza/LaserWeb3/wiki/Quick-Start)
 
 ## Disclaimer
-By using this software, the user accepts complete responsibility for each and every aspect of safety associated with the use of the Laser machine, Laser system and LaserWeb2 Software.
+By using this software, the user accepts complete responsibility for each and every aspect of safety associated with the use of the Laser machine, Laser system and LaserWeb3 Software.
 
 ####You agree that:
 
 1. You will not hold the author or contributors of LaserWeb2 liable for any damage to equipment or persons from the use of LaserWeb2. 
 2. You know the potential hazards in using high power lasers and high voltages.
-3. You will wear professional laser-eye-protection when using a laser controlled by LaserWeb2.
+3. You will wear professional laser-eye-protection when using a laser controlled by LaserWeb3.
 4. You will use the LaserWeb2 software in a legal and safe manner.
-5. You relieve the author and contributors from any liability arising from the use or distribution of the LaserWeb2 software.
+5. You relieve the author and contributors from any liability arising from the use or distribution of the LaserWeb3 software.
 6. You are entirely operating at your own risk. Lasers can be lethally dangerous. 
 
 ## What's new / planned for LaserWeb 3
