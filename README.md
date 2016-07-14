@@ -2,7 +2,7 @@
 
 ## Development Version
 
-Note: Version 3 (this one) is currently in development phase!
+Note: Version 3 (this one) is currently in development phase!  Documentaion is being added to the Wiki pages.
 
 ## Install Instructions
 
