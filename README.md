@@ -4,6 +4,14 @@
 
 Note: Version 3 (this one) is currently in development phase!
 
+## Install Instructions
+
+[https://github.com/openhardwarecoza/LaserWeb3/wiki/Installation-Instructions](https://github.com/openhardwarecoza/LaserWeb3/wiki/Installation-Instructions)
+
+## Quick Start Guide
+
+[https://github.com/openhardwarecoza/LaserWeb3/wiki/Quick-Start](https://github.com/openhardwarecoza/LaserWeb3/wiki/Quick-Start)
+
 ## Disclaimer
 By using this software, the user accepts complete responsibility for each and every aspect of safety associated with the use of the Laser machine, Laser system and LaserWeb2 Software.
 
@@ -25,10 +33,6 @@ By using this software, the user accepts complete responsibility for each and ev
 * Rotary Axis Support (planned)
 
 ![Screenshot](https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/screenshot.png)
-
-## Install Instructions
-
-[https://github.com/openhardwarecoza/LaserWeb3/wiki/Installation-Instructions](https://github.com/openhardwarecoza/LaserWeb3/wiki/Installation-Instructions)
 
 ## Supported firmwares
 
