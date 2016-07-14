@@ -17,7 +17,7 @@ By using this software, the user accepts complete responsibility for each and ev
 
 ####You agree that:
 
-1. You will not hold the author or contributors of LaserWeb2 liable for any damage to equipment or persons from the use of LaserWeb2. 
+1. You will not hold the author or contributors of LaserWeb3 liable for any damage to equipment or persons from the use of LaserWeb3. 
 2. You know the potential hazards in using high power lasers and high voltages.
 3. You will wear professional laser-eye-protection when using a laser controlled by LaserWeb3.
 4. You will use the LaserWeb2 software in a legal and safe manner.
