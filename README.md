@@ -49,7 +49,7 @@ Note: Ever changing.  See the Issues tab above for details.
 | Tables        | Supported by LW3 | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
 | ------------- |------------------| :----------------:|:-----------------:|:----------------------:|
 | Smoothieware  | Fully            |   Yes             |   Yes             | Yes - improvements     |
-| Marlin        | In Alpha         |   No              |   No              | Yes - test and improve | 
+| Marlin        | In Alpha         |   **Yes, but...   |   No              | Yes - test and improve | 
 | Grbl          | planned          |   No              |   No              | Yes - please           |
 | TinyG         | not planned      |   No              |   Yes             | Yes - please           |
 | Repetier      | not planned      |   No              |   No              | Yes                    |
@@ -57,5 +57,7 @@ Note: Ever changing.  See the Issues tab above for details.
 Long story short:  Smoothieware wins on all fronts.  its the ONLY open source firmware which automatically modulates its laser power output according to the realtime acceleration values - ensuring that (de)acceleration does not cause larger kerf / darker engraves - which the other firmwares causes.   This is a MUST for good Raster engraving, and is needed for Raster Grayscale!
 
 Smoothieware is also a massively faster (up to 120Mhz vs the 16Mhz of the Arduino based controllers) - which means we can pull near realtime feedback from the controller. This keeps the UI massively responsive, and ensures you are always aware of what your machine is doing. 
+
+`**`Marlin Firmware support grayscale, but it doesnt modulate power according to acceleration: Thus start/end of raster moves burn a little darker.  On some machines / some graphics, this can really look bad, so i'd rather not say "yes" since the experience is not what it could be.  Again, Smoothieware is sooo much better at this!
 
 
