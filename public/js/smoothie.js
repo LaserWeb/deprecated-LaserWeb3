@@ -40,7 +40,7 @@ function initSmoothie() {
           console.log(data, textStatus, XMLHttpRequest);
           if (textStatus = '200') {
             // alert('Found board at' + ip)
-            printLog('Got response from  '+smoothieIp, successcolor)
+            printLog('Got response from  '+smoothieIp, successcolor, "wifi")
             isConnected = true;
             $('#ethConnectStatus').html("Ethernet OK")
             $('#syncstatus').html('Eth Connected');
@@ -85,7 +85,7 @@ function scanSubnet() {
 };
 
 function  scanIP(ip) {
-  printLog('Checking: '+ip, successcolor)
+  printLog('Checking: '+ip, successcolor, "wifi")
   var cmd = "version\n";
   var url = "http://" + ip + "/command";
   // Send the data using post
@@ -96,7 +96,7 @@ function  scanIP(ip) {
     scanok += 1
     $("#scannumber").html('Scanning: <span style="color: #00cc00">'+scanok+ '</span>+<span style="color: #cc0000">'+scanfail+ '</span> done. '+scanned+' to go.' )
       $.each(data.split('\n'), function(index) {
-        printLog(this, msgcolor)
+        printLog(this, msgcolor, "wifi")
         var pattern = /Build version: (.*), Build date: (.*), MCU: (.*), System Clock: (.*)/;
          // test the pattern
          var matches = this.match(pattern);
@@ -139,7 +139,7 @@ function runCommand(cmd, silent) {
   if (!silent) {
     posting.done(function(data) {
       $.each(data.split('\n'), function(index) {
-        printLog(this, msgcolor)
+        printLog(this, msgcolor, "wifi")
         console.log(this);
       });
     });

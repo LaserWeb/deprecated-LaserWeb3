@@ -10,9 +10,9 @@ function initSocket() {
     if (data.indexOf('<') == 0) {
       updateStatus(data);
     } else if (data =='ok') {
-    printLog(data, '#cccccc')
+    printLog(data, '#cccccc', "usb")
     } else {
-    printLog(data, msgcolor)
+    printLog(data, msgcolor, "usb")
     }
   });
 
@@ -162,7 +162,7 @@ function playpauseMachine() {
     }
   // end isConnected
   } else {
-    printLog('You have to Connect to a machine First!', errorcolor)
+    printLog('You have to Connect to a machine First!', errorcolor, "usb")
   }
 };
 
@@ -177,7 +177,7 @@ function playGcode() {
       $('#playicon').removeClass('fa-play');
       $('#playicon').addClass('fa-pause');
     } else {
-      printLog('Not Connected', errorcolor)
+      printLog('Not Connected', errorcolor, "usb")
     }
   } else if (connectVia == "Ethernet") {
     // Upload to SD Wizard

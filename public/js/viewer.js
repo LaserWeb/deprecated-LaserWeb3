@@ -44,7 +44,7 @@ function initWebcam() {
 
   	if (!navigator.getUserMedia)
   	{
-  		printLog('Sorry. WebRTC is not available.', errorcolor);
+  		printLog('Sorry. WebRTC is not available.', errorcolor, "viewer");
   	} else {
   		navigator.getUserMedia({video: true}, gotStream, noStream);
   	}
@@ -69,7 +69,7 @@ function noStream(e)
   var msg = 'No camera available.';
   if (e.code == 1)
   {   msg = 'User denied access to use camera.';   }
-  printLog(msg, errorcolor)
+  printLog(msg, errorcolor, "viewer")
 }
 
 
@@ -113,14 +113,14 @@ function init3D() {
     })();
 
     if (webgl) {
-        printLog('<h5>WebGL Support found!</h5><b>success:</b><br> Laserweb will work optimally on this device!<hr><p>', successcolor);
+        printLog('<h5><i class="fa fa-search fa-fw" aria-hidden="true"></i>WebGL Support found!</h5><b>success:</b><br> Laserweb will work optimally on this device!<hr><p>', successcolor);
         renderer = new THREE.WebGLRenderer({
             autoClearColor: true,
             antialias: false
         });
 
     } else if (canvas) {
-        printLog('<h5>No WebGL Support found!</h5><b>CRITICAL ERROR:</b><br> Laserweb may not work optimally on this device! <br>Try another device with WebGL support</p><br><u>Try the following:</u><br><ul><li>In the Chrome address bar, type: <b>chrome://flags</b> [Enter]</li><li>Enable the <b>Override software Rendering</b></li><li>Restart Chrome and try again</li></ul>Sorry! :(<hr><p>', errorcolor);
+        printLog('<h5><i class="fa fa-search fa-fw" aria-hidden="true"></i>No WebGL Support found!</h5><b>CRITICAL ERROR:</b><br> Laserweb may not work optimally on this device! <br>Try another device with WebGL support</p><br><u>Try the following:</u><br><ul><li>In the Chrome address bar, type: <b>chrome://flags</b> [Enter]</li><li>Enable the <b>Override software Rendering</b></li><li>Restart Chrome and try again</li></ul>Sorry! :(<hr><p>', errorcolor);
         renderer = new THREE.CanvasRenderer();
     };
 
@@ -723,7 +723,7 @@ function onMouseClick(e) {
             obj = intersection.object;
 
         if (obj.name && obj.name != "bullseye" && obj.name != "rastermesh" && obj.name != "XY") {
-            printLog('Clicked on : ' + obj.name, successcolor)
+            printLog('Clicked on : ' + obj.name, successcolor, "viewer")
             console.log('Clicked on : ' + obj.name);
             // obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
             attachBB(obj)

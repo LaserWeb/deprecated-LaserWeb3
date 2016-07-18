@@ -282,7 +282,7 @@ function readFile(evt) {
             r.onload = function(e) {
                 dxf = r.result
                 drawDXF(dxf, f.name);
-                printLog('DXF Opened', successcolor);
+                printLog('DXF Opened', msgcolor, "file");
                 putFileObjectAtZero();
                 resetView()
             };
@@ -296,7 +296,7 @@ function readFile(evt) {
                 svgpreview.innerHTML = r.result;
                 var svgfile = $('#svgpreview').html();
                 svg2three(svgfile, f.name);
-                printLog('SVG Opened', successcolor);
+                printLog('SVG Opened', msgcolor, "file");
                 resetView()
             };
 
@@ -308,7 +308,7 @@ function readFile(evt) {
                 $("#gcodefile").show();
                 document.getElementById('gcodepreview').value = this.result;
                 openGCodeFromText();
-                printLog('GCODE Opened', successcolor);
+                printLog('GCODE Opened', msgcolor, "file");
                 resetView()
             };
         } else if (f.name.match(/.stl$/i)) {
@@ -346,7 +346,7 @@ function readFile(evt) {
             };
             // start reading file as array buffer
             r.readAsArrayBuffer(evt.target.files[0]);
-            printLog('STL Opened', successcolor);
+            printLog('STL Opened', msgcolor, "file");
             $('#stlslice').modal('show')
         } else {
             console.log(f.name + " is probably a Raster");
@@ -357,6 +357,7 @@ function readFile(evt) {
                 var data = event.target.result;
                 drawRaster(name, data);
             };
+
         }
     }
     $('#filestatus').hide();
@@ -428,12 +429,47 @@ function invokeSaveAsDialog(file, fileName) {
         URL.revokeObjectURL(hyperlink.href);
     }
 }
-function printLog(text, color) {
+function printLog(text, color, logclass) {
   if ($('#console p').length > 300) {
     // remove oldest if already at 300 lines
     $('#console p').first().remove();
   }
-  $('#console').append('<p class="pf" style="color: ' + color + ';">' + text);
+  var template = '<p class="pf" style="color: ' + color + ';">'
+  if (logclass) {
+   if (logclass == "settings") {
+     template += '<i class="fa fa-cogs fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
+   if (logclass == "file") {
+     template += '<i class="fa fa-file-text-o fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
+   if (logclass == "google") {
+     template += '<i class="fa fa-google fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
+   if (logclass == "jog") {
+     template += '<i class="fa fa-arrows fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
+   if (logclass == "macro") {
+     template += '<i class="fa fa-th-large fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
+   if (logclass == "fullscreen") {
+     template += '<i class="fa fa-fullscreen fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
+   if (logclass == "raster") {
+     template += '<i class="fa fa-file-image-o fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
+   if (logclass == "usb") {
+     template += '<i class="fa fa-usb fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
+   if (logclass == "wifi") {
+     template += '<i class="fa fa-wifi fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
+   if (logclass == "viewer") {
+     template += '<i class="fa fa-search fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
+
+  }
+  template += text
+  $('#console').append(template);
   $('#console').scrollTop($("#console")[0].scrollHeight - $("#console").height());
 };
 
@@ -448,7 +484,7 @@ function toggleFullScreen() {
     } else if (document.documentElement.webkitRequestFullScreen) {
       document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
     }
-    printLog('Going Fullscreen', successcolor);
+    printLog('Going Fullscreen', successcolor, "fullscreen");
   } else {
     if (document.cancelFullScreen) {
       document.cancelFullScreen();
@@ -457,6 +493,6 @@ function toggleFullScreen() {
     } else if (document.webkitCancelFullScreen) {
       document.webkitCancelFullScreen();
     }
-    printLog('Exiting Fullscreen', successcolor);
+    printLog('Exiting Fullscreen', successcolor, "fullscreen");
   }
 }

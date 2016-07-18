@@ -9,7 +9,7 @@ $(document).ready(function() {
 
     $('#generategcode').on('click', function() { // DXF job Params to MC
         if (typeof(fileObject) == 'undefined') {
-            printLog('No file loaded. do, File -> Open, first!', errorcolor)
+            printLog('No file loaded. do, File -> Open, first!', errorcolor, "file")
         };
         // Lets get the machine specific Gcode from the settings Modal (:
         var startgcode = document.getElementById('startgcode').value;
@@ -48,7 +48,7 @@ $(document).ready(function() {
         pwr = [];
         cutSpeed = [];
         for (j = 0; j < objectsInScene.length; j++) {
-            printLog('Processing ' + objectsInScene[j].name, msgcolor)
+            printLog('Processing ' + objectsInScene[j].name, msgcolor, "file")
             // This step converts each object in objectsInScene, to gcode and puts that gcode into objectsInScene[j].userData.gcode - to be later assembled into a gcode file with proper sequence
             objectsInScene[j].updateMatrix();
             if (objectsInScene[j].name != 'object') {
@@ -84,7 +84,7 @@ $(document).ready(function() {
                   $('#startgcodefinal').val(startgcode)
                   $('#endgcodefinal').val(endgcode);
 
-                  printLog('Gcode Generated for ' +objectsInScene[j].name , successcolor);
+                  printLog('Gcode Data Generated for ' +objectsInScene[j].name , successcolor, "file");
                   // prepgcodefile();
                 }
               }
@@ -109,7 +109,7 @@ function prepgcodefile() {
   }
 
   for (j = 0; j < objectsInScene.length; j++) {
-      printLog('Processing ' + objectsInScene[j].name, msgcolor)
+      printLog('Preparing Gcode File: ' + objectsInScene[j].name, msgcolor, "file")
       // document.getElementById('gcodepreview').value = "";
       if (typeof(objectsInScene[j].userData.gcode) != "undefined") {
        g += objectsInScene[j].userData.gcode
@@ -379,7 +379,7 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
 
         if (newClipperPaths.length < 1) {
             console.error("Clipper Simplification Failed!:");
-            printLog('Clipper Simplification Failed!', errorcolor)
+            printLog('Clipper Simplification Failed!', errorcolor, "viewer")
         }
 
         // get the inflated/deflated path
@@ -446,7 +446,7 @@ pocketPath = function(infobject, inflateVal, zstep, zdepth) {
 
         if (newClipperPaths.length < 1) {
             console.error("Clipper Simplification Failed!:");
-            printLog('Clipper Simplification Failed!', errorcolor)
+            printLog('Clipper Simplification Failed!', errorcolor, "viewer")
         }
 
         for (j = 0; j < zdepth; j += zstep) {

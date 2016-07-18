@@ -60,7 +60,7 @@ function drawRaster(name, data) {
         $("#blackwhitespeedsection").hide();
     }
 
-    printLog('Bitmap Opened', successcolor);
+    printLog('Bitmap Opened', msgcolor, "raster");
     //tbfleming's threejs texture code
 
     var img = document.getElementById('origImage'+currentIdx);
@@ -154,7 +154,7 @@ function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, black
 
 
 function gcodereceived(i) {
-    printLog('Raster Completed for <b>' + objectsInScene[i].name + '</b>' , msgcolor)
+    printLog('Raster Completed for <b>' + objectsInScene[i].name + '</b>' , msgcolor, "raster")
     var template = `
     <form class="form-horizontal">
       <label for="startgcodefinal" class="control-label">`+objectsInScene[i].name+`</label>

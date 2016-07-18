@@ -13,12 +13,12 @@ var startApp = function() {
         });
 
         attachSignin(document.getElementById('g-login'));
-        printLog('Enabled Google Drive integration', successcolor);
+        printLog('Enabled Google Drive integration', successcolor, "google");
 
       });
       gapi.load('picker', {'callback': onPickerApiLoad});
     } else {
-      printLog('Could not enable Google Drive Integration: Does this device have working internet access?', warncolor);
+      printLog('Could not enable Google Drive Integration: Does this device have working internet access?', warncolor, "google");
       $('#g-login').addClass('disabled');
     }
 
@@ -101,7 +101,7 @@ function signOut() {
 
 function getFileContent(fileId, fileName) {
   console.log('fetching ', fileId)
-  printLog('Fetching '+ fileName, msgcolor)
+  printLog('Fetching '+ fileName, msgcolor, "google")
   $('#statusmodal').modal('show');
   $('#statusTitle').empty();
   $('#statusTitle').html('Fetching file');
@@ -140,7 +140,7 @@ function getFileContent(fileId, fileName) {
               if ( myXHR.status == 200 ) {
 //              200=OK
                   //console.log( myXHR.response );
-                  printLog('Successfully Fetched '+ fileName, successcolor)
+                  printLog('Successfully Fetched '+ fileName, successcolor, "google")
                   $('#tabsLayers').append('<li role="presentation" class="layerth" id="'+fileName+'-tab"><a href="#">'+fileName+'</a></li>')
                   if (fileName.match(/.dxf$/i)) {
                     dxf = myXHR.response
@@ -151,7 +151,7 @@ function getFileContent(fileId, fileName) {
                     // getSettings();
                     drawDXF(dxf, fileName);
                     currentWorld();
-                    printLog('DXF Opened', successcolor);
+                    printLog('DXF Opened', successcolor, "file");
                     $('#cammodule').show();
                     putFileObjectAtZero();
                     resetView()
@@ -159,7 +159,7 @@ function getFileContent(fileId, fileName) {
                     $('#prepopt').show();
                     $('#prepopt').click();
                     attachTransformWidget();
-                    printLog('Google Drive DXF File Opened', successcolor);
+                    printLog('Google Drive DXF File Opened', successcolor, "google");
                   } else if (fileName.match(/.svg$/i)) {
                     svg = myXHR.response
                     var svgpreview = document.getElementById('svgpreview');
@@ -182,7 +182,7 @@ function getFileContent(fileId, fileName) {
                     // };
                     svg2three(svgfile, fileName);
                     currentWorld();
-                    printLog('SVG Opened', successcolor);
+                    printLog('SVG Opened', successcolor, "file");
                     $('#cammodule').show();
                     putFileObjectAtZero();
                     resetView()
@@ -192,12 +192,12 @@ function getFileContent(fileId, fileName) {
                     $('#svgresize').modal('show');
                     attachTransformWidget();
                     $('#svgresize').modal('show');
-                    printLog('Google Drive SVG File Opened', successcolor);
+                    printLog('Google Drive SVG File Opened', successcolor, "google");
                   } else if (fileName.match(/.gcode$/i)) {
                     cleanupThree();
                     document.getElementById('gcodepreview').value = myXHR.response;
                     openGCodeFromText();
-                    printLog('GCODE Opened', successcolor);
+                    printLog('GCODE Opened', successcolor, "file");
                     $('#toggleviewer').click();
                     $('#cammodule').hide();
                     $('#rastermodule').hide();
@@ -206,9 +206,9 @@ function getFileContent(fileId, fileName) {
                     $('#stlopt').hide();
                     $('#prepopt').hide();
                     $("#transformcontrols").hide();
-                    printLog('Google Drive GCODE File Opened', successcolor);
+                    printLog('Google Drive GCODE File Opened', successcolor, "google");
                   } else if (fileName.match(/.stl$/i)) {
-                    printLog('STL not supported yet', errorcolor)
+                    printLog('STL not supported yet', errorcolor, "file")
                   } else {
                     var imgtag = document.getElementById("origImage");
                     var imgwidth, imgheight;
@@ -263,7 +263,7 @@ function getFileContent(fileId, fileName) {
 
                     //  attachTransformWidget();
                     //resetView()
-                    printLog('Google Drive RASTER File Opened', successcolor);
+                    printLog('Google Drive RASTER File Opened', successcolor, "raster");
                   }
                   $('#filestatus').hide();
                   $('#cam-menu').click();

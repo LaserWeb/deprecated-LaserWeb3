@@ -64,7 +64,7 @@ function initJog() {
 
     // Jog Widget
     $('#stepsize input').on('change', function() {
-       printLog('Jog will use ' +$('input[name=stp]:checked', '#stepsize').val() + ' mm per click', successcolor);
+       printLog('Jog will use ' +$('input[name=stp]:checked', '#stepsize').val() + ' mm per click', successcolor, "jog");
        $(".stepsizeval").empty();
        $(".stepsizeval").html($('input[name=stp]:checked', '#stepsize').val() + 'mm');
     });

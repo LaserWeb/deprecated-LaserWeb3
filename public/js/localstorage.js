@@ -13,7 +13,7 @@ function saveSettingsLocal() {
         printLog('Saving: ' + localParams[i] + ' : ' + val, successcolor);
         localStorage.setItem(localParams[i], val);
     };
-    printLog('<b>Saved Settings: <br>NB:</b> Please refresh page for settings to take effect', errorcolor);
+    printLog('<b>Saved Settings: <br>NB:</b> Please refresh page for settings to take effect', errorcolor, "settings");
 };
 
 function loadSettingsLocal() {
@@ -37,7 +37,7 @@ function checkSettingsLocal() {
   $("#settingsstatus").hide();
   var anyissues = false;
   var anywarn = false;
-  printLog('<hr><b>Checking whether you have configured LaserWeb :</b><p>', msgcolor);
+  printLog('<b>Checking whether you have configured LaserWeb :</b><p>', msgcolor, "settings");
   for (i = 0; i < localParams.length; i++) {
     field = localParams[i]
     var val = $('#' + localParams[i]).val(); // Read the value from form
@@ -45,29 +45,29 @@ function checkSettingsLocal() {
       if (field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0) {
         // Dont print these, just saved as easy reference, not critical in the least
       } else {
-        printLog('Checking : ' + localParams[i] + ' : ' + val, successcolor);
+        printLog('Checking : ' + localParams[i] + ' : ' + val, successcolor, "settings");
       };
     } else {
       if (field.indexOf('laseron') == 0 || field.indexOf('laseroff') == 0 || field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0) {
-        printLog('Checking : ' + localParams[i] + ' : OPTIONAL ' + val, warncolor);
+        printLog('Checking : ' + localParams[i] + ' : OPTIONAL ' + val, warncolor, "settings");
         anywarn = true;
       } else if (field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0) {
-        printLog('Checking : ' + localParams[i] + ' : Optional ETHERNET ' + val, warncolor);
+        printLog('Checking : ' + localParams[i] + ' : Optional ETHERNET ' + val, warncolor, "settings");
         anywarn = true;
       } else {
-        printLog('Checking : ' + localParams[i] + ' : NOT SET ' + val, errorcolor);
+        printLog('Checking : ' + localParams[i] + ' : NOT SET ' + val, errorcolor, "settings");
         anyissues = true;
       }
     }
   };
   if (anyissues) {
-    printLog('<b>MISSING CONFIG: You need to configure LaserWeb for your setup. </b><hr>', errorcolor);
+    printLog('<b>MISSING CONFIG: You need to configure LaserWeb for your setup. </b>', errorcolor, "settings");
     $("#togglesettings").click();
     $("#settingsstatus").show();
   }
 
   if (!anyissues && anywarn) {
-    printLog('<b>WARNINGS in Config: You might need to configure LaserWeb for your setup, depending on your controller.</b><hr>', warncolor);
+    printLog('<b>WARNINGS in Config: You might need to configure LaserWeb for your setup, depending on your controller.</b>', warncolor, "settings");
     $("#settingsstatus").hide();
   }
 };

@@ -41,7 +41,7 @@ function macrosInit() {
   // Show/Hide Macro Pad
   $('#editmacro').on('click', function() {
       $('#macrostatus').hide();
-      printLog('Editing Macros', msgcolor);
+      printLog('Editing Macros', msgcolor, "macro");
       $("#macrostbody").empty();
       readMacros();
       $('#macro_pad').toggle();
@@ -93,7 +93,7 @@ function deleteRow(t) {
 }
 
 function saveMacros() {
-  printLog('Saving Macros', msgcolor);
+  printLog('Saving Macros', msgcolor, "macro");
   $('#macro_pad').toggle();
   $('#macro_settings').toggle();
   $('#savemacro').hide();

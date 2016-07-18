@@ -86,7 +86,7 @@ function Rasterizer(config) {
       lasermultiply = $('#lasermultiply').val();
     } else {
       lasermultiply = 100;
-      printLog('NB - generated with default value of S100 since you have not yet configured LaserWeb for your machine.  Click that settings button and configure the Max PWM S Value (and all the other settings please).... ', errorcolor)
+      printLog('NB - generated with default value of S100 since you have not yet configured LaserWeb for your machine.  Click that settings button and configure the Max PWM S Value (and all the other settings please).... ', errorcolor, "raster")
     }
     homingseq = $('#homingseq').val();
     endgcode = $('#endgcode').val();
@@ -100,7 +100,6 @@ function Rasterizer(config) {
         '; White Speed: {3}mm/s',
         '; Resolution (mm per pixel): {4}mm',
         '; Laser Spot Size: {5}mm',
-        '; Laser Feedrate: {6}mm/s',
         '; X Offset: {8}mm',
         '; Y Offset: {9}mm \n',
         'G1 F{7}\n'
@@ -430,7 +429,7 @@ Rasterizer.prototype.onFinish = function() {
 
 this.RasterNow = function(config) {
     console.time("Process Raster");
-    printLog('Process Raster', msgcolor)
+    printLog('Process Raster', msgcolor, "raster")
     var div = config.div;
     var rasterizer = new Rasterizer(config);
     console.log('from Container: ', div)
@@ -439,7 +438,7 @@ this.RasterNow = function(config) {
 
 this.G7RasterNow = function(config) {
     console.time("Process G7 Raster");
-    printLog('Process G7 Raster', msgcolor)
+    printLog('Process G7 Raster', msgcolor, "raster")
 
     var rasterizer = new G7Rasterizer(config);
     rasterizer.init();
@@ -486,7 +485,7 @@ function G7Rasterizer(config) {
       G7lasermultiply = $('#lasermultiply').val();
     } else {
       G7lasermultiply = 100;
-      printLog('NB - generated with default value of S100 since you have not yet configured LaserWeb for your machine.  Click that settings button and configure the Max PWM S Value (and all the other settings please).... ', errorcolor)
+      printLog('NB - generated with default value of S100 since you have not yet configured LaserWeb for your machine.  Click that settings button and configure the Max PWM S Value (and all the other settings please).... ', errorcolor, "raster")
     }
     G7homingseq = $('#homingseq').val();
     G7endgcode = $('#endgcode').val();
