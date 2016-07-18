@@ -13,7 +13,7 @@ Link to Youtube Playlist with LaserWeb videos: [https://www.youtube.com/playlist
 Link to authors other projects:  [https://openhardwarecoza.github.io/donate](https://openhardwarecoza.github.io/donate)
 
 ## Install Instructions
-
+l
 [https://github.com/openhardwarecoza/LaserWeb3/wiki/Installation-Instructions](https://github.com/openhardwarecoza/LaserWeb3/wiki/Installation-Instructions)
 
 ## Quick Start Guide
@@ -27,9 +27,9 @@ By using this software, the user accepts complete responsibility for each and ev
 
 1. You will not hold the author or contributors of LaserWeb3 liable for any damage to equipment or persons from the use of LaserWeb3. 
 2. You know the potential hazards in using high power lasers and high voltages.
-3. You will wear professional laser-eye-protection when using a laser controlled by LaserWeb3.
-4. You will use the LaserWeb2 software in a legal and safe manner.
-5. You relieve the author and contributors from any liability arising from the use or distribution of the LaserWeb3 software.
+3. You will wear professional laser-eye-protection when using a laser controlled by LaserWeb.
+4. You will use the LaserWeb software in a legal and safe manner.
+5. You relieve the author and contributors from any liability arising from the use or distribution of the LaserWeb software.
 6. You are entirely operating at your own risk. Lasers can be lethally dangerous. 
 
 ## What's new / planned for LaserWeb 3
