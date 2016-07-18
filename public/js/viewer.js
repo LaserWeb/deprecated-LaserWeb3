@@ -181,7 +181,15 @@ function init3D() {
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 0, 0); // view direction perpendicular to XY-plane
-    //controls.enableRotate = false;
+
+    cncMode = $('#cncMode').val()
+    if (cncMode == "Enable") {
+      controls.enableRotate = true;
+    } else {
+      controls.enableRotate = false;
+    }
+
+
     controls.enableZoom = true; // optional
     controls.noKeys = true; // Disable Keyboard on canvas
     //controls.mouseButtons = { PAN: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, ORBIT: THREE.MOUSE.RIGHT }; // swapping left and right buttons
@@ -722,7 +730,7 @@ function onMouseClick(e) {
         var intersection = intersects[i],
             obj = intersection.object;
 
-        if (obj.name && obj.name != "bullseye" && obj.name != "rastermesh" && obj.name != "XY") {
+        if (obj.name && obj.name != "bullseye" && obj.name != "rastermesh" && obj.name != "XY" && obj.name != "GridHelper") {
             printLog('Clicked on : ' + obj.name, successcolor, "viewer")
             console.log('Clicked on : ' + obj.name);
             // obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
