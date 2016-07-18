@@ -198,8 +198,10 @@ function svg2three(svgfile, fileName, settings) {
 
     console.log('Color Value', colorval);
     if (colorval) {
+      console.log('Color Value', colorval);
       var svgMaterial = new THREE.MeshBasicMaterial( { color: colorval } )
     } else {
+      console.log('Color Value: NONE: Using Blue');
       var svgMaterial = new THREE.MeshBasicMaterial( { color: 0x0000ff } )
     }
 

@@ -314,6 +314,12 @@ function fillLayerTabs() {
       </div>
       <div id="collapse`+i+`" class="panel-collapse collapse">
         <div class="panel-body" id="panel`+i+`">
+          <label >Copy image to a traced vector for cutting use </label>
+          <div class="btn-group btn-group-justified" role="group" aria-label="tracegcode">
+              <div class="btn-group" role="group">
+                  <a class="btn btn-warning btn-block" href="#" onclick="tracebmp(`+i+`, '`+objectsInScene[i].name+`')">Trace to Vector</a>
+              </div>
+          </div>
           <div class="form-group">
             <label >Raster: Proportional Feedrate</label>
             <div class="input-group">
