@@ -2,7 +2,15 @@
 
 ## Development Version
 
-Note: Version 3 (this one) is currently in development phase!  Documentation is being added to the Wiki pages.
+Note: Version 3 (this one) is currently in development phase!  Documentation is being added to the Wiki pages.  Test and report back please
+
+## Contact
+
+[Link to Support Community: https://plus.google.com/communities/115879488566665599508](https://plus.google.com/communities/115879488566665599508)
+
+[Link to Youtube Playlist with LaserWeb videos: https://www.youtube.com/playlist?list=PL1JTb6-HQgOyc1eM6eX4v0tdSYpXFLYNT](https://www.youtube.com/playlist?list=PL1JTb6-HQgOyc1eM6eX4v0tdSYpXFLYNT)
+
+[Link to authors other projects:  https://openhardwarecoza.github.io/donate](https://openhardwarecoza.github.io/donate)
 
 ## Install Instructions
 
