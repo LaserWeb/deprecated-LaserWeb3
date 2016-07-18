@@ -202,6 +202,7 @@ function fillLayerTabs() {
                     <option>Inside</option>
                     <option>Outside</option>
                     <option>Pocket</option>
+                    <option>Drag Knife</option>
                   </select>
                   <div class = "input-group-btn"><button class="btn btn-success" onclick="addOperation('`+i+`', $('#operation`+i+`').val(), $('#zstep`+i+`').val(), $('#zdepth`+i+`').val())">Add</button></div>
                 </div>

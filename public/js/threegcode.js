@@ -63,14 +63,15 @@ $(document).ready(function() {
                 rapidSpeed = parseFloat(document.getElementById('rapidspeed').value) * 60;
                 if (objectsInScene[j].userData.inflated) {
                   // g += generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
+                  printLog('Seperate Operation for ' + objectsInScene[j].name, msgcolor, "file")
                   objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                 } else {
                   // g += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                   objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
-
+                }
                   var template = `
                   <form class="form-horizontal">
-                    <label for="startgcodefinal" class="control-label">`+objectsInScene[j].name+`</label>
+                    <label for="gcode`+i+`" class="control-label">`+objectsInScene[j].name+`</label>
                     <textarea id="gcode`+i+`" spellcheck="false" style="width: 100%; height: 80px;" placeholder="processing..." disabled></textarea>
                   </form>`
 
@@ -86,7 +87,7 @@ $(document).ready(function() {
 
                   printLog('Gcode Data Generated for ' +objectsInScene[j].name , successcolor, "file");
                   // prepgcodefile();
-                }
+
               }
             }
         }
@@ -326,6 +327,12 @@ addOperation = function(index, operation, zstep, zdepth) {
     objectsInScene[index].userData.zdepth = zdepth;
   }
 
+  if (operation == "Drag Knife") {
+    objectsInScene[index].userData.inflated = dragknifePath(objectsInScene[index], ($("#tooldia").val()/2), zstep, zdepth );
+    objectsInScene[index].userData.operation = operation;
+    objectsInScene[index].userData.zstep = zstep;
+    objectsInScene[index].userData.zdepth = zdepth;
+  }
   setTimeout(function(){ fillLayerTabs(); }, 100);
 
 }
@@ -470,6 +477,192 @@ pocketPath = function(infobject, inflateVal, zstep, zdepth) {
     }
 };
 
+dragknifePath = function(infobject, inflateVal, zstep, zdepth) {
+    var zstep = parseFloat(zstep, 2);
+    var zdepth = parseFloat(zdepth, 2);
+    var dragknifeGrp = new THREE.Group();
+    if (typeof(inflateGrp) != 'undefined') {
+        scene.remove(inflateGrp);
+        inflateGrp = null;
+    }
+
+    // if (inflateVal != 0) {
+        console.log("user wants to create Drag Knife Path. val:", inflateVal);
+        infobject.updateMatrix();
+        var grp = infobject;
+        var clipperPaths = [];
+        grp.traverse(function(child) {
+            // console.log('Traverse: ', child)
+            if (child.name == "inflatedGroup") {
+                console.log("this is the inflated path from a previous run. ignore.");
+                return;
+            } else if (child.type == "Line") {
+                // let's inflate the path for this line. it may not be closed
+                // so we need to check that.
+                var clipperArr = [];
+                // Fix world Coordinates
+                for (i = 0; i < child.geometry.vertices.length; i++) {
+                    var localPt = child.geometry.vertices[i];
+                    var worldPt = grp.localToWorld(localPt.clone());
+                    var xpos = (parseFloat(worldPt.x.toFixed(3)));
+                    var ypos = (parseFloat(worldPt.y.toFixed(3)));
+
+                    clipperArr.push({
+                        X: xpos,
+                        Y: ypos
+                    });
+                }
+                clipperPaths.push(clipperArr);
+            } else if (child.type == "Points") {
+                child.visible = false;
+            } else {
+                console.log("type of ", child.type, " being skipped");
+            }
+        });
+
+        console.log("clipperPaths:", clipperPaths);
+
+        // simplify this set of paths which is a very powerful Clipper call that figures out holes and path orientations
+        var newClipperPaths = simplifyPolygons(clipperPaths);
+
+        if (newClipperPaths.length < 1) {
+            console.error("Clipper Simplification Failed!:");
+            printLog('Clipper Simplification Failed!', errorcolor, "viewer")
+        }
+
+
+
+        for (j = 0; j < zdepth; j += zstep) {
+            // get the inflated/deflated path
+
+          // for (i = 1; i < 100; i++) {  // Rather 100 than a while loop, just in case
+            // inflateValUsed = inflateVal * i;
+            // var inflatedPaths = getInflatePath(newClipperPaths, -inflateValUsed);
+            var polygons = newClipperPaths;
+            polygons = polygons.map(function (poly) {
+              // return addCornerActions(poly, Math.pow(2, 20) * 5, 20 / 180 * Math.PI);
+              return addCornerActions(poly, inflateVal, 20 / 180 * Math.PI);
+            });
+            inflateGrp = drawClipperPaths(polygons, 0xff00ff, 0.8, -j, true, "inflatedGroup"); // (paths, color, opacity, z, zstep, isClosed, isAddDirHelper, name, inflateVal)
+            if (inflateGrp.children.length) {
+              inflateGrp.name = 'dragknifeGrp';
+              inflateGrp.position = infobject.position;
+              dragknifeGrp.add(inflateGrp)
+            } else {
+              console.log('Dragknife Operation Failed')
+              break;
+            }
+          // }
+        }
+        return dragknifeGrp
+    // }
+};
+
+
+
+
+
+addCornerActions = function (clipperPolyline, clipperRadius, toleranceAngleRadians) {
+  // var previousPoint = null;
+  // var point = [];
+    console.log("clipperPolyline Starting :  ", clipperPolyline);
+    if (clipperRadius == 0 || clipperPolyline.length == 0)
+        return clipperPolyline;
+    var result = [];
+    result.push(clipperPolyline[0]);
+    //previous point is not always at i-1, because repeated points in the polygon are skipped
+    // var previousPoint = clipperPolyline[0];
+    var previousPoint = new Point(clipperPolyline[0].X, clipperPolyline[0].Y, 0); //clipperPolyline[i - 1];
+    for (var i = 1; i < clipperPolyline.length - 1; i++) {
+        // console.log("clipperPolyline:  X:", clipperPolyline[i].X, " Y:", clipperPolyline[i].Y);
+        previousPoint = new Point(clipperPolyline[i - 1].X, clipperPolyline[i - 1].Y, 0); //clipperPolyline[i - 1];
+        var point = new Point(clipperPolyline[i].X, clipperPolyline[i].Y, 0); //clipperPolyline[i];
+        // console.log("PreviousPoint: ", previousPoint);
+        if (previousPoint.sqDistance(point) == 0)
+         continue;
+        // you don't want to play with atan2() if a point is repeated
+
+        // console.log("point: ", point);
+        var incomingVector = point.sub(previousPoint);
+        // console.log("incomingVector: ", incomingVector);
+        var nextPoint = new Point(clipperPolyline[i + 1].X, clipperPolyline[i + 1].Y, 0) //clipperPolyline[i + 1];
+        // console.log("nextPoint: ", nextPoint);
+        var angle = point.angle(previousPoint, nextPoint);
+        // console.log("angle: ", angle);
+        // console.log("clipperRadius: ", clipperRadius);
+        var overshoot = point.add(incomingVector.normalized().scale(clipperRadius));
+        console.log("overshoot: ", overshoot);
+        result.push(overshoot);
+        if (Math.abs(angle) > toleranceAngleRadians) {
+
+            var arcPoints = 100 / (2 * Math.PI) * Math.abs(angle);
+            var incomingAngle = incomingVector.atan2();
+            for (var j = 0; j <= arcPoints; j++) {
+                var a = incomingAngle + angle / arcPoints * j;
+                var pt = point.add(polarPoint(clipperRadius, a));
+                result.push(pt);
+                // console.log("pt: ", pt);
+            }
+        }
+        previousPoint = point;
+    }
+    if (clipperPolyline.length > 1)
+        result.push(clipperPolyline[clipperPolyline.length - 1]);
+    return result;
+ }
+
+ function Point(X, Y, Z) {
+        this.X = X;
+        this.Y = Y;
+        this.Z = Z === undefined ? 0 : Z;
+ }
+
+ Point.prototype = {
+   sqDistance: function (p) {
+    var d = p == null ? this : this.sub(p);
+    return d.X * d.X + d.Y * d.Y + d.Z * d.Z;
+  },
+  sub: function (p) {
+      //  console.log("sub.x: ", this.x, " p.x ", p.x)
+       return new Point(this.X - p.X, this.Y - p.Y, this.Z - p.Z);
+  },
+  angle: function (fromPoint, toPoint) {
+       var toPoint2 = new Point(toPoint.X, toPoint.Y, toPoint.Z);
+       var v1 = this.sub(fromPoint);
+       var v2 = toPoint2.sub(this);
+       var dot = v1.X * v2.X + v1.Y * v2.Y;
+       var cross = v1.X * v2.Y - v1.Y * v2.X;
+       var res = Math.atan2(cross, dot);
+       var twoPi = 2 * Math.PI;
+       if (res < -twoPi)
+           return res + twoPi;
+       if (res > twoPi)
+           return res - twoPi;
+       return res;
+  },
+  normalized: function () {
+      // console.log("normalized.distance: ", this.distance())
+       return this.scale(1 / this.distance());
+       console.log("normalized: ", this.scale(1 / this.distance()))
+  },
+  scale: function (val) {
+       return new Point(this.X * val, this.Y * val, this.Z * val);
+  },
+  distance: function (p) {
+       return Math.sqrt(this.sqDistance(p));
+  },
+  add: function (p) {
+       return new Point(this.X + p.X, this.Y + p.Y, this.Z + p.Z);
+  },
+  atan2: function () {
+       return Math.atan2(this.Y, this.Y);
+  },
+};
+
+polarPoint = function (r, theta) {
+  return new Point(r * Math.cos(theta), r * Math.sin(theta));
+}
+
 
 simplifyPolygons = function(paths) {
     console.log('Simplifying: ', paths)
@@ -501,7 +694,7 @@ getInflatePath = function(paths, delta, joinType) {
 };
 
 drawClipperPaths = function(paths, color, opacity, z, isClosed, name) {
-    console.log("drawClipperPaths");
+    console.log("drawClipperPaths", paths);
 
     var lineUnionMat = new THREE.LineBasicMaterial({
         color: color,
