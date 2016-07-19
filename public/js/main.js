@@ -221,7 +221,18 @@ $(document).ready(function() {
     // Version check
 
     var version = $('meta[name=version]').attr("content");
-    printLog("Current Version: " + version , msgcolor, "git")
+    $.get( "https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/version.txt", function( data ) {
+      printLog("Version currently Installed : " + version , msgcolor, "git")
+		  printLog("Version available online on Github : " + data , msgcolor, "git")
+      if (version < data) {
+        printLog("<b><u>NB:  UPDATE AVAILABLE!</u></b>  - Execute 'git pull' from your laserweb terminal " , errorcolor, "git")
+      } else {
+        printLog("Your version of LaserWeb is Up To Date! " , successcolor, "git")
+      }
+
+    });
+
+
 
 }); // End of document.ready
 
