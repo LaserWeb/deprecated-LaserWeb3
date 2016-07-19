@@ -178,10 +178,10 @@ function filePrepInit() {
   });
 
 
-    useOffset = $('#useOffset').val()
-    if (useOffset.indexOf('Disable') == 0) {
-        $('#inflateFeature').hide();
-    }
+    // useOffset = $('#useOffset').val()
+    // if (useOffset.indexOf('Disable') == 0) {
+    //     $('#inflateFeature').hide();
+    // }
 
 
 }

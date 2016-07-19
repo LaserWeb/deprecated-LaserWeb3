@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>LaserWeb</title>
+    <title>&#128295; LaserWeb</title>
 
     <meta name="description" content="Free Web Based Lasercutter Control Software for machines running on Grbl, Marlin, Smoothieware etc. Supports PNG/JPG/BMP Raster Engraving,  DXF/SVG Cutting">
     <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator">
@@ -150,9 +150,11 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <form class="navbar-form navbar-left" role="form">
+            <a class="navbar-brand" href="#"><img src="./images/logo.png" alt="Dispute Bills">
+            </a>
+            <!-- <form class="navbar-form navbar-left" role="form">
                 <span class="btn btn-default btn-file" title="Open a png, .jpg, .jpeg, .bmp, .gcode, .tap, .nc, .gc, .svg, .dxf, or .stl file" id="openbutton"><i class="fa fa-folder-open fa-fw"></i>Open<input id="file" type="file" accept=".png,.jpg,.jpeg,.bmp,.gcode,.g,.svg,.dxf,.stl,.tap,.gc,.nc" /></span>
-            </form>
+            </form> -->
 
             <form class="navbar-form navbar-left" role="form">
               <label for="connectVia" class="control-label  icon-white"><i class="fa fa-2x fa-plug"></i></label>
@@ -245,27 +247,32 @@
                 <tr>
                   <td colspan="5">
 
-                    <div class="panel panel-danger" id="armmachine">
-                      <div class="panel-heading">Machine Control Disabled</div>
-                      <div class="panel-body">
+                    <div class="bs-callout bs-callout-danger" id="armmachine">
+                        <h4><i class="fa fa-fw fa-exclamation" aria-hidden="true"></i>Machine Control Disabled</h4>
                         <table>
                           <tr>
-                            <td style="width: 250px;">  Enter Pin </td>
+                            <td style="width: 250px;">
+                              Enter <kbd>PIN</kbd> to unlock:
+                            </td>
                           </tr>
                           <tr>
                             <td>
-                              <input type="text" id="armpin"><br>
+                              <span id="armerror" style="color: red;"></span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div style="margin: 5px;"><input type="text" id="armpin"><p></div>
                               <a href="#" onclick="javascript:$('#armpin').pincodeInput().data('plugin_pincodeInput').clear()" class="btn btn-sm btn-danger">clear</a>
                               <a href="#" onclick="javascript:$('#pinresetmodal').modal('show')" class="btn btn-sm btn-warning">set pin</a><br/>
-                              <span id="armerror"></span>
+
                             </td>
                             <!-- <td></td> -->
                           </tr>
                         </table>
-
-
-                      </div>
                     </div>
+
+
                     <div class="btn-group" role="group" aria-label="controljob" id="controlmachine">
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="homeBtn" onclick="homeMachine();"><span class="fa-stack fa-1x"><i class="fa fa-home fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">home</strong><strong class="fa-stack-1x icon-bot-text">laser</strong></span></button></div>
                       <div class="btn-group"><button type="button" class="btn btn-ctl btn-default" id="playBtn" onclick="playpauseMachine();"><span class="fa-stack fa-1x"><i id="playicon" class="fa fa-play fa-stack-1x"></i><strong class="fa-stack-1x icon-top-text">run</strong><strong class="fa-stack-1x icon-bot-text">gcode</strong></span></button></div>
@@ -473,14 +480,14 @@
                       <i>(NB: Page needs a refresh for these settings to take effect!)</i>
                       <form class="form-horizontal">
                           <!-- <div class="form-group"> -->
-                              <label for="laserXMax" class="control-label">X-Length</label>
+                              <label for="laserXMax" class="control-label">X-Length <span style="color:red;">(Required)</span></label>
                               <input type="text" class="form-control numpad" id="laserXMax" placeholder="600">
                           <!-- </div>
                           <div class="form-group"> -->
-                              <label for="laserYMax" class="control-label">Y-Length</label>
+                              <label for="laserYMax" class="control-label">Y-Length <span style="color:red;">(Required)</span></label>
                               <input type="text" class="form-control numpad" id="laserYMax" placeholder="400">
 
-                              <label for="SpotSize" class="control-label">Laser Beam Diameter</label>
+                              <label for="SpotSize" class="control-label">Laser Beam Diameter <span style="color:red;">(Required)</span></label>
                               <input type="text" class="form-control numpad" id="spotSize" placeholder="0.1">
                           </form>
                         </p>
@@ -490,30 +497,30 @@
                       Configure pre/post/control GCode commands:
                       <form class="form-horizontal">
                           <!-- <div class="form-group"> -->
-                              <label for="startgcode" class="control-label">Start G-Code</label>
+                              <label for="startgcode" class="control-label">Start G-Code <span style="color:#FFA500;">(Optional)</span></label>
                               <textarea class="form-control numpadgcode" id="startgcode" placeholder="G28\nG90\nM80"></textarea>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
-                              <label for="laseron" class="control-label">Laser ON Command</label>
+                              <label for="laseron" class="control-label">Laser ON Command <span style="color:#FFA500;">(Optional)</span></label>
                               <input type="text" class="form-control numpadgcode" id="laseron" placeholder="M3 / blank for firmwares that support G1"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
-                              <label for="laseroff" class="control-label">Laser OFF Command</label>
+                              <label for="laseroff" class="control-label">Laser OFF Command <span style="color:#FFA500;">(Optional)</label>
                               <input type="text" class="form-control numpadgcode" id="laseroff" placeholder="M5 / blank for firmwares that support G1"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
-                              <label for="laseroff" class="control-label">PWM Max S value</label>
+                              <label for="laseroff" class="control-label">PWM Max S value <span style="color:red;">(Required)</span></label>
                               <input type="text" class="form-control  numpad" id="lasermultiply" placeholder="255"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
-                              <label for="homingseq" class="control-label">Homing Sequence</label>
+                              <label for="homingseq" class="control-label">Homing Sequence <span style="color:red;">(Required)</span></label>
                               <input type="text" class="form-control numpadgcode" id="homingseq" placeholder="G28"></input>
                           <!-- </div>
                           <div class="form-group"> -->
-                              <label for="endgcode" class="control-label">End G-Code</label>
+                              <label for="endgcode" class="control-label">End G-Code <span style="color:#FFA500;">(Optional)</span></label>
                               <textarea class="form-control numpadgcode" id="endgcode" placeholder="M81\nG28\n"></textarea>
 
-                              <label for="rapidspeed" class="control-label">Travel Moves (mm/s)</label>
+                              <label for="rapidspeed" class="control-label">Travel Moves (mm/s) <span style="color:red;">(Required)</span></label>
                              <input class="form-control numpad" id="rapidspeed" placeholder="30"></input>
                         </p>
                       </form>
@@ -524,22 +531,23 @@
                       Configure how the application works, turn on/off features:
                       <form class="form-horizontal">
                           <!-- <div class="form-group"> -->
-                              <label for="cncMode" class="control-label">Enable CNC Cam</label>
+                              <label for="cncMode" class="control-label">Enable CNC Cam <span style="color:#FFA500;">(CNCWeb Mode)</span></label>
                               <select class="form-control" id="cncMode">
                                   <option>Disable</option>
                                   <option>Enable</option>
                               </select>
 
-                              <label for="autoClose" class="control-label">Auto Close SVG Shapes</label>
+                              <label for="autoClose" class="control-label">Auto Close SVG Shapes<br></label>
+                              <label for="autoClose" class="control-label"><span style="color:#FFA500;">(Some files needs this to render properly)</span></label>
                                 <select class="form-control" id="autoClose">
                                   <option>No</option>
                                   <option>Yes</option>
                                 </select>
-                              <label for="endgcode" class="control-label">Experimental: Tool Offset </label>
-                              <select class="form-control" id="useOffset">
+                              <!-- <label for="" class="control-label">Experimental: Tool Offset </label> -->
+                              <!-- <select class="form-control" id="useOffset">
                                   <option>Enable</option>
                                   <option>Disable</option>
-                              </select>
+                              </select> -->
                           <!-- </div>
                           <div class="form-group"> -->
                               <label for="imagePosition" class="control-label">Place uploaded image in quadrant</label>
@@ -549,12 +557,13 @@
                               </select>
 
                               <label for="useNumPad" class="control-label">Use Touch Numpads</label>
+                              <label for="useNumPad" class="control-label"><span style="color:#FFA500;">(For tablets and touchscreens)</span></label>
                               <select class="form-control" id="useNumPad">
                                   <option>Disable</option>
                                   <option>Enable</option>
                               </select>
 
-                              <label for="useVideo" class="control-label">Use Video Overlay on Bed</label>
+                              <label for="useVideo" class="control-label">Use Video <span style="color:#FFA500;">(Webcam Overlay)</span></label>
                               <select class="form-control" id="useVideo">
                                   <option>Disable</option>
                                   <option>Enable</option>
@@ -588,7 +597,7 @@
                       </form>
                   </div>
 
-                  <button type="button" class="btn btn-lg btn-default" data-dismiss="modal" id="savesettings">Save</button>
+                  <button type="button" class="btn btn-lg btn-success" data-dismiss="modal" id="savesettings">Save</button>
                   <button type="button" class="btn btn-lg btn-default" data-dismiss="modal">Cancel</button>
               </div>
           </div>
@@ -601,7 +610,10 @@
         <div id="col2">
 
             <!--Tabs for Layers-->
+
+
             <ul class="nav nav-tabs" accesskey=""id="tabsLayers">
+              <li role="presentation"><span class="btn btn-primary btn-lg btn-file" title="Open a png, .jpg, .jpeg, .bmp, .gcode, .tap, .nc, .gc, .svg, .dxf, or .stl file" id="openbutton"><i class="fa fa-folder-open fa-fw"></i>Open<input id="file" type="file" accept=".png,.jpg,.jpeg,.bmp,.gcode,.g,.svg,.dxf,.stl,.tap,.gc,.nc" /></span>&nbsp;</li>
               <li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li>
               <li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>
             </ul>

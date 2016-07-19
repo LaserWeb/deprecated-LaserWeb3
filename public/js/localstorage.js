@@ -4,7 +4,7 @@ function initLocalStorage() {
 }
 
 
-localParams = ['rapidspeed', 'autoClose', 'subnet1', 'subnet2', 'subnet3',  'smoothieIp', 'laserXMax', 'laserYMax', 'spotSize', 'startgcode', 'laseron', 'laseroff', 'lasermultiply', 'homingseq', 'endgcode', 'useOffset', 'imagePosition', 'useNumPad', 'useVideo', 'cncMode'];
+localParams = ['rapidspeed', 'autoClose', 'subnet1', 'subnet2', 'subnet3',  'smoothieIp', 'laserXMax', 'laserYMax', 'spotSize', 'startgcode', 'laseron', 'laseroff', 'lasermultiply', 'homingseq', 'endgcode', 'imagePosition', 'useNumPad', 'useVideo', 'cncMode'];
 
 function saveSettingsLocal() {
     for (i = 0; i < localParams.length; i++) {
@@ -45,10 +45,13 @@ function checkSettingsLocal() {
       if (field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0) {
         // Dont print these, just saved as easy reference, not critical in the least
       } else {
-        printLog('Checking : ' + localParams[i] + ' : ' + val, successcolor, "settings");
+        // printLog('Checking : ' + localParams[i] + ' : ' + val, successcolor, "settings");
       };
     } else {
-      if (field.indexOf('laseron') == 0 || field.indexOf('laseroff') == 0 || field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0) {
+      if (field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0) {
+        // printLog('Checking : ' + localParams[i] + ' : OPTIONAL ' + val, warncolor, "settings");
+        // anywarn = true;
+      } else if (field.indexOf('laseron') == 0 || field.indexOf('laseroff') == 0 || field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0  || field.indexOf('startgcode') == 0  || field.indexOf('endgcode') == 0) {
         printLog('Checking : ' + localParams[i] + ' : OPTIONAL ' + val, warncolor, "settings");
         anywarn = true;
       } else if (field.indexOf('subnet1') == 0 || field.indexOf('subnet2') == 0 || field.indexOf('subnet3') == 0 || field.indexOf('smoothieIp') == 0) {
@@ -61,7 +64,7 @@ function checkSettingsLocal() {
     }
   };
   if (anyissues) {
-    printLog('<b>MISSING CONFIG: You need to configure LaserWeb for your setup. </b>', errorcolor, "settings");
+    printLog('<b>MISSING CONFIG: You need to configure LaserWeb for your setup. </b>. Click <kbd>Settings <i class="fa fa-cogs"></i></kbd> on the left, and work through all the options', errorcolor, "settings");
     $("#togglesettings").click();
     $("#settingsstatus").show();
   }
