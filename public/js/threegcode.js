@@ -1,6 +1,6 @@
 /*
-    Based on code from:  John Lauer, Todd Fleming
-    -- changes by AUTHOR: Peter van der Walt
+    AUTHOR: Peter van der Walt
+    Based on code from:  John Lauer, Todd Fleming, Nicholas Raynaud and others
 */
 var inflateGrp, fileParentGroup, fileParentGroupOriginal, fileObjectOriginal, fileGroup, svgPath, fileInflatePath, i, il, y, yl, shape, lines, line;
 var options = {};
@@ -170,28 +170,15 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                 // Convert to World Coordinates
                 var localPt = child.geometry.vertices[i];
                 var worldPt = grp.localToWorld(localPt.clone());
-                // if (stl) {
-                //     var xpos = (parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2) + child.parent.position.x).toFixed(3);
-                //     var ypos = (parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2) + child.parent.position.y).toFixed(3);
-                // } else if (yflip == true && !inflateGrp) {
-                //     var xpos = (parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2)).toFixed(3);
-                //     var ypos = (-1 * parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2)).toFixed(3);
-                // } else {
                 var xpos_offset = (parseFloat(child.position.x.toFixed(3)));
                 var ypos_offset = (parseFloat(child.position.y.toFixed(3)));
                 var xpos = parseFloat((parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2)).toFixed(3));
                 var ypos = parseFloat((parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2)).toFixed(3));
-                // };
+
 
                 if (child.geometry.type == "CircleGeometry") {
-
-                  // console.log("Type Check:  xpos_offset:" + typeof(xpos_offset) + " xpos:" + typeof(xpos));
-                  // console.log("Type Check:  ypos_offset:" + typeof(xpos_offset) + " ypos:" + typeof(xpos));
-                  // console.log("Found Segment of circle - adjusting by parent position: X:" + xpos_offset + " Y:" + ypos_offset )
-                  // console.log("Before Move: X:" + xpos + " Y:" + ypos);
                   xpos = (xpos + xpos_offset);
                   ypos = (ypos + ypos_offset);
-                  // console.log("After Move: X:" + xpos + " Y:" + ypos);
                 }
 
 
@@ -269,12 +256,6 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                     g += " Y" + ypos;
                     g += " Z" + zpos;
                     g += " S" + laserPwrVal + "\n";
-                    // var xpos = parseFloat(worldPt.x.toFixed(3));
-                    // var ypos = parseFloat(worldPt.y.toFixed(3));
-                    // subj_paths.push({
-                    //     X: xpos,
-                    //     Y: ypos
-                    // });
                 }
             }
 
@@ -366,6 +347,14 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
                     var xpos = (parseFloat(worldPt.x.toFixed(3)));
                     var ypos = (parseFloat(worldPt.y.toFixed(3)));
 
+                    var xpos_offset = (parseFloat(child.position.x.toFixed(3)));
+                    var ypos_offset = (parseFloat(child.position.y.toFixed(3)));
+
+                    if (child.geometry.type == "CircleGeometry") {
+                     xpos = (xpos + xpos_offset);
+                     ypos = (ypos + ypos_offset);
+                    }
+
                     clipperArr.push({
                         X: xpos,
                         Y: ypos
@@ -432,6 +421,16 @@ pocketPath = function(infobject, inflateVal, zstep, zdepth) {
                     var worldPt = grp.localToWorld(localPt.clone());
                     var xpos = (parseFloat(worldPt.x.toFixed(3)));
                     var ypos = (parseFloat(worldPt.y.toFixed(3)));
+
+                    var xpos_offset = (parseFloat(child.position.x.toFixed(3)));
+                    var ypos_offset = (parseFloat(child.position.y.toFixed(3)));
+
+                    if (child.geometry.type == "CircleGeometry") {
+                     xpos = (xpos + xpos_offset);
+                     ypos = (ypos + ypos_offset);
+                    }
+
+
 
                     clipperArr.push({
                         X: xpos,
@@ -507,6 +506,14 @@ dragknifePath = function(infobject, inflateVal, zstep, zdepth) {
                     var xpos = (parseFloat(worldPt.x.toFixed(3)));
                     var ypos = (parseFloat(worldPt.y.toFixed(3)));
 
+                    var xpos_offset = (parseFloat(child.position.x.toFixed(3)));
+                    var ypos_offset = (parseFloat(child.position.y.toFixed(3)));
+
+                    if (child.geometry.type == "CircleGeometry") {
+                     xpos = (xpos + xpos_offset);
+                     ypos = (ypos + ypos_offset);
+                    }
+
                     clipperArr.push({
                         X: xpos,
                         Y: ypos
@@ -533,11 +540,6 @@ dragknifePath = function(infobject, inflateVal, zstep, zdepth) {
 
 
         for (j = 0; j < zdepth; j += zstep) {
-            // get the inflated/deflated path
-
-          // for (i = 1; i < 100; i++) {  // Rather 100 than a while loop, just in case
-            // inflateValUsed = inflateVal * i;
-            // var inflatedPaths = getInflatePath(newClipperPaths, -inflateValUsed);
             var polygons = newClipperPaths;
             polygons = polygons.map(function (poly) {
               // return addCornerActions(poly, Math.pow(2, 20) * 5, 20 / 180 * Math.PI);
@@ -552,15 +554,9 @@ dragknifePath = function(infobject, inflateVal, zstep, zdepth) {
               console.log('Dragknife Operation Failed')
               break;
             }
-          // }
         }
         return dragknifeGrp
-    // }
 };
-
-
-
-
 
 addCornerActions = function (clipperPolyline, clipperRadius, toleranceAngleRadians) {
   // var previousPoint = null;
@@ -574,24 +570,15 @@ addCornerActions = function (clipperPolyline, clipperRadius, toleranceAngleRadia
     // var previousPoint = clipperPolyline[0];
     var previousPoint = new Point(clipperPolyline[0].X, clipperPolyline[0].Y, 0); //clipperPolyline[i - 1];
     for (var i = 1; i < clipperPolyline.length - 1; i++) {
-        // console.log("clipperPolyline:  X:", clipperPolyline[i].X, " Y:", clipperPolyline[i].Y);
         previousPoint = new Point(clipperPolyline[i - 1].X, clipperPolyline[i - 1].Y, 0); //clipperPolyline[i - 1];
         var point = new Point(clipperPolyline[i].X, clipperPolyline[i].Y, 0); //clipperPolyline[i];
-        // console.log("PreviousPoint: ", previousPoint);
         if (previousPoint.sqDistance(point) == 0)
          continue;
         // you don't want to play with atan2() if a point is repeated
-
-        // console.log("point: ", point);
         var incomingVector = point.sub(previousPoint);
-        // console.log("incomingVector: ", incomingVector);
         var nextPoint = new Point(clipperPolyline[i + 1].X, clipperPolyline[i + 1].Y, 0) //clipperPolyline[i + 1];
-        // console.log("nextPoint: ", nextPoint);
         var angle = point.angle(previousPoint, nextPoint);
-        // console.log("angle: ", angle);
-        // console.log("clipperRadius: ", clipperRadius);
         var overshoot = point.add(incomingVector.normalized().scale(clipperRadius));
-        console.log("overshoot: ", overshoot);
         result.push(overshoot);
         if (Math.abs(angle) > toleranceAngleRadians) {
 
@@ -601,7 +588,6 @@ addCornerActions = function (clipperPolyline, clipperRadius, toleranceAngleRadia
                 var a = incomingAngle + angle / arcPoints * j;
                 var pt = point.add(polarPoint(clipperRadius, a));
                 result.push(pt);
-                // console.log("pt: ", pt);
             }
         }
         previousPoint = point;

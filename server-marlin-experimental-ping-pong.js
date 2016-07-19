@@ -2,9 +2,6 @@
 
   AUTHOR:  Peter van der Walt openhardwarecoza.github.io/donate
 
-  RepRapWeb - A Web Based 3d Printer Controller
-  Copyright (C) 2015 Andrew Hodel
-
   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
   WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
   MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -156,8 +153,8 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
 			var a = sentGcodeQueue.shift();
 			var d = new Date();
 			sentLen -= a;
-//			console.log("Removed :" + a +  " queue is now: " + sentLen);	      
-			if (tot() != sentLen) 
+//			console.log("Removed :" + a +  " queue is now: " + sentLen);
+			if (tot() != sentLen)
 			    console.log("Error in counting: tot()=" + tot() + " sentLen=" + sentLen);
 		        send1Q();
 		    } else {
@@ -177,7 +174,7 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
 //		    console.log("Status1:" + data)
 		    data = statusMessage; // replace
 //		    console.log("Status2:" + data)
-		} 
+		}
 		socket.emit("data", data);
 	    } else {
 		console.log("Nope:" + data)
@@ -221,7 +218,7 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
     }
 
     function send1Q() {
-	//  if (sentLen < 0) { console.log("Less than zero. BAD"); sentLen = 0; }   
+	//  if (sentLen < 0) { console.log("Less than zero. BAD"); sentLen = 0; }
 	// if (sentGcodeQueue.length > 1) {
 	//     return false;
 	// }
@@ -232,7 +229,7 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
 		return false;
 	    }
 	    if (gcodeQueue[0].length == 0 || gcodeQueue[0].indexOf(";") == 0) { // Comment, skip
-//		console.log("Empty line or comment, skip:" + gcodeQueue[0]); 
+//		console.log("Empty line or comment, skip:" + gcodeQueue[0]);
 		gcodeQueue.shift();
 		return send1Q();
 	    }
@@ -248,7 +245,7 @@ io.sockets.on('connection', function (socket) { // When we open a WS connection,
 		lastSentTime = d.getTime();
 		return true;
 	    }
-	} 
+	}
 	return false;
     }
     // End Queue

@@ -218,6 +218,11 @@ $(document).ready(function() {
     setTimeout(function(){ $('#viewReset').click(); }, 100);
 
 
+    // Version check
+
+    var version = $('meta[name=version]').attr("content");
+    printLog("Current Version: " + version , msgcolor, "git")
+
 }); // End of document.ready
 
 
@@ -466,7 +471,9 @@ function printLog(text, color, logclass) {
    if (logclass == "viewer") {
      template += '<i class="fa fa-search fa-fw" aria-hidden="true"></i>:&nbsp;'
    }
-
+   if (logclass == "git") {
+     template += '<i class="fa fa-github fa-fw" aria-hidden="true"></i>:&nbsp;'
+   }
   }
   template += text
   $('#console').append(template);
