@@ -40,7 +40,7 @@ By using this software, the user accepts complete responsibility for each and ev
 
 Note: Ever changing.  See the Issues tab above for details.
 
-| Tables        | Supported by LW3 | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
+| Firmware      | Supported by LW3 | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
 | ------------- |------------------| :----------------:|:-----------------:|:----------------------:|
 | Smoothieware  | Fully            |   Yes             |   Yes             | Yes - improvements     |
 | Marlin        | In Alpha         |   **Yes, but...   |   No              | Yes - test and improve | 
