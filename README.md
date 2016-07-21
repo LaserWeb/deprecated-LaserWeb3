@@ -1,24 +1,18 @@
 # LaserWeb3
 
-## Development Version
 
-Note: Version 3 (this one) is currently in development phase!  Documentation is being added to the Wiki pages.  Test and report back please
+## Documentation:
 
-## Contact
+We have a pretty detailed Wiki on [https://github.com/openhardwarecoza/LaserWeb3/wiki](https://github.com/openhardwarecoza/LaserWeb3/wiki) - with details of Installing LaserWeb, Common application Workflows, Firmware setup tricks, and help for setting up LaserWeb's settings
+
+
+## Contact Us if you need help! We can't fix bugs if we don't hear about them (;
 
 Link to Support Community: [https://plus.google.com/communities/115879488566665599508](https://plus.google.com/communities/115879488566665599508)
 
 Link to Youtube Playlist with LaserWeb videos: [https://www.youtube.com/playlist?list=PL1JTb6-HQgOyc1eM6eX4v0tdSYpXFLYNT](https://www.youtube.com/playlist?list=PL1JTb6-HQgOyc1eM6eX4v0tdSYpXFLYNT)
 
 Link to authors other projects:  [https://openhardwarecoza.github.io/donate](https://openhardwarecoza.github.io/donate)
-
-## Install Instructions
-l
-[https://github.com/openhardwarecoza/LaserWeb3/wiki/Installation-Instructions](https://github.com/openhardwarecoza/LaserWeb3/wiki/Installation-Instructions)
-
-## Quick Start Guide
-
-[https://github.com/openhardwarecoza/LaserWeb3/wiki/Quick-Start](https://github.com/openhardwarecoza/LaserWeb3/wiki/Quick-Start)
 
 ## Disclaimer
 By using this software, the user accepts complete responsibility for each and every aspect of safety associated with the use of the Laser machine, Laser system and LaserWeb3 Software.
@@ -46,7 +40,7 @@ By using this software, the user accepts complete responsibility for each and ev
 
 Note: Ever changing.  See the Issues tab above for details.
 
-| Tables        | Supported by LW3 | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
+| Firmware      | Supported by LW3 | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
 | ------------- |------------------| :----------------:|:-----------------:|:----------------------:|
 | Smoothieware  | Fully            |   Yes             |   Yes             | Yes - improvements     |
 | Marlin        | In Alpha         |   **Yes, but...   |   No              | Yes - test and improve | 

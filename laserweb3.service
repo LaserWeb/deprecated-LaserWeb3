@@ -1,0 +1,18 @@
+[Unit]
+Description=Laserweb3 node.js service
+
+[Service]
+ExecStart=/usr/local/bin/node /home/pi/LaserWeb3/server-smoothie-grbl.js
+Restart=always
+RestartSec=10                       # Restart service after 10 seconds if node service crashes
+StandardOutput=syslog               # Output to syslog
+StandardError=syslog                # Output to syslog
+SyslogIdentifier=laserweb3
+WorkingDirectory=/home/pi/LaserWeb3
+User=pi
+#Group=<alternate group>
+Environment=NODE_ENV=production PORT=8000
+
+[Install]
+WantedBy=multi-user.target
+
