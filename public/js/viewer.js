@@ -13,7 +13,7 @@ var laserxmax;
 var laserymax;
 var lineincrement = 50
 var camvideo;
-var video, videoImage, videoImageContext, videoTexture, useVideo;
+var video, videoImage, videoImageContext, videoTexture, useVideo, movieScreen;
 var objectsInScene = []; //array that holds all objects we added to the scene.
 
 containerWidth = window.innerWidth;
@@ -45,6 +45,7 @@ function initWebcam() {
   	if (!navigator.getUserMedia)
   	{
   		printLog('Sorry. WebRTC is not available.', errorcolor, "viewer");
+      scene.remove(movieScreen);
   	} else {
   		navigator.getUserMedia({video: true}, gotStream, noStream);
   	}
@@ -70,6 +71,7 @@ function noStream(e)
   if (e.code == 1)
   {   msg = 'User denied access to use camera.';   }
   printLog(msg, errorcolor, "viewer")
+  scene.remove(movieScreen);
 }
 
 
@@ -481,7 +483,7 @@ function init3D() {
       	// the geometry on which the movie will be displayed;
       	// 		movie image will be scaled to fit these dimensions.
       	var movieGeometry = new THREE.PlaneGeometry( laserxmax, laserymax, 1, 1 );
-      	var movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
+      	movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
       	movieScreen.position.set(0,0,-0.2);
       	scene.add(movieScreen);
       }

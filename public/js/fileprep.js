@@ -5,8 +5,6 @@ var oldyscale = 0;
 
 
 function filePrepInit() {
-  // SVG DPI
-
 
   $('#rotLeftBtn').on('click', function() {
     if (fileParentGroup) {

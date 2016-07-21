@@ -1,12 +1,19 @@
 function initJog() {
 
-    $('#bounding').on('click', function() {
-      $('#console').append('<span class="pf" style="color: #000000;"><b>Drawing Bounding Box...</b></span><br>');
-      $('#console').scrollTop($("#console")[0].scrollHeight - $("#console").height());
-      sendGcode('G90\nG0 X'+$('#BBXMIN').val()+' Y'+$('#BBYMIN').val()+' F2000\nG0 X'+$('#BBXMAX').val()+' Y'+$('#BBYMIN').val()+' F2000\nG0 X'+$('#BBXMAX').val()+' Y'+$('#BBYMAX').val()+' F2000\nG0 X'+$('#BBXMIN').val()+' Y'+$('#BBYMAX').val()+' F2000\nG0 X'+$('#BBXMIN').val()+' Y'+$('#BBYMIN').val()+' F2000\nG90');
-    });
-
-
+  $('#bounding').on('click', function() {
+    var bbox2 = new THREE.Box3().setFromObject(object);
+    console.log('bbox for Draw Bounding Box: '+ object +' Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
+    printLog("Drawing Bounding Box...", msgcolor, "jog");
+    var moves = `
+    G90\n
+    G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F2000\n
+    G0 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F2000\n
+    G0 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F2000\n
+    G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F2000\n
+    G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F2000\n
+    G90\n`
+    sendGcode(moves)
+});
 
     $('#xP').on('click', function() {
        if (isConnected) {
