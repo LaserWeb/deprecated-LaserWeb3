@@ -9,7 +9,7 @@
     <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator">
     <meta name="google-site-verification" content="Q5N27jmbSMfsf_oC4UmRlNDVXKta7BP4DaDq1h0Ox5Y" />
     <meta name="author" content="github.com/openhardwarecoza/LaserWeb2/">
-    <meta name="version" content="30146">
+    <meta name="version" content="30150">
 
     <!--IE Compatibility modes-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -150,11 +150,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><img src="./images/logo.png" alt="Dispute Bills">
-            </a>
-            <!-- <form class="navbar-form navbar-left" role="form">
-                <span class="btn btn-default btn-file" title="Open a png, .jpg, .jpeg, .bmp, .gcode, .tap, .nc, .gc, .svg, .dxf, or .stl file" id="openbutton"><i class="fa fa-folder-open fa-fw"></i>Open<input id="file" type="file" accept=".png,.jpg,.jpeg,.bmp,.gcode,.g,.svg,.dxf,.stl,.tap,.gc,.nc" /></span>
-            </form> -->
+            <!-- <a class="navbar-brand" href="#"><img src="./images/logo.png"></a> -->
 
             <form class="navbar-form navbar-left" role="form">
               <label for="connectVia" class="control-label  icon-white"><i class="fa fa-2x fa-plug"></i></label>
@@ -223,6 +219,27 @@
                     <i class="fa fa-desktop"></i>
                 </a>
             </form>
+
+            <form class="navbar-form navbar-right" role="form">
+              <div class="btn-group  input-group" role="group" id="support" aria-label="Support" style="vertical-align: bottom;">
+                <div class="btn-group" role="group">
+                  <button class="btn btn-danger dropdown-toggle btn-sm" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <i class="fa fa-info fa-fw"></i>Support
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a target="_blank" href="https://plus.google.com/communities/115879488566665599508">Support Community</a></li>
+                    <li><a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/issues">Open a Bug Report</a></li>
+                    <li><a href="#" onclick="tour.restart()">Take a Tour of LaserWeb</a></li>
+                    <li><a href="https://github.com/openhardwarecoza/LaserWeb3/wiki">Instruction / Wiki</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3">Fork Me!</a></li>
+                  </ul>
+                </div>
+              </form>
+
+
+            </div>
         </div>
     </div>
 </nav>
@@ -551,20 +568,19 @@
                               </select> -->
                           <!-- </div>
                           <div class="form-group"> -->
-                              <label for="imagePosition" class="control-label">Place uploaded image in quadrant</label>
+                              <label for="imagePosition" class="control-label">Place uploaded image in quadrant <a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/wiki/Settings:--Image-Position">(help)</a></label>
                               <select class="form-control" id="imagePosition">
                                   <option>BottomLeft</option>
                                   <option>TopLeft</option>
                               </select>
 
-                              <label for="useNumPad" class="control-label">Use Touch Numpads</label>
-                              <label for="useNumPad" class="control-label"><span style="color:#FFA500;">(For tablets and touchscreens)</span></label>
+                              <label for="useNumPad" class="control-label">Use Touch Numpads <a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/wiki/Settings:-Use-Touch-Num-Pads">(help)</a></label>
                               <select class="form-control" id="useNumPad">
                                   <option>Disable</option>
                                   <option>Enable</option>
                               </select>
 
-                              <label for="useVideo" class="control-label">Use Video <span style="color:#FFA500;">(Webcam Overlay)</span></label>
+                              <label for="useVideo" class="control-label">Use Webcam Video Overlay <a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/wiki/Settings:-Webcam-Integration">(help)</a></label>
                               <select class="form-control" id="useVideo">
                                   <option>Disable</option>
                                   <option>Enable</option>
@@ -683,11 +699,11 @@
 
               <table style="width: 100%">
                 <tr>
-                  <td style="width: 385px;">
+                  <td style="width: 259px;">
 
                     <p>
                     <div class="btn-group btn-group-btn-group-justified" role="group" id="chatcntr" style="vertical-align: bottom; margin-left: 18px;">
-                      <div class="btn-group  input-group" role="group" id="support" aria-label="Support" style="vertical-align: bottom;">
+                      <!-- <div class="btn-group  input-group" role="group" id="support" aria-label="Support" style="vertical-align: bottom;">
                         <div class="btn-group dropup" role="group">
                             <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                               <i class="fa fa-info fa-fw"></i>Support
@@ -703,7 +719,7 @@
                           </div>
 
 
-                      </div>
+                      </div> -->
                     </div>
 
                       <div class="btn-group" role="group" id="transformcontrols" style="vertical-align: bottom; margin-left: 18px; display: none;">
