@@ -9,7 +9,7 @@
     <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator">
     <meta name="google-site-verification" content="Q5N27jmbSMfsf_oC4UmRlNDVXKta7BP4DaDq1h0Ox5Y" />
     <meta name="author" content="github.com/openhardwarecoza/LaserWeb2/">
-    <meta name="version" content="30002">
+    <meta name="version" content="30146">
 
     <!--IE Compatibility modes-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -228,7 +228,7 @@
 </nav>
 
 <div class="page-container sidebar-collapsed">
-<div class="container-fluid" style="height: calc(100% - 70px); width: 100%;">
+<div class="container-fluid" style="height: 100%; width: 100%;">
     <!-- Main Body -->
     <div id="container1">
         <!-- First Row -->
@@ -746,14 +746,15 @@
                           </div>
                       </div>
                     </td>
-                    <td style="padding-right: 0px;"><div class="rotate"><label>SysLog</label></div></td>
+                    <td align="right"><div class="rotate">SysLog</div></td>
                     <td>
-                      <div id="console"></div><br>
-                      <div class="input-group">
+                      <div id="console"></div>
+                      <div class="input-group btn-group" style="margin-left: 10px;">
                         <span class="input-group-addon"><i class="fa fa-terminal fa-lg"></i></span>
-                          <input type="text" autocomplete="on" class="form-control numpadgcode" id="command">
-                          <span class="input-group-btn">
-                          <button id="sendCommand" class="btn btn-default" type="button"><i class="fa fa-play" style="margin-right: 10px;"></i>Send</button>
+                        <input type="text" autocomplete="on" class="form-control numpadgcode" id="command">
+                        <span class="input-group-btn">
+                        <button id="sendCommand" class="btn btn-default" type="button"><i class="fa fa-play" style="margin-right: 10px;"></i>Send</button>
+                        <button class="emptylog btn btn-default" type="button" onclick="$('#console').empty();">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
                         </span>
                       </div>
                     </td>

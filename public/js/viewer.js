@@ -67,9 +67,9 @@ function gotStream(stream)
 }
 function noStream(e)
 {
-  var msg = 'No camera available.';
+  var msg = 'No camera available.  You have Video Overlay enabled in <kbd>Settings <i class="fa fa-cogs"></i></kbd>, but WebRTC could not locate a device.  Please plug in a webcam, and position the camera to look at your cutting bed';
   if (e.code == 1)
-  {   msg = 'User denied access to use camera.';   }
+  {   msg = 'User denied access to use camera.  Please refresh the page, and click Allow on the permission request at the top of the browser window, to use Video Overlay.  Or Disable Video Overlay from <kbd>Settings <i class="fa fa-cogs"></i></kbd> ';   }
   printLog(msg, errorcolor, "viewer")
   scene.remove(movieScreen);
 }

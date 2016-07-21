@@ -321,6 +321,8 @@ d-grid {border: none; padding: 20px;}
   opacity: 0.2;
  }
 
+
+
  .panel-heading .accordion-toggle:after {
      /* symbol for "opening" panels */
      font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
