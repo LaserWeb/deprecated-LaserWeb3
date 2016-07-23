@@ -187,3 +187,65 @@ function getTemperature() {
     }
   });
 }
+
+function upload(filename, gcode) {
+        var host = $('#smoothieIp').val();
+        // create XHR instance
+        xhr = new XMLHttpRequest();
+
+        // send the file through POST
+        // var posting = $.post("http://" + host + "/command", "M105\n");
+        xhr.open("POST", 'http://' +host + '/upload', true);
+        xhr.setRequestHeader('X-Filename', filename);
+
+        // make sure we have the sendAsBinary method on all browsers
+        XMLHttpRequest.prototype.mySendAsBinary = function(text){
+            console.log(this)
+            var data = new ArrayBuffer(text.length);
+            var ui8a = new Uint8Array(data, 0);
+            for (var i = 0; i < text.length; i++) ui8a[i] = (text.charCodeAt(i) & 0xff);
+
+            if(typeof window.Blob == "function")
+            {
+                 var blob = new Blob([text]);
+            }else{
+                 var bb = new (window.MozBlobBuilder || window.WebKitBlobBuilder || window.BlobBuilder)();
+                 bb.append(text);
+                 var blob = bb.getBlob();
+            }
+            console.log(blob)
+            this.send(blob);
+        }
+
+        // let's track upload progress
+        var eventSource = xhr.upload || xhr;
+        eventSource.addEventListener("progress", function(e) {
+            // get percentage of how much of the current file has been sent
+            var position = e.position || e.loaded;
+            var total = e.totalSize || e.total;
+            var percentage = Math.round((position/total)*100);
+
+            // here you should write your own code how you wish to proces this
+            printLog('uploaded ' + percentage + '%', msgcolor, "wifi");
+        });
+
+        // state change observer - we need to know when and if the file was successfully uploaded
+        xhr.onreadystatechange = function()
+        {
+            if(xhr.readyState == 4)
+            {
+                if(xhr.status == 200)
+                {
+                    // process success
+                    printLog('Uploaded Ok', successcolor, "wifi");
+                }else{
+                    // process error
+                    printLog('Uploaded Failed' + xhr.status, errorcolor, "wifi");
+                    console.log("XHR Failed: ", xhr)
+                }
+            }
+        };
+
+        // start sending
+        xhr.mySendAsBinary(gcode);
+    };

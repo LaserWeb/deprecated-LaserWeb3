@@ -70,7 +70,7 @@ function checkSettingsLocal() {
   }
 
   if (!anyissues && anywarn) {
-    printLog('<b>WARNINGS in Config: You might need to configure LaserWeb for your setup, depending on your controller.</b>', warncolor, "settings");
+    printLog('<b>WARNINGS in Config: You might need to configure LaserWeb for your setup, depending on your controller.</b>  Click <kbd>Settings <i class="fa fa-cogs"></i></kbd> on the left.  If you already did, then ignore this warning, its probably related to one of the Optional Settings which you then probably dont need anyway (: ', warncolor, "settings");
     $("#settingsstatus").hide();
   }
 };
