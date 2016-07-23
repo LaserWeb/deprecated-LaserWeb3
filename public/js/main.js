@@ -382,7 +382,9 @@ function readFile(evt) {
         scene.remove(control);
         controls.reset();
     }
-    setTimeout(function(){ fillLayerTabs(); }, 300);
+    setTimeout(function(){ fillLayerTabs(); }, 250);
+    setTimeout(function(){ viewExtents(objectsInScene[objectsInScene.length - 1]); }, 300);
+
 };
 
 function saveFile() {
