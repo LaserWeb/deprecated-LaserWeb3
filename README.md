@@ -44,7 +44,7 @@ Note: Ever changing.  See the Issues tab above for details.
 | ------------- |------------------| :----------------:|:-----------------:|:----------------------:|
 | Smoothieware  | Fully            |   Yes             |   Yes             | Yes - improvements     |
 | Marlin        | In Alpha         |   **Yes, but...   |   No              | Yes - test and improve | 
-| Grbl          | planned          |   No              |   No              | Yes - please           |
+| Grbl          | Implemented Jul'16 | **Yes,  but...  |   almost          | Yes - improved  error handling  |
 | TinyG         | not planned      |   No              |   Yes             | Yes - please           |
 | Repetier      | not planned      |   No              |   No              | Yes                    |
 
