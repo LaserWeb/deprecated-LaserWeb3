@@ -3,6 +3,17 @@ var connectMode;
 var scanned, scanok, scanfail;
 
 function initSmoothie() {
+
+$('#uploadsdbtn').on('click', function () {
+  var filename = $('#saveasname').val() + '.gcode'
+  printLog("Starting upload of " + filename + '.gcode', msgcolor, "wifi")
+  var g;
+  g = prepgcodefile();
+  upload(filename, g)
+  $('#sdupload').modal('hide');
+
+});
+
   $('#connectVia').change(function() {
     var connectVia = $('#connectVia').val()
     if (connectVia == "USB") {

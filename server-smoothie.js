@@ -197,7 +197,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       })
       port.on("data", function (data) {
         console.log('Recv: ' + data)
-        if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0 || data.indexOf("$") == 0){
+        if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0){
             if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
               blocked = false;
             }
