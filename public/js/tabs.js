@@ -283,6 +283,19 @@ function fillLayerTabs() {
               </div>
             </div>
             <div class="form-group">
+              <label>Multipass Cutting</label>
+              <div class="input-group">
+                <span class="input-group-addon">x</span>
+                <input type="number" class="form-control" value="1" id="passes`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">pass(es)</span>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">at</span>
+                <input type="number" step="0.1" class="form-control" value="0.0" id="depth`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">mm per pass (Z step)</span>
+              </div>
+            </div>
+            <div class="form-group">
               <label >Position Offset</label>
               <div class="input-group">
                 <span class="input-group-addon">X</span>

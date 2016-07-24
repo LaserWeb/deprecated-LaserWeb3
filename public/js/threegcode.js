@@ -60,6 +60,8 @@ $(document).ready(function() {
                 var cutSpeed0 = parseFloat( $("#speed"+(j)).val() ) * 60;
                 var pwr0 = parseFloat( $("#power"+(j)).val() );
                 var plungeSpeed0 = parseFloat( $("#plungespeed"+(j)).val() ) * 60;
+                var passes = parseInt( $("#passes"+(j)).val() );
+                var passdepth = parseFloat( $("#depth"+(j)).val() );
                 rapidSpeed = parseFloat(document.getElementById('rapidspeed').value) * 60;
                 if (objectsInScene[j].userData.inflated) {
                   // g += generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
@@ -67,7 +69,19 @@ $(document).ready(function() {
                   objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                 } else {
                   // g += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
-                  objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
+                  if (passes > 1) {
+                    console.log("Mulipass Layers to generate: " + passes)
+                    var gcodewithmultipass;
+                    for (m = 0; m < passes; m++) {
+                      console.log("Mulipass Layer: " + m)
+                      var zoffset = passdepth * m;
+                       gcodewithmultipass += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
+                    }
+                    objectsInScene[j].userData.gcode = gcodewithmultipass;
+                  } else {
+                    objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
+                  }
+
                 }
                   var template = `
                   <form class="form-horizontal">
@@ -123,7 +137,7 @@ function prepgcodefile() {
   return g;
 }
 
-function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, rapidSpeed, laseron, laseroff, clearanceHeight) {
+function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset) {
 
     var laserPwrVal = 0.0;
     console.log('inside generateGcode')
@@ -183,6 +197,11 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
 
 
                 var zpos = parseFloat(worldPt.z.toFixed(3));
+
+                if (zoffset) {
+                  zpos = zpos - zoffset;
+                }
+
 
                 // First Move To
                 if (i == 0) {
@@ -255,6 +274,8 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                     g += " X" + xpos;
                     g += " Y" + ypos;
                     g += " Z" + zpos;
+
+
                     g += " S" + laserPwrVal + "\n";
                 }
             }

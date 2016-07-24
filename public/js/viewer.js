@@ -187,6 +187,7 @@ function init3D() {
     cncMode = $('#cncMode').val()
     if (cncMode == "Enable") {
       controls.enableRotate = true;
+      $('#3dview').prop('checked', true);
     } else {
       controls.enableRotate = false;
     }
@@ -489,6 +490,15 @@ function init3D() {
       }
     }
 
+    $('#3dview').change(function() {
+           if($(this).is(":checked")) {
+               controls.enableRotate = true;
+               resetView();
+           } else {
+             controls.enableRotate = false;
+             resetView();
+           }
+     });
 
 }
 
