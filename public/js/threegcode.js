@@ -116,8 +116,10 @@ function prepgcodefile() {
   var startgcode = document.getElementById('startgcode').value;
   var endgcode = document.getElementById('endgcode').value;
   var g = ""
-  g += startgcode;
-  g += "\n";
+  if (startgcode)  {
+    g += startgcode;
+    g += "\n";
+  } 
   var externalgcode = document.getElementById('gcodepreview').value;
   if (externalgcode) {
     g += externalgcode;
@@ -133,7 +135,9 @@ function prepgcodefile() {
      }
   }
   g += "\n";
-  g += endgcode;
+  if (endgcode) {
+    g += endgcode;
+  } 
   return g;
 }
 
