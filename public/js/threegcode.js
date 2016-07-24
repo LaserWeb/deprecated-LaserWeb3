@@ -71,11 +71,11 @@ $(document).ready(function() {
                   // g += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                   if (passes > 1) {
                     console.log("Mulipass Layers to generate: " + passes)
-                    var gcodewithmultipass;
+                    var gcodewithmultipass ="":
                     for (m = 0; m < passes; m++) {
                       console.log("Mulipass Layer: " + m)
                       var zoffset = passdepth * m;
-                       gcodewithmultipass = generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
+                       gcodewithmultipass += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
                     }
                     objectsInScene[j].userData.gcode = gcodewithmultipass;
                   } else {
