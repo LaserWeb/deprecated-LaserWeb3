@@ -20,7 +20,7 @@ By using this software, the user accepts complete responsibility for each and ev
 
 ####You agree that:
 
-1. You will not hold the author or contributors of LaserWeb3 liable for any damage to equipment or persons from the use of LaserWeb3. 
+1. You will not hold the author or contributors of LaserWeb3 liable for any damage to equipment or persons from the use of LaserWeb. 
 2. You know the potential hazards in using high power lasers and high voltages.
 3. You will wear professional laser-eye-protection when using a laser controlled by LaserWeb.
 4. You will use the LaserWeb software in a legal and safe manner.
@@ -41,11 +41,11 @@ By using this software, the user accepts complete responsibility for each and ev
 
 Note: Ever changing.  See the Issues tab above for details.
 
-| Firmware      | Supported by LW3 | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
+| Firmware      | Supported by LW  | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
 | ------------- |------------------| :----------------:|:-----------------:|:----------------------:|
 | Smoothieware  | Fully            |   Yes             |   Yes             | Yes - improvements     |
 | Marlin        | In Alpha         |   **Yes, but...   |   No              | Yes - test and improve | 
-| Grbl          | Implemented Jul'16 | **Yes,  but...  |   almost          | Yes - improved  error handling  |
+| Grbl          |Implemented Jul'16| **Yes,  but...    |   almost          | Yes - improved  error handling  |
 | TinyG         | not planned      |   No              |   Yes             | Yes - please           |
 | Repetier      | not planned      |   No              |   No              | Yes                    |
 
