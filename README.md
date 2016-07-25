@@ -16,7 +16,7 @@ Link to Youtube Playlist with LaserWeb videos: [https://www.youtube.com/playlist
 Link to authors other projects:  [https://openhardwarecoza.github.io/donate](https://openhardwarecoza.github.io/donate)
 
 ## Disclaimer
-By using this software, the user accepts complete responsibility for each and every aspect of safety associated with the use of the Laser machine, Laser system and LaserWeb3 Software.
+By using this software, the user accepts complete responsibility for each and every aspect of safety associated with the use of the Laser machine, Laser system and LaserWeb Software.
 
 ####You agree that:
 
