@@ -71,7 +71,7 @@ $(document).ready(function() {
                   // g += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                   if (passes > 1) {
                     console.log("Mulipass Layers to generate: " + passes)
-                    var gcodewithmultipass ="":
+                    var gcodewithmultipass = "";
                     for (m = 0; m < passes; m++) {
                       console.log("Mulipass Layer: " + m)
                       var zoffset = passdepth * m;
@@ -119,7 +119,7 @@ function prepgcodefile() {
   if (startgcode)  {
     g += startgcode;
     g += "\n";
-  } 
+  }
   var externalgcode = document.getElementById('gcodepreview').value;
   if (externalgcode) {
     g += externalgcode;
@@ -137,7 +137,7 @@ function prepgcodefile() {
   g += "\n";
   if (endgcode) {
     g += endgcode;
-  } 
+  }
   return g;
 }
 
@@ -229,7 +229,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                         g += "\nG0 Z" + clearanceHeight + "\n"; // Position Before Plunge!
                       }
                     };
-                    g += "\nG0" + seekrate;
+                    g += "G0" + seekrate;
                     g += " X" + xpos + " Y" + ypos + "\n";
                     if (cncMode == "Enable") {
                       g += "\nG0 Z1\n";  // G0 to Z0 then Plunge!
