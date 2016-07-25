@@ -1,4 +1,4 @@
-# LaserWeb3
+# LaserWeb
 
 
 ## Documentation:
@@ -26,7 +26,7 @@ By using this software, the user accepts complete responsibility for each and ev
 5. You relieve the author and contributors from any liability arising from the use or distribution of the LaserWeb software.
 6. You are entirely operating at your own risk. Lasers can be lethally dangerous. 
 
-## What's new / planned for LaserWeb 3
+## What's new / planned for LaserWeb 
 
 * A ground up rewrite of the serial comms layer (In progress:  Smoothieware support is done, Marlin support is available for testing and further development, and Grbl support needs to be written next) 
 * A new tabbed multilayer CAM system that allows you to load dxfs, svgs, stls and rasters into the SAME job! (Implemented, needs testing)
