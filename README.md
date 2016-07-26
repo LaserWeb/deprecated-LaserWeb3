@@ -1,4 +1,5 @@
-# LaserWeb3
+# LaserWeb
+
 
 
 ## Documentation:
@@ -15,18 +16,18 @@ Link to Youtube Playlist with LaserWeb videos: [https://www.youtube.com/playlist
 Link to authors other projects:  [https://openhardwarecoza.github.io/donate](https://openhardwarecoza.github.io/donate)
 
 ## Disclaimer
-By using this software, the user accepts complete responsibility for each and every aspect of safety associated with the use of the Laser machine, Laser system and LaserWeb3 Software.
+By using this software, the user accepts complete responsibility for each and every aspect of safety associated with the use of the Laser machine, Laser system and LaserWeb Software.
 
 ####You agree that:
 
-1. You will not hold the author or contributors of LaserWeb3 liable for any damage to equipment or persons from the use of LaserWeb3. 
+1. You will not hold the author or contributors of LaserWeb3 liable for any damage to equipment or persons from the use of LaserWeb. 
 2. You know the potential hazards in using high power lasers and high voltages.
 3. You will wear professional laser-eye-protection when using a laser controlled by LaserWeb.
 4. You will use the LaserWeb software in a legal and safe manner.
 5. You relieve the author and contributors from any liability arising from the use or distribution of the LaserWeb software.
 6. You are entirely operating at your own risk. Lasers can be lethally dangerous. 
 
-## What's new / planned for LaserWeb 3
+## What's new / planned for LaserWeb 
 
 * A ground up rewrite of the serial comms layer (In progress:  Smoothieware support is done, Marlin support is available for testing and further development, and Grbl support needs to be written next) 
 * A new tabbed multilayer CAM system that allows you to load dxfs, svgs, stls and rasters into the SAME job! (Implemented, needs testing)
@@ -40,11 +41,11 @@ By using this software, the user accepts complete responsibility for each and ev
 
 Note: Ever changing.  See the Issues tab above for details.
 
-| Firmware      | Supported by LW3 | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
+| Firmware      | Supported by LW  | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
 | ------------- |------------------| :----------------:|:-----------------:|:----------------------:|
 | Smoothieware  | Fully            |   Yes             |   Yes             | Yes - improvements     |
 | Marlin        | In Alpha         |   **Yes, but...   |   No              | Yes - test and improve | 
-| Grbl          | Implemented Jul'16 | **Yes,  but...  |   almost          | Yes - improved  error handling  |
+| Grbl          |Implemented Jul'16| **Yes,  but...    |   almost          | Yes - improved  error handling  |
 | TinyG         | not planned      |   No              |   Yes             | Yes - please           |
 | Repetier      | not planned      |   No              |   No              | Yes                    |
 
