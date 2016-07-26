@@ -247,7 +247,7 @@ function fillLayerTabs() {
           </div>
         </div>
       </div>
-
+      </div>
 
 
 
@@ -308,6 +308,7 @@ function fillLayerTabs() {
           </div>
         </div>
       </div>
+      </div>
         `
         // $("#layerprep").append(template);
         layerprep += template;
@@ -321,62 +322,66 @@ function fillLayerTabs() {
       var scale = objectsInScene[i].scale.y;
       var template = `
       <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a class="accordion-toggle"  data-toggle="collapse" data-parent="#accordion" href="#collapse`+i+`">`+objectsInScene[i].name+`</a>
-        </h4>
-      </div>
-      <div id="collapse`+i+`" class="panel-collapse collapse">
-        <div class="panel-body" id="panel`+i+`">
-          <label >Copy image to a traced vector for cutting use </label>
-          <div class="btn-group btn-group-justified" role="group" aria-label="tracegcode">
-              <div class="btn-group" role="group">
-                  <a class="btn btn-warning btn-block" href="#" onclick="tracebmp(`+i+`, '`+objectsInScene[i].name+`')">Trace to Vector</a>
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a class="accordion-toggle"  data-toggle="collapse" data-parent="#accordion" href="#collapse`+i+`">`+objectsInScene[i].name+`</a>
+          </h4>
+        </div>
+        <div id="collapse`+i+`" class="panel-collapse collapse">
+          <div class="panel-body" id="panel`+i+`">
+            <label >Copy image to a traced vector for cutting use </label>
+            <div class="btn-group btn-group-justified" role="group" aria-label="tracegcode">
+                <div class="btn-group" role="group">
+                    <a class="btn btn-warning btn-block" href="#" onclick="tracebmp(`+i+`, '`+objectsInScene[i].name+`')">Trace to Vector</a>
+                </div>
+            </div>
+            <hr>
+            <div class="form-group">
+              <label>Bitmap Resolution</label>
+              <div class="input-group">
+                <input type="number" class="form-control" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">DPI</span>
               </div>
-          </div>
-          <div class="form-group">
-            <label >Raster: Proportional Feedrate</label>
-            <div class="input-group">
-              <span class="input-group-addon">Light</span>
-              <input type="number" class="form-control"  value="20" id="feedRateW`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon">mm/s</span>
-            </div><br>
-            <div class="input-group">
-              <span class="input-group-addon">Dark</span>
-              <input type="number" class="form-control"  value="20" id="feedRateB`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon">mm/s</span>
             </div>
-          </div>
-          <div class="form-group">
-            <label>Laser Power Contraints</label>
-            <div class="input-group">
-              <span class="input-group-addon">Min</span>
-              <input type="number" class="form-control" value="0" id="minpwr`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon">Max</span>
-              <input type="number" class="form-control" value="100" id="maxpwr`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon">%</span>
+
+            <div class="form-group">
+              <label >Raster: Proportional Feedrate</label>
+              <div class="input-group">
+                <span class="input-group-addon">Light</span>
+                <input type="number" class="form-control"  value="20" id="feedRateW`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">mm/s</span>
+              </div><br>
+              <div class="input-group">
+                <span class="input-group-addon">Dark</span>
+                <input type="number" class="form-control"  value="20" id="feedRateB`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">mm/s</span>
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label >Position Offset</label>
-            <div class="input-group">
-              <span class="input-group-addon">X</span>
-              <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon">Y</span>
-              <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon">mm</span>
+            <div class="form-group">
+              <label>Laser Power Contraints</label>
+              <div class="input-group">
+                <span class="input-group-addon">Min</span>
+                <input type="number" class="form-control" value="0" id="minpwr`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">Max</span>
+                <input type="number" class="form-control" value="100" id="maxpwr`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">%</span>
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label>Bitmap Resolution</label>
-            <div class="input-group">
-              <input type="number" class="form-control" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon">DPI</span>
+            <div class="form-group">
+              <label >Position Offset</label>
+              <div class="input-group">
+                <span class="input-group-addon">X</span>
+                <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">Y</span>
+                <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">mm</span>
+              </div>
             </div>
+
           </div>
         </div>
-      </div>
-    </div>
+       </div>
+       </div>
       `;
       // $("#layerprep").append(template);
       layerprep += template;
@@ -425,7 +430,6 @@ function fillLayerTabs() {
         <div class="input-group">
           <input type="number" class="form-control" value="`+(25.4/svgscale)+`" id="svgdpi`+i+`" objectseq="`+i+`">
           <span class="input-group-addon">DPI</span>
-
         </div>
       </div>
       `
