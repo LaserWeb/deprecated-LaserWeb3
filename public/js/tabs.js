@@ -1,24 +1,24 @@
 function initTabs() {
 
   $('#layerprep').on('keyup change','input', function() {
-    var newval = $(this).val();
-    var newval = parseFloat(newval, 3)
+    var inputVal = $(this).val();
+    var newval = parseFloat(inputVal, 3)
     var id = $(this).attr('id');
     var objectseq = $(this).attr('objectseq');
     console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
     if ( id.indexOf('rasterxoffset') == 0 ) {
-      objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + parseFloat(newval, 3);
+      objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + newval;
       console.log('Moving ' +objectsInScene[objectseq].name+ ' to X: '+newval);
       attachBB(objectsInScene[objectseq]);
     } else if ( id.indexOf('rasteryoffset') == 0 ) {
-      objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + parseFloat(newval, 3);
+      objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + newval;
       console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y: '+newval);
       attachBB(objectsInScene[objectseq]);
     } else if ( id.indexOf('rasterDPI') == 0 ) {
       var bboxpre = new THREE.Box3().setFromObject(objectsInScene[objectseq]);
       console.log('bbox for BEFORE SCALE: Min X: ', (bboxpre.min.x + (laserxmax / 2)), '  Max X:', (bboxpre.max.x + (laserxmax / 2)), 'Min Y: ', (bboxpre.min.y + (laserymax / 2)), '  Max Y:', (bboxpre.max.y + (laserymax / 2)));
       console.log('Scaling ' +objectsInScene[objectseq].name+ ' to: '+scale);
-      var scale = (25.4 / parseFloat(newval, 3) );
+      var scale = (25.4 / newval );
       objectsInScene[objectseq].scale.x = scale;
       objectsInScene[objectseq].scale.y = scale;
       objectsInScene[objectseq].scale.z = scale;
@@ -27,14 +27,13 @@ function initTabs() {
       $("#rasterxoffset"+objectseq).val('0')
       $("#rasteryoffset"+objectseq).val('0')
     } else if ( id.indexOf('svgdpi') == 0 ) {
-      var svgscale = (25.4 / parseFloat(newval, 3) );
+      var svgscale = (25.4 / newval );
       objectsInScene[objectseq].scale.x = svgscale;
       objectsInScene[objectseq].scale.y = svgscale;
       objectsInScene[objectseq].scale.z = svgscale;
       putFileObjectAtZero(objectsInScene[objectseq]);
       attachBB(objectsInScene[objectseq]);
     }
-
 
   });
 
@@ -270,6 +269,16 @@ function fillLayerTabs() {
         <div id="collapse`+i+`" class="panel-collapse collapse">
           <div class="panel-body" id="panel`+i+`">
             <div class="form-group">
+              <label >Position Offset</label>
+              <div class="input-group">
+                <span class="input-group-addon">X</span>
+                <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">Y</span>
+                <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
+                <span class="input-group-addon">mm</span>
+              </div>
+            </div>
+            <div class="form-group">
               <label >Laser Power (0-100%)</label>
               <div class="input-group">
               <input type="number" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
@@ -295,16 +304,7 @@ function fillLayerTabs() {
                 <span class="input-group-addon">mm per pass (Z step)</span>
               </div>
             </div>
-            <div class="form-group">
-              <label >Position Offset</label>
-              <div class="input-group">
-                <span class="input-group-addon">X</span>
-                <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
-                <span class="input-group-addon">Y</span>
-                <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
-                <span class="input-group-addon">mm</span>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
@@ -328,11 +328,22 @@ function fillLayerTabs() {
       </div>
       <div id="collapse`+i+`" class="panel-collapse collapse">
         <div class="panel-body" id="panel`+i+`">
-          <label >Copy image to a traced vector for cutting use </label>
-          <div class="btn-group btn-group-justified" role="group" aria-label="tracegcode">
-              <div class="btn-group" role="group">
-                  <a class="btn btn-warning btn-block" href="#" onclick="tracebmp(`+i+`, '`+objectsInScene[i].name+`')">Trace to Vector</a>
-              </div>
+          <div class="form-group">
+            <label>Bitmap Resolution</label>
+            <div class="input-group">
+              <input type="number" class="form-control" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">DPI</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label >Position Offset</label>
+            <div class="input-group">
+              <span class="input-group-addon">X</span>
+              <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">Y</span>
+              <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon">mm</span>
+            </div>
           </div>
           <div class="form-group">
             <label >Raster: Proportional Feedrate</label>
@@ -357,22 +368,11 @@ function fillLayerTabs() {
               <span class="input-group-addon">%</span>
             </div>
           </div>
-          <div class="form-group">
-            <label >Position Offset</label>
-            <div class="input-group">
-              <span class="input-group-addon">X</span>
-              <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon">Y</span>
-              <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon">mm</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Bitmap Resolution</label>
-            <div class="input-group">
-              <input type="number" class="form-control" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon">DPI</span>
-            </div>
+          <label >Copy image to a traced vector for cutting use </label>
+          <div class="btn-group btn-group-justified" role="group" aria-label="tracegcode">
+              <div class="btn-group" role="group">
+                  <a class="btn btn-warning btn-block" href="#" onclick="tracebmp(`+i+`, '`+objectsInScene[i].name+`')">Trace to Vector</a>
+              </div>
           </div>
         </div>
       </div>
