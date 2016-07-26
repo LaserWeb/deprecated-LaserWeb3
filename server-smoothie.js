@@ -40,26 +40,28 @@ var isConnected, port, isBlocked, lastsent = "", paused = false, blocked = false
 var gcodeQueue; gcodeQueue = [];
 
 
-console.log(chalk.green('***************************************************************'));
-console.log(chalk.green('*                        Notice:                              *'));
-console.log(chalk.green('***************************************************************'));
-console.log(chalk.green('*'),chalk.white('    Remember to update (: !!!                              '), chalk.green('*'));
-console.log(chalk.green('* 1.  Run ./update.sh or git pull                             *'));
-console.log(chalk.green('* 2.  or check the commit log on                              *'));
-console.log(chalk.green('*'), chalk.yellow('https://github.com/openhardwarecoza/LaserWeb/commits/master'), chalk.green('*'));
-console.log(chalk.green('***************************************************************'));
-
-
-// Lets add a message so users know where to point their browser
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
-    console.log(chalk.green('*'),chalk.white('Access the LaserWeb User Interface:                        '), chalk.green('*'));
-    console.log(chalk.green('* 1. Open Chrome                                              *'));
-    console.log(chalk.green('* 2. Go to :                                                  *'));
-    console.log(chalk.green('*'), chalk.yellow('   http://'+add+':'+config.webPort+'/                                  '), chalk.green('*'));
+    console.log(chalk.green(' '));
+    console.log(chalk.green('***************************************************************'));
+    console.log(chalk.white('                 ---- LaserWeb Started ----                    '));
+    console.log(chalk.green('***************************************************************'));
+    console.log(chalk.white('  Access the LaserWeb User Interface:                        '));
+    console.log(chalk.green('  1. Open Chrome                                              '));
+    console.log(chalk.green('  2. Go to : '), chalk.yellow(' http://'+add+':'+config.webPort+'/'));
     console.log(chalk.green('***************************************************************'));
     console.log(chalk.green(' '));
     console.log(chalk.green(' '));
+    console.log(chalk.red('* Updates: '));
+    console.log(chalk.green('  Remember to check the commit log on'));
+    console.log(chalk.green(' '), chalk.yellow('https://github.com/openhardwarecoza/LaserWeb3/commits/master'));
+    console.log(chalk.green('  regularly, to know about updates and fixes, and then when ready'));
+    console.log(chalk.green('  update LaserWeb3 accordingly by running'), chalk.cyan("git pull"));
+    console.log(chalk.green(' '));
+    console.log(chalk.red('* Support: '));
+    console.log(chalk.green('  If you need help / support, come over to '));
+    console.log(chalk.green(' '), chalk.yellow('https://plus.google.com/communities/115879488566665599508'));
 })
+
 
 
 // Webserver
