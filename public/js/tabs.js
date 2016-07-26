@@ -1,24 +1,24 @@
 function initTabs() {
 
   $('#layerprep').on('keyup change','input', function() {
-    var newval = $(this).val();
-    var newval = parseFloat(newval, 3)
+    var inputVal = $(this).val();
+    var newval = parseFloat(inputVal, 3)
     var id = $(this).attr('id');
     var objectseq = $(this).attr('objectseq');
     console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
     if ( id.indexOf('rasterxoffset') == 0 ) {
-      objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + parseFloat(newval, 3);
+      objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + newval;
       console.log('Moving ' +objectsInScene[objectseq].name+ ' to X: '+newval);
       attachBB(objectsInScene[objectseq]);
     } else if ( id.indexOf('rasteryoffset') == 0 ) {
-      objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + parseFloat(newval, 3);
+      objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + newval;
       console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y: '+newval);
       attachBB(objectsInScene[objectseq]);
     } else if ( id.indexOf('rasterDPI') == 0 ) {
       var bboxpre = new THREE.Box3().setFromObject(objectsInScene[objectseq]);
       console.log('bbox for BEFORE SCALE: Min X: ', (bboxpre.min.x + (laserxmax / 2)), '  Max X:', (bboxpre.max.x + (laserxmax / 2)), 'Min Y: ', (bboxpre.min.y + (laserymax / 2)), '  Max Y:', (bboxpre.max.y + (laserymax / 2)));
       console.log('Scaling ' +objectsInScene[objectseq].name+ ' to: '+scale);
-      var scale = (25.4 / parseFloat(newval, 3) );
+      var scale = (25.4 / newval);
       objectsInScene[objectseq].scale.x = scale;
       objectsInScene[objectseq].scale.y = scale;
       objectsInScene[objectseq].scale.z = scale;
@@ -27,7 +27,7 @@ function initTabs() {
       $("#rasterxoffset"+objectseq).val('0')
       $("#rasteryoffset"+objectseq).val('0')
     } else if ( id.indexOf('svgdpi') == 0 ) {
-      var svgscale = (25.4 / parseFloat(newval, 3) );
+      var svgscale = (25.4 / newval );
       objectsInScene[objectseq].scale.x = svgscale;
       objectsInScene[objectseq].scale.y = svgscale;
       objectsInScene[objectseq].scale.z = svgscale;
