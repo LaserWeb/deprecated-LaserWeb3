@@ -57,23 +57,18 @@ function Rasterizer(config) {
     this.config = config;
 
     console.log('[Rasterizer] Width: ' + this.config.imgwidth + '  Height: ' + this.config.imgheight);
+    console.log('[Rasterizer] Phys Width: ' + this.config.physicalHeight + '  Height: ' + this.config.physicalWidth);
 
     // Init some variables we'll be using in the process
     this.path = '';
     this.intensity = '';
-    //this.gcodex = '';
-
     this.moveCount = 0; // Keep count of Gcode lines so we can optimise, lower = better
     this.skip = 0;
     this.dir = 1;
-    //this.lastPosx = -1;
     this.megaPixel = 0;
     this.x = 0;
-    //this.endPosx = 0;
     this.grayLevel = 0;
-    //this.gridSize = 1;
     this.startTime = 0;
-
     this.rasterIntervalTimer = null;
 
     // GCODE Header
@@ -103,9 +98,7 @@ function Rasterizer(config) {
         '; X Offset: {8}mm',
         '; Y Offset: {9}mm \n',
         'G1 F{7}\n'
-        //'G0 F{7}'
     ].join('\n').format(
-        // this.config.firmware,
         this.config.minIntensity,
         this.config.maxIntensity,
         this.config.blackRate,
@@ -116,18 +109,6 @@ function Rasterizer(config) {
         this.config.rapidRate,
         this.config.xOffset,
         this.config.yOffset);
-
-
-
-    // this.result += '; Start GCode\n'
-    // this.result += startgcode
-    // this.result += '\n';
-
-    // if (this.config.firmware.indexOf('Lasaur') == 0) {
-    //   this.result += 'M80\n'; // Air Assist on
-    // }
-
-    // console.log('Variable Speed?:  ' + useVariableSpeed);
 }
 
 Rasterizer.prototype.figureIntensity = function() {
@@ -140,20 +121,6 @@ Rasterizer.prototype.figureIntensity = function() {
     } else {
         intensity = 0;
     }
-
-    // Firmware Specific Gcode Output
-    // if (this.config.firmware.indexOf('Grbl') == 0) {
-    //   intensity = intensity.map(0, 100, 0, 255);
-    //   intensity = intensity.toFixed(0);
-    // } else if (this.config.firmware.indexOf('Smooth') == 0) {
-    //   intensity = intensity / 100;
-    //   //intensity = intensity.toFixed(1);
-    // } else if (this.config.firmware.indexOf('Lasaur') == 0) {
-    //   intensity = intensity.map(0, 100, 0, 255);
-    //   intensity = intensity.toFixed(0);
-    // } else {
-    // intensity = intensity.map(0, 100, 0, parseInt(lasermultiply));
-    // intensity = intensity.toFixed(0);
 
     if (parseInt(lasermultiply) <= 1) {
         var intensity = parseFloat(intensity) / 100;
@@ -191,12 +158,11 @@ Rasterizer.prototype.init = function(div) {
 
     // Log it as a sanity check
     console.log('Constraining Laser power between {0}% and {1}%'.format(this.config.minIntensity, this.config.maxIntensity));
-    console.log('Height: {0}px, Width: {1}px'.format(this.config.imgheight, this.config.imgwidth));
+    console.log('Height: {0}px, Width: {1}px'.format(this.config.physHeight, this.config.physWidth));
     console.log('Spot Size: {0}mm'.format(this.config.spotSize1));
     console.log('Raster Width: {0} Height: {1}'.format(this.raster.width, this.raster.height));
     console.log('G0: {0}mm/s, G1: {1}mm/s'.format(this.config.rapidRate, this.config.feedRate));
     console.log('Black speed: {0} Whitespeed: {1}'.format(this.config.blackRate, this.config.whiteRate));
-
     // As the web is asynchronous, we need to wait for the raster to load before we can perform any operation on its pixels.
     this.raster.on('load', this.onRasterLoaded.bind(this));
     console.log('Raster: ', this.raster)
@@ -204,17 +170,27 @@ Rasterizer.prototype.init = function(div) {
 
 
 Rasterizer.prototype.rasterRow = function(y) {
+
+  // // spotSize1 = size in mm that each physical pixel needs to fill
+  // // beamSize1 = size of the laser beam
+  // // Since the beam is a physical size, we need to adjust the raster to be more or less big that the actual pixels (either interpolated enlarge, or less detail) so that we have enough (and just enough) data to fill up the Beamsizes
+  // // For example:  If I draw a square of 10x10mm at 72dpi,  it only has 28x28 pixels.  If I want to engrave that square with a beam size of 0.1mm I need 100x100 pixels.  So we need to resize the 28x28 raster to 100x100 raster using http://paperjs.org/reference/raster/#size as shown in the example on http://paperjs.org/tutorials/images/using-pixel-colors/
+  // var ypixels = ( parseFloat(this.config.physicalHeight) * parseFloat(this.config.beamSize1) );
+  // var xpixels = ( parseFloat(this.config.physicalWidth) * parseFloat(this.config.beamSize1) );
+  // printLog("Raster needs " + xpixels + " x " + ypixels +  " px at " + parseFloat(this.config.beamSize1) , msgcolor, "raster")
+  // this.raster.size = new Size(xpixels,ypixels);
+
+
     // console.log('[Rasterizer] rasterRow', y);
 
     // Calculate where to move to to start the first and next rows - G0 Yxx move between lines
-
     var posy = y;
     // posy = (posy * this.config.spotSize1) - parseFloat(this.config.yOffset);
     if (this.config.imagePos == "TopLeft") {
     //   posy = (posy * this.config.spotSize1) - parseFloat(this.config.yOffset) + ((laserymax / 2) + this.config.imgheight);
-      posy = (posy * this.config.spotSize1) + parseFloat(this.config.yOffset) - parseFloat(laserymax) + parseFloat(this.config.physicalHeight);
+      posy = (posy * this.config.beamSize1) + parseFloat(this.config.yOffset) - parseFloat(laserymax) + parseFloat(this.config.physicalHeight);
     } else {
-      posy = (posy * this.config.spotSize1) - parseFloat(this.config.yOffset);
+      posy = (posy * this.config.beamSize1) - parseFloat(this.config.yOffset);
     }
     posy = posy.toFixed(3);
 
@@ -244,14 +220,14 @@ Rasterizer.prototype.rasterRow = function(y) {
         }
 
         // Convert Pixel Position to millimeter position
-        posx = (posx * this.config.spotSize1 + parseFloat(this.config.xOffset));
+        posx = (posx * this.config.beamSize1 + parseFloat(this.config.xOffset));
         posx = posx.toFixed(3);
         // Keep some stats of how many pixels we've processed
         this.megaPixel++;
 
         // The Luma grayscale of the pixel
 	var alpha = pixels[x*4+3]/255.0;                                                   // 0-1.0
-        var lumaGray = (pixels[x*4]*0.3 + pixels[x*4+1]*0.59 + pixels[x*4+2]*0.11)/255.0;  // 0-1.0
+  var lumaGray = (pixels[x*4]*0.3 + pixels[x*4+1]*0.59 + pixels[x*4+2]*0.11)/255.0;  // 0-1.0
 	lumaGray = alpha * lumaGray + (1-alpha)*1.0;
 	this.grayLevel = lumaGray.toFixed(3);
 	this.graLevel = lumaGray.toFixed(1);
@@ -277,69 +253,29 @@ Rasterizer.prototype.rasterRow = function(y) {
 
             //console.log('From: ' + this.lastPosx + ', ' + lastPosy + '  - To: ' + posx + ', ' + posy + ' at ' + lastIntensity + '%');
             if (lastIntensity > 0) {
-                // if (this.config.useVariableSpeed == "true") {
-                    // if (this.config.firmware.indexOf('Grbl') == 0) {
-                    //   this.result += 'M3 S{2}\nG1 X{0} Y{1} F{3} S{2}\nM5\n'.format(posx, gcodey, lastIntensity, speed);
-                    // } else {
-                    if (laseron) {
-                        this.result += laseron
-                        this.result += '\n'
-                    }
-                    this.result += 'G1 X{0} S{2} F{3}\n'.format(posx, gcodey, lastIntensity, speed);
-                    if (laseroff) {
-                        this.result += laseroff
-                        this.result += '\n'
-                    }
-                    // }
-                // } else {
-                //     // if (this.config.firmware.indexOf('Grbl') == 0) {
-                //     //   this.result += 'M3 S{2}\nG1 X{0} Y{1} S{2}\nM5\n'.format(posx, gcodey, lastIntensity);
-                //     // } else {
-                //     if (laseron) {
-                //         this.result += laseron
-                //         this.result += '\n'
-                //     }
-                //     this.result += 'G1 X{0} S{2}\n'.format(posx, gcodey, lastIntensity);
-                //     if (laseroff) {
-                //         this.result += laseroff
-                //         this.result += '\n'
-                //     }
-                //     // }
-                // }
-                // This will hopefully get rid of black marks at the end of a line segment
-                // It seems that some controllers dwell at a spot between gcode moves
-                // If this does not work, switch to G1 to this.endPosx and then G0 to posx
-                //this.result += 'G1 S0\n';
+              if (laseron) {
+                  this.result += laseron
+                  this.result += '\n'
+              }
+              this.result += 'G1 X{0} S{2} F{3}\n'.format(posx, gcodey, lastIntensity, speed);
+              if (laseroff) {
+                  this.result += laseroff
+                  this.result += '\n'
+              }
             } else {
-                if ((intensity > 0) || (this.config.optimizelineends == false)) {
-                    this.result += 'G0 X{0} S0\n'.format(posx, gcodey);
-                }
-
+              if ((intensity > 0) || (this.config.optimizelineends == false)) {
+                this.result += 'G0 X{0} S0\n'.format(posx, gcodey);
+              }
             }
-
-            // Debug:  Can be commented, but DON'T DELETE - I use it all the time when i find bug that I am not sure of
-            // whether the root cause is the raster module or the gcode viewer module - by drawing the paper.js object I can
-            // do a comparison to see which it is
-            // Draw canvas (not used for GCODE generation)
-            //path = new Path.Line({
-            //    from: [(this.lastPosx * this.gridSize), (posy * this.gridSize)],
-            //    to: [(this.endPosx * this.gridSize), (posy * this.gridSize)],
-            //    strokeColor: 'black'
-            //    });
-            //path.strokeColor = 'black';
-            //path.opacity = (lastIntensity / 100);
-            // End of debug drawing
         } else {
             this.skip++
         }
-
         // End of write a line of gcode
         //this.endPosx = posx;
 
         // Store values to use in next loop
         if (intensity != lastIntensity) {
             lastIntensity = intensity;
-            //this.lastPosx = posx
         }
     }
 
@@ -354,24 +290,15 @@ Rasterizer.prototype.rasterInterval = function() {
 
         this.currentPosy++;
         var progress = Math.round((this.currentPosy / this.raster.height) * 100.0);
-        //$('#rasterProgressShroud .progress-bar').width(progress + "%");
         $('#rasterProgressPerc').html(progress + "%");
         NProgress.set(progress / 100);
-        //console.log('[Rasterizer] ', progress, '% done');
+        printLog('[Rasterizer] ' + progress + '% done', msgcolor, "raster");
     } else {
         this.onFinish();
-        //var rasterSendToLaserButton = document.getElementById("rasterWidgetSendRasterToLaser");
-        //if (rasterSendToLaserButton.style.display == "none") { // Raster Mode
         NProgress.done();
         NProgress.remove();
-        //$('#rasterparams').hide();
-        //$('#rasterwidget').modal('hide');
-        // } else {  // Calibration Mode
         $('#rasterparams').show();
         $('#rasterProgressShroud').hide();
-        //   $('.progress').removeClass('active');
-        // 	$('#rasterProgressShroud .progress-bar').width(0);
-        // }
         window.clearInterval(this.rasterIntervalTimer);
     }
 };
@@ -379,32 +306,31 @@ Rasterizer.prototype.rasterInterval = function() {
 Rasterizer.prototype.onRasterLoaded = function() {
     console.log('[Rasterizer] onRasterLoaded');
     var rasterSendToLaserButton = document.getElementById("rasterWidgetSendRasterToLaser");
-    //if (rasterSendToLaserButton.style.display == "none") {  // Raster Mode
     $('#rasterparams').hide();
     $('#rasterProgressShroud').show();
     $('.progress').removeClass('active');
     $('#rasterProgressShroud .progress-bar').width(0);
-    // } else {  // Calibration Mode
-    //   $('#rasterparams').hide();
-    //   $('#rasterProgressShroud').show();
-    //   $('.progress').removeClass('active');
-    // 	$('#rasterProgressShroud .progress-bar').width(0);
-    // }
-
     // Iterate through the Pixels asynchronously
+
+        // spotSize1 = size in mm that each physical pixel needs to fill
+        // beamSize1 = size of the laser beam
+        // Since the beam is a physical size, we need to adjust the raster to be more or less big that the actual pixels (either interpolated enlarge, or less detail) so that we have enough (and just enough) data to fill up the Beamsizes
+        // For example:  If I draw a square of 10x10mm at 72dpi,  it only has 28x28 pixels.  If I want to engrave that square with a beam size of 0.1mm I need 100x100 pixels.  So we need to resize the 28x28 raster to 100x100 raster using http://paperjs.org/reference/raster/#size as shown in the example on http://paperjs.org/tutorials/images/using-pixel-colors/
+        var ypixels = ( parseFloat(this.config.physicalHeight) / parseFloat(this.config.beamSize1) );
+        var xpixels = ( parseFloat(this.config.physicalWidth) / parseFloat(this.config.beamSize1) );
+        printLog("Raster needs " + xpixels + " x " + ypixels +  " px at " + parseFloat(this.config.beamSize1) , msgcolor, "raster")
+        this.raster.size = new Size(xpixels,ypixels);
+        console.log('After Resize Raster: ', this.raster)
+
+
     this.currentPosy = 0;
     this.rasterIntervalTimer = window.setInterval(this.rasterInterval.bind(this), 10);
 };
 
 Rasterizer.prototype.onFinish = function() {
-    // if (firmware.indexOf('Lasaur') == 0) {
-    //   this.result += 'M81\n'; // Air Assist off
-    // }
-
     // Populate the GCode textarea
     var seq = this.config.objectid;
     // console.log("%c%s","color: #000; background: green; font-size: 24px;",seq)
-
     objectsInScene[seq].userData.gcode = this.result;
     // var existinggcode =  document.getElementById('gcodepreview').value
     // document.getElementById('gcodepreview').value = existinggcode + this.result;
@@ -434,256 +360,4 @@ this.RasterNow = function(config) {
     var rasterizer = new Rasterizer(config);
     console.log('from Container: ', div)
     rasterizer.init(div);
-};
-
-this.G7RasterNow = function(config) {
-    console.time("Process G7 Raster");
-    printLog('Process G7 Raster', msgcolor, "raster")
-
-    var rasterizer = new G7Rasterizer(config);
-    rasterizer.init();
-};
-
-var G7startgcode;
-var G7laseron;
-var G7laseroff;
-var G7lasermultiply;
-var G7homingseq;
-var G7endgcode;
-
-function G7Rasterizer(config) {
-
-    this.config = config;
-
-    console.log('[G7Rasterizer] Width: ' + this.config.imgwidth + '  Height: ' + this.config.imgheight);
-
-    // Init some variables we'll be using in the process
-    this.path = '';
-    this.intensity = '';
-    //this.gcodex = '';
-
-    this.moveCount = 0; // Keep count of Gcode lines so we can optimise, lower = better
-    this.skip = 0;
-    this.dir = 1;
-    //this.lastPosx = -1;
-    this.megaPixel = 0;
-    this.x = 0;
-    //this.endPosx = 0;
-    this.grayLevel = 0;
-    //this.gridSize = 1;
-    this.startTime = 0;
-
-    this.rasterIntervalTimer = null;
-
-    // GCODE Header
-    // var useVariableSpeed = this.config.useVariableSpeed;
-
-    G7startgcode = $('#startgcode').val();
-    G7laseron = $('#laseron').val();
-    G7laseroff = $('#laseroff').val();
-    if ($('#lasermultiply').val()) {
-      G7lasermultiply = $('#lasermultiply').val();
-    } else {
-      G7lasermultiply = 100;
-      printLog('NB - generated with default value of S100 since you have not yet configured LaserWeb for your machine.  Click that settings button and configure the Max PWM S Value (and all the other settings please).... ', errorcolor, "raster")
-    }
-    G7homingseq = $('#homingseq').val();
-    G7endgcode = $('#endgcode').val();
-
-    this.result = [
-        '; GCODE generated by Laserweb',
-        // '; Firmware: {0}',
-        '; Laser Max: {1}%',
-        '; Laser Spot Size: {4}mm',
-        '; Engraving Feedrate: {5}mm/s \n',
-        //'G0 F{7}'
-    ].join('\n').format(
-        // this.config.firmware,
-        this.config.minIntensity,
-        this.config.maxIntensity,
-        this.config.blackRate,
-        this.config.whiteRate,
-        this.config.spotSize1,
-        this.config.feedRate,
-	this.config.xOffset,
-	this.config.yOffset);
-
-    this.result += '; Start GCode\n'
-    this.result += G7startgcode
-    this.result += '\n';
-
-    this.result += 'M649 S{0} B2 D0 R{1}\n'.format(this.config.maxIntensity, this.config.spotSize1);
-    this.result += 'G0 X{0} Y{1} F{2}\nG1 F{3}\n'.format(this.config.xOffset, this.config.yOffset, this.config.rapidRate, this.config.feedRate);
-}
-
-G7Rasterizer.prototype.init = function() {
-    this.startTime = Date.now();
-
-    // Initialise
-    project.clear();
-
-    // Create a raster item using the image tag 'origImage'
-    this.raster = new Raster('origImage');
-    this.raster.visible = false;
-
-    // Log it as a sanity check
-    console.log('Not Constraining Laser power between {0}% and {1}%'.format(this.config.minIntensity, this.config.maxIntensity));
-    console.log('Height: {0}px, Width: {1}px'.format(this.config.imgheight, this.config.imgwidth));
-    console.log('Spot Size: {0}mm'.format(this.config.spotSize1));
-    console.log('Raster Width: {0} Height: {1}'.format(this.raster.width, this.raster.height));
-    console.log('G0: {0}mm/s, G1: {1}mm/s'.format(this.config.rapidRate, this.config.feedRate));
-    console.log('Black speed: {0} Whitespeed: {1}'.format(this.config.blackRate, this.config.whiteRate));
-
-    // As the web is asynchronous, we need to wait for the raster to load before we can perform any operation on its pixels.
-    this.raster.on('load', this.onRasterLoaded.bind(this));
-};
-
-
-G7Rasterizer.prototype.rasterRow = function(y) {
-    //console.log('[G7Rasterizer] rasterRow', y);
-    var firstline=true;
-    // In fast forward?
-    if (typeof this.inFF === "undefined") this.inFF = false;
-    if (this.inFF == true) { // Only second time
-	this.result += 'G91\nG0 Y{0}\nG90\n'.format(2*this.config.spotSize1);
-	this.inFF = false;
-	return; // We are done with this line
-    } else {
-	// Check if the two folling lines can be fast forwarded
-	if (y%2 == 0 && y < this.raster.height -2) {
-	    var ImgData1 = this.raster.getImageData(0, this.raster.height - y - 1, this.raster.width, 1);
-	    var ImgData2 = this.raster.getImageData(0, this.raster.height - (y+1) - 1, this.raster.width, 1);
-	    var px1 = ImgData1.data;
-	    var px2 = ImgData2.data;
-//	    console.log(ii,px1[ii+0],px1[ii+1],px1[ii+2],px1[iii+0],px1[iii+1],px1[iii+2]);
-	    this.inFF=false;
-	    for (var i=0; i < this.raster.width; i++) {
-		var ii = i*4;
-		var clrsum = px1[ii] + px1[ii+1] + px1[ii+2] + px2[ii] + px2[ii+1] + px2[ii+2];
-		var transpsum = px1[ii+3]+px2[ii+3];
-		if ((clrsum == 0 && transpsum != 0) || (clrsum != 0)) {  // Color
-		    //console.log('==>',ii,clrsum, transpsum, px1[ii+0],px1[ii+1],px1[ii+2],px1[ii+3],px2[ii+0],px2[ii+1],px2[ii+2],px2[ii+3]);
-		    this.inFF = false;
-		    break; // We do the line
-		}
-	    }
-	    if (this.inFF) return;
-	}
-    }
-    var ImgData = this.raster.getImageData(0, this.raster.height - y - 1, this.raster.width, 1);
-    var pixels = ImgData.data;
-    var G7dots;
-    for (G7dots = 0; G7dots < Math.floor(this.raster.width / 51); G7dots++) {
-	if (firstline) this.result += 'G7 ${0} L{1} D'.format(this.dir > 0 ? 1 : 0, 68);
-	else           this.result += 'G7 L{0} D'.format(68);
-
-	firstline = false;
-	var buf = new Uint8Array(51);
-	for (var ix = 0; ix < 51; ix++) {
-	    var x = G7dots*51 + ix;
-            if (this.dir < 0) x = this.raster.width - x - 1; // Backwards
-	    var grayscale;
-	    if (pixels[x*4+3] == 0) grayscale = 255; // Full transparency => white
-            else  grayscale = pixels[x*4] * .3 + pixels[x*4+1] * .59 + pixels[x*4+2] * .11;
-	    buf[ix] = Math.round(grayscale);
-	}
-	this.result += btoa(String.fromCharCode.apply(null, buf));
-	this.result += '\n';
-    }
-
-    var rem = this.raster.width % 51;
-    if (rem > 0) {  // Partial block (lenght < 51)
-	if (firstline) this.result += 'G7 ${0} L{1} D'.format(this.dir > 0 ? 1 : 0, rem);
-	else           this.result += 'G7 L{0} D'.format(rem);
-
-	var buf = new Uint8Array(rem);
-	for (var ix = 0; ix < rem; ix++) {
-	    var x = G7dots*51 + ix;
-            if (this.dir < 0) x = this.raster.width - x - 1; // Backwards
-	    var grayscale;
-	    if (pixels[x*4+3] == 0) grayscale = 255; // Full transparency => white
-            else  grayscale = pixels[x*4] * .3 + pixels[x*4+1] * .59 + pixels[x*4+2] * .11;
-	    buf[ix] = Math.round(grayscale);
-	}
-	this.result += btoa(String.fromCharCode.apply(null, buf));
-	this.result += '\n\n';
-    }
-    this.dir = -this.dir; // Reverse direction for next row
-};
-
-
-G7Rasterizer.prototype.rasterInterval = function() {
-    if (this.currentPosy < this.raster.height) {
-
-        this.rasterRow(this.currentPosy);
-
-        this.currentPosy++;
-        var progress = Math.round((this.currentPosy / this.raster.height) * 100.0);
-        //$('#rasterProgressShroud .progress-bar').width(progress + "%");
-        $('#rasterProgressPerc').html(progress + "%");
-        NProgress.set(progress / 100);
-        //console.log('[Rasterizer] ', progress, '% done');
-    } else {
-        this.onFinish();
-        //var rasterSendToLaserButton = document.getElementById("rasterWidgetSendRasterToLaser");
-        //if (rasterSendToLaserButton.style.display == "none") { // Raster Mode
-        NProgress.done();
-        NProgress.remove();
-        //$('#rasterparams').hide();
-        //$('#rasterwidget').modal('hide');
-        // } else {  // Calibration Mode
-        $('#rasterparams').show();
-        $('#rasterProgressShroud').hide();
-        //   $('.progress').removeClass('active');
-        // 	$('#rasterProgressShroud .progress-bar').width(0);
-        // }
-        window.clearInterval(this.rasterIntervalTimer);
-    }
-};
-
-G7Rasterizer.prototype.onRasterLoaded = function() {
-    //console.log('[Rasterizer] onRasterLoaded');
-    //console.log('[Rasterizer] onRasterLoaded');
-    var rasterSendToLaserButton = document.getElementById("rasterWidgetSendRasterToLaser");
-    //if (rasterSendToLaserButton.style.display == "none") {  // Raster Mode
-    $('#rasterparams').hide();
-    $('#rasterProgressShroud').show();
-    $('.progress').removeClass('active');
-    $('#rasterProgressShroud .progress-bar').width(0);
-    // } else {  // Calibration Mode
-    //   $('#rasterparams').hide();
-    //   $('#rasterProgressShroud').show();
-    //   $('.progress').removeClass('active');
-    // 	$('#rasterProgressShroud .progress-bar').width(0);
-    // }
-
-    // Iterate through the Pixels asynchronously
-    this.currentPosy = 0;
-    this.rasterIntervalTimer = window.setInterval(this.rasterInterval.bind(this), 10);
-};
-
-G7Rasterizer.prototype.onFinish = function() {
-    // if (firmware.indexOf('Lasaur') == 0) {
-    //   this.result += 'M81\n'; // Air Assist off
-    // }
-
-    // Populate the GCode textarea
-    document.getElementById('gcodepreview').value = this.result;
-    console.log('Optimized by number of line: ', this.skip);
-
-    // Some Post-job Stats and Cleanup
-    console.log('Number of GCode Moves: ', this.moveCount);
-    var pixeltotal = this.raster.width * this.raster.height;
-    console.log('Pixels: {0} done, of {1}'.format(this.megaPixel, pixeltotal));
-
-    console.timeEnd("Process Raster");
-    var currentTime = Date.now();
-    var elapsed = (currentTime - this.startTime);
-    $('#console')
-        .append('<p class="pf" style="color: #009900;"><b>Raster completed in {0}ms</b></p>'.format(elapsed))
-        .scrollTop($("#console")[0].scrollHeight - $("#console").height());
-
-    if (this.config.completed) {
-        this.config.completed();
-    }
 };

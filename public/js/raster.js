@@ -127,6 +127,7 @@ function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, black
     var physwidth = (width / dpival) ;
     var spotSize = (physwidth / width);
 
+
     $('#rasterProgressShroud').hide();
 
 
@@ -139,15 +140,14 @@ function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, black
         beamSize1: [spotSizeMul],
         imgheight: [height],
         imgwidth: [width],
-        // feedRate: [laserFeed],
         blackRate: [blackspeed],
         whiteRate: [whitespeed],
-        // useVariableSpeed: [useVariableSpeed],
         rapidRate: [laserRapid],
         xOffset: [xoffset],
         yOffset: [yoffset],
         imagePos: [imagePosition],
         physicalHeight: [physheight],
+        physicalWidth: [physwidth],
         div: toRaster // Div Containing the image to raster
     });
 };
