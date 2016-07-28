@@ -4,5 +4,4 @@ function tracebmp(index, filename) {
   var traceimgtag = document.getElementById("origImage"+seq);
   Potrace.loadImageFromUrl(traceimgtag.src);
   Potrace.process(function(){svg2three(Potrace.getSVG(1), "trace"+filename+".svg" ); fillLayerTabs(); });
-  
 }

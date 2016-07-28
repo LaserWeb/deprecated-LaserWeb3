@@ -272,13 +272,13 @@ function fillLayerTabs() {
             <div class="form-group">
               <label >Laser Power (0-100%)</label>
               <div class="input-group">
-              <input type="number" min="0" max="100" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
+              <input type="number" min="0" max="100" class="form-control input-sm" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
               <span class="input-group-addon">%</span>
             </div>
             <div class="form-group">
               <label>Feedrate: Cut</label>
               <div class="input-group">
-                <input type="number" class="form-control" value="`+speed+`" id="speed`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-sm" value="`+speed+`" id="speed`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">mm/s</span>
               </div>
             </div>
@@ -286,12 +286,12 @@ function fillLayerTabs() {
               <label>Multipass Cutting</label>
               <div class="input-group">
                 <span class="input-group-addon">x</span>
-                <input type="number" class="form-control" value="1" id="passes`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-sm" value="1" id="passes`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">pass(es)</span>
               </div>
               <div class="input-group">
                 <span class="input-group-addon">at</span>
-                <input type="number" step="0.1" class="form-control" value="0.0" id="depth`+i+`" objectseq="`+i+`">
+                <input type="number" step="0.1" class="form-control input-sm" value="0.0" id="depth`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">mm per pass (Z step)</span>
               </div>
             </div>
@@ -299,9 +299,9 @@ function fillLayerTabs() {
               <label >Position Offset</label>
               <div class="input-group">
                 <span class="input-group-addon">X</span>
-                <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-sm" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">Y</span>
-                <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-sm" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">mm</span>
               </div>
             </div>
@@ -339,7 +339,7 @@ function fillLayerTabs() {
             <div class="form-group">
               <label>Bitmap Resolution</label>
               <div class="input-group">
-                <input type="number" class="form-control" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-sm" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">DPI</span>
               </div>
             </div>
@@ -348,12 +348,12 @@ function fillLayerTabs() {
               <label >Raster: Proportional Feedrate</label>
               <div class="input-group">
                 <span class="input-group-addon">Light</span>
-                <input type="number" class="form-control"  value="20" id="feedRateW`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-sm"  value="20" id="feedRateW`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">mm/s</span>
               </div><br>
               <div class="input-group">
                 <span class="input-group-addon">Dark</span>
-                <input type="number" class="form-control"  value="20" id="feedRateB`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-sm"  value="20" id="feedRateB`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">mm/s</span>
               </div>
             </div>
@@ -361,9 +361,9 @@ function fillLayerTabs() {
               <label>Laser Power Constraints</label>
               <div class="input-group">
                 <span class="input-group-addon">Min</span>
-                <input type="number"  min="0" max="100" class="form-control" value="0" id="minpwr`+i+`" objectseq="`+i+`">
+                <input type="number"  min="0" max="100" class="form-control input-sm" value="0" id="minpwr`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">Max</span>
-                <input type="number"  min="0" max="100" class="form-control" value="100" id="maxpwr`+i+`" objectseq="`+i+`">
+                <input type="number"  min="0" max="100" class="form-control input-sm" value="100" id="maxpwr`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">%</span>
               </div>
             </div>
@@ -371,9 +371,9 @@ function fillLayerTabs() {
               <label >Position Offset</label>
               <div class="input-group">
                 <span class="input-group-addon">X</span>
-                <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-sm" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">Y</span>
-                <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-sm" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">mm</span>
               </div>
             </div>
@@ -401,13 +401,13 @@ function fillLayerTabs() {
       <label class="control-label">Tool Options</label>
       <div class="input-group">
         <span class="input-group-addon">Tool Diameter</span>
-        <input type="number" class="form-control" value="3.175" id="tooldia">
+        <input type="number" class="form-control input-sm" value="3.175" id="tooldia">
         <span class="input-group-addon">mm</span>
 
       </div>
       <div class="input-group">
         <span class="input-group-addon">Z Safe Height</span>
-        <input type="number" class="form-control" value="10" id="clearanceHeight">
+        <input type="number" class="form-control input-sm" value="10" id="clearanceHeight">
         <span class="input-group-addon">mm</span>
 
       </div>
@@ -428,7 +428,7 @@ function fillLayerTabs() {
       <div class="form-group">
         <label>SVG Resolution</label>
         <div class="input-group">
-          <input type="number" class="form-control" value="`+(25.4/svgscale)+`" id="svgdpi`+i+`" objectseq="`+i+`">
+          <input type="number" class="form-control input-sm" value="`+(25.4/svgscale)+`" id="svgdpi`+i+`" objectseq="`+i+`">
           <span class="input-group-addon">DPI</span>
         </div>
       </div>
