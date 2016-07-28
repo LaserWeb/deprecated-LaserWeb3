@@ -239,7 +239,7 @@ function fillLayerTabs() {
                 <div class="form-group">
                   <label >Spindle RPM (0-100%)</label>
                   <div class="input-group">
-                  <input type="number" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
+                  <input type="number"  min="0" max="100" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
                   <span class="input-group-addon">RPM %</span>
                 </div>
               </div>
@@ -272,7 +272,7 @@ function fillLayerTabs() {
             <div class="form-group">
               <label >Laser Power (0-100%)</label>
               <div class="input-group">
-              <input type="number" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
+              <input type="number" min="0" max="100" class="form-control" value="`+pwr+`" id="power`+i+`" objectseq="`+i+`">
               <span class="input-group-addon">%</span>
             </div>
             <div class="form-group">
@@ -358,12 +358,12 @@ function fillLayerTabs() {
               </div>
             </div>
             <div class="form-group">
-              <label>Laser Power Contraints</label>
+              <label>Laser Power Constraints</label>
               <div class="input-group">
                 <span class="input-group-addon">Min</span>
-                <input type="number" class="form-control" value="0" id="minpwr`+i+`" objectseq="`+i+`">
+                <input type="number"  min="0" max="100" class="form-control" value="0" id="minpwr`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">Max</span>
-                <input type="number" class="form-control" value="100" id="maxpwr`+i+`" objectseq="`+i+`">
+                <input type="number"  min="0" max="100" class="form-control" value="100" id="maxpwr`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">%</span>
               </div>
             </div>
