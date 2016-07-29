@@ -39,60 +39,62 @@ function drawRaster(name, data) {
 
     var currentIdx = objectsInScene.length + 100;
 
-    var div = document.createElement("img");
-    div.style.display = "none";
-    div.id = "origImage"+currentIdx;
-    document.body.appendChild(div);
+    var img = document.createElement("img");
+    img.style.display = "none";
+    img.id = "origImage"+currentIdx;
+    img.title = name;
+    // All of this will happen after the image is loaded.
+    // The actual load happens after this def.
+    img.onload = function() {
+        document.body.appendChild(img);
 
-    var imgtag = document.getElementById("origImage"+currentIdx);
+        var imgwidth = img.naturalWidth;
+        var imgheight = img.naturalHeight;
 
-    imgtag.title = name;
-    imgtag.src = data;
+        $('#rasterProgressShroud').hide();
+        $('#rasterparams').show();
+        $("body").trigger("click") // close dropdown menu
 
+        if ($('#useRasterBlackWhiteSpeeds').prop('checked')) {
+            $("#blackwhitespeedsection").show();
+        } else {
+            $("#blackwhitespeedsection").hide();
+        }
 
-    $('#rasterProgressShroud').hide();
-    $('#rasterparams').show();
-    $("body").trigger("click") // close dropdown menu
+        printLog('Bitmap Opened', msgcolor, "raster");
+        //tbfleming's threejs texture code
 
-    if ($('#useRasterBlackWhiteSpeeds').prop('checked')) {
-        $("#blackwhitespeedsection").show();
-    } else {
-        $("#blackwhitespeedsection").hide();
-    }
+        console.log('Sanity Check', img, imgwidth, imgheight)
 
-    printLog('Bitmap Opened', msgcolor, "raster");
-    //tbfleming's threejs texture code
+        var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
 
-    var img = document.getElementById('origImage'+currentIdx);
-    var imgwidth = img.naturalWidth;
-    var imgheight = img.naturalHeight;
-    console.log('Sanity Check', img, imgwidth, imgheight)
+        var texture = new THREE.TextureLoader().load(data);
+        texture.minFilter = THREE.LinearFilter
 
-    var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
+        var material = new THREE.MeshBasicMaterial({
+            map: texture,
+            transparent: true
+        });
 
-    var texture = new THREE.TextureLoader().load(data);
-    texture.minFilter = THREE.LinearFilter
+        rastermesh = new THREE.Mesh(geometry, material);
 
-    var material = new THREE.MeshBasicMaterial({
-        map: texture,
-        transparent: true
-    });
+        rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
+        rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
+        rastermesh.position.z = -0.9;
+        rastermesh.name = name
 
-    rastermesh = new THREE.Mesh(geometry, material);
+        scene.add(rastermesh);
+        putFileObjectAtZero(rastermesh);
+        calcZeroOffset(rastermesh)
+        rastermesh.userData.seq = currentIdx;
+        objectsInScene.push(rastermesh)
+        // resetView();
+        // setImgDims(currentIdx);
+        $('#rasterresize').modal('show')
+    };
+    // This actually loads the image, and fires the onload above.
+    img.src = data;
 
-    rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
-    rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
-    rastermesh.position.z = -0.9;
-    rastermesh.name = name
-
-    scene.add(rastermesh);
-    putFileObjectAtZero(rastermesh);
-    calcZeroOffset(rastermesh)
-    rastermesh.userData.seq = currentIdx;
-    objectsInScene.push(rastermesh)
-    // resetView();
-    // setImgDims(currentIdx);
-    $('#rasterresize').modal('show')
 };
 
 function runRaster(index) {
