@@ -105,9 +105,9 @@ function runRaster(index) {
 
   // var laserFeed = $('#feedRate'+index).val() * 60;
   var rasterDPI = parseFloat($('#rasterDPI'+index).val());
-  var blackspeed = $("#feedRateW"+index).val() * 60;
-  var whitespeed = $("#feedRateB"+index).val() * 60;
-  var useVariableSpeed = $('#useRasterBlackWhiteSpeeds'+index).prop('checked');
+  var whitespeed = $("#feedRateW"+index).val() * 60;
+  var blackspeed = $("#feedRateB"+index).val() * 60;
+  // var useVariableSpeed = $('#useRasterBlackWhiteSpeeds'+index).prop('checked');
   var xoffset = parseFloat($('#rasterxoffset'+index).val());
   var yoffset = parseFloat($('#rasteryoffset'+index).val());
   var minpwr = $("#minpwr"+index).val();;
@@ -128,7 +128,7 @@ function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, black
     var spotSize = (physwidth / width);
 
 
-    $('#rasterProgressShroud').hide();
+    // $('#rasterProgressShroud').hide();
 
 
     paper.RasterNow({
