@@ -217,13 +217,12 @@ createObjectFromGCode = function (gcode, indxMax) {
     this.extraObjects["G17"] = [];
     this.extraObjects["G18"] = [];
     this.extraObjects["G19"] = [];
-    this.offsetG92 = {x:0, y:0, z:0, a:0, e:0};
+    this.offsetG92 = {x:0, y:0, z:0, e:0};
 
     var lastLine = {
         x: 0,
         y: 0,
         z: 0,
-	a: 0,
         e: 0,
         f: 0,
         feedrate: null,
@@ -799,26 +798,13 @@ createObjectFromGCode = function (gcode, indxMax) {
     addLineSegment = function (p1, p2) {
 
 	var i = lineObject.nLines*6;
-	if (p1.a != 0 || p2.a != 0) { // A axis: rotate around X
-	    var R1 = Math.sqrt(p1.y*p1.y+p1.z*p1.z);
-	    var R2 = Math.sqrt(p2.y*p2.y+p2.z*p2.z);
-	    var a1 = p1.y == 0 ? Math.sign(p1.z)*90 : Math.atan2(p1.z, p1.y)*180.0/Math.PI; 
-	    var a2 = p2.y == 0 ? Math.sign(p2.z)*90 : Math.atan2(p2.z, p2.y)*180.0/Math.PI; 
-            lineObject.vertexBuf[i+0] = p1.x;  
-            lineObject.vertexBuf[i+1] = R1*Math.cos((-p1.a+a1)*Math.PI/180.0);
-            lineObject.vertexBuf[i+2] = R1*Math.sin((-p1.a+a1)*Math.PI/180.0);
-            lineObject.vertexBuf[i+3] = p2.x;
-            lineObject.vertexBuf[i+4] = R2*Math.cos((-p2.a+a2)*Math.PI/180.0);
-            lineObject.vertexBuf[i+5] = R2*Math.sin((-p2.a+a2)*Math.PI/180.0);
-	} else { 
-            lineObject.vertexBuf[i+0] = p1.x;  // Vertices
-            lineObject.vertexBuf[i+1] = 0.1*p1.a;
-            lineObject.vertexBuf[i+2] = p1.z;
-            lineObject.vertexBuf[i+3] = p2.x;
-            lineObject.vertexBuf[i+4] = 0.1*p2.a;
-            lineObject.vertexBuf[i+5] = p2.z;
-        } 
-	console.log(p1);
+        lineObject.vertexBuf[i+0] = p1.x;  // Vertices
+        lineObject.vertexBuf[i+1] = p1.y;
+        lineObject.vertexBuf[i+2] = p1.z;
+        lineObject.vertexBuf[i+3] = p2.x;
+        lineObject.vertexBuf[i+4] = p2.y;
+        lineObject.vertexBuf[i+5] = p2.z;
+
 	var dist = Math.sqrt((p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y)+(p1.z-p2.z)*(p1.z-p2.z));
 	totalDist += dist;
 	timeMinutes = dist / p2.f;
@@ -827,7 +813,7 @@ createObjectFromGCode = function (gcode, indxMax) {
 
 	var col;
 	var intensity;
-	var lasermultiply = $("#lasermultiply").val() || 100;
+  var lasermultiply = $("#lasermultiply").val() || 100;
 	if (p2.g0) {          // g0
 	    col = {r: 0, g:1, b:0};
 	    intensity = 1.0-p2.s/lasermultiply; // lasermultiply
@@ -916,7 +902,6 @@ createObjectFromGCode = function (gcode, indxMax) {
 		x: args.x !== undefined ? cofg.absolute(lastLine.x, args.x) + cofg.offsetG92.x : lastLine.x,
 		y: args.y !== undefined ? cofg.absolute(lastLine.y, args.y) + cofg.offsetG92.y : lastLine.y,
 		z: args.z !== undefined ? cofg.absolute(lastLine.z, args.z) + cofg.offsetG92.z : lastLine.z,
-		a: args.a !== undefined ? cofg.absolute(lastLine.a, args.a) + cofg.offsetG92.a : lastLine.a,
 		e: args.e !== undefined ? cofg.absolute(lastLine.e, args.e) + cofg.offsetG92.e : lastLine.e,
 		f: args.f !== undefined ? args.f : lastLine.f,
 		s: 100,
@@ -938,7 +923,6 @@ createObjectFromGCode = function (gcode, indxMax) {
 		x: args.x !== undefined ? cofg.absolute(lastLine.x, args.x) + cofg.offsetG92.x : lastLine.x,
 		y: args.y !== undefined ? cofg.absolute(lastLine.y, args.y) + cofg.offsetG92.y : lastLine.y,
 		z: args.z !== undefined ? cofg.absolute(lastLine.z, args.z) + cofg.offsetG92.z : lastLine.z,
-		a: args.a !== undefined ? cofg.absolute(lastLine.a, args.a) + cofg.offsetG92.a : lastLine.a,
 		e: args.e !== undefined ? cofg.absolute(lastLine.e, args.e) + cofg.offsetG92.e : lastLine.e,
 		f: args.f !== undefined ? args.f : lastLine.f,
 		s: args.s !== undefined ? args.s : lastLine.s,
@@ -965,7 +949,6 @@ createObjectFromGCode = function (gcode, indxMax) {
 		x: args.x !== undefined ? cofg.absolute(lastLine.x, args.x) + cofg.offsetG92.x : lastLine.x,
 		y: args.y !== undefined ? cofg.absolute(lastLine.y, args.y) + cofg.offsetG92.y : lastLine.y,
 		z: args.z !== undefined ? cofg.absolute(lastLine.z, args.z) + cofg.offsetG92.z : lastLine.z,
-		a: args.a !== undefined ? cofg.absolute(lastLine.a, args.a) + cofg.offsetG92.a : lastLine.a,
 		e: args.e !== undefined ? cofg.absolute(lastLine.e, args.e) + cofg.offsetG92.e : lastLine.e,
 		f: args.f !== undefined ? args.f : lastLine.f,
 		s: args.s !== undefined ? args.s : lastLine.s,
@@ -992,7 +975,6 @@ createObjectFromGCode = function (gcode, indxMax) {
 		x: args.x !== undefined ? cofg.absolute(lastLine.x, args.x) + cofg.offsetG92.x : lastLine.x,
 		y: args.y !== undefined ? cofg.absolute(lastLine.y, args.y) + cofg.offsetG92.y : lastLine.y,
 		z: args.z !== undefined ? cofg.absolute(lastLine.z, args.z) + cofg.offsetG92.z : lastLine.z,
-		a: args.a !== undefined ? cofg.absolute(lastLine.a, args.a) + cofg.offsetG92.a : lastLine.a,
 		e: args.e !== undefined ? cofg.absolute(lastLine.e, args.e) + cofg.offsetG92.e : lastLine.e,
 		f: args.f !== undefined ? args.f : lastLine.f,
 		s: args.s !== undefined ? args.s : lastLine.s,
@@ -1035,7 +1017,6 @@ createObjectFromGCode = function (gcode, indxMax) {
 		    x: lastLine.x,
 		    y: lastLine.y + cofg.spotSizeG7,
 		    z: lastLine.z,
-		    a: lastLine.a,
 		    e: lastLine.e,
 		    f: lastLine.f,
 		    s: 100,
@@ -1051,7 +1032,6 @@ createObjectFromGCode = function (gcode, indxMax) {
 		    x: lastLine.x + cofg.spotSizeG7*(this.dirG7 == 1 ? 1 : -1),
 		    y: lastLine.y,
 		    z: lastLine.z,
-		    a: lastLine.a,
 		    e: lastLine.e,
 		    f: lastLine.f,
 		    s: intensity,
@@ -1142,7 +1122,6 @@ createObjectFromGCode = function (gcode, indxMax) {
             cofg.offsetG92.x = (args.x !== undefined ? (args.x === 0 ? newLine.x : newLine.x - args.x) : 0);
             cofg.offsetG92.y = (args.y !== undefined ? (args.y === 0 ? newLine.y : newLine.y - args.y) : 0);
             cofg.offsetG92.z = (args.z !== undefined ? (args.z === 0 ? newLine.z : newLine.z - args.z) : 0);
-            cofg.offsetG92.a = (args.a !== undefined ? (args.a === 0 ? newLine.a : newLine.a - args.a) : 0);
             cofg.offsetG92.e = (args.e !== undefined ? (args.e === 0 ? newLine.e : newLine.e - args.e) : 0);
 
             //newLine.x = args.x !== undefined ? args.x + newLine.x : newLine.x;
