@@ -13,7 +13,7 @@ var laserxmax;
 var laserymax;
 var lineincrement = 50
 var camvideo;
-var video, videoImage, videoImageContext, videoTexture, useVideo, movieScreen;
+var imageDetect, video, videoImage, videoImageContext, videoTexture, useVideo, movieScreen;
 var objectsInScene = []; //array that holds all objects we added to the scene.
 
 containerWidth = window.innerWidth;
@@ -40,7 +40,7 @@ function initWebcam() {
 
   window.URL = window.URL || window.webkitURL;
 
-  var camvideo = document.getElementById('monitor');
+  camvideo = document.getElementById('monitor');
 
   	if (!navigator.getUserMedia)
   	{
@@ -55,11 +55,11 @@ function gotStream(stream)
 {
   if (window.URL)
   {
-    var camvideo = document.getElementById('monitor');
+    camvideo = document.getElementById('monitor');
     camvideo.src = window.URL.createObjectURL(stream);   }
   else // Opera
   {
-    var camvideo = document.getElementById('monitor');
+    camvideo = document.getElementById('monitor');
     camvideo.src = stream;   }
   camvideo.onerror = function(e)
   {   stream.stop();   };
@@ -475,6 +475,32 @@ function init3D() {
       	var movieGeometry = new THREE.PlaneGeometry( laserxmax, laserymax, 1, 1 );
       	movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
       	movieScreen.position.set(0,0,-0.2);
+        movieScreen.name ="Video Overlay WebRTC"
+      	scene.add(movieScreen);
+      }
+
+      if (useVideo.indexOf('Remote') == 0) {
+        // initWebcam();
+        imageDetect = document.createElement('img');
+        imageDetect.crossOrigin = 'Anonymous';
+        imageDetect.src = $('#webcamUrl').val()
+      	videoImage = document.getElementById( 'videoImage' );
+      	videoImageContext = videoImage.getContext( '2d' );
+      	// background color if no video present
+      	videoImageContext.fillStyle = '#ffffff';
+      	videoImageContext.fillRect( 0, 0, videoImage.width, videoImage.height );
+        videoImageContext.drawImage( imageDetect, 0, 0 );
+      	videoTexture = new THREE.Texture( videoImage );
+      	videoTexture.minFilter = THREE.LinearFilter;
+      	videoTexture.magFilter = THREE.LinearFilter;
+
+      	var movieMaterial = new THREE.MeshBasicMaterial( { map: videoTexture, overdraw: true, side:THREE.DoubleSide } );
+      	// the geometry on which the movie will be displayed;
+      	// 		movie image will be scaled to fit these dimensions.
+      	var movieGeometry = new THREE.PlaneGeometry( laserxmax, laserymax, 1, 1 );
+      	movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
+      	movieScreen.position.set(0,0,-0.2);
+        movieScreen.name ="Video Overlay MJPG"
       	scene.add(movieScreen);
       }
     }
@@ -502,7 +528,13 @@ function animate() {
       		if ( videoTexture )
       			videoTexture.needsUpdate = true;
       	}
-      }
+      } else if (useVideo.indexOf('Remote') == 0) {
+
+          		videoImageContext.drawImage( imageDetect, 0, 0);
+          		if ( videoTexture )
+          			videoTexture.needsUpdate = true;
+
+          }
     }
     requestAnimationFrame(animate);
 
