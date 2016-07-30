@@ -186,7 +186,8 @@
 				if (options.gcode){
 					return nmpd.display.val();
 				} else {
-					return isNaN(nmpd.display.val()) ? 0 : nmpd.display.val();
+					// return isNaN(nmpd.display.val()) ? 0 : nmpd.display.val();
+					return nmpd.display.val();
 				}
 
 			};
@@ -212,7 +213,7 @@
 			nmpd.close = function(target){
 				// If a target element is given, set it's value to the dipslay value of the numpad. Otherwise just hide the numpad
 				if (target){
-					if (target.prop("tagName") == 'INPUT'){
+					if (target.prop("tagName") == 'INPUT' || target.prop("tagName") == 'TEXTAREA'){
 						target.val(nmpd.getValue().toString().replace('.', options.decimalSeparator));
 					} else {
 						target.html(nmpd.getValue().toString().replace('.', options.decimalSeparator));
@@ -244,8 +245,10 @@
 					if (target.prop("tagName") == 'INPUT'){
 						nmpd.display.val(target.val());
 						nmpd.display.attr('maxLength', target.attr('maxLength'));
+					} else if (isNaN(target.text())) {
+						nmpd.display.val(parseFloat(target.text()) + "Number");
 					} else {
-						nmpd.display.val(parseFloat(target.text()));
+						nmpd.display.val(target.text());
 					}
 				}
 				// Mark the numpad as not dirty initially
