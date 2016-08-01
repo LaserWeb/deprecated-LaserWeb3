@@ -268,16 +268,7 @@ function fillLayerTabs() {
         </div>
         <div id="collapse`+i+`" class="panel-collapse collapse">
           <div class="panel-body" id="panel`+i+`">
-            <div class="form-group">
-              <label >Position Offset</label>
-              <div class="input-group">
-                <span class="input-group-addon">X</span>
-                <input type="number" class="form-control" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`">
-                <span class="input-group-addon">Y</span>
-                <input type="number" class="form-control" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`">
-                <span class="input-group-addon">mm</span>
-              </div>
-            </div>
+
             <div class="form-group">
               <label >Laser Power (0-100%)</label>
               <div class="input-group">
