@@ -38,6 +38,7 @@ var http = require('http');
 var chalk = require('chalk');
 var isConnected, port, isBlocked, lastsent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
+var request = require('request'); // proxy for remote webcams
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -68,11 +69,29 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
 app.listen(config.webPort);
 var fileServer = new static.Server('./public');
 function handler (req, res) {
-  	fileServer.serve(req, res, function (err, result) {
-  		if (err) {
-  			console.error(chalk.red('ERROR:'), chalk.yellow(' fileServer error:'+req.url+' : '), err.message);
-  		}
-  	});
+
+  var queryData = url.parse(req.url, true).query;
+      if (queryData.url) {
+        if (queryData.url != "") {
+          request({
+              url: queryData.url,  // proxy for remote webcams
+              callback: (err, res, body) => {
+                if (err) {
+                  // console.log(err)
+                  console.error(chalk.red('ERROR:'), chalk.yellow(' Remote Webcam Proxy error: '), chalk.white("\""+queryData.url+"\""), chalk.yellow(' is not a valid URL: '));
+                }
+              }
+          }).on('error', function(e) {
+              res.end(e);
+          }).pipe(res);
+        }
+      } else {
+        fileServer.serve(req, res, function (err, result) {
+      		if (err) {
+      			console.error(chalk.red('ERROR:'), chalk.yellow(' fileServer error:'+req.url+' : '), err.message);
+      		}
+      	});
+      };
 }
 function ConvChar( str ) {
   c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;',

@@ -23,7 +23,8 @@
     "dotenv": "*",
     "node-static": "*",
     "serialport": "*",
-    "socket.io": "*"
+    "socket.io": "*",
+    "request": "*"
   },
   "license": "AGPL-3.0"
 }

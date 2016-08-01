@@ -477,20 +477,16 @@ function init3D() {
       	movieScreen.position.set(0,0,-0.2);
         movieScreen.name ="Video Overlay WebRTC"
       	scene.add(movieScreen);
+        videoTexture.needsUpdate = true;
       }
 
       if (useVideo.indexOf('Remote') == 0) {
         // initWebcam();
         imageDetect = document.createElement('img');
         imageDetect.crossOrigin = 'Anonymous';
-        imageDetect.src = $('#webcamUrl').val()
-      	videoImage = document.getElementById( 'videoImage' );
-      	videoImageContext = videoImage.getContext( '2d' );
-      	// background color if no video present
-      	videoImageContext.fillStyle = '#ffffff';
-      	videoImageContext.fillRect( 0, 0, videoImage.width, videoImage.height );
-        videoImageContext.drawImage( imageDetect, 0, 0 );
-      	videoTexture = new THREE.Texture( videoImage );
+        // imageDetect.src = $('#webcamUrl').val()
+        imageDetect.src = './?url=' + $('#webcamUrl').val();
+      	videoTexture = new THREE.Texture( imageDetect );
       	videoTexture.minFilter = THREE.LinearFilter;
       	videoTexture.magFilter = THREE.LinearFilter;
 
@@ -502,6 +498,16 @@ function init3D() {
       	movieScreen.position.set(0,0,-0.2);
         movieScreen.name ="Video Overlay MJPG"
       	scene.add(movieScreen);
+        videoTexture.needsUpdate = true;
+
+        setInterval(function(){
+          imageDetect.onload = function () {
+            videoTexture.needsUpdate = true;
+          }
+          imageDetect.crossOrigin = 'Anonymous';
+          imageDetect.src = './?url=' + $('#webcamUrl').val();
+        }, 250);
+
       }
     }
 
@@ -522,19 +528,14 @@ function animate() {
   //useVideo = $('#useVideo').val()
   if (useVideo) {
     if (useVideo.indexOf('Enable') == 0) {
-        if ( video.readyState === video.HAVE_ENOUGH_DATA )
-      	{
+        if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
       		videoImageContext.drawImage( video, 0, 0, videoImage.width, videoImage.height );
-      		if ( videoTexture )
-      			videoTexture.needsUpdate = true;
-      	}
-      } else if (useVideo.indexOf('Remote') == 0) {
-
-          		videoImageContext.drawImage( imageDetect, 0, 0);
-          		if ( videoTexture )
-          			videoTexture.needsUpdate = true;
-
+      		if ( videoTexture ) {
+            videoTexture.needsUpdate = true;
           }
+      	}
+      }
+
     }
     requestAnimationFrame(animate);
 
