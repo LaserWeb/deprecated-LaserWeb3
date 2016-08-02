@@ -250,34 +250,9 @@ function init3D() {
     }
     bullseye = new THREE.Object3D();
 
-    var material = new THREE.MeshBasicMaterial({
+    var material = new THREE.LineBasicMaterial({
         color: 0xFF0000
     });
-
-    // var radius = 3.5;
-    // var segments = 32;
-    // var circleGeometry = new THREE.CircleGeometry(radius, segments);
-    // var circle = new THREE.Line(circleGeometry, material);
-    // bullseye.add(circle);
-    //
-    // var geometryx = new THREE.Geometry();
-    // geometryx.vertices.push(
-    //     new THREE.Vector3(-6, 0, 0),
-    //     new THREE.Vector3(6, 0, 0)
-    // );
-    // var linex = new THREE.Line(geometryx, material);
-    // linex.position = (0, 0, 0)
-    // bullseye.add(linex);
-    //
-    // var geometryy = new THREE.Geometry();
-    // geometryy.vertices.push(
-    //     new THREE.Vector3(0, -6, 0),
-    //     new THREE.Vector3(0, 6, 0)
-    // );
-    // var liney = new THREE.Line(geometryy, material);
-    // liney.position = (0, 0, 0)
-    // bullseye.add(liney);
-
 
     var cone = new THREE.Mesh(new THREE.CylinderGeometry(0, 5, 40, 15, 1, false), new THREE.MeshPhongMaterial( {
         color: 0x0000ff,
