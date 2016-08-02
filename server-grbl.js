@@ -25,8 +25,7 @@
 */
 var config = require('./config');
 var serialport = require("serialport");
-var SerialPort = serialport.SerialPort
-var app = require('http').createServer(handler)
+var SerialPort = serialportvar app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
   , fs = require('fs');
 var static = require('node-static');
