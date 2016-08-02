@@ -5,19 +5,19 @@ function initTabs() {
     var newval = parseFloat(inputVal, 3)
     var id = $(this).attr('id');
     var objectseq = $(this).attr('objectseq');
-    console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
+    // console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
     if ( id.indexOf('rasterxoffset') == 0 ) {
       objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + newval;
-      console.log('Moving ' +objectsInScene[objectseq].name+ ' to X: '+newval);
+      // console.log('Moving ' +objectsInScene[objectseq].name+ ' to X: '+newval);
       attachBB(objectsInScene[objectseq]);
     } else if ( id.indexOf('rasteryoffset') == 0 ) {
       objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + newval;
-      console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y: '+newval);
+      // console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y: '+newval);
       attachBB(objectsInScene[objectseq]);
     } else if ( id.indexOf('rasterDPI') == 0 ) {
       var bboxpre = new THREE.Box3().setFromObject(objectsInScene[objectseq]);
-      console.log('bbox for BEFORE SCALE: Min X: ', (bboxpre.min.x + (laserxmax / 2)), '  Max X:', (bboxpre.max.x + (laserxmax / 2)), 'Min Y: ', (bboxpre.min.y + (laserymax / 2)), '  Max Y:', (bboxpre.max.y + (laserymax / 2)));
-      console.log('Scaling ' +objectsInScene[objectseq].name+ ' to: '+scale);
+      // console.log('bbox for BEFORE SCALE: Min X: ', (bboxpre.min.x + (laserxmax / 2)), '  Max X:', (bboxpre.max.x + (laserxmax / 2)), 'Min Y: ', (bboxpre.min.y + (laserymax / 2)), '  Max Y:', (bboxpre.max.y + (laserymax / 2)));
+      // console.log('Scaling ' +objectsInScene[objectseq].name+ ' to: '+scale);
       var scale = (25.4 / newval);
       objectsInScene[objectseq].scale.x = scale;
       objectsInScene[objectseq].scale.y = scale;
@@ -54,8 +54,8 @@ function initTabs() {
   });
 
   $('#tabsLayers').on('click','a',function(){
-    console.log("selected object id: " + $(this).attr('layerindex'));
-    console.log("selected tab name: " + $(this).parents('li').attr('id'));
+    // console.log("selected object id: " + $(this).attr('layerindex'));
+    // console.log("selected tab name: " + $(this).parents('li').attr('id'));
 
     var tabName = $(this).parents('li').attr('id')
 
@@ -63,7 +63,7 @@ function initTabs() {
     $(this).parents('li').addClass('active');
     if (tabName == "allView") {
       for (var j = 0; j < objectsInScene.length; j++) {
-        console.log('added object ' + j)
+        // console.log('added object ' + j)
         scene.add(objectsInScene[j]);
         if (objectsInScene[j].userData) {
           if (objectsInScene[j].userData.inflated) {
@@ -77,7 +77,7 @@ function initTabs() {
       scene.remove(boundingBox)
     } else if (tabName == "gCodeView") {
       if (objectsInScene.length > 0) {
-        console.log('L: ', scene.children.length)
+        // console.log('L: ', scene.children.length)
         if (typeof(boundingBox) != 'undefined') {
             scene.remove(boundingBox);
         }

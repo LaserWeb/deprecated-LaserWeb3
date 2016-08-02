@@ -23,6 +23,5 @@ function openGCodeFromText() {
   var gcode = prepgcodefile();
 
 	createObject(gcode);
-  console.timeEnd("Process 3D View");
 	
 }

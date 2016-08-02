@@ -7,6 +7,7 @@ function initLocalStorage() {
 localParams = ['rapidspeed', 'subnet1', 'subnet2', 'subnet3',  'smoothieIp', 'laserXMax', 'laserYMax', 'spotSize', 'startgcode', 'laseron', 'laseroff', 'lasermultiply', 'homingseq', 'endgcode', 'imagePosition', 'useNumPad', 'useVideo', 'cncMode', 'webcamUrl'];
 
 function saveSettingsLocal() {
+  console.group("Saving settings to LocalStorage")
     for (i = 0; i < localParams.length; i++) {
         var val = $('#' + localParams[i]).val(); // Read the value from form
         console.log('Saving: ', localParams[i], ' : ', val);
@@ -14,9 +15,11 @@ function saveSettingsLocal() {
         localStorage.setItem(localParams[i], val);
     };
     printLog('<b>Saved Settings: <br>NB:</b> Please refresh page for settings to take effect', errorcolor, "settings");
+    console.groupEnd();
 };
 
 function loadSettingsLocal() {
+  console.group("Loading settings from LocalStorage")
     for (i = 0; i < localParams.length; i++) {
         var val = localStorage.getItem(localParams[i]);
         if (val) {
@@ -24,6 +27,7 @@ function loadSettingsLocal() {
             $('#' + localParams[i]).val(val) // Set the value to Form from Storage
         };
     };
+    console.groupEnd();
 };
 
 function backupSettingsLocal() {

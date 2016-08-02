@@ -99,11 +99,12 @@ function drawRaster(name, data) {
 };
 
 function runRaster(index) {
+  // console.group("Preparing Raster..")
   var seq = objectsInScene[index].userData.seq;
   var toRaster = 'origImage'+seq;
   var spotSizeMul = parseFloat($('#spotSize').val());
   var laserRapid = parseFloat($('#rapidspeed').val()) * 60;
-  console.log("RAPIDSPEED", laserRapid)
+  // console.log("RAPIDSPEED", laserRapid)
   var imagePosition = $('#imagePosition').val()
 
   // var laserFeed = $('#feedRate'+index).val() * 60;
@@ -123,7 +124,7 @@ function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, black
 
     dpival = rasterDPI * 0.03937007874016;
     var img = document.getElementById(toRaster);
-    console.log(toRaster)
+    // console.log(toRaster)
     height = img.naturalHeight;
     width = img.naturalWidth;
     var physheight = (height / dpival)
@@ -157,6 +158,7 @@ function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, black
 
 
 function gcodereceived(i) {
+
     printLog('Raster Completed for <b>' + objectsInScene[i].name + '</b>' , msgcolor, "raster")
     var template = `
     <form class="form-horizontal">
@@ -173,5 +175,9 @@ function gcodereceived(i) {
 
     $('#startgcodefinal').val(startgcode)
     $('#endgcodefinal').val(endgcode);
+
+
+    console.groupEnd();
+
     openGCodeFromText();
 };
