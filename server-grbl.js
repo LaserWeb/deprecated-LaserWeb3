@@ -38,6 +38,8 @@ var http = require('http');
 var chalk = require('chalk');
 var isConnected, port, isBlocked, lastsent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
+var request = require('request'); // proxy for remote webcams
+
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log(chalk.green(' '));
