@@ -2,6 +2,7 @@ body {
     height: 100%;
     width: 100%;
     position: absolute;
+    padding-top: 45px;
 }
 
 button:focus {outline:0 !important;}

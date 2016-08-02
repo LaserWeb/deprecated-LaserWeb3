@@ -97,6 +97,7 @@ function generateSlices() {
 }
 
 function slicegrid(step) {
+  console.group("Slicing STL");
     var numx = Math.floor(laserxmax / (stlxsize + 3));
     var numy = Math.floor(laserymax / (stlysize + 3));
     var numlayers = Math.floor(stlzsize / parseFloat($('#layerheight').val()))
@@ -139,8 +140,8 @@ function slicegrid(step) {
     //object.add(stl);
 
     // Calculate position
-    console.log(' Min: ', bbox.box.min);
-    console.log(' Max: ', bbox.box.max);
+    // console.log(' Min: ', bbox.box.min);
+    // console.log(' Max: ', bbox.box.max);
 
     slicegroup.position.z = 0;
     slicegroup.translateX(-bbox.box.min.x);
@@ -160,6 +161,9 @@ function slicegrid(step) {
     fileobject = slicegroup;
     viewExtents(slicegroup);
     fillLayerTabs();
+
+    console.log("Slice Completed")
+    console.groupEnd();
 }
 
 function allSlice(maxheight, step) {

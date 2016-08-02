@@ -8,6 +8,7 @@ var options = {};
 $(document).ready(function() {
 
     $('#generategcode').on('click', function() { // DXF job Params to MC
+      console.group("Generating GCODE");
         if (typeof(fileObject) == 'undefined') {
             printLog('No file loaded. do, File -> Open, first!', errorcolor, "file")
         };
@@ -35,7 +36,7 @@ $(document).ready(function() {
           scene.remove(scene.children[j]);
         }
         for (var j = 0; j < objectsInScene.length; j++) {
-          console.log('added object ' + j)
+          // console.log('added object ' + j)
           scene.add(objectsInScene[j]);
         }
 
@@ -53,10 +54,10 @@ $(document).ready(function() {
             objectsInScene[j].updateMatrix();
             if (objectsInScene[j].name != 'object') {
               if (objectsInScene[j].type == "Mesh") {
-                console.log('Object '+j+' is a Raster')
+                console.log('Object: '+objectsInScene[j].name+' is a Raster')
                 runRaster(j)
               } else {
-                console.log('Object '+j+' is a Vector')
+                console.log('Object: '+objectsInScene[j].name+' is a Vector')
                 var cutSpeed0 = parseFloat( $("#speed"+(j)).val() ) * 60;
                 var pwr0 = parseFloat( $("#power"+(j)).val() );
                 var plungeSpeed0 = parseFloat( $("#plungespeed"+(j)).val() ) * 60;
@@ -108,11 +109,14 @@ $(document).ready(function() {
         scene.remove(inflateGrp);
 
         $('#gcode-menu').click();
+        console.groupEnd();
         openGCodeFromText();
     });
 });
 
 function prepgcodefile() {
+
+  console.group("Consolidating GCODE file");
   var startgcode = document.getElementById('startgcode').value;
   var endgcode = document.getElementById('endgcode').value;
   var g = ""
@@ -127,6 +131,7 @@ function prepgcodefile() {
 
   for (j = 0; j < objectsInScene.length; j++) {
       printLog('Preparing Gcode File: ' + objectsInScene[j].name, msgcolor, "file")
+      console.log('Preparing Gcode File: ' + objectsInScene[j].name)
       // document.getElementById('gcodepreview').value = "";
       if (typeof(objectsInScene[j].userData.gcode) != "undefined") {
        g += objectsInScene[j].userData.gcode
@@ -138,19 +143,20 @@ function prepgcodefile() {
   if (endgcode) {
     g += endgcode;
   }
+  console.groupEnd();
   return g;
 }
 
 function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset) {
 
     var laserPwrVal = 0.0;
-    console.log('inside generateGcode')
-    console.log('Group', threeGroup);
-    console.log('CutSpeed', cutSpeed);
-    console.log('plungeSpeed', plungeSpeed);
-    console.log('Laser Power %', laserPwr);
+    // console.log('inside generateGcode')
+    // console.log('Group', threeGroup);
+    // console.log('CutSpeed', cutSpeed);
+    // console.log('plungeSpeed', plungeSpeed);
+    // console.log('Laser Power %', laserPwr);
     var lasermultiply = $('#lasermultiply').val();
-    console.log('Laser Multiplier', lasermultiply);
+    // console.log('Laser Multiplier', lasermultiply);
 
     if (lasermultiply <= 1) {
         var laserPwrVal = laserPwr / 100;
@@ -159,7 +165,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
         var laserPwrVal = laserPwr * (lasermultiply / 100);
         laserPwrVal = laserPwrVal.toFixed(0);
     }
-    console.log('Laser Power Value', laserPwrVal, ' type of ', typeof(laserPwrVal));
+    // console.log('Laser Power Value', laserPwrVal, ' type of ', typeof(laserPwrVal));
 
     var g = "";
     // get the THREE.Group() that is the txt3d
@@ -173,14 +179,14 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
     var isSeekrateSpecifiedAlready = false;
     // var subj_path2 = [];
     // var subj_paths = [];
-    console.log(txtGrp);
-    console.log(rapidSpeed)
-    console.log(cutSpeed);
+    // console.log(txtGrp);
+    // console.log(rapidSpeed)
+    // console.log(cutSpeed);
 
     // txtGrp.updateMatrixWorld();
 
     txtGrp.traverse(function(child) {
-        console.log(child);
+        // console.log(child);
         if (child.type == "Line") {
             // let's create gcode for all points in line
             for (i = 0; i < child.geometry.vertices.length; i++) {
@@ -214,7 +220,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                     if (isSeekrateSpecifiedAlready) {
                         seekrate = "";
                     } else {
-                        console.log('Rapid Speed: ', rapidSpeed);
+                        // console.log('Rapid Speed: ', rapidSpeed);
                         if (rapidSpeed) {
                             seekrate = " F" + rapidSpeed;
                             isSeekrateSpecifiedAlready = true;
@@ -237,7 +243,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                     } else {
                       if (isFeedrateSpecifiedAlready) {
                       } else {
-                          console.log('Cut Speed: ', cutSpeed);
+                          // console.log('Cut Speed: ', cutSpeed);
                           if (cutSpeed) {
                               feedrate = " F" + cutSpeed;
                               isFeedrateSpecifiedAlready = true;
@@ -298,7 +304,8 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
             }
         }
     });
-    console.log("generated gcode. length:", g.length);
+    console.log("Generated gcode. length:", g.length);
+    console.log(" ");
     isGcodeInRegeneratingState = false;
     return g;
 };

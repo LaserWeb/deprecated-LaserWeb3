@@ -208,17 +208,17 @@ function putFileObjectAtZero(object) {
   }
 
   var bbox2 = new THREE.Box3().setFromObject(object);
-  console.log('bbox for putFileObjectAtZero: Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
+  // console.log('bbox for putFileObjectAtZero: Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
   Xtofix = -(bbox2.min.x + (laserxmax / 2));
   imagePosition = $('#imagePosition').val()
-  console.log('ImagePosition', imagePosition)
+  // console.log('ImagePosition', imagePosition)
   if (imagePosition == "TopLeft") {
       Ytofix = (laserymax / 2) - bbox2.max.y;
   } else {
       Ytofix = -(bbox2.min.y + (laserymax / 2));
   }
-  console.log('X Offset', Xtofix)
-  console.log('Y Offset', Ytofix)
+  // console.log('X Offset', Xtofix)
+  // console.log('Y Offset', Ytofix)
   object.translateX(Xtofix);
   object.translateY(Ytofix);
   calcZeroOffset(object);
@@ -229,10 +229,10 @@ function putFileObjectAtZero(object) {
 function calcZeroOffset(object) {
       if (object) {
         var bbox2 = new THREE.Box3().setFromObject(object);
-        console.log('bbox for object: Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
+        // console.log('bbox for object: Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
         xfromzero = -(bbox2.min.x + (laserxmax / 2));
         imagePosition = $('#imagePosition').val()
-        console.log('ImagePosition', imagePosition)
+        // console.log('ImagePosition', imagePosition)
         if (imagePosition == "TopLeft") {
             yfromzero = (laserymax / 2) - bbox2.max.y;
         } else {
@@ -240,8 +240,8 @@ function calcZeroOffset(object) {
         }
         var xoffset = ( object.position.x - xfromzero )
         var yoffset = ( object.position.y - yfromzero )
-        console.log('X Offset', xoffset )
-        console.log('Y Offset', yoffset )
+        // console.log('X Offset', xoffset )
+        // console.log('Y Offset', yoffset )
         object.userData.offsetX = xoffset
         object.userData.offsetY = yoffset
     }

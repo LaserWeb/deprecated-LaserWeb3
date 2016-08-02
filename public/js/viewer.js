@@ -13,7 +13,7 @@ var laserxmax;
 var laserymax;
 var lineincrement = 50
 var camvideo;
-var video, videoImage, videoImageContext, videoTexture, useVideo, movieScreen;
+var imageDetect, video, videoImage, videoImageContext, videoTexture, useVideo, movieScreen;
 var objectsInScene = []; //array that holds all objects we added to the scene.
 
 containerWidth = window.innerWidth;
@@ -40,7 +40,7 @@ function initWebcam() {
 
   window.URL = window.URL || window.webkitURL;
 
-  var camvideo = document.getElementById('monitor');
+  camvideo = document.getElementById('monitor');
 
   	if (!navigator.getUserMedia)
   	{
@@ -55,11 +55,11 @@ function gotStream(stream)
 {
   if (window.URL)
   {
-    var camvideo = document.getElementById('monitor');
+    camvideo = document.getElementById('monitor');
     camvideo.src = window.URL.createObjectURL(stream);   }
   else // Opera
   {
-    var camvideo = document.getElementById('monitor');
+    camvideo = document.getElementById('monitor');
     camvideo.src = stream;   }
   camvideo.onerror = function(e)
   {   stream.stop();   };
@@ -194,7 +194,7 @@ function init3D() {
 
 
     controls.enableZoom = true; // optional
-    controls.noKeys = true; // Disable Keyboard on canvas
+    controls.enableKeys = false; // Disable Keyboard on canvas
     //controls.mouseButtons = { PAN: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, ORBIT: THREE.MOUSE.RIGHT }; // swapping left and right buttons
     // /var STATE = { NONE : - 1, ROTATE : 0, DOLLY : 1, PAN : 2, TOUCH_ROTATE : 3, TOUCH_DOLLY : 4, TOUCH_PAN : 5 };
 
@@ -250,34 +250,9 @@ function init3D() {
     }
     bullseye = new THREE.Object3D();
 
-    var material = new THREE.MeshBasicMaterial({
+    var material = new THREE.LineBasicMaterial({
         color: 0xFF0000
     });
-
-    // var radius = 3.5;
-    // var segments = 32;
-    // var circleGeometry = new THREE.CircleGeometry(radius, segments);
-    // var circle = new THREE.Line(circleGeometry, material);
-    // bullseye.add(circle);
-    //
-    // var geometryx = new THREE.Geometry();
-    // geometryx.vertices.push(
-    //     new THREE.Vector3(-6, 0, 0),
-    //     new THREE.Vector3(6, 0, 0)
-    // );
-    // var linex = new THREE.Line(geometryx, material);
-    // linex.position = (0, 0, 0)
-    // bullseye.add(linex);
-    //
-    // var geometryy = new THREE.Geometry();
-    // geometryy.vertices.push(
-    //     new THREE.Vector3(0, -6, 0),
-    //     new THREE.Vector3(0, 6, 0)
-    // );
-    // var liney = new THREE.Line(geometryy, material);
-    // liney.position = (0, 0, 0)
-    // bullseye.add(liney);
-
 
     var cone = new THREE.Mesh(new THREE.CylinderGeometry(0, 5, 40, 15, 1, false), new THREE.MeshPhongMaterial( {
         color: 0x0000ff,
@@ -475,7 +450,39 @@ function init3D() {
       	var movieGeometry = new THREE.PlaneGeometry( laserxmax, laserymax, 1, 1 );
       	movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
       	movieScreen.position.set(0,0,-0.2);
+        movieScreen.name ="Video Overlay WebRTC"
       	scene.add(movieScreen);
+        videoTexture.needsUpdate = true;
+      }
+
+      if (useVideo.indexOf('Remote') == 0) {
+        // initWebcam();
+        imageDetect = document.createElement('img');
+        imageDetect.crossOrigin = 'Anonymous';
+        // imageDetect.src = $('#webcamUrl').val()
+        imageDetect.src = './?url=' + $('#webcamUrl').val();
+      	videoTexture = new THREE.Texture( imageDetect );
+      	videoTexture.minFilter = THREE.LinearFilter;
+      	videoTexture.magFilter = THREE.LinearFilter;
+
+      	var movieMaterial = new THREE.MeshBasicMaterial( { map: videoTexture, overdraw: true, side:THREE.DoubleSide } );
+      	// the geometry on which the movie will be displayed;
+      	// 		movie image will be scaled to fit these dimensions.
+      	var movieGeometry = new THREE.PlaneGeometry( laserxmax, laserymax, 1, 1 );
+      	movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
+      	movieScreen.position.set(0,0,-0.2);
+        movieScreen.name ="Video Overlay MJPG"
+      	scene.add(movieScreen);
+        videoTexture.needsUpdate = true;
+
+        setInterval(function(){
+          imageDetect.onload = function () {
+            videoTexture.needsUpdate = true;
+          }
+          imageDetect.crossOrigin = 'Anonymous';
+          imageDetect.src = './?url=' + $('#webcamUrl').val();
+        }, 250);
+
       }
     }
 
@@ -496,13 +503,14 @@ function animate() {
   //useVideo = $('#useVideo').val()
   if (useVideo) {
     if (useVideo.indexOf('Enable') == 0) {
-        if ( video.readyState === video.HAVE_ENOUGH_DATA )
-      	{
+        if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
       		videoImageContext.drawImage( video, 0, 0, videoImage.width, videoImage.height );
-      		if ( videoTexture )
-      			videoTexture.needsUpdate = true;
+      		if ( videoTexture ) {
+            videoTexture.needsUpdate = true;
+          }
       	}
       }
+
     }
     requestAnimationFrame(animate);
 
@@ -519,7 +527,7 @@ function animate() {
 
 viewExtents = function(objecttosee) {
     //console.log("viewExtents. object.userData:", this.object.userData);
-    console.log("controls:", controls);
+    // console.log("controls:", controls);
     //wakeAnimate();
 
     // lets override the bounding box with a newly
@@ -534,7 +542,7 @@ viewExtents = function(objecttosee) {
 
     // If you want a visible bounding box
     //this.scene.add(this.bboxHelper);
-    console.log("helper bbox:", helper);
+    // console.log("helper bbox:", helper);
 
     var minx = helper.box.min.x;
     var miny = helper.box.min.y;
@@ -554,7 +562,7 @@ viewExtents = function(objecttosee) {
     var centerz = minz + (lenz / 2);
 
 
-    console.log("lenx:", lenx, "leny:", leny, "lenz:", lenz);
+    // console.log("lenx:", lenx, "leny:", leny, "lenz:", lenz);
     var maxlen = Math.max(lenx, leny, lenz);
     var dist = 2 * maxlen;
     // center camera on gcode objects center pos, but twice the maxlen
@@ -564,9 +572,9 @@ viewExtents = function(objecttosee) {
     controls.target.x = centerx;
     controls.target.y = centery;
     controls.target.z = centerz;
-    console.log("maxlen:", maxlen, "dist:", dist);
+    // console.log("maxlen:", maxlen, "dist:", dist);
     var fov = 2.2 * Math.atan(maxlen / (2 * dist)) * (180 / Math.PI);
-    console.log("new fov:", fov, " old fov:", controls.object.fov);
+    // console.log("new fov:", fov, " old fov:", controls.object.fov);
     if (isNaN(fov)) {
         console.log("giving up on viewing extents because fov could not be calculated");
         return;
@@ -586,7 +594,7 @@ viewExtents = function(objecttosee) {
 
       // Zoom correction
       camera.translateZ(L - l);
-      console.log("up:", up);
+      // console.log("up:", up);
       up.y = 1;
       up.x = 0;
       up.z = 0;
@@ -662,7 +670,7 @@ function makeSprite(scene, rendererType, vals) {
 
     var material = new THREE.SpriteMaterial({
         map: texture,
-        useScreenCoordinates: false,
+        // useScreenCoordinates: false,
         transparent: true,
         opacity: 0.6
     });
@@ -787,7 +795,7 @@ function attachBB(object) {
     }
 
       var bbox2 = new THREE.Box3().setFromObject(object);
-    console.log('bbox for Clicked Obj: '+ object +' Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
+    // console.log('bbox for Clicked Obj: '+ object +' Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
 
     BBmaterial =  new THREE.LineDashedMaterial( { color: 0xaaaaaa, dashSize: 5, gapSize: 4, linewidth: 2 } );
     BBgeometry = new THREE.Geometry();

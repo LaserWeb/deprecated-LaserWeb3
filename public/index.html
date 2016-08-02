@@ -9,7 +9,7 @@
     <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator">
     <meta name="google-site-verification" content="Q5N27jmbSMfsf_oC4UmRlNDVXKta7BP4DaDq1h0Ox5Y" />
     <meta name="author" content="github.com/openhardwarecoza/LaserWeb2/">
-    <meta name="version" content="30188">
+    <meta name="version" content="30216">
 
     <!--IE Compatibility modes-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -124,12 +124,6 @@
 
     <!-- User Interface -->
     <script src="js/main.js"></script>
-
-    <!--Google Sign-in-->
-    <script src="https://apis.google.com/js/client.js"></script>
-    <script src="js/googlesignin.js"></script>
-    <meta name="google-signin-client_id" content="1086441811451-4nmidqbqq8tve1qqa592uq1hs04kl5sl.apps.googleusercontent.com">
-    <link rel="stylesheet" href="css/googlesignin.css" />
 
     <!-- Product tour -->
     <script src="js/tour.js"></script>
@@ -346,12 +340,7 @@
                 </tr>
               </table>
             </center>
-            <nav>
-              <ul class="pager">
-                <!-- <li class="previous"><a href="#" onclick="$('#connectVia').click();"><span aria-hidden="true">&larr;</span> Connect</a></li> -->
-                <li class="next"><a href="#" onclick="$('#console-menu').click();">View Log <span aria-hidden="true">&rarr;</span></a></li>
-              </ul>
-            </nav>
+
           </div>
           <!-- end jog -->
           <!-- quote -->
@@ -555,19 +544,7 @@
                                   <option>Enable</option>
                               </select>
 
-                              <label for="autoClose" class="control-label">Auto Close SVG Shapes<br></label>
-                              <label for="autoClose" class="control-label"><span style="color:#FFA500;">(Some files needs this to render properly)</span></label>
-                                <select class="form-control" id="autoClose">
-                                  <option>Yes</option>
-                                  <option>No</option>
-                                </select>
-                              <!-- <label for="" class="control-label">Experimental: Tool Offset </label> -->
-                              <!-- <select class="form-control" id="useOffset">
-                                  <option>Enable</option>
-                                  <option>Disable</option>
-                              </select> -->
-                          <!-- </div>
-                          <div class="form-group"> -->
+
                               <label for="imagePosition" class="control-label">Place uploaded image in quadrant <a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/wiki/Settings:--Image-Position">(help)</a></label>
                               <select class="form-control" id="imagePosition">
                                   <option>BottomLeft</option>
@@ -584,9 +561,11 @@
                               <select class="form-control" id="useVideo">
                                   <option>Disable</option>
                                   <option>Enable</option>
+                                  <option>Remote</option>
                               </select>
 
-
+                              <label for="webcamUrl" class="control-label">Remote Webcam URL <a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/wiki/Settings:-Remote-Webcam">(help)</a></label>
+                              <input type="text" class="form-control" id="webcamUrl" placeholder="http://192.168.1.100:8080/?action=snapshot"></input>
                           <!-- </div> -->
                         </p>
                       </form>
@@ -598,7 +577,7 @@
                           <!-- <div class="form-group"> -->
                               <div class="btn-group input-group  btn-group-justified" role="group" id="jogx" aria-label="Backup">
                                   <div class="btn-group" role="group">
-                                      <button id="backup" class="btn btn-lg btn-default btn-file" title="Take a backup" onclick="backupSettingsLocal()"><i class="fa fa-download fa-fw" aria-hidden="true"></i></i>Backup Settings</button>
+                                      <a id="backup" class="btn btn-lg btn-default btn-file" title="Take a backup" onclick="backupSettingsLocal()"><i class="fa fa-download fa-fw" aria-hidden="true"></i></i>Backup Settings</a>
                                   </div>
                               </div>
                               <p>
@@ -606,7 +585,7 @@
                           <!-- <div class="form-group"> -->
                               <div class="btn-group input-group  btn-group-justified" role="group" id="jogx" aria-label="Restore">
                                   <div class="btn-group" role="group">
-                                      <span id="restore" class="btn btn-lg btn-default btn-file" title="Open a backup settings file"><i class="fa fa-upload  fa-fw" aria-hidden="true"></i>Restore from file<input id="jsonFile" type="file" accept=".json" /></span>
+                                      <span id="restore" href="#" class="btn btn-lg btn-default btn-file" title="Open a backup settings file"><i class="fa fa-upload  fa-fw" aria-hidden="true"></i>Restore from file<input id="jsonFile" type="file" accept=".json" /></span>
                                   </div>
                               </div>
                               <p>
@@ -797,6 +776,9 @@
 <video id="monitor" autoplay width="160" height="120" style="display: none; visibility: hidden; float:left;"></video>
 
 <canvas id="videoImage" width="160" height="120" style="display: none; visibility: hidden; float:left;"></canvas>
+
+<img id="imageDetect" crossOrigin width="160" height="120" style="display: none; visibility: hidden; float:left;"></canvas>
+
 
 <div id="work-area" style="display: none; visibility: hidden; float:left;">
   <div id="svgpreview"></div>
@@ -1004,7 +986,7 @@ $("#jog-menu").click(function() {
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-38524928-2', 'none');
+  ga('create', 'UA-38524928-3', 'auto');
   ga('send', 'pageview');
 
 </script>

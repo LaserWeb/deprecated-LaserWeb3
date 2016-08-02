@@ -35,7 +35,7 @@ if (!String.prototype.format) {
 
 function drawRaster(name, data) {
 
-    console.log('inside drawRaster')
+    console.group('Raster File')
 
     var currentIdx = objectsInScene.length + 100;
 
@@ -64,7 +64,7 @@ function drawRaster(name, data) {
         printLog('Bitmap Opened', msgcolor, "raster");
         //tbfleming's threejs texture code
 
-        console.log('Sanity Check', img, imgwidth, imgheight)
+        // console.log('Sanity Check', img, imgwidth, imgheight)
 
         var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
 
@@ -94,15 +94,17 @@ function drawRaster(name, data) {
     };
     // This actually loads the image, and fires the onload above.
     img.src = data;
-
+    console.log("Raster Opened")
+    console.groupEnd();
 };
 
 function runRaster(index) {
+  // console.group("Preparing Raster..")
   var seq = objectsInScene[index].userData.seq;
   var toRaster = 'origImage'+seq;
   var spotSizeMul = parseFloat($('#spotSize').val());
   var laserRapid = parseFloat($('#rapidspeed').val()) * 60;
-  console.log("RAPIDSPEED", laserRapid)
+  // console.log("RAPIDSPEED", laserRapid)
   var imagePosition = $('#imagePosition').val()
 
   // var laserFeed = $('#feedRate'+index).val() * 60;
@@ -122,7 +124,7 @@ function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, black
 
     dpival = rasterDPI * 0.03937007874016;
     var img = document.getElementById(toRaster);
-    console.log(toRaster)
+    // console.log(toRaster)
     height = img.naturalHeight;
     width = img.naturalWidth;
     var physheight = (height / dpival)
@@ -156,6 +158,7 @@ function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, black
 
 
 function gcodereceived(i) {
+
     printLog('Raster Completed for <b>' + objectsInScene[i].name + '</b>' , msgcolor, "raster")
     var template = `
     <form class="form-horizontal">
@@ -172,5 +175,9 @@ function gcodereceived(i) {
 
     $('#startgcodefinal').val(startgcode)
     $('#endgcodefinal').val(endgcode);
+
+
+    console.groupEnd();
+
     openGCodeFromText();
 };

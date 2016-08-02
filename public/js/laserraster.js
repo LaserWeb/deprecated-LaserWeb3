@@ -56,8 +56,8 @@ function Rasterizer(config) {
 
     this.config = config;
 
-    console.log('[Rasterizer] Width: ' + this.config.imgwidth + '  Height: ' + this.config.imgheight);
-    console.log('[Rasterizer] Phys Width: ' + this.config.physicalHeight + '  Height: ' + this.config.physicalWidth);
+    // console.log('[Rasterizer] Width: ' + this.config.imgwidth + '  Height: ' + this.config.imgheight);
+    // console.log('[Rasterizer] Phys Width: ' + this.config.physicalHeight + '  Height: ' + this.config.physicalWidth);
 
     // Init some variables we'll be using in the process
     this.path = '';
@@ -145,7 +145,7 @@ Rasterizer.prototype.figureSpeed = function(passedGrey) {
 };
 
 Rasterizer.prototype.init = function(div) {
-    console.log('INIT Container: ', this.config.div)
+    // console.log('INIT Container: ', this.config.div)
     this.startTime = Date.now();
 
     // Initialise
@@ -157,15 +157,15 @@ Rasterizer.prototype.init = function(div) {
     this.raster.visible = false;
 
     // Log it as a sanity check
-    console.log('Constraining Laser power between {0}% and {1}%'.format(this.config.minIntensity, this.config.maxIntensity));
-    console.log('Height: {0}px, Width: {1}px'.format(this.config.physHeight, this.config.physWidth));
-    console.log('Spot Size: {0}mm'.format(this.config.spotSize1));
-    console.log('Raster Width: {0} Height: {1}'.format(this.raster.width, this.raster.height));
-    console.log('G0: {0}mm/s, G1: {1}mm/s'.format(this.config.rapidRate, this.config.feedRate));
-    console.log('Black speed: {0} Whitespeed: {1}'.format(this.config.blackRate, this.config.whiteRate));
+    // console.log('Constraining Laser power between {0}% and {1}%'.format(this.config.minIntensity, this.config.maxIntensity));
+    // console.log('Height: {0}px, Width: {1}px'.format(this.config.physHeight, this.config.physWidth));
+    // console.log('Spot Size: {0}mm'.format(this.config.spotSize1));
+    // console.log('Raster Width: {0} Height: {1}'.format(this.raster.width, this.raster.height));
+    // console.log('G0: {0}mm/s, G1: {1}mm/s'.format(this.config.rapidRate, this.config.feedRate));
+    // console.log('Black speed: {0} Whitespeed: {1}'.format(this.config.blackRate, this.config.whiteRate));
     // As the web is asynchronous, we need to wait for the raster to load before we can perform any operation on its pixels.
     this.raster.on('load', this.onRasterLoaded.bind(this));
-    console.log('Raster: ', this.raster)
+    // console.log('Raster: ', this.raster)
 };
 
 
@@ -304,7 +304,7 @@ Rasterizer.prototype.rasterInterval = function() {
 };
 
 Rasterizer.prototype.onRasterLoaded = function() {
-    console.log('[Rasterizer] onRasterLoaded');
+    // console.log('[Rasterizer] onRasterLoaded');
     var rasterSendToLaserButton = document.getElementById("rasterWidgetSendRasterToLaser");
     $('#rasterparams').hide();
     $('#rasterProgressShroud').show();
@@ -320,7 +320,7 @@ Rasterizer.prototype.onRasterLoaded = function() {
         var xpixels = ( parseFloat(this.config.physicalWidth) / parseFloat(this.config.beamSize1) );
         printLog("Raster needs " + xpixels + " x " + ypixels +  " px at " + parseFloat(this.config.beamSize1) , msgcolor, "raster")
         this.raster.size = new Size(xpixels,ypixels);
-        console.log('After Resize Raster: ', this.raster)
+        // console.log('After Resize Raster: ', this.raster)
 
 
     this.currentPosy = 0;
@@ -328,6 +328,7 @@ Rasterizer.prototype.onRasterLoaded = function() {
 };
 
 Rasterizer.prototype.onFinish = function() {
+    console.group("Raster Completed");
     // Populate the GCode textarea
     var seq = this.config.objectid;
     // console.log("%c%s","color: #000; background: green; font-size: 24px;",seq)
@@ -350,6 +351,7 @@ Rasterizer.prototype.onFinish = function() {
     if (this.config.completed) {
         this.config.completed(this.config.objectid);
     }
+    console.groupEnd()
 };
 
 
@@ -358,6 +360,6 @@ this.RasterNow = function(config) {
     printLog('Process Raster', msgcolor, "raster")
     var div = config.div;
     var rasterizer = new Rasterizer(config);
-    console.log('from Container: ', div)
+    // console.log('from Container: ', div)
     rasterizer.init(div);
 };

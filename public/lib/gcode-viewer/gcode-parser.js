@@ -179,14 +179,15 @@ function GCodeParser(handlers) {
             // console.log('done parsing ')
             if (index < count) {
                 setTimeout(doChunk, 1);  // set Timeout for async iteration
+                // console.log('[GCODE PARSE] ' + (index / count ) * 100 + "%");
             } else {
                 NProgress.done();
                 NProgress.remove();
-                console.log('[GCODE PARSE] Done  ');
+                // console.log('[GCODE PARSE] Done  ');
                 $('#renderprogressholder').hide();
                 object =  drawobject();
 		            object.add(lineObjects);
-                console.log('Line Objects', lineObjects)
+                // console.log('Line Objects', lineObjects)
                 object.translateX(laserxmax /2 * -1);
                 object.translateY(laserymax /2 * -1);
                 object.name = 'object';
@@ -202,6 +203,10 @@ colorG1: 0x0000ff;
 colorG2: 0x999900;
 
 createObjectFromGCode = function (gcode, indxMax) {
+
+    console.group("Generating GCODE Preview");
+
+    // console.group("Rendering GCODE Preview")
     //debugger;
     // Credit goes to https://github.com/joewalnes/gcode-viewer
     // for the initial inspiration and example code.
@@ -834,7 +839,7 @@ createObjectFromGCode = function (gcode, indxMax) {
           lineObject.vertexBuf[i+5] = p2.z;
 
         }
-        console.log("Segment " + p1);
+        // console.log("Segment " + p1);
 
 	var dist = Math.sqrt((p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y)+(p1.z-p2.z)*(p1.z-p2.z));
 	totalDist += dist;
@@ -1238,7 +1243,7 @@ function drawobject() {
 
     // old approach of monolithic line segment
     for (var lid in layers3d) {
-      console.log('processing Layer ' + lid)
+      // console.log('processing Layer ' + lid)
         var layer = layers3d[lid];
         for (var tid in layer.type) {
             var type = layer.type[tid];
@@ -1305,14 +1310,14 @@ function drawobject() {
 
     if (fileParentGroup) {
        var bbox2 = new THREE.Box3().setFromObject(fileParentGroup);
-       console.log('bbox width: ', (bbox2.max.x - bbox2.min.x), 'height Y: ', (bbox2.max.y - bbox2.min.y) );
+      //  console.log('bbox width: ', (bbox2.max.x - bbox2.min.x), 'height Y: ', (bbox2.max.y - bbox2.min.y) );
        width = (bbox2.max.x - bbox2.min.x);
        height = (bbox2.max.y - bbox2.min.y);
        $('#quoteresult').html('Job moves length: ' + totalDist.toFixed(1) + ' mm<br> Width: ' + width.toFixed(1) + ' mm<br>Height: ' + height.toFixed(1) + ' mm<br>Material: ' + ((width*height) / 1000).toFixed(3) + 'cm<sup>2</sup>' );
        $("#materialqty").val(((width*height) / 1000).toFixed(3));
     } else if (rastermesh) {
        var bbox2 = new THREE.Box3().setFromObject(rastermesh);
-       console.log('bbox width: ', (bbox2.max.x - bbox2.min.x), 'height Y: ', (bbox2.max.y - bbox2.min.y) );
+      //  console.log('bbox width: ', (bbox2.max.x - bbox2.min.x), 'height Y: ', (bbox2.max.y - bbox2.min.y) );
        width = (bbox2.max.x - bbox2.min.x);
        height = (bbox2.max.y - bbox2.min.y);
        $('#quoteresult').html('Job moves length: ' + totalDist.toFixed(1) + ' mm<br> Width: ' + width.toFixed(1) + ' mm<br>Height: ' + height.toFixed(1) + ' mm<br>Material: ' + ((width*height) / 1000).toFixed(3) + 'cm<sup>2</sup>' );
@@ -1327,7 +1332,9 @@ function drawobject() {
 //    newObject.userData.extraObjects = extraObjects;
 //    newObject.userData.threeObjs = new3dObj;
 
+    console.groupEnd();
     return newObject;
+    // console.groupEnd();
 
 };
 

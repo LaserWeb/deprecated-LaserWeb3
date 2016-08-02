@@ -34,16 +34,16 @@ var stlxsize, stlysize, stlzsize;
 
     // methods
     STLLoader.prototype.onGeometry = function(geometry, number, mainScope, fileInfo) {
-        console.log("Geometry dropped STL no: ", number);
-        console.log ("geometry:  ", geometry);
+        //console.log("Geometry dropped STL no: ", number);
+        //console.log ("geometry:  ", geometry);
         var self = this;
 
-        console.log ("self inside onGeometry:  ", self);
+        console.group("Parsing STL Geometry:");
 
         //render here,
 
         stl = new THREE.Group();
-        var material = new THREE.MeshPhongMaterial( {ambient: 0xffffff, color: 0xff5533, specular: 0x111111, shininess: 200 } );  //taken from slotted disk example of STLLoader.  Bright orange!  Gets your attention!
+        var material = new THREE.MeshPhongMaterial( {color: 0xff5533, specular: 0x111111, shininess: 200 } );  //taken from slotted disk example of STLLoader.  Bright orange!  Gets your attention!
 
         //var colorrandom = '#' + Math.floor(Math.random()*16777215).toString(16);
         var colorrandom = '#ff5533'
@@ -62,8 +62,8 @@ var stlxsize, stlysize, stlzsize;
         //object.add(stl);
 
         // Calculate position
-        console.log('Object no: ', number, ' Min: ', bbox.box.min);
-        console.log('Object no: ', number, ' Max: ', bbox.box.max);
+        // console.log('Object no: ', number, ' Min: ', bbox.box.min);
+        // console.log('Object no: ', number, ' Max: ', bbox.box.max);
 
         // Put object on Z=0
         mesh.translateX(bbox.box.min.x * -1)
@@ -104,8 +104,11 @@ var stlxsize, stlysize, stlzsize;
         scene.add(stl);
         showstl();
 
+        console.log("STL Rendered")
+
         viewExtents(stl)
-        $('#layers > tbody:last-child').append('<tr><td>STL</td><td>  <div class="input-group" style="margin-bottom:5px; width: 100%;"><input class="form-control" name=sp0 id=sp0 value=55><span class="input-group-addon"  style="width: 30px;">mm/s</span><input class="form-control" name=pwr0 id=pwr0 value=100><span class="input-group-addon"  style="width: 30px;">%</span></div></td></tr>');
+        // $('#layers > tbody:last-child').append('<tr><td>STL</td><td>  <div class="input-group" style="margin-bottom:5px; width: 100%;"><input class="form-control" name=sp0 id=sp0 value=55><span class="input-group-addon"  style="width: 30px;">mm/s</span><input class="form-control" name=pwr0 id=pwr0 value=100><span class="input-group-addon"  style="width: 30px;">%</span></div></td></tr>');
+        console.groupEnd();
 
     };
     STLLoader.prototype.onError = function(error) {};
