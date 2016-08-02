@@ -237,7 +237,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
 
          } else {
-             console.log("Nope")
+             connections[i].emit("data", data);
          }
       });
     } else {
