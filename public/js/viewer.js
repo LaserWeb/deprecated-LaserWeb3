@@ -194,7 +194,7 @@ function init3D() {
 
 
     controls.enableZoom = true; // optional
-    controls.noKeys = true; // Disable Keyboard on canvas
+    controls.enableKeys = false; // Disable Keyboard on canvas
     //controls.mouseButtons = { PAN: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, ORBIT: THREE.MOUSE.RIGHT }; // swapping left and right buttons
     // /var STATE = { NONE : - 1, ROTATE : 0, DOLLY : 1, PAN : 2, TOUCH_ROTATE : 3, TOUCH_DOLLY : 4, TOUCH_PAN : 5 };
 
@@ -670,7 +670,7 @@ function makeSprite(scene, rendererType, vals) {
 
     var material = new THREE.SpriteMaterial({
         map: texture,
-        useScreenCoordinates: false,
+        // useScreenCoordinates: false,
         transparent: true,
         opacity: 0.6
     });
