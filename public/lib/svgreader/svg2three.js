@@ -176,19 +176,12 @@ function svg2three(svgfile, fileName, settings) {
   }
 
   for (var pathIdx = 0, pathLength = paths.length; pathIdx < pathLength; pathIdx++) {
+    console.group("SVG Path " + pathIdx)
+
     path = paths[pathIdx];
 
-
-    // seek to index 0
-    // gcode.push(['G0',
-    //   'X' + scale(path[0].x + settings.offsetX),
-    //   'Y' + scale(-path[0].y + settings.offsetY),
-    //   'F' + settings.seekRate,
-		// 	'; Seek to 0'
-    // ].join(' '));
-	  svgShape = new THREE.Shape();
-
-    svgShape.moveTo( path[0].x,(path[0].y * -1));
+	  var svgGeom = new THREE.Geometry();
+    // svgShape.moveTo( path[0].x,(path[0].y * -1));
 
     var pathcolor = paths[pathIdx].node.stroke;
     var r = pathcolor[0] / 255;
@@ -198,54 +191,32 @@ function svg2three(svgfile, fileName, settings) {
 
     console.log('Color Value', colorval);
     if (colorval) {
-      console.log('Color Value', colorval);
+      // console.log('Color Value', colorval);
       var svgMaterial = new THREE.MeshBasicMaterial( { color: colorval } )
     } else {
-      console.log('Color Value: NONE: Using Blue');
+      // console.log('Color Value: NONE: Using Blue');
       var svgMaterial = new THREE.MeshBasicMaterial( { color: 0x0000ff } )
     }
 
-
-    // keep track of the current path being cut, as we may need to reverse it
-    // var localPath = [];
-    // svgShape.lineTo( 0, 0 );
     for (var segmentIdx=0, segmentLength = path.length; segmentIdx<segmentLength; segmentIdx++) {
       var segment = path[segmentIdx];
 
-      // var localSegment = ['G1',
-      //   'X' + scale(segment.x + settings.offsetX),
-      //   'Y' + scale(-segment.y + settings.offsetY),
-      //   'F' + settings.feedRate,
-      //   'S' + intensity
-      // ].join(' ');
-      //
-      // gcode.push(localSegment);
-
-      svgShape.lineTo( segment.x, (segment.y * -1) );
-      // localPath.push(localSegment);
-
-      // if the path is not closed, reverse it, drop to the next cut depth and cut
-      // this handles lines
-      // if (segmentIdx === segmentLength - 1 && (segment.x !== path[0].x || segment.y !== path[0].y)) {
-      //   // begin the cut by dropping the tool to the work
-      //   gcode.push(['G1',
-      //     'Z' + (settings.cutZ),
-      //     'F' + '200'
-      //   ].join(' '));
-      //   Array.prototype.push.apply(gcode, localPath.reverse());
-      // }
-
-    }
-    var autoClose = $('#autoClose').val()
-    console.log('autoClose', autoClose)
-    if (autoClose == "Yes") {
-      //  svgShape.lineTo( path[0].x,(path[0].y * -1));
-       svgShape.autoClose = true;
+      // svgShape.lineTo( segment.x, (segment.y * -1) );
+      svgGeom.vertices.push( new THREE.Vector3( segment.x, (segment.y * -1), 0 ) );
+      console.log("svgGeom.vertices.push( new THREE.Vector3( " + segment.x + "," + (segment.y * -1) + ", 0 ) );")
     }
 
-    svgGeom = new THREE.ShapeGeometry( svgShape );
+    // var autoClose = $('#autoClose').val()
+    // console.log('autoClose', autoClose)
+    // if (autoClose == "Yes") {
+    //   //  svgShape.lineTo( path[0].x,(path[0].y * -1));
+    //    svgShape.autoClose = true;
+    // }
+
+    // svgGeom = new THREE.ShapeGeometry( svgShape );
     window["svgEntity" + pathIdx] = new THREE.Line( svgGeom, svgMaterial ) ;
     fileObject.add(window["svgEntity" + pathIdx]);
+    console.groupEnd();
 }
 // fileParentGroup.add(fileObject);
 // fileParentGroup.translateX((laserxmax / 2) * -1);
