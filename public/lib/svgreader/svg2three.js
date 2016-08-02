@@ -106,7 +106,7 @@ function svg2three(svgfile, fileName, settings) {
 
 
  for (i = 0; i < paths.length; i++) {
- console.log('PATH: '+i+', FILL: '+paths[i].node.fill+', STROKE: '+paths[i].node.stroke+', COLOR: '+paths[i].node.color+', OPACTITY: '+paths[i].node.opacity, ' Path ', paths)
+ // console.log('PATH: '+i+', FILL: '+paths[i].node.fill+', STROKE: '+paths[i].node.stroke+', COLOR: '+paths[i].node.color+', OPACTITY: '+paths[i].node.opacity, ' Path ', paths)
  }
 
  while(idx--) {
@@ -203,7 +203,7 @@ function svg2three(svgfile, fileName, settings) {
 
       // svgShape.lineTo( segment.x, (segment.y * -1) );
       svgGeom.vertices.push( new THREE.Vector3( segment.x, (segment.y * -1), 0 ) );
-      console.log("svgGeom.vertices.push( new THREE.Vector3( " + segment.x + "," + (segment.y * -1) + ", 0 ) );")
+      // console.log("svgGeom.vertices.push( new THREE.Vector3( " + segment.x + "," + (segment.y * -1) + ", 0 ) );")
     }
 
     // var autoClose = $('#autoClose').val()

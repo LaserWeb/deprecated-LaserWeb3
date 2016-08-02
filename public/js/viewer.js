@@ -527,7 +527,7 @@ function animate() {
 
 viewExtents = function(objecttosee) {
     //console.log("viewExtents. object.userData:", this.object.userData);
-    console.log("controls:", controls);
+    // console.log("controls:", controls);
     //wakeAnimate();
 
     // lets override the bounding box with a newly
@@ -542,7 +542,7 @@ viewExtents = function(objecttosee) {
 
     // If you want a visible bounding box
     //this.scene.add(this.bboxHelper);
-    console.log("helper bbox:", helper);
+    // console.log("helper bbox:", helper);
 
     var minx = helper.box.min.x;
     var miny = helper.box.min.y;
@@ -562,7 +562,7 @@ viewExtents = function(objecttosee) {
     var centerz = minz + (lenz / 2);
 
 
-    console.log("lenx:", lenx, "leny:", leny, "lenz:", lenz);
+    // console.log("lenx:", lenx, "leny:", leny, "lenz:", lenz);
     var maxlen = Math.max(lenx, leny, lenz);
     var dist = 2 * maxlen;
     // center camera on gcode objects center pos, but twice the maxlen
@@ -572,9 +572,9 @@ viewExtents = function(objecttosee) {
     controls.target.x = centerx;
     controls.target.y = centery;
     controls.target.z = centerz;
-    console.log("maxlen:", maxlen, "dist:", dist);
+    // console.log("maxlen:", maxlen, "dist:", dist);
     var fov = 2.2 * Math.atan(maxlen / (2 * dist)) * (180 / Math.PI);
-    console.log("new fov:", fov, " old fov:", controls.object.fov);
+    // console.log("new fov:", fov, " old fov:", controls.object.fov);
     if (isNaN(fov)) {
         console.log("giving up on viewing extents because fov could not be calculated");
         return;
@@ -594,7 +594,7 @@ viewExtents = function(objecttosee) {
 
       // Zoom correction
       camera.translateZ(L - l);
-      console.log("up:", up);
+      // console.log("up:", up);
       up.y = 1;
       up.x = 0;
       up.z = 0;

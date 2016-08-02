@@ -35,7 +35,7 @@ if (!String.prototype.format) {
 
 function drawRaster(name, data) {
 
-    console.log('inside drawRaster')
+    console.group('Raster File')
 
     var currentIdx = objectsInScene.length + 100;
 
@@ -64,7 +64,7 @@ function drawRaster(name, data) {
         printLog('Bitmap Opened', msgcolor, "raster");
         //tbfleming's threejs texture code
 
-        console.log('Sanity Check', img, imgwidth, imgheight)
+        // console.log('Sanity Check', img, imgwidth, imgheight)
 
         var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
 
@@ -94,7 +94,8 @@ function drawRaster(name, data) {
     };
     // This actually loads the image, and fires the onload above.
     img.src = data;
-
+    console.log("Raster Opened")
+    console.groupEnd();
 };
 
 function runRaster(index) {

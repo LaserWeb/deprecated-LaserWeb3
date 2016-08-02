@@ -284,7 +284,9 @@ errorHandlerJS = function() {
 
 // Function to execute when opening file (triggered by fileOpen.addEventListener('change', readFile, false); )
 function readFile(evt) {
+  console.group("New FileOpen Event:")
   console.log(evt);
+  console.groupEnd();
     // Close the menu
     $("#drop1").dropdown("toggle");
     // Filereader
@@ -292,8 +294,8 @@ function readFile(evt) {
     if (f) {
         var r = new FileReader();
         if (f.name.match(/.dxf$/i)) {
-            console.log(f.name + " is a DXF file");
-            console.log('Reader: ', r)
+            // console.log(f.name + " is a DXF file");
+            // console.log('Reader: ', r)
             r.readAsText(evt.target.files[0]);
             r.onload = function(e) {
                 dxf = r.result
@@ -304,7 +306,7 @@ function readFile(evt) {
             };
 
         } else if (f.name.match(/.svg$/i)) {
-            console.log(f.name + " is a SVG file");
+            // console.log(f.name + " is a SVG file");
             r.readAsText(evt.target.files[0]);
             r.onload = function(event) {
                 svg = r.result
@@ -330,12 +332,12 @@ function readFile(evt) {
         } else if (f.name.match(/.stl$/i)) {
             //r.readAsText(evt.target.files[0]);
             // Remove the UI elements from last run
+            console.group("STL File");
             var stlloader = new MeshesJS.STLLoader;
             r.onload = function(event) {
                 // cleanupThree();
                 // Parse ASCII STL
                 if (typeof r.result === 'string') {
-                    console.log("Inside STL.js Found ASCII");
                     stlloader.loadString(r.result);
                     return;
                 }
@@ -357,12 +359,13 @@ function readFile(evt) {
                     return;
                 }
                 // parse binary STL
-                console.log("Inside STL.js Binary STL");
                 stlloader.loadBinaryData(view, faces, 100, window, evt.target.files[0]);
             };
             // start reading file as array buffer
             r.readAsArrayBuffer(evt.target.files[0]);
             printLog('STL Opened', msgcolor, "file");
+            console.log("Opened STL, and asking user for Slice settings")
+            console.groupEnd();
             $('#stlslice').modal('show')
         } else {
             console.log(f.name + " is probably a Raster");

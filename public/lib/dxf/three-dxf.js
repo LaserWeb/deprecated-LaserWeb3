@@ -277,7 +277,7 @@ function getDXFColor(entity) {
 	 color = 0x000000;
  }
   //return 0x000099;
-	console.log('DXF Color', color)
+	// console.log('DXF Color', color)
 	return color;
 }
 

@@ -2,6 +2,8 @@ var inflateGrp;
 var fileParentGroup;
 
 function drawDXF(file, fileName) {
+
+    console.group("DXF File:")
     yflip = false;
     Array.prototype.unique = function() {
         var n = {},
@@ -17,7 +19,7 @@ function drawDXF(file, fileName) {
 
 
     // Empty File Prep Table
-    $("#layers").empty();
+    // $("#layers").empty();
     // if (typeof(showDxf) !== 'undefined') {
     //   scene.remove(showDxf);
     // };
@@ -34,6 +36,7 @@ function drawDXF(file, fileName) {
 
     for (i = 0; i < dxf2.entities.length; i++) {
         row[i] = dxf2.entities[i].layer
+        console.log('drawEntity - DXF: ' + i)
         drawEntity(i, dxf2.entities[i]);
     };
 
@@ -69,11 +72,9 @@ function drawDXF(file, fileName) {
     layers = [];
     layers = row.unique();
     //console.log(layers);
-    for (var c = 0; c < layers.length; c++) {
-        $('#layers').append('<form class="form-horizontal"><label class="control-label">'+ layers[c] +'</label><div class="input-group"><input class="form-control numpad" name=sp' + c + ' id=sp' + c + ' value=20><span class="input-group-addon">mm/s</span></div><div class="input-group"><input class="form-control numpad" name=pwr' + c + ' id=pwr' + c + ' value=100><span class="input-group-addon">%</span></div></form>');
-
-
-    }
+    // for (var c = 0; c < layers.length; c++) {
+    //     $('#layers').append('<form class="form-horizontal"><label class="control-label">'+ layers[c] +'</label><div class="input-group"><input class="form-control numpad" name=sp' + c + ' id=sp' + c + ' value=20><span class="input-group-addon">mm/s</span></div><div class="input-group"><input class="form-control numpad" name=pwr' + c + ' id=pwr' + c + ' value=100><span class="input-group-addon">%</span></div></form>');
+    // }
 
     // document.getElementById('fileInputGcode').value = '';
     // document.getElementById('fileInputDXF').value = '';
@@ -88,5 +89,5 @@ function drawDXF(file, fileName) {
     svgxpos = 0;
     svgypos = 0;
 
-
+    console.groupEnd();
 };

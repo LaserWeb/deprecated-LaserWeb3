@@ -216,7 +216,7 @@ var SLAcer = SLAcer || {};
         // slice
         this.slice = mesh.clone();
 
-        console.log('SLICE!', this.slice);
+        // console.log('SLICE!', this.slice);
         // bounding box
         var box = mesh.geometry.boundingBox.clone();
 
@@ -380,8 +380,8 @@ var SLAcer = SLAcer || {};
                 ));
             }
             catch(e) {
-                console.error(e);
-                console.log(shapes[key]);
+                // console.error(e);
+                // console.log(shapes[key]);
             }
         }
 
