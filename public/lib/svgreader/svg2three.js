@@ -174,7 +174,7 @@ function svg2three(svgfile, fileName, settings) {
 
     path = paths[pathIdx];
     var pathname = path.node.id
-    console.log(path)
+    // console.log(path)
 	  var svgGeom = new THREE.Geometry();
     // svgShape.moveTo( path[0].x,(path[0].y * -1));
 
