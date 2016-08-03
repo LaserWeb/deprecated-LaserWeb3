@@ -21,6 +21,9 @@ function fillTree() {
       <td>
         <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
       </td>
+      <td>
+        <a class="btn btn-xs btn-success" onclick="rotate(objectsInScene[`+i+`]); fillTree(); fillLayerTabs();"><i class="fa fa-undo" aria-hidden="true"></i></a>
+      </td>
     </tr>
     `
 
@@ -37,12 +40,19 @@ function fillTree() {
         <td>
           <a class="btn btn-xs btn-danger" onclick="objectsInScene[`+i+`].remove(objectsInScene[`+i+`].children[`+j+`]); fillTree();"><i class="fa fa-times" aria-hidden="true"></i></a>
         </td>
+        <td>
+          <a class="btn btn-xs btn-primary"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+        </td>
        </tr>
        `
        $('#filetreetable').append(child)
       //  var name = objectsInScene[i].children[j].name;
       objectsInScene[i].children[j].userData.link = "link"+i+"_"+j
      }
+     var tableend = `
+     </table>
+     `
+     $('#filetreetable').append(tableend)
   }
   $('.tree').treegrid({
     expanderExpandedClass: 'fa fa-minus-square',
@@ -56,4 +66,8 @@ function resetColors() {
       objectsInScene[i].children[j].material.color.setHex(objectsInScene[i].children[j].userData.color);
     }
   }
+}
+
+function rotate(object) {
+  object.rotateZ(Math.PI / 4);
 }
