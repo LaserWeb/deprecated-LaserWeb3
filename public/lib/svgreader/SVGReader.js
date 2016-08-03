@@ -678,7 +678,8 @@ SVGReader = {
     if ( typeof d == 'string') {
       // parse path string
       d = d.match(/([A-Za-z]|-?[0-9]+\.?[0-9]*(?:e-?[0-9]*)?)/g);
-      for (var i=0; i<d.length; i++) {
+      if (d) for (var i=0; i<d.length; i++) {
+        // Make sure d is not an empty string before trying to parse it.
         var num = parseFloat(d[i]);
         if (!isNaN(num)) {
           d[i] = num;
