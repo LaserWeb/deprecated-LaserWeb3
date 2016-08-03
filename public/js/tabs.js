@@ -49,6 +49,10 @@ function initTabs() {
 
      var layerIndex = $(this).parents('a').attr('layerindex');
      console.log('dumping ' + layerIndex + ' from objectsInScene')
+     var seq = objectsInScene[layerIndex].userData.seq
+     if (objectsInScene[layerIndex].type == "Mesh") {
+       $("#origImage"+seq).remove();
+     }
      objectsInScene.splice(layerIndex, 1)
      fillLayerTabs();
      fillTree();
@@ -101,12 +105,14 @@ function initTabs() {
         scene.remove(scene.children[j]);
       }
       var i = parseInt($(this).attr('layerindex'));
-      scene.add(objectsInScene[i]);
-      attachBB(objectsInScene[i]);
-      if (typeof(objectsInScene[i].userData) !== 'undefined') {
-        if (objectsInScene[i].userData.inflated) {
-          scene.add(objectsInScene[i].userData.inflated);
-        }
+      if (objectsInScene.length > 0) {
+        scene.add(objectsInScene[i]);
+        attachBB(objectsInScene[i]);
+        if (typeof(objectsInScene[i].userData) !== 'undefined') {
+          if (objectsInScene[i].userData.inflated) {
+            scene.add(objectsInScene[i].userData.inflated);
+          }
+        };
       };
     };
   });
