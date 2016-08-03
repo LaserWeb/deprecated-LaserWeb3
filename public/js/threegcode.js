@@ -284,8 +284,6 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                     g += " X" + xpos;
                     g += " Y" + ypos;
                     g += " Z" + zpos;
-
-
                     g += " S" + laserPwrVal + "\n";
                 }
             }
