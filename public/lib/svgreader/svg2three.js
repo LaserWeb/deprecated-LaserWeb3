@@ -174,17 +174,18 @@ function svg2three(svgfile, fileName, settings) {
 
     path = paths[pathIdx];
     var pathname = path.node.id
-
+    console.log(path)
 	  var svgGeom = new THREE.Geometry();
     // svgShape.moveTo( path[0].x,(path[0].y * -1));
 
-    var pathcolor = paths[pathIdx].node.stroke;
-    var r = pathcolor[0] / 255;
-    var g = pathcolor[1] / 255;
-    var b = pathcolor[2] / 255;
-    var colorval = new THREE.Color().setRGB(r, g, b);
+    if (typeof(paths[pathIdx].node.stroke) != "undefined") {
+      var pathcolor = paths[pathIdx].node.stroke;
+      var r = pathcolor[0] / 255;
+      var g = pathcolor[1] / 255;
+      var b = pathcolor[2] / 255;
+      var colorval = new THREE.Color().setRGB(r, g, b);
+    }
 
-    console.log('Color Value', colorval);
     if (colorval) {
       // console.log('Color Value', colorval);
       var svgMaterial = new THREE.LineBasicMaterial ( { color: colorval } )
@@ -192,6 +193,7 @@ function svg2three(svgfile, fileName, settings) {
       // console.log('Color Value: NONE: Using Blue');
       var svgMaterial = new THREE.LineBasicMaterial ( { color: 0x0000ff } )
     }
+
 
     for (var segmentIdx=0, segmentLength = path.length; segmentIdx<segmentLength; segmentIdx++) {
       var segment = path[segmentIdx];
