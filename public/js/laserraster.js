@@ -294,6 +294,7 @@ Rasterizer.prototype.rasterRow = function(y) {
         this.result += laseroff
         this.result += '\n'
     }
+    isLaserOn = false;
     this.dir = -this.dir; // Reverse direction for next row - makes us move in a more efficient zig zag down the image
 };
 
