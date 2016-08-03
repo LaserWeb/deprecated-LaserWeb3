@@ -784,7 +784,7 @@ function onMouseClick(e) {
 
 function attachBB(object) {
   resetColors() // Set all colors back to original
-  if (object.material) {
+  if (object.material && object.type != "Mesh") {
     object.material.color.setRGB(1, 0.1, 0.1);
   }
   $('.entity').css('color', 'black');
