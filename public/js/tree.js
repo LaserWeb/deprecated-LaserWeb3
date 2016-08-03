@@ -16,10 +16,10 @@ function fillTree() {
     <tr class="treegrid-1">
       <td>
         <i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i>&nbsp;
-        <a href="#" onclick="attachBB(objectsInScene[`+i+`])">` + objectsInScene[i].name; + `</a>
+        <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]); fillTree(); fillLayerTabs();">` + objectsInScene[i].name + `</a>
       </td>
       <td>
-        <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree();"><i class="fa fa-times" aria-hidden="true"></i></a>
+        <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
       </td>
     </tr>
     `
