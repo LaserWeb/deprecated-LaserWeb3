@@ -1,54 +1,59 @@
 function initTree() {
-  $('#filetree').jstree({
-      core: {
-          "check_callback": true,
-          "animation": 0
-      },
-      "html_data": {},
-      "themes": {
-          "icons": false
-      },
-      "types" : {
-        "file" : {
-          "icon" : "fa fa-file-text-o"
-        }
-      },
-      "plugins" : ["themes","types"]
-  });
-  $('#filetree').on("changed.jstree", function (e, data) {
-    var str = '';
-    for (var p in data.selected) {
-        if (data.selected.hasOwnProperty(p)) {
-            str += data.selected[p];
-        }
-    }
-    console.log(str)
-    string = str.split(".")
-
-    if (string[1]) {
-      attachBB(objectsInScene[string[0]].children[0].children[string[1]]);
-    } else {
-      attachBB(objectsInScene[string[0]-10]);
-    }
+  $('.tree').treegrid({
+    expanderExpandedClass: 'fa fa-folder-open-o',
+    expanderCollapsedClass: 'fa fa-folder-o'
   });
 }
 
 function fillTree() {
+  $('#filetree').empty();
 
-    $('#filetree').jstree().delete_node($('#filetree').find('> ul > li'));
-    for (i = 0; i < objectsInScene.length; i++) {
-      var parent = '#';
-      var index = i + 10;
-      var name = objectsInScene[i].name;
-      var node = { id:index,text:name, type:"file", opened:true};
-      $('#filetree').jstree().create_node(parent, node, 'last');
+  var header = `<table class="table tree" style="width: 100%" id="filetreetable">`
+  $('#filetree').append(header);
+  for (i = 0; i < objectsInScene.length; i++) {
 
-      for (j = 0; j < objectsInScene[i].children[0].children.length; j++) {
-        var parent = i + 10;
-        var index = i + "." + j;
-        var name = objectsInScene[i].children[0].children[j].name;
-        var node = { id:index,text:name, type:"file", opened:true};
-        $('#filetree').jstree().create_node(parent, node, 'last');
-      }
+    var file = `
+    <tr class="treegrid-1">
+      <td>
+        <i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i>&nbsp;
+        <a href="#" onclick="attachBB(objectsInScene[`+i+`])">` + objectsInScene[i].name; + `</a>
+      </td>
+      <td>
+        <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree();"><i class="fa fa-times" aria-hidden="true"></i></a>
+      </td>
+    </tr>
+    `
+
+    $('#filetreetable').append(file)
+    //  var name = objectsInScene[i].name;
+     for (j = 0; j < objectsInScene[i].children.length; j++) {
+
+       var child = `
+       <tr class="treegrid-2 treegrid-parent-1">
+         <td style="background: url(css/tablebg.gif) 18px 54% no-repeat;">
+          <i class="fa fa-fw fa-sm fa-object-group" aria-hidden="true"></i>&nbsp;
+          <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`].children[`+j+`])" id="link`+i+`_`+j+`">`+objectsInScene[i].children[j].name+`</a>
+        </td>
+        <td>
+          <a class="btn btn-xs btn-danger" onclick="objectsInScene[`+i+`].remove(objectsInScene[`+i+`].children[`+j+`]); fillTree();"><i class="fa fa-times" aria-hidden="true"></i></a>
+        </td>
+       </tr>
+       `
+       $('#filetreetable').append(child)
+      //  var name = objectsInScene[i].children[j].name;
+      objectsInScene[i].children[j].userData.link = "link"+i+"_"+j
+     }
+  }
+  $('.tree').treegrid({
+    expanderExpandedClass: 'fa fa-minus-square',
+    expanderCollapsedClass: 'fa fa-plus-square'
+  });
+}
+
+function resetColors() {
+  for (i = 0; i < objectsInScene.length; i++) {
+    for (j = 0; j < objectsInScene[i].children.length; j++) {
+      objectsInScene[i].children[j].material.color.setHex(objectsInScene[i].children[j].userData.color);
     }
+  }
 }

@@ -70,12 +70,6 @@
 
 function svg2three(svgfile, fileName, settings) {
 
-  if (typeof(fileParentGroup) !== 'undefined') {
-    scene.remove(fileParentGroup);
-  };
-  fileParentGroup = new THREE.Group();
-  fileParentGroup.name = fileName;
-
   if (typeof(fileObject) !== 'undefined') {
     scene.remove(fileObject);
   };
@@ -207,13 +201,6 @@ function svg2three(svgfile, fileName, settings) {
       // console.log("svgGeom.vertices.push( new THREE.Vector3( " + segment.x + "," + (segment.y * -1) + ", 0 ) );")
     }
 
-    // var autoClose = $('#autoClose').val()
-    // console.log('autoClose', autoClose)
-    // if (autoClose == "Yes") {
-    //   //  svgShape.lineTo( path[0].x,(path[0].y * -1));
-    //    svgShape.autoClose = true;
-    // }
-
     // svgGeom = new THREE.ShapeGeometry( svgShape );
     window["svgEntity" + pathIdx] = new THREE.Line( svgGeom, svgMaterial ) ;
     if (pathname) {
@@ -221,27 +208,15 @@ function svg2three(svgfile, fileName, settings) {
     } else {
       window["svgEntity" + pathIdx].name = "svgEntity" + pathIdx
     }
+    window["svgEntity" + pathIdx].userData.color = window["svgEntity" + pathIdx].material.color.getHex();
     fileObject.add(window["svgEntity" + pathIdx]);
     console.groupEnd();
-}
-// fileParentGroup.add(fileObject);
-// fileParentGroup.translateX((laserxmax / 2) * -1);
-// fileParentGroup.translateY((laserymax / 2) * -1);
-// scene.add(fileParentGroup);
-// objectsInScene.push(fileParentGroup)
-//
-// $('#layers').append('<form class="form-horizontal"><label class="control-label">SVG</label><div class="input-group"><input class="form-control numpad" name=sp0 id=sp0 value=55><span class="input-group-addon">mm/s</span></div><div class="input-group"><input class="form-control numpad" name=pwr0 id=pwr0 value=100><span class="input-group-addon">%</span></div></form>');
-
-fileParentGroup.add(fileObject);
-fileParentGroup.translateX((laserxmax / 2) * -1);
-fileParentGroup.translateY((laserymax / 2) * -1);
-putFileObjectAtZero(fileParentGroup)
-scene.add(fileParentGroup);
-calcZeroOffset(fileParentGroup)
-fileObject.name = fileName + idx
-objectsInScene.push(fileParentGroup)
-
-// $('#layers').append('<form class="form-horizontal"><label class="control-label">SVG</label><div class="input-group"><input class="form-control numpad" name=sp0 id=sp0 value=55><span class="input-group-addon">mm/s</span></div><div class="input-group"><input class="form-control numpad" name=pwr0 id=pwr0 value=100><span class="input-group-addon">%</span></div></form>');
-
-
+  }
+  fileObject.translateX((laserxmax / 2) * -1);
+  fileObject.translateY((laserymax / 2) * -1);
+  putFileObjectAtZero(fileObject)
+  scene.add(fileObject);
+  calcZeroOffset(fileObject)
+  fileObject.name = fileName
+  objectsInScene.push(fileObject)
 }

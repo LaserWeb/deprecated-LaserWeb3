@@ -302,7 +302,7 @@ function readFile(evt) {
                 dxf = r.result
                 drawDXF(dxf, f.name);
                 printLog('DXF Opened', msgcolor, "file");
-                putFileObjectAtZero();
+                // putFileObjectAtZero();
                 resetView()
             };
 

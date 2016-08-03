@@ -157,12 +157,13 @@ function drawLine(entity, index) {
 	window["dxfEntity" + index] = new THREE.Line(geometry, material);
 	//window["dxfEntity" + index].translateX(laserxmax /2 * -1);
 	//window["dxfEntity" + index].translateY(laserymax /2 * -1);
-	fileObject.add(window["dxfEntity" + index]);
 	if (entity.type) {
 		window["dxfEntity" + index].name = entity.type + index
 	} else {
 		window["dxfEntity" + index].name = "dxfEntity" + index
 	}
+	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
+	fileObject.add(window["dxfEntity" + index]);
 }
 
 function drawCircle(entity, index) {
@@ -189,12 +190,13 @@ var arcTotalDeg = entity.startAngleDeg - entity.endAngleDeg;
 	window["dxfEntity" + index].translateZ(entity.center.z);
 	//window["dxfEntity" + index].translateX(laserxmax /2 * -1);
 	//window["dxfEntity" + index].translateY(laserymax /2 * -1);
-	fileObject.add(window["dxfEntity" + index]);
 	if (entity.type) {
 		window["dxfEntity" + index].name = entity.type + index
 	} else {
 		window["dxfEntity" + index].name = "dxfEntity" + index
 	}
+	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
+	fileObject.add(window["dxfEntity" + index]);
 }
 
 function drawSolid(entity, index) {
@@ -232,10 +234,8 @@ function drawSolid(entity, index) {
 	} else {
 		window["dxfEntity" + index].name = "dxfEntity" + index
 	}
-	//window["dxfEntity" + index].translateX(laserxmax /2 * -1);
-	//window["dxfEntity" + index].translateY(laserymax /2 * -1);
+	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
-
 }
 
 function drawText(entity, index) {
@@ -256,6 +256,7 @@ function drawText(entity, index) {
 	} else {
 		window["dxfEntity" + index].name = "dxfEntity" + index
 	}
+	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
 }
 
@@ -287,8 +288,7 @@ function drawPoint(entity, index) {
 	} else {
 		window["dxfEntity" + index].name = "dxfEntity" + index
 	}
-	//window["dxfEntity" + index].translateX(laserxmax /2 * -1);
-	//window["dxfEntity" + index].translateY(laserymax /2 * -1);
+	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
 }
 
