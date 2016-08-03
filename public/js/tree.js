@@ -12,20 +12,38 @@ function fillTree() {
   $('#filetree').append(header);
   for (i = 0; i < objectsInScene.length; i++) {
 
-    var file = `
-    <tr class="treegrid-1">
-      <td>
-        <i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i>&nbsp;
-        <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]); fillTree(); fillLayerTabs();">` + objectsInScene[i].name + `</a>
-      </td>
-      <td>
-        <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
-      </td>
-      <td>
-        <a class="btn btn-xs btn-success" onclick="rotate(objectsInScene[`+i+`]); fillTree(); fillLayerTabs();"><i class="fa fa-undo" aria-hidden="true"></i></a>
-      </td>
-    </tr>
-    `
+    if (objectsInScene[i].type != "Mesh") {
+      var file = `
+      <tr class="treegrid-1">
+        <td>
+          <i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i>&nbsp;
+          <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]); fillTree(); fillLayerTabs();">` + objectsInScene[i].name + `</a>
+        </td>
+        <td>
+          <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
+        </td>
+        <td>
+          <a class="btn btn-xs btn-success" onclick="rotate(objectsInScene[`+i+`]); fillTree(); fillLayerTabs();"><i class="fa fa-undo" aria-hidden="true"></i></a>
+        </td>
+      </tr>
+      `
+    } else {
+      var file = `
+      <tr class="treegrid-1">
+        <td>
+          <i class="fa fa-fw fa-file-photo-o" aria-hidden="true"></i>&nbsp;
+          <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]); fillTree(); fillLayerTabs();">` + objectsInScene[i].name + `</a>
+        </td>
+        <td>
+          <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
+        </td>
+        <td>
+          <a class="btn btn-xs btn-primary"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+        </td>
+      </tr>
+      `
+    }
+
 
     $('#filetreetable').append(file)
     //  var name = objectsInScene[i].name;
