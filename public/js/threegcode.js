@@ -347,6 +347,7 @@ addOperation = function(index, operation, zstep, zdepth) {
     objectsInScene[index].userData.zdepth = zdepth;
   }
   setTimeout(function(){ fillLayerTabs(); }, 100);
+  setTimeout(function(){ fillTree(); }, 101);
 
 }
 

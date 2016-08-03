@@ -38,6 +38,7 @@ function drawDXF(file, fileName) {
         row[i] = dxf2.entities[i].layer
         console.log('drawEntity - DXF: ' + i)
         drawEntity(i, dxf2.entities[i]);
+        // console.log( dxf2.entities[i].type + i)
     };
 
     // Make the 'geometry' object disappear

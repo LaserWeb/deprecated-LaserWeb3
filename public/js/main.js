@@ -30,6 +30,7 @@ $(document).ready(function() {
     initSocket();
     initTour();
     initSmoothie();
+    initTree();
 
 
     // Tooltips
@@ -386,6 +387,7 @@ function readFile(evt) {
         controls.reset();
     }
     setTimeout(function(){ fillLayerTabs(); }, 250);
+    setTimeout(function(){ fillTree(); }, 250);
     setTimeout(function(){ viewExtents(objectsInScene[objectsInScene.length - 1]); }, 300);
 
 };

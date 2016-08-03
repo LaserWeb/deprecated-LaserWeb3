@@ -47,6 +47,9 @@
 
     <script src="lib/jquery/jquery-input-history.min.js"></script>
 
+    <script src="lib/jstree/jstree.js"></script>
+    <link rel="stylesheet" href="lib/jstree/themes/default/style.min.css" />
+    <script src="js/tree.js"></script>
 
     <!-- https://github.com/kabachello/jQuery.NumPad -->
     <script src="lib/jnumpad/jquery.numpad.js"></script>
@@ -395,18 +398,23 @@
 
           </div>
           <!-- end quote -->
+
+
+
+
           <!-- cam -->
           <div id="cam-menu-panel" class="mobtab" style="display: none;">
-            <h4>CAM: Convert to G-CODE</h4>
             <div class="bs-callout bs-callout-danger" id="filestatus">
+                <h4>CAM: Convert to G-CODE</h4>
                 <h4><i class="fa fa-fw fa-exclamation" aria-hidden="true"></i>No File to work with</h4> Please <a href="#" onclick="$('#file').click()">open a file from the "Open" button</a>:
                 <br> SVG (Paths only, single group), DXF (R14 Lines/Polylines/Circles), BMP/PNG/JPEG (Raster Engraving) and GCODE (External CAM) are all supported
             </div>
 
             <!-- New CAM System -->
             <div class="btn-group btn-group-justified" role="group" aria-label="gengcode">
+
                 <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-success btn-block" id="generategcode">Generate G-Code</button>
+                <button type="button" class="btn btn-success btn-block" id="generategcode">Generate G-Code</button>
                 </div>
             </div>
 
@@ -417,6 +425,20 @@
 
           </div>
           <!-- end cam -->
+
+
+          <!-- tree cam -->
+          <div id="tree-cam-menu-panel" class="mobtab" style="display: none;">
+            <div class="bs-callout bs-callout-danger" id="filestatus">
+              <h4><i class="fa fa-fw fa-exclamation" aria-hidden="true"></i>Preview Feature</h4>
+              Note: This is not active yet, we are busy coding up this new feature to replace the existing CAM tab.  For more details see <a href="https://github.com/openhardwarecoza/LaserWeb3/issues/52">Issue 52</a>
+            </div>
+
+            <div id="filetree"></div>
+          </div>
+          <!-- end tree cam -->
+
+
           <!-- gcode -->
           <div id="gcode-menu-panel" class="mobtab" style="display: none;">
             <h4>G-CODE</h4>
@@ -757,10 +779,10 @@
   		      <ul id="menu" >
   		        <li id="jog-menu" class="leftmenuitem active" ><a href="#"><i class="fa fa-arrows-alt"></i><span>Jog</span></a></li>
               <li id="cam-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-pencil-square-o"></i><span>CAM</span></a></li>
+              <li id="tree-cam-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-pencil"></i><span>Tree Based CAM</span></a></li>
               <li id="gcode-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-file-code-o"></i><span>GCode</span></a></li>
               <li id="quote-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-money"></i><span>Quote</span></a></li>
               <!-- <li id="gdrive-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-google"></i><span>Google Drive</span></a></li> -->
-              <!-- <li id="console-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-list"></i><span>Console Log</span></a></li> -->
               <li id="settings-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-cogs"></i><span>Settings</span></a></li>
   		      </ul>
   		    </div>
@@ -966,12 +988,12 @@ $("#quote-menu").click(function() {
 //   $('#gdrive-menu-panel').show();
 //   $("#gdrive-menu").addClass('active')
 // });
-// $("#console-menu").click(function() {
-//   $('.mobtab').hide();
-//   $('.leftmenuitem').removeClass('active');
-//   $('#console-menu-panel').show();
-//   $("#console-menu").addClass('active')
-// });
+$("#tree-cam-menu").click(function() {
+  $('.mobtab').hide();
+  $('.leftmenuitem').removeClass('active');
+  $('#tree-cam-menu-panel').show();
+  $("#tree-cam-menu").addClass('active')
+});
 $("#jog-menu").click(function() {
   $('.mobtab').hide();
   $('.leftmenuitem').removeClass('active');
@@ -994,5 +1016,6 @@ $("#jog-menu").click(function() {
 <!-- <a href="https://openhardwarecoza.github.io/donate" target="_new">
     <img style="position: fixed; top: 50px; right: 0; border: 0;" src="images/donate.png"  alt="Fork me on GitHub">
 </a> -->
+
 
 </html>

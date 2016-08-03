@@ -179,6 +179,7 @@ function svg2three(svgfile, fileName, settings) {
     console.group("SVG Path " + pathIdx)
 
     path = paths[pathIdx];
+    var pathname = path.node.id
 
 	  var svgGeom = new THREE.Geometry();
     // svgShape.moveTo( path[0].x,(path[0].y * -1));
@@ -215,6 +216,11 @@ function svg2three(svgfile, fileName, settings) {
 
     // svgGeom = new THREE.ShapeGeometry( svgShape );
     window["svgEntity" + pathIdx] = new THREE.Line( svgGeom, svgMaterial ) ;
+    if (pathname) {
+      window["svgEntity" + pathIdx].name = pathname
+    } else {
+      window["svgEntity" + pathIdx].name = "svgEntity" + pathIdx
+    }
     fileObject.add(window["svgEntity" + pathIdx]);
     console.groupEnd();
 }

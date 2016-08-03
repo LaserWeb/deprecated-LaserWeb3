@@ -51,6 +51,7 @@ function initTabs() {
      console.log('dumping ' + layerIndex + ' from objectsInScene')
      objectsInScene.splice(layerIndex, 1)
      fillLayerTabs();
+     fillTree();
   });
 
   $('#tabsLayers').on('click','a',function(){
