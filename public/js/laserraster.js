@@ -272,7 +272,7 @@ Rasterizer.prototype.rasterRow = function(y) {
                       this.result += laseroff
                       this.result += '\n'
                   }
-                  isLaserOn = true;
+                  isLaserOn = false;
                 }
                 this.result += 'G0 X{0} S0\n'.format(posx, gcodey);
 
