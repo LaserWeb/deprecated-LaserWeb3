@@ -377,11 +377,38 @@ d-grid {border: none; padding: 20px;}
      border-radius: 3px;
  }
 
- .entity {
-     font-size: 11px;
-
+ .uppercase {
+   text-transform:uppercase;
  }
 
- .uppercase {
-  text-transform:uppercase
+ .entity {
+     font-size: 11px;
+ }
+
+ .entity-job {
+     font-size: 11px;
+ }
+
+
+.jobsetuptable {
+
+}
+
+.jobsetupfile {
+  text-align: right;
+}
+
+.jobsetupfile td:first-child {
+  text-align: left;
+}
+
+
+.jobsetupchild {
+  text-align: right;
+}
+
+.jobsetupchild td:first-child {
+  background: url(tablebg.gif) 4px 54% no-repeat;
+  padding-left: 15px;
+  text-align: left;
 }
