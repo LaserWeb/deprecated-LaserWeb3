@@ -530,30 +530,30 @@
                       <form class="form-horizontal">
                           <!-- <div class="form-group"> -->
                               <label for="startgcode" class="control-label">Start G-Code <span style="color:#FFA500;">(Optional)</span></label>
-                              <textarea class="form-control numpadgcode" id="startgcode" placeholder="G28\nG90\nM80"></textarea>
+                              <textarea class="form-control numpadgcode uppercase" id="startgcode" placeholder="G28\nG90\nM80"></textarea>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
                               <label for="laseron" class="control-label">Laser ON Command <span style="color:#FFA500;">(Optional)</span></label>
-                              <input type="text" class="form-control numpadgcode" id="laseron" placeholder="M3 / blank for firmwares that support G1"></input>
+                              <input type="text" class="form-control numpadgcode uppercase" id="laseron" placeholder="M3 / blank for firmwares that support G1"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
                               <label for="laseroff" class="control-label">Laser OFF Command <span style="color:#FFA500;">(Optional)</label>
-                              <input type="text" class="form-control numpadgcode" id="laseroff" placeholder="M5 / blank for firmwares that support G1"></input>
+                              <input type="text" class="form-control numpadgcode uppercase" id="laseroff" placeholder="M5 / blank for firmwares that support G1"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
-                              <label for="laseroff" class="control-label">PWM Max S value <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control  numpad" id="lasermultiply" placeholder="255"></input>
+                              <label for="lasermultiply" class="control-label">PWM Max S value <span style="color:red;">(Required)</span></label>
+                              <input type="text" class="form-control numpad uppercase" id="lasermultiply" placeholder="255"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
                               <label for="homingseq" class="control-label">Homing Sequence <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control numpadgcode" id="homingseq" placeholder="G28"></input>
+                              <input type="text" class="form-control numpadgcode uppercase" id="homingseq" placeholder="G28"></input>
                           <!-- </div>
                           <div class="form-group"> -->
                               <label for="endgcode" class="control-label">End G-Code <span style="color:#FFA500;">(Optional)</span></label>
-                              <textarea class="form-control numpadgcode" id="endgcode" placeholder="M81\nG28\n"></textarea>
+                              <textarea class="form-control numpadgcode uppercase" id="endgcode" placeholder="M81\nG28\n"></textarea>
 
                               <label for="rapidspeed" class="control-label">Travel Moves (mm/s) <span style="color:red;">(Required)</span></label>
-                             <input class="form-control numpad" id="rapidspeed" placeholder="30"></input>
+                             <input class="form-control numpad uppercase" id="rapidspeed" placeholder="30"></input>
                         </p>
                       </form>
                   </div>
@@ -759,7 +759,7 @@
                       <div id="console"></div>
                       <div class="input-group btn-group" style="margin-left: 10px;">
                         <span class="input-group-addon"><i class="fa fa-terminal fa-lg"></i></span>
-                        <input type="text" autocomplete="on" class="form-control numpadgcode" id="command">
+                        <input type="text" autocomplete="on" class="form-control numpadgcode uppercase" id="command">
                         <span class="input-group-btn">
                         <button id="sendCommand" class="btn btn-default" type="button"><i class="fa fa-play" style="margin-right: 10px;"></i>Send</button>
                         <button class="emptylog btn btn-default" type="button" onclick="$('#console').empty();">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>

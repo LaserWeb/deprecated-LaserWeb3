@@ -381,3 +381,7 @@ d-grid {border: none; padding: 20px;}
      font-size: 11px;
 
  }
+
+ .uppercase {
+  text-transform:uppercase
+}
