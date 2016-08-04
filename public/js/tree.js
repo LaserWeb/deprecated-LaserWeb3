@@ -34,7 +34,7 @@ function fillTree() {
         <tr class="jobsetupfile">
           <td>
             <i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i>&nbsp;
-            <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]); fillTree(); fillLayerTabs();"><b>` + objectsInScene[i].name + `</b></a>
+            <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
           </td>
           <td>
             <a class="btn btn-xs btn-primary"><i class="fa fa-arrows" aria-hidden="true"></i></a>
@@ -51,7 +51,7 @@ function fillTree() {
         <tr class="jobsetupfile">
           <td>
             <i class="fa fa-fw fa-file-photo-o" aria-hidden="true"></i>&nbsp;
-            <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]); fillTree(); fillLayerTabs();"><b>` + objectsInScene[i].name + `</b></a>
+            <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
           </td>
           <td>
             <a class="btn btn-xs btn-primary"><i class="fa fa-arrows" aria-hidden="true"></i></a>
