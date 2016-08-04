@@ -1,6 +1,41 @@
 var toolpathsInScene = [];
 
 function initTree() {
+  $('#filetree').on('keyup change','input', function() {
+    var inputVal = $(this).val();
+    var newval = parseFloat(inputVal, 3)
+    var id = $(this).attr('id');
+    var objectseq = $(this).attr('objectseq');
+    // console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
+    if ( id.indexOf('rasterxoffset') == 0 ) {
+      objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + newval;
+      // console.log('Moving ' +objectsInScene[objectseq].name+ ' to X: '+newval);
+      attachBB(objectsInScene[objectseq]);
+    } else if ( id.indexOf('rasteryoffset') == 0 ) {
+      objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + newval;
+      // console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y: '+newval);
+      attachBB(objectsInScene[objectseq]);
+    } else if ( id.indexOf('rasterDPI') == 0 ) {
+      var bboxpre = new THREE.Box3().setFromObject(objectsInScene[objectseq]);
+      // console.log('bbox for BEFORE SCALE: Min X: ', (bboxpre.min.x + (laserxmax / 2)), '  Max X:', (bboxpre.max.x + (laserxmax / 2)), 'Min Y: ', (bboxpre.min.y + (laserymax / 2)), '  Max Y:', (bboxpre.max.y + (laserymax / 2)));
+      // console.log('Scaling ' +objectsInScene[objectseq].name+ ' to: '+scale);
+      var scale = (25.4 / newval);
+      objectsInScene[objectseq].scale.x = scale;
+      objectsInScene[objectseq].scale.y = scale;
+      objectsInScene[objectseq].scale.z = scale;
+      putFileObjectAtZero(objectsInScene[objectseq]);
+      attachBB(objectsInScene[objectseq]);
+      $("#rasterxoffset"+objectseq).val('0')
+      $("#rasteryoffset"+objectseq).val('0')
+    } else if ( id.indexOf('svgdpi') == 0 ) {
+      var svgscale = (25.4 / newval );
+      objectsInScene[objectseq].scale.x = svgscale;
+      objectsInScene[objectseq].scale.y = svgscale;
+      objectsInScene[objectseq].scale.z = svgscale;
+      putFileObjectAtZero(objectsInScene[objectseq]);
+      attachBB(objectsInScene[objectseq]);
+    }
+  });
 
 }
 
@@ -16,9 +51,6 @@ function fillTree() {
           <label for="filetreetable">Objects</label>
         </td>
         <td>
-          &nbsp;
-        </td>
-        <td>
           <a class="btn btn-xs btn-success" onclick="addJob();"><i class="fa fa-plus" aria-hidden="true"></i> Add selection to Job</a>
         </td>
       </tr>
@@ -29,37 +61,97 @@ function fillTree() {
     $('#filetree').append(header);
     for (i = 0; i < objectsInScene.length; i++) {
 
+      var xoffset = objectsInScene[i].userData.offsetX.toFixed(1);
+      var yoffset = objectsInScene[i].userData.offsetY.toFixed(1);
+      var xpos = objectsInScene[i].position.x.toFixed(1);
+      var ypos = objectsInScene[i].position.y.toFixed(1);
+      var scale = objectsInScene[i].scale.y;
+      if (objectsInScene[i].name.indexOf('.svg') != -1) {
+        var svgscale = objectsInScene[i].scale.x
+      }
+
       if (objectsInScene[i].type != "Mesh") {
         var file = `
-        <tr class="jobsetupfile">
+        <tr class="jobsetupfile topborder">
           <td>
             <i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i>&nbsp;
             <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
           </td>
           <td>
-            <a class="btn btn-xs btn-primary"><i class="fa fa-arrows" aria-hidden="true"></i></a>
-            <a class="btn btn-xs btn-primary"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-primary" onclick="$('#move`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-arrows" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-primary" onclick="$('#scale`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-pencil" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
           </td>
           <td>
-            <input type="checkbox" value="" onclick=" $('.chkchildof`+i+`').prop('checked', $(this).prop('checked'));" />
+            <input type="checkbox" value="" onclick=" $('.chkchildof`+i+`').prop('checked', $(this).prop('checked'));" id="selectall`+i+`" />
           </td>
         </tr>
+        <tr class="jobsetupfile" id="move`+i+`" style="display: none;">
+          <td colspan="3">
+            <label >Position Offset</label>
+            <table><tr><td>
+            <div class="input-group">
+              <span class="input-group-addon input-group-addon-xs">X:</span>
+              <input type="number" class="form-control input-xs" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`" step="1"><br>
+              <span class="input-group-addon input-group-addon-xs">mm</span>
+            </div></td><td>
+            <div class="input-group">
+              <span class="input-group-addon input-group-addon-xs">Y:</span>
+              <input type="number" class="form-control input-xs" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`" step="1">
+              <span class="input-group-addon input-group-addon-xs">mm</span>
+            </div></td></tr></table>
+          </td>
+        </tr>
+        <tr class="jobsetupfile" id="scale`+i+`" style="display: none;">
+          <td colspan="3">
+            <label>SVG Resolution</label>
+            <div class="input-group">
+              <input type="number" class="form-control input-xs" value="`+(25.4/svgscale)+`" id="svgdpi`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon input-group-addon-xs">DPI</span>
+            </div>
+          </td>
+        </tr>
+
         `
       } else {
         var file = `
-        <tr class="jobsetupfile">
+        <tr class="jobsetupfile topborder">
           <td>
             <i class="fa fa-fw fa-file-photo-o" aria-hidden="true"></i>&nbsp;
             <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
           </td>
           <td>
-            <a class="btn btn-xs btn-primary"><i class="fa fa-arrows" aria-hidden="true"></i></a>
-            <a class="btn btn-xs btn-primary"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-primary" onclick="$('#move`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-arrows" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-primary" onclick="$('#scale`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-pencil" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
           </td>
           <td>
             <input type="checkbox" value="" class="chkaddjob" id="child.`+i+`" />
+          </td>
+        </tr>
+        <tr class="jobsetupfile" id="move`+i+`" style="display: none;">
+          <td colspan="3">
+            <label >Position Offset</label>
+            <table><tr><td>
+            <div class="input-group">
+              <span class="input-group-addon input-group-addon-xs">X:</span>
+              <input type="number" class="form-control input-xs" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`" step="1"><br>
+              <span class="input-group-addon input-group-addon-xs">mm</span>
+            </div></td><td>
+            <div class="input-group">
+              <span class="input-group-addon input-group-addon-xs">Y:</span>
+              <input type="number" class="form-control input-xs" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`" step="1">
+              <span class="input-group-addon input-group-addon-xs">mm</span>
+            </div></td></tr></table>
+          </td>
+        </tr>
+        <tr class="jobsetupfile" id="scale`+i+`" style="display: none;">
+          <td colspan="3">
+            <label>Bitmap Resolution</label>
+            <div class="input-group">
+              <input type="number" class="form-control input-xs" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon input-group-addon-xs">DPI</span>
+            </div>
           </td>
         </tr>
         `
@@ -71,7 +163,7 @@ function fillTree() {
        for (j = 0; j < objectsInScene[i].children.length; j++) {
 
          var child = `
-         <tr class="jobsetupchild">
+         <tr class="jobsetupchild children`+i+`">
            <td>
             <i class="fa fa-fw fa-sm fa-object-ungroup" aria-hidden="true"></i>&nbsp;
             <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`].children[`+j+`])" id="link`+i+`_`+j+`">`+objectsInScene[i].children[j].name+`</a>
@@ -103,9 +195,6 @@ function fillTree() {
       <tr class="jobsetupfile">
         <td>
           <label for="toolpathstable">Toolpaths</label>
-        </td>
-        <td>
-          &nbsp;
         </td>
         <td>
           <a class="btn btn-xs btn-success"><i class="fa fa-cubes" aria-hidden="true"></i> Generate G-Code</a>

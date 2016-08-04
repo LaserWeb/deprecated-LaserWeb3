@@ -377,6 +377,18 @@ d-grid {border: none; padding: 20px;}
      border-radius: 3px;
  }
 
+.input-group-addon-xs {
+  padding: 3px 8px !important;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  color: #555;
+  text-align: center;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+}
  .uppercase {
    text-transform:uppercase;
  }
@@ -391,11 +403,14 @@ d-grid {border: none; padding: 20px;}
 
 
 .jobsetuptable {
-
 }
 
 .jobsetupfile {
   text-align: right;
+}
+
+.topborder {
+  border-top: dashed 1px #aaa;
 }
 
 .jobsetupfile td:first-child {
