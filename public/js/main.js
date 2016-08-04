@@ -235,7 +235,6 @@ $(document).ready(function() {
 
     // A few gcode input fields need to be caps for the firmware to support it
     $('.uppercase').keyup(function() {
-      console.log('capping')
         this.value = this.value.toLocaleUpperCase();
     });
 

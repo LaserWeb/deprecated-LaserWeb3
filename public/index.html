@@ -527,15 +527,15 @@
                       <form class="form-horizontal">
                           <!-- <div class="form-group"> -->
                               <label for="startgcode" class="control-label">Start G-Code <span style="color:#FFA500;">(Optional)</span></label>
-                              <textarea class="form-control numpadgcode uppercase" id="startgcode" placeholder="G28\nG90\nM80"></textarea>
+                              <textarea class="form-control numpadgcode uppercase" id="startgcode" placeholder="For example G28 G90 M80 - supports multi line commands"></textarea>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
                               <label for="laseron" class="control-label">Laser ON Command <span style="color:#FFA500;">(Optional)</span></label>
-                              <input type="text" class="form-control numpadgcode uppercase" id="laseron" placeholder="M3 / blank for firmwares that support G1"></input>
+                              <input type="text" class="form-control numpadgcode uppercase" id="laseron" placeholder="For example M3 / blank for firmwares that support G1"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
                               <label for="laseroff" class="control-label">Laser OFF Command <span style="color:#FFA500;">(Optional)</label>
-                              <input type="text" class="form-control numpadgcode uppercase" id="laseroff" placeholder="M5 / blank for firmwares that support G1"></input>
+                              <input type="text" class="form-control numpadgcode uppercase" id="laseroff" placeholder="For example M5 / blank for firmwares that support G1"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
                               <label for="lasermultiply" class="control-label">PWM Max S value <span style="color:red;">(Required)</span></label>
@@ -543,14 +543,14 @@
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
                               <label for="homingseq" class="control-label">Homing Sequence <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control numpadgcode uppercase" id="homingseq" placeholder="G28"></input>
+                              <input type="text" class="form-control numpadgcode uppercase" id="homingseq" placeholder="For example G28, or $H"></input>
                           <!-- </div>
                           <div class="form-group"> -->
                               <label for="endgcode" class="control-label">End G-Code <span style="color:#FFA500;">(Optional)</span></label>
-                              <textarea class="form-control numpadgcode uppercase" id="endgcode" placeholder="M81\nG28\n"></textarea>
+                              <textarea class="form-control numpadgcode uppercase" id="endgcode" placeholder="For example M81 G28 - supports multi line commands"></textarea>
 
                               <label for="rapidspeed" class="control-label">Travel Moves (mm/s) <span style="color:red;">(Required)</span></label>
-                             <input class="form-control numpad uppercase" id="rapidspeed" placeholder="30"></input>
+                             <input class="form-control numpad uppercase" id="rapidspeed" placeholder="For example 30"></input>
                         </p>
                       </form>
                   </div>
