@@ -215,7 +215,7 @@ function fillTree() {
 
           </td>
           <td>
-          <a class="btn btn-xs btn-default" onclick="viewToolpath('`+i+`', 1);"><i class="fa fa-eye" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-default" onclick="viewToolpath('`+i+`', 1);"><i class="fa fa-eye" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-danger" onclick="toolpathsInScene.splice('`+i+`'); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-primary"><i class="fa fa-fw fa-sliders" aria-hidden="true"></i></a>
           </td>
@@ -231,6 +231,7 @@ function fillTree() {
 
           </td>
           <td>
+          <a class="btn btn-xs btn-default" onclick="viewToolpath('`+i+`', 1);"><i class="fa fa-eye" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-danger" onclick="toolpathsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-primary"><i class="fa fa-fw fa-sliders" aria-hidden="true"></i></a>
           </td>
