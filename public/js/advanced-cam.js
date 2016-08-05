@@ -215,7 +215,8 @@ function fillTree() {
 
           </td>
           <td>
-            <a class="btn btn-xs btn-danger" onclick="toolpathsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
+          <a class="btn btn-xs btn-default" onclick="viewToolpath('`+i+`', 1);"><i class="fa fa-eye" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-danger" onclick="toolpathsInScene.splice('`+i+`'); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-primary"><i class="fa fa-fw fa-sliders" aria-hidden="true"></i></a>
           </td>
         </tr>
@@ -247,13 +248,7 @@ function fillTree() {
 
 }
 
-function resetColors() {
-  for (i = 0; i < objectsInScene.length; i++) {
-    for (j = 0; j < objectsInScene[i].children.length; j++) {
-      objectsInScene[i].children[j].material.color.setHex(objectsInScene[i].children[j].userData.color);
-    }
-  }
-}
+
 
 function addJob() {
   var toolpath = new THREE.Group();
@@ -289,4 +284,46 @@ function addJob() {
     toolpathsInScene.push(toolpath)
   }
   fillTree();
+}
+
+function viewToolpath(i) {
+  $(".layertab").removeClass('active');
+  $('#jobView').addClass('active');
+  clearScene()
+  scene.add(toolpathsInScene[i]);
+  var tpath = toolpathsInScene[i];
+  makeRed(tpath);
+  if (toolpathsInScene[i].userData) {
+    if (toolpathsInScene[i].userData.inflated) {
+      scene.add(toolpathsInScene[i].userData.inflated);
+      toolpathsInScene[i].userData.inflated.translateX(toolpathsInScene[i].parent.position.x)
+      toolpathsInScene[i].userData.inflated.translateY(toolpathsInScene[i].parent.position.y)
+    }
+  };
+  if (typeof(boundingBox) != 'undefined') {
+      scene.remove(boundingBox);
+  }
+}
+
+function clearScene() {
+  var total = scene.children.length
+  for (var j = 6; j < total; j++) {
+    scene.remove(scene.children[j]);
+  }
+}
+
+function resetColors() {
+  for (i = 0; i < objectsInScene.length; i++) {
+    for (j = 0; j < objectsInScene[i].children.length; j++) {
+      objectsInScene[i].children[j].material.color.setHex(objectsInScene[i].children[j].userData.color);
+    }
+  }
+}
+
+function makeRed(tpath) {
+  tpath.traverse( function ( child ) {
+    if (child.type == "Line") {
+      child.material.color.setRGB(1, 0.1, 0.1);
+    }
+  });
 }

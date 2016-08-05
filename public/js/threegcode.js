@@ -497,7 +497,7 @@ pocketPath = function(infobject, inflateVal, zstep, zdepth) {
             if (inflateGrp.children.length) {
               inflateGrp.name = 'inflateGrp';
               inflateGrp.position = infobject.position;
-              pocketGrp.userData.color = pocketGrp.material.color.getHex();
+              // pocketGrp.userData.color = pocketGrp.material.color.getHex();
               pocketGrp.add(inflateGrp)
             } else {
               console.log('Pocket already done after ' + i + ' iterations')
