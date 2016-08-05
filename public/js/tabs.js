@@ -61,15 +61,13 @@ function initTabs() {
   $('#tabsLayers').on('click','a',function(){
     // console.log("selected object id: " + $(this).attr('layerindex'));
     // console.log("selected tab name: " + $(this).parents('li').attr('id'));
+    clearScene();
 
     var tabName = $(this).parents('li').attr('id')
-
     $(".layertab").removeClass('active');
     $(this).parents('li').addClass('active');
     if (tabName == "allView") {
-      for (j = 6; j < scene.children.length+1; j++) {
-        scene.remove(scene.children[j])
-      }
+      clearScene();
       for (var j = 0; j < objectsInScene.length; j++) {
         // console.log('added object ' + j)
         scene.add(objectsInScene[j]);
@@ -85,7 +83,7 @@ function initTabs() {
       scene.remove(boundingBox)
       resetColors()
     } else if (tabName == "jobView") {
-      clearScene()
+      clearScene();
       for (var j = 0; j < toolpathsInScene.length; j++) {
         // console.log('added object ' + j)
         scene.add(toolpathsInScene[j]);
@@ -99,12 +97,12 @@ function initTabs() {
           scene.remove(boundingBox);
       }
     } else if (tabName == "gCodeView") {
+      clearScene();
       if (objectsInScene.length > 0 || toolpathsInScene.length > 0) {
         // console.log('L: ', scene.children.length)
         if (typeof(boundingBox) != 'undefined') {
             scene.remove(boundingBox);
         }
-        clearScene();
           if (typeof(object) != 'undefined') {
           scene.add(object);
           attachBB(object);

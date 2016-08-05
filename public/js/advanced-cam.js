@@ -288,6 +288,7 @@ function addJob() {
 }
 
 function viewToolpath(i) {
+  clearScene()
   $(".layertab").removeClass('active');
   $('#jobView').addClass('active');
   clearScene()
@@ -308,8 +309,14 @@ function viewToolpath(i) {
 
 function clearScene() {
   var total = scene.children.length
-  for (var j = 6; j < total; j++) {
-    scene.remove(scene.children[j]);
+  for (var x = 6; x < total; x++) {
+    // console.log('Removing ' + scene.children[x].name + ' from scene')
+    scene.remove(scene.children[x]);
+  }
+  var total = scene.children.length
+  for (var x = 6; x < total; x++) {
+    // console.log('Removing ' + scene.children[x].name + ' from scene')
+    scene.remove(scene.children[x]);
   }
 }
 
