@@ -649,7 +649,7 @@ function setupRaster(toolpathid) {
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group inputraster" >
     <label >Raster: Proportional Feedrate</label>
     <div class="input-group">
       <span class="input-group-addon">Light</span>
@@ -662,7 +662,7 @@ function setupRaster(toolpathid) {
       <span class="input-group-addon">mm/s</span>
     </div>
   </div>
-  <div class="form-group">
+  <div class="form-group inputraster">
     <label>Laser Power Constraints</label>
     <div class="input-group">
       <span class="input-group-addon">Min</span>
@@ -890,6 +890,7 @@ function cncVRasterMode() {
   $('.inputlaser').hide();
   $('.inputdragknife').hide();
   $('.inputvbit').show();
+  $('.inputraster').hide();
   $('#svgOpName').text("");
 };
 
