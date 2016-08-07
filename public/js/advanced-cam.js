@@ -45,30 +45,47 @@ function initTree() {
     console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
     if ( id.indexOf('tzstep') == 0 ) {
       var numPass = Math.floor((parseFloat($('#tzdepth'+objectseq).val()) / parseFloat(newval)))
+
       if ((parseFloat($('#tzdepth'+objectseq).val()) / parseFloat(newval)) - Math.floor(parseFloat($('#tzdepth'+objectseq).val()) / parseFloat(newval)) != 0) {
         var finalPass = parseFloat($('#tzdepth'+objectseq).val()) - (newval * numPass);
         $('#svgZDepth').text( numPass + ' x ' + newval + 'mm + 1 x ' + finalPass + 'mm');
       } else {
-        console.log('Numpass; ' + numPass + ' newval ' + newval)
         $('#svgZDepth').text( numPass + ' x ' + newval + 'mm');
       }
-      //
+      updateCamUserData(objectseq);
     } else if ( id.indexOf('tzdepth') == 0 ) {
       $('#svgZFinal').text(newval + 'mm');
-      //
+      var numPass = Math.floor((parseFloat(newval) / parseFloat($('#tzstep'+objectseq).val())))
+      if ((parseFloat(newval) / parseFloat($('#tzstep'+objectseq).val())) - Math.floor(parseFloat(newval) / parseFloat($('#tzstep'+objectseq).val())) != 0) {
+        var finalPass = parseFloat(newval) - ($('#tzstep'+objectseq).val() * numPass);
+        $('#svgZDepth').text( numPass + ' x ' + $('#tzstep'+objectseq).val() + 'mm + 1 x ' + finalPass + 'mm');
+      } else {
+        $('#svgZDepth').text( numPass + ' x ' + $('#tzstep'+objectseq).val() + 'mm');
+      }
+      updateCamUserData(objectseq);
     } else if ( id.indexOf('tspeed') == 0 ) {
-      //
+      updateCamUserData(objectseq);
     } else if ( id.indexOf('tplungespeed') == 0 ) {
-      //
+      updateCamUserData(objectseq);
     } else if ( id.indexOf('ttooldia') == 0 ) {
       $('#svgToolDia').text(newval + 'mm');
-      //
+      updateCamUserData(objectseq);
     } else if ( id.indexOf('tclearanceHeight') == 0 ) {
       $('#svgZClear').text(newval + 'mm');
-      //
+      updateCamUserData(objectseq);
     } else if ( id.indexOf('tdragoffset') == 0 ) {
       $('#dragKnifeRadius').text(newval + 'mm');
-      //
+      updateCamUserData(objectseq);
+    }
+
+    if ( id.indexOf('tminpwr') == 0 ) {
+      updateRasterUserData(objectseq);
+    } else if ( id.indexOf('tmaxpwr') == 0 ) {
+      updateRasterUserData(objectseq);
+    } else if ( id.indexOf('tfeedRateW') == 0 ) {
+      updateRasterUserData(objectseq);
+    } else if ( id.indexOf('tfeedRateB') == 0 ) {
+      updateRasterUserData(objectseq);
     }
 
 
@@ -79,23 +96,48 @@ function initTree() {
     var id = $(this).attr('id');
     var objectseq = $(this).attr('objectseq');
     console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
-    if ( id.indexOf('operation') == 0 ) {
+    if ( id.indexOf('toperation') == 0 ) {
       if (newval == "Laser (no path offset)") {
         laserMode();
+        updateCamUserData(objectseq);
       } else if (newval == "Inside") {
         cncInsideMode();
+        updateCamUserData(objectseq);
       } else if (newval == "Outside") {
         cncOutsideMode();
+        updateCamUserData(objectseq);
       } else if (newval == "Pocket") {
         cncPocketMode();
+        updateCamUserData(objectseq);
       } else if (newval == "Drag Knife") {
         dragKnifeMode();
+        updateCamUserData(objectseq);
       }
 
     };
   });
 
 }
+
+function updateCamUserData(i) {
+  toolpathsInScene[i].userData.camOperation = $('#toperation'+i).val();
+  toolpathsInScene[i].userData.camToolDia = $('#ttooldia'+i).val();
+  toolpathsInScene[i].userData.camZClearance = $('#tclearanceHeight'+i).val();
+  toolpathsInScene[i].userData.camDragOffset = $('#tdragoffset'+i).val();
+  toolpathsInScene[i].userData.camLaserPower = $('#tpwr'+i).val();
+  toolpathsInScene[i].userData.camZStep = $('#tzstep'+i).val();
+  toolpathsInScene[i].userData.camZDepth = $('#tzdepth'+i).val();
+  toolpathsInScene[i].userData.camFeedrate = $('#tspeed'+i).val();
+  toolpathsInScene[i].userData.camPlungerate = $('#tplungespeed'+i).val();
+};
+
+function updateRasterUserData(i) {
+  toolpathsInScene[i].userData.camOperation = "Raster";
+  toolpathsInScene[i].userData.rasterMinPwr = $('#tminpwr'+i).val();
+  toolpathsInScene[i].userData.rasterMaxPwr = $('#tmaxpwr'+i).val();
+  toolpathsInScene[i].userData.rasterBlackFeedrate = $('#tfeedRateB'+i).val();
+  toolpathsInScene[i].userData.rasterWhiteFeedrate = $('#tfeedRateW'+i).val();
+};
 
 function fillTree() {
   $('#filetree').empty();
@@ -168,9 +210,10 @@ function fillTree() {
             <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
           </td>
           <td>
+            <a class="btn btn-xs btn-warning" onclick="tracebmp(`+i+`, '`+objectsInScene[i].name+`')"><i class="fa fa-scissors" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-primary" onclick="$('#scale`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-expand" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-primary" onclick="$('#move`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-arrows" aria-hidden="true"></i></a>
-            <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-danger"  onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
           </td>
           <td>
             <input type="checkbox" value="" class="chkaddjob" id="child.`+i+`" />
@@ -298,8 +341,8 @@ function fillTree() {
 
           </td>
           <td>
-          <a class="btn btn-xs btn-default" onclick="viewToolpath('`+i+`', 1);"><i class="fa fa-eye" aria-hidden="true"></i></a>
-            <a class="btn btn-xs btn-danger" onclick="toolpathsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-default" onclick="viewToolpath('`+i+`', 1);"><i class="fa fa-eye" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-danger"  onclick="toolpathsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-primary" onclick="setupRaster(`+i+`);"><i class="fa fa-fw fa-sliders" aria-hidden="true"></i></a>
           </td>
         </tr>
@@ -416,41 +459,41 @@ function setupJob(toolpathid) {
   <div class="form-group">
     <label>Operation</label>
       <div class="input-group" >
-        <select class="form-control" id="operation`+toolpathid+`" objectseq="`+toolpathid+`">
+        <span class="input-group-addon">Type of cut: </span>
+        <select class="form-control" id="toperation`+toolpathid+`" objectseq="`+toolpathid+`">
           <option>Laser (no path offset)</option>
           <option>Inside</option>
           <option>Outside</option>
           <option>Pocket</option>
           <option>Drag Knife</option>
         </select>
-        <div class = "input-group-btn"><button class="btn btn-success" onclick="addOperation('`+toolpathid+`', $('#operation`+i+`').val(), $('#zstep`+toolpathid+`').val(), $('#zdepth`+toolpathid+`').val())">Add</button></div>
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group">r
       <label class="control-label">Tool Options</label>
 
       <div class="input-group cnconly">
         <span class="input-group-addon">Endmill Diameter</span>
-        <input type="number" class="form-control input-sm" value="6.35" id="ttooldia`+toolpathid+`"  objectseq="`+toolpathid+`">
+        <input type="number" class="form-control input-sm" value="6.35" id="ttooldia`+toolpathid+`"  objectseq="`+toolpathid+`" min="0.1">
         <span class="input-group-addon">mm</span>
       </div>
 
       <div class="input-group cnconly">
         <span class="input-group-addon">Z Safe Height</span>
-        <input type="number" class="form-control input-sm" value="10" id="tclearanceHeight`+toolpathid+`"  objectseq="`+toolpathid+`">
+        <input type="number" class="form-control input-sm" value="10" id="tclearanceHeight`+toolpathid+`"  objectseq="`+toolpathid+`" min="1">
         <span class="input-group-addon">mm</span>
       </div>
 
       <div class="input-group dragknifeonly">
         <span class="input-group-addon">Drag Knife: Center Offset</span>
-        <input type="number" class="form-control input-sm" value="0.1" id="tdragoffset`+toolpathid+`"  objectseq="`+toolpathid+`" step="0.1">
+        <input type="number" class="form-control input-sm" value="0.1" id="tdragoffset`+toolpathid+`"  objectseq="`+toolpathid+`" step="0.1" min="0.001">
         <span class="input-group-addon">mm</span>
       </div>
 
       <div class="input-group laseronly">
         <span class="input-group-addon">Laser: Power</span>
-        <input type="number" class="form-control" value="100" id="tpwr`+toolpathid+`" objectseq="`+toolpathid+`">
+        <input type="number" class="form-control" value="100" id="tpwr`+toolpathid+`" objectseq="`+toolpathid+`" min="1" max="100">
         <span class="input-group-addon">%</span>
       </div>
 
@@ -461,13 +504,13 @@ function setupJob(toolpathid) {
 
       <div class="input-group cnconly laseronly">
         <span class="input-group-addon">Cut Depth per pass</span>
-        <input type="number" class="form-control" id="tzstep`+toolpathid+`" value="1" objectseq="`+toolpathid+`">
+        <input type="number" class="form-control" id="tzstep`+toolpathid+`" value="1" objectseq="`+toolpathid+`" min="0.01">
         <span class="input-group-addon">mm</span>
       </div>
 
       <div class="input-group cnconly laseronly">
         <span class="input-group-addon">Cut Depth Final</span>
-        <input type="number" class="form-control" id="tzdepth`+toolpathid+`" value="1" objectseq="`+toolpathid+`">
+        <input type="number" class="form-control" id="tzdepth`+toolpathid+`" value="1" objectseq="`+toolpathid+`" min="0.01">
         <span class="input-group-addon">mm</span>
       </div>
 
@@ -478,13 +521,13 @@ function setupJob(toolpathid) {
 
       <div class="input-group">
         <span class="input-group-addon">Feedrate: Cut</span>
-        <input type="number" class="form-control" value="6" id="tspeed`+toolpathid+`" objectseq="`+toolpathid+`">
+        <input type="number" class="form-control" value="6" id="tspeed`+toolpathid+`" objectseq="`+toolpathid+`" min="0.1">
         <span class="input-group-addon">mm/s</span>
       </div>
 
       <div class="input-group cnconly">
         <span class="input-group-addon">Feedrate: Plunge</span>
-        <input type="number" class="form-control" value="2" id="tplungespeed`+toolpathid+`" objectseq="`+toolpathid+`">
+        <input type="number" class="form-control" value="2" id="tplungespeed`+toolpathid+`" objectseq="`+toolpathid+`" min="0.1">
         <span class="input-group-addon">mm/s</span>
       </div>
     </div>
@@ -493,8 +536,7 @@ function setupJob(toolpathid) {
   <button type="button" class="btn btn-lg btn-success" data-dismiss="modal">Preview Toolpath </button>
   `
   $('#statusBody2').html(template2);
-
-$('#statusBody').prepend(svgcnctool);
+  $('#statusBody').prepend(svgcnctool);
 
 laserMode(); // Default to laser since the Select defaults to laser.  In near future I want to update this to keep last user Operation in localstorage and default to last used on when opening modal
 
@@ -510,22 +552,17 @@ function setupRaster(toolpathid) {
 
   $('#statusBody').html('Configure the operation for the toolpath <b>' + toolpathsInScene[toolpathid].name + '</b><hr>' );
   var template2 = `
-  <label >Copy image to a traced vector for cutting use </label>
-  <div class="btn-group btn-group-justified" role="group" aria-label="tracegcode">
-      <div class="btn-group" role="group">
-          <a class="btn btn-warning btn-block" href="#">Trace to Vector</a>
-      </div>
-  </div>
-<div class="form-group">
+
+  <div class="form-group">
     <label >Raster: Proportional Feedrate</label>
     <div class="input-group">
       <span class="input-group-addon">Light</span>
-      <input type="number" class="form-control input-sm"  value="20" id="feedRateW`+i+`" objectseq="`+i+`">
+      <input type="number" class="form-control input-sm"  value="20" id="tfeedRateW`+toolpathid+`" objectseq="`+toolpathid+`">
       <span class="input-group-addon">mm/s</span>
     </div>
     <div class="input-group">
       <span class="input-group-addon">Dark</span>
-      <input type="number" class="form-control input-sm"  value="20" id="feedRateB`+i+`" objectseq="`+i+`">
+      <input type="number" class="form-control input-sm"  value="20" id="tfeedRateB`+toolpathid+`" objectseq="`+toolpathid+`">
       <span class="input-group-addon">mm/s</span>
     </div>
   </div>
@@ -533,17 +570,17 @@ function setupRaster(toolpathid) {
     <label>Laser Power Constraints</label>
     <div class="input-group">
       <span class="input-group-addon">Min</span>
-      <input type="number"  min="0" max="100" class="form-control input-sm" value="0" id="minpwr`+i+`" objectseq="`+i+`">
+      <input type="number"  min="0" max="100" class="form-control input-sm" value="0" id="tminpwr`+toolpathid+`" objectseq="`+toolpathid+`">
       <span class="input-group-addon">%</span>
     </div>
     <div class="input-group">
       <span class="input-group-addon">Max</span>
-      <input type="number"  min="0" max="100" class="form-control input-sm" value="100" id="maxpwr`+i+`" objectseq="`+i+`">
+      <input type="number"  min="0" max="100" class="form-control input-sm" value="100" id="tmaxpwr`+toolpathid+`" objectseq="`+toolpathid+`">
       <span class="input-group-addon">%</span>
     </div>
   </div>
 
-  <button type="button" class="btn btn-lg btn-success" data-dismiss="modal">Preview Toolpath </button>
+  <button type="button" class="btn btn-lg btn-success" data-dismiss="modal">Save Parameters </button>
   `
   $('#statusBody2').html(template2);
 }
