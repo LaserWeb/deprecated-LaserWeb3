@@ -66,7 +66,11 @@ function initTree() {
     } else if ( id.indexOf('tclearanceHeight') == 0 ) {
       $('#svgZClear').text(newval + 'mm');
       //
+    } else if ( id.indexOf('tdragoffset') == 0 ) {
+      $('#dragKnifeRadius').text(newval + 'mm');
+      //
     }
+
 
   });
 
@@ -440,7 +444,7 @@ function setupJob(toolpathid) {
 
       <div class="input-group dragknifeonly">
         <span class="input-group-addon">Drag Knife: Center Offset</span>
-        <input type="number" class="form-control input-sm" value="10" id="tdragoffset`+toolpathid+`"  objectseq="`+toolpathid+`">
+        <input type="number" class="form-control input-sm" value="0.1" id="tdragoffset`+toolpathid+`"  objectseq="`+toolpathid+`" step="0.1">
         <span class="input-group-addon">mm</span>
       </div>
 
