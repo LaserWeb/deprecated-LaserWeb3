@@ -7,11 +7,11 @@ function initTree() {
     var id = $(this).attr('id');
     var objectseq = $(this).attr('objectseq');
     // console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
-    if ( id.indexOf('rasterxoffset') == 0 ) {
+    if ( id.indexOf('xoffset') == 0 ) {
       objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + newval;
       // console.log('Moving ' +objectsInScene[objectseq].name+ ' to X: '+newval);
       attachBB(objectsInScene[objectseq]);
-    } else if ( id.indexOf('rasteryoffset') == 0 ) {
+    } else if ( id.indexOf('yoffset') == 0 ) {
       objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + newval;
       // console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y: '+newval);
       attachBB(objectsInScene[objectseq]);
@@ -27,7 +27,7 @@ function initTree() {
       attachBB(objectsInScene[objectseq]);
       $("#rasterxoffset"+objectseq).val('0')
       $("#rasteryoffset"+objectseq).val('0')
-    } else if ( id.indexOf('svgdpi') == 0 ) {
+    } else if ( id.indexOf('svgresol') == 0 ) {
       var svgscale = (25.4 / newval );
       objectsInScene[objectseq].scale.x = svgscale;
       objectsInScene[objectseq].scale.y = svgscale;
@@ -77,9 +77,8 @@ function fillTree() {
             <i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i>&nbsp;
             <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
           </td>
-          <td>
+          <td id="buttons`+i+`">
             <a class="btn btn-xs btn-primary" onclick="$('#move`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-arrows" aria-hidden="true"></i></a>
-            <a class="btn btn-xs btn-primary" onclick="$('#scale`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-pencil" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
           </td>
           <td>
@@ -92,26 +91,16 @@ function fillTree() {
             <table><tr><td>
             <div class="input-group">
               <span class="input-group-addon input-group-addon-xs">X:</span>
-              <input type="number" class="form-control input-xs" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`" step="1"><br>
+              <input type="number" class="form-control input-xs" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="xoffset`+i+`" objectseq="`+i+`" step="1"><br>
               <span class="input-group-addon input-group-addon-xs">mm</span>
             </div></td><td>
             <div class="input-group">
               <span class="input-group-addon input-group-addon-xs">Y:</span>
-              <input type="number" class="form-control input-xs" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`" step="1">
+              <input type="number" class="form-control input-xs" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="yoffset`+i+`" objectseq="`+i+`" step="1">
               <span class="input-group-addon input-group-addon-xs">mm</span>
             </div></td></tr></table>
           </td>
         </tr>
-        <tr class="jobsetupfile" id="scale`+i+`" style="display: none;">
-          <td colspan="3">
-            <label>SVG Resolution</label>
-            <div class="input-group">
-              <input type="number" class="form-control input-xs" value="`+(25.4/svgscale)+`" id="svgdpi`+i+`" objectseq="`+i+`">
-              <span class="input-group-addon input-group-addon-xs">DPI</span>
-            </div>
-          </td>
-        </tr>
-
         `
       } else {
         var file = `
@@ -121,8 +110,8 @@ function fillTree() {
             <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
           </td>
           <td>
+            <a class="btn btn-xs btn-primary" onclick="$('#scale`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-expand" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-primary" onclick="$('#move`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-arrows" aria-hidden="true"></i></a>
-            <a class="btn btn-xs btn-primary" onclick="$('#scale`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-pencil" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
           </td>
           <td>
@@ -159,6 +148,26 @@ function fillTree() {
 
 
       $('#filetreetable').append(file)
+
+      if (svgscale) {
+        var svgfile =`
+        <tr class="jobsetupfile" id="scale`+i+`" style="display: none;">
+          <td colspan="3">
+            <label>SVG Resolution</label>
+            <div class="input-group">
+              <input type="number" class="form-control input-xs" value="`+(25.4/svgscale)+`" id="svgresol`+i+`" objectseq="`+i+`">
+              <span class="input-group-addon input-group-addon-xs">DPI</span>
+            </div>
+          </td>
+        </tr>`
+        $('#filetreetable').append(svgfile)
+
+        var scalebtn = `<a class="btn btn-xs btn-primary" onclick="$('#scale`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-expand" aria-hidden="true"></i></a>`
+        $('#buttons'+i).prepend(scalebtn)
+
+
+      }
+
       //  var name = objectsInScene[i].name;
        for (j = 0; j < objectsInScene[i].children.length; j++) {
 
@@ -209,15 +218,15 @@ function fillTree() {
         var toolp = `<tr class="jobsetupfile">
           <td>
             <i class="fa fa-fw fa-object-group" aria-hidden="true"></i>&nbsp;
-            <a class="entity-job" href="#">Vector-` +i + `</a>
+            <a class="entity-job" href="#">`+toolpathsInScene[i].name+`</a>
           </td>
           <td>
 
           </td>
           <td>
             <a class="btn btn-xs btn-default" onclick="viewToolpath('`+i+`', 1);"><i class="fa fa-eye" aria-hidden="true"></i></a>
-            <a class="btn btn-xs btn-danger" onclick="toolpathsInScene.splice('`+i+`'); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
-            <a class="btn btn-xs btn-primary"><i class="fa fa-fw fa-sliders" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-danger" onclick="toolpathsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-primary" onclick="setupJob(`+i+`);"><i class="fa fa-fw fa-sliders" aria-hidden="true"></i></a>
           </td>
         </tr>
         `
@@ -225,7 +234,7 @@ function fillTree() {
         var toolp = `<tr class="jobsetupfile">
           <td>
             <i class="fa fa-fw fa-picture-o" aria-hidden="true"></i>&nbsp;
-            <a class="entity-job" href="#">Raster-` +i + `</a>
+            <a class="entity-job" href="#">`+toolpathsInScene[i].name+`</a>
           </td>
           <td>
 
@@ -233,7 +242,7 @@ function fillTree() {
           <td>
           <a class="btn btn-xs btn-default" onclick="viewToolpath('`+i+`', 1);"><i class="fa fa-eye" aria-hidden="true"></i></a>
             <a class="btn btn-xs btn-danger" onclick="toolpathsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
-            <a class="btn btn-xs btn-primary"><i class="fa fa-fw fa-sliders" aria-hidden="true"></i></a>
+            <a class="btn btn-xs btn-primary" onclick="setupRaster(`+i+`);"><i class="fa fa-fw fa-sliders" aria-hidden="true"></i></a>
           </td>
         </tr>
         `
@@ -260,7 +269,7 @@ function addJob() {
       var $this = $(this);
 
       if($this.is(":checked")){
-          console.log($this.attr("id"));
+          // console.log($this.attr("id"));
           var id = $this.attr("id");
           var id = id.split(".");
           if (id[2]) {
@@ -282,6 +291,7 @@ function addJob() {
       }
   });
   if (toolpath.children.length > 0) {
+    toolpath.name = "Vector-"+(toolpathsInScene.length)
     toolpathsInScene.push(toolpath)
   }
   fillTree();
@@ -334,4 +344,108 @@ function makeRed(tpath) {
       child.material.color.setRGB(1, 0.1, 0.1);
     }
   });
+}
+
+function setupJob(toolpathid) {
+  $('#statusmodal').modal('show');
+  $('#statusTitle').empty();
+  $('#statusTitle').html('Configure Toolpath');
+  $('#statusBody').empty();
+  $('#statusBody2').empty();
+
+  $('#statusBody').html('Configure the operation for the toolpath <b>' + toolpathsInScene[toolpathid].name + '</b><hr>' );
+  var template2 = `
+  <div class="form-group">
+    <label>Operation</label>
+      <div class="input-group" >
+        <select class="form-control" id="operation`+i+`">
+          <option>Laser (no path offset)</option>
+          <option>Inside</option>
+          <option>Outside</option>
+          <option>Pocket</option>
+          <option>Drag Knife</option>
+        </select>
+        <div class = "input-group-btn"><button class="btn btn-success" onclick="addOperation('`+i+`', $('#operation`+i+`').val(), $('#zstep`+i+`').val(), $('#zdepth`+i+`').val())">Add</button></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label >Cut Depth per pass</label>
+      <div class="input-group">
+        <input type="number" class="form-control" value=""  id="zstep`+i+`">
+        <span class="input-group-addon">mm</span>
+      </div>
+      <label>Final Depth</label>
+      <div class="input-group">
+        <input type="number" class="form-control" value=""  id="zdepth`+i+`">
+        <span class="input-group-addon">mm</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Feedrate: Cut</label>
+      <div class="input-group">
+        <input type="number" class="form-control" value="" id="speed`+i+`" objectseq="`+i+`">
+        <span class="input-group-addon">mm/s</span>
+      </div>
+      <label>Feedrate: Plunge</label>
+      <div class="input-group">
+        <input type="number" class="form-control" value="20" id="plungespeed`+i+`" objectseq="`+i+`">
+        <span class="input-group-addon">mm/s</span>
+      </div>
+    </div>
+
+
+  <button type="button" class="btn btn-lg btn-success" data-dismiss="modal">Preview Toolpath </button>
+  `
+  $('#statusBody2').html(template2);
+
+}
+
+
+function setupRaster(toolpathid) {
+  $('#statusmodal').modal('show');
+  $('#statusTitle').empty();
+  $('#statusTitle').html('Configure Toolpath');
+  $('#statusBody').empty();
+  $('#statusBody2').empty();
+
+  $('#statusBody').html('Configure the operation for the toolpath <b>' + toolpathsInScene[toolpathid].name + '</b><hr>' );
+  var template2 = `
+  <label >Copy image to a traced vector for cutting use </label>
+  <div class="btn-group btn-group-justified" role="group" aria-label="tracegcode">
+      <div class="btn-group" role="group">
+          <a class="btn btn-warning btn-block" href="#">Trace to Vector</a>
+      </div>
+  </div>
+<div class="form-group">
+    <label >Raster: Proportional Feedrate</label>
+    <div class="input-group">
+      <span class="input-group-addon">Light</span>
+      <input type="number" class="form-control input-sm"  value="20" id="feedRateW`+i+`" objectseq="`+i+`">
+      <span class="input-group-addon">mm/s</span>
+    </div>
+    <div class="input-group">
+      <span class="input-group-addon">Dark</span>
+      <input type="number" class="form-control input-sm"  value="20" id="feedRateB`+i+`" objectseq="`+i+`">
+      <span class="input-group-addon">mm/s</span>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Laser Power Constraints</label>
+    <div class="input-group">
+      <span class="input-group-addon">Min</span>
+      <input type="number"  min="0" max="100" class="form-control input-sm" value="0" id="minpwr`+i+`" objectseq="`+i+`">
+      <span class="input-group-addon">%</span>
+    </div>
+    <div class="input-group">
+      <span class="input-group-addon">Max</span>
+      <input type="number"  min="0" max="100" class="form-control input-sm" value="100" id="maxpwr`+i+`" objectseq="`+i+`">
+      <span class="input-group-addon">%</span>
+    </div>
+  </div>
+
+
+  <button type="button" class="btn btn-lg btn-success" data-dismiss="modal">Preview Toolpath </button>
+  `
+  $('#statusBody2').html(template2);
+
 }
