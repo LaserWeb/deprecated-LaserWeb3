@@ -406,7 +406,7 @@ function fillTree() {
     }
 
   } else {
-    var instructions = `Please select some entities from the <b>Objects<b> above and add them to a toolpath using the <br><kbd><i class="fa fa-plus" aria-hidden="true"></i> Add selection to Job</kbd> button...`
+    var instructions = `Please select some entities from the <b>Objects</b> above and add them to a toolpath using the <br><kbd><i class="fa fa-plus" aria-hidden="true"></i> Add selection to Job</kbd> button...`
     $('#toolpathtree').append(instructions)
 
   }  // End of if (toolpathsInScene.length > 0)
