@@ -188,7 +188,7 @@ Rasterizer.prototype.rasterRow = function(y) {
     // posy = (posy * this.config.spotSize1) - parseFloat(this.config.yOffset);
     if (this.config.imagePos == "TopLeft") {
     //   posy = (posy * this.config.spotSize1) - parseFloat(this.config.yOffset) + ((laserymax / 2) + this.config.imgheight);
-      posy = (posy * this.config.beamSize1) + parseFloat(this.config.yOffset) - parseFloat(laserymax) + parseFloat(this.config.physicalHeight);
+      posy = (posy * this.config.beamSize1) - parseFloat(this.config.yOffset) - parseFloat(laserymax) + parseFloat(this.config.physicalHeight);
     } else {
       posy = (posy * this.config.beamSize1) - parseFloat(this.config.yOffset);
     }
