@@ -161,6 +161,7 @@ function slicegrid(step) {
     fileobject = slicegroup;
     viewExtents(slicegroup);
     fillLayerTabs();
+    fillTree();
 
     console.log("Slice Completed")
     console.groupEnd();

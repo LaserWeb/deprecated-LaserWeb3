@@ -87,6 +87,7 @@ function drawRaster(name, data) {
         putFileObjectAtZero(rastermesh);
         calcZeroOffset(rastermesh)
         rastermesh.userData.seq = currentIdx;
+        rastermesh.userData.color = rastermesh.material.color.getHex();
         objectsInScene.push(rastermesh)
         // resetView();
         // setImgDims(currentIdx);

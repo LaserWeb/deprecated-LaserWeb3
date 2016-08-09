@@ -30,6 +30,7 @@ $(document).ready(function() {
     initSocket();
     initTour();
     initSmoothie();
+    initTree();
 
 
     // Tooltips
@@ -232,6 +233,11 @@ $(document).ready(function() {
 
     });
 
+    // A few gcode input fields need to be caps for the firmware to support it
+    $('.uppercase').keyup(function() {
+        this.value = this.value.toLocaleUpperCase();
+    });
+
 
 
 }); // End of document.ready
@@ -301,7 +307,7 @@ function readFile(evt) {
                 dxf = r.result
                 drawDXF(dxf, f.name);
                 printLog('DXF Opened', msgcolor, "file");
-                putFileObjectAtZero();
+                // putFileObjectAtZero();
                 resetView()
             };
 
@@ -386,6 +392,7 @@ function readFile(evt) {
         controls.reset();
     }
     setTimeout(function(){ fillLayerTabs(); }, 250);
+    setTimeout(function(){ fillTree(); }, 250);
     setTimeout(function(){ viewExtents(objectsInScene[objectsInScene.length - 1]); }, 300);
 
 };

@@ -36,7 +36,7 @@ var laseroff;
 var lasermultiply;
 var homingseq;
 var endgcode;
-
+var isLaserOn = false;
 
 // add MAP function to the Numbers function
 Number.prototype.map = function(in_min, in_max, out_min, out_max) {
@@ -253,18 +253,29 @@ Rasterizer.prototype.rasterRow = function(y) {
 
             //console.log('From: ' + this.lastPosx + ', ' + lastPosy + '  - To: ' + posx + ', ' + posy + ' at ' + lastIntensity + '%');
             if (lastIntensity > 0) {
-              if (laseron) {
-                  this.result += laseron
-                  this.result += '\n'
+              if (!isLaserOn) {
+                if (laseron) {
+                    this.result += laseron
+                    this.result += '\n'
+                }
+                isLaserOn = true;
               }
               this.result += 'G1 X{0} S{2} F{3}\n'.format(posx, gcodey, lastIntensity, speed);
-              if (laseroff) {
-                  this.result += laseroff
-                  this.result += '\n'
-              }
+              // if (laseroff) {
+              //     this.result += laseroff
+              //     this.result += '\n'
+              // }
             } else {
               if ((intensity > 0) || (this.config.optimizelineends == false)) {
+                if (isLaserOn) {
+                  if (laseroff) {
+                      this.result += laseroff
+                      this.result += '\n'
+                  }
+                  isLaserOn = false;
+                }
                 this.result += 'G0 X{0} S0\n'.format(posx, gcodey);
+
               }
             }
         } else {
@@ -278,7 +289,12 @@ Rasterizer.prototype.rasterRow = function(y) {
             lastIntensity = intensity;
         }
     }
-
+    isLaserOn = false;
+    if (laseroff) {
+        this.result += laseroff
+        this.result += '\n'
+    }
+    isLaserOn = false;
     this.dir = -this.dir; // Reverse direction for next row - makes us move in a more efficient zig zag down the image
 };
 

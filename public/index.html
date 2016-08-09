@@ -9,7 +9,7 @@
     <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator">
     <meta name="google-site-verification" content="Q5N27jmbSMfsf_oC4UmRlNDVXKta7BP4DaDq1h0Ox5Y" />
     <meta name="author" content="github.com/openhardwarecoza/LaserWeb2/">
-    <meta name="version" content="30216">
+    <meta name="version" content="30229">
 
     <!--IE Compatibility modes-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,6 +47,9 @@
 
     <script src="lib/jquery/jquery-input-history.min.js"></script>
 
+    <!-- CAM populated from threejs objects -->
+    <script src="js/simple-cam.js"></script>
+    <script src="js/advanced-cam.js"></script>
 
     <!-- https://github.com/kabachello/jQuery.NumPad -->
     <script src="lib/jnumpad/jquery.numpad.js"></script>
@@ -395,18 +398,23 @@
 
           </div>
           <!-- end quote -->
+
+
+
+
           <!-- cam -->
           <div id="cam-menu-panel" class="mobtab" style="display: none;">
-            <h4>CAM: Convert to G-CODE</h4>
             <div class="bs-callout bs-callout-danger" id="filestatus">
+                <h4>CAM: Convert to G-CODE</h4>
                 <h4><i class="fa fa-fw fa-exclamation" aria-hidden="true"></i>No File to work with</h4> Please <a href="#" onclick="$('#file').click()">open a file from the "Open" button</a>:
                 <br> SVG (Paths only, single group), DXF (R14 Lines/Polylines/Circles), BMP/PNG/JPEG (Raster Engraving) and GCODE (External CAM) are all supported
             </div>
 
             <!-- New CAM System -->
             <div class="btn-group btn-group-justified" role="group" aria-label="gengcode">
+
                 <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-success btn-block" id="generategcode">Generate G-Code</button>
+                <button type="button" class="btn btn-success btn-block" id="generategcode">Generate G-Code</button>
                 </div>
             </div>
 
@@ -417,6 +425,22 @@
 
           </div>
           <!-- end cam -->
+
+
+          <!-- tree cam -->
+          <div id="tree-cam-menu-panel" class="mobtab" style="display: none;">
+            <div class="bs-callout bs-callout-danger" id="filestatus">
+              <h4><i class="fa fa-fw fa-exclamation" aria-hidden="true"></i>Preview Feature</h4>
+              Note: This is not active yet, we are busy coding up this new feature to replace the existing CAM tab.  For more details see <a href="https://github.com/openhardwarecoza/LaserWeb3/issues/52">Issue 52</a>
+            </div>
+
+            <div id="filetree">
+
+            </div>
+          </div>
+          <!-- end tree cam -->
+
+
           <!-- gcode -->
           <div id="gcode-menu-panel" class="mobtab" style="display: none;">
             <h4>G-CODE</h4>
@@ -505,30 +529,30 @@
                       <form class="form-horizontal">
                           <!-- <div class="form-group"> -->
                               <label for="startgcode" class="control-label">Start G-Code <span style="color:#FFA500;">(Optional)</span></label>
-                              <textarea class="form-control numpadgcode" id="startgcode" placeholder="G28\nG90\nM80"></textarea>
+                              <textarea class="form-control numpadgcode uppercase" id="startgcode" placeholder="For example G28 G90 M80 - supports multi line commands"></textarea>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
                               <label for="laseron" class="control-label">Laser ON Command <span style="color:#FFA500;">(Optional)</span></label>
-                              <input type="text" class="form-control numpadgcode" id="laseron" placeholder="M3 / blank for firmwares that support G1"></input>
+                              <input type="text" class="form-control numpadgcode uppercase" id="laseron" placeholder="For example M3 / blank for firmwares that support G1"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
                               <label for="laseroff" class="control-label">Laser OFF Command <span style="color:#FFA500;">(Optional)</label>
-                              <input type="text" class="form-control numpadgcode" id="laseroff" placeholder="M5 / blank for firmwares that support G1"></input>
+                              <input type="text" class="form-control numpadgcode uppercase" id="laseroff" placeholder="For example M5 / blank for firmwares that support G1"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
-                              <label for="laseroff" class="control-label">PWM Max S value <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control  numpad" id="lasermultiply" placeholder="255"></input>
+                              <label for="lasermultiply" class="control-label">PWM Max S value <span style="color:red;">(Required)</span></label>
+                              <input type="text" class="form-control numpad uppercase" id="lasermultiply" placeholder="For example 255, 1, or 1000"></input>
                           <!-- </div> -->
                           <!-- <div class="form-group"> -->
                               <label for="homingseq" class="control-label">Homing Sequence <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control numpadgcode" id="homingseq" placeholder="G28"></input>
+                              <input type="text" class="form-control numpadgcode uppercase" id="homingseq" placeholder="For example G28, or $H"></input>
                           <!-- </div>
                           <div class="form-group"> -->
                               <label for="endgcode" class="control-label">End G-Code <span style="color:#FFA500;">(Optional)</span></label>
-                              <textarea class="form-control numpadgcode" id="endgcode" placeholder="M81\nG28\n"></textarea>
+                              <textarea class="form-control numpadgcode uppercase" id="endgcode" placeholder="For example M81 G28 - supports multi line commands"></textarea>
 
                               <label for="rapidspeed" class="control-label">Travel Moves (mm/s) <span style="color:red;">(Required)</span></label>
-                             <input class="form-control numpad" id="rapidspeed" placeholder="30"></input>
+                             <input class="form-control numpad uppercase" id="rapidspeed" placeholder="For example 30"></input>
                         </p>
                       </form>
                   </div>
@@ -734,7 +758,7 @@
                       <div id="console"></div>
                       <div class="input-group btn-group" style="margin-left: 10px;">
                         <span class="input-group-addon"><i class="fa fa-terminal fa-lg"></i></span>
-                        <input type="text" autocomplete="on" class="form-control numpadgcode" id="command">
+                        <input type="text" autocomplete="on" class="form-control numpadgcode uppercase" id="command">
                         <span class="input-group-btn">
                         <button id="sendCommand" class="btn btn-default" type="button"><i class="fa fa-play" style="margin-right: 10px;"></i>Send</button>
                         <button class="emptylog btn btn-default" type="button" onclick="$('#console').empty();">&nbsp;<i class="fa fa-trash"></i>&nbsp;</button>
@@ -757,10 +781,10 @@
   		      <ul id="menu" >
   		        <li id="jog-menu" class="leftmenuitem active" ><a href="#"><i class="fa fa-arrows-alt"></i><span>Jog</span></a></li>
               <li id="cam-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-pencil-square-o"></i><span>CAM</span></a></li>
+              <li id="tree-cam-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-pencil"></i><span>Tree Based CAM</span></a></li>
               <li id="gcode-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-file-code-o"></i><span>GCode</span></a></li>
               <li id="quote-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-money"></i><span>Quote</span></a></li>
               <!-- <li id="gdrive-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-google"></i><span>Google Drive</span></a></li> -->
-              <!-- <li id="console-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-list"></i><span>Console Log</span></a></li> -->
               <li id="settings-menu"  class="leftmenuitem"><a href="#"><i class="fa fa-cogs"></i><span>Settings</span></a></li>
   		      </ul>
   		    </div>
@@ -966,12 +990,12 @@ $("#quote-menu").click(function() {
 //   $('#gdrive-menu-panel').show();
 //   $("#gdrive-menu").addClass('active')
 // });
-// $("#console-menu").click(function() {
-//   $('.mobtab').hide();
-//   $('.leftmenuitem').removeClass('active');
-//   $('#console-menu-panel').show();
-//   $("#console-menu").addClass('active')
-// });
+$("#tree-cam-menu").click(function() {
+  $('.mobtab').hide();
+  $('.leftmenuitem').removeClass('active');
+  $('#tree-cam-menu-panel').show();
+  $("#tree-cam-menu").addClass('active')
+});
 $("#jog-menu").click(function() {
   $('.mobtab').hide();
   $('.leftmenuitem').removeClass('active');
@@ -994,5 +1018,6 @@ $("#jog-menu").click(function() {
 <!-- <a href="https://openhardwarecoza.github.io/donate" target="_new">
     <img style="position: fixed; top: 50px; right: 0; border: 0;" src="images/donate.png"  alt="Fork me on GitHub">
 </a> -->
+
 
 </html>

@@ -284,8 +284,6 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                     g += " X" + xpos;
                     g += " Y" + ypos;
                     g += " Z" + zpos;
-
-
                     g += " S" + laserPwrVal + "\n";
                 }
             }
@@ -347,6 +345,7 @@ addOperation = function(index, operation, zstep, zdepth) {
     objectsInScene[index].userData.zdepth = zdepth;
   }
   setTimeout(function(){ fillLayerTabs(); }, 100);
+  setTimeout(function(){ fillTree(); }, 101);
 
 }
 
@@ -416,6 +415,7 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
         for (i = 0; i < zdepth; i += zstep) {
             inflateGrp = drawClipperPaths(inflatedPaths, 0xff00ff, 0.8, -i, true, "inflatedGroup"); // (paths, color, opacity, z, zstep, isClosed, isAddDirHelper, name, inflateVal)
             inflateGrp.name = 'inflateGrp';
+            inflateGrp.userData.color = inflateGrp.material.color.getHex();
             inflateGrp.position = infobject.position;
             console.log(i)
             inflateGrpZ.add(inflateGrp)
@@ -497,6 +497,7 @@ pocketPath = function(infobject, inflateVal, zstep, zdepth) {
             if (inflateGrp.children.length) {
               inflateGrp.name = 'inflateGrp';
               inflateGrp.position = infobject.position;
+              // pocketGrp.userData.color = pocketGrp.material.color.getHex();
               pocketGrp.add(inflateGrp)
             } else {
               console.log('Pocket already done after ' + i + ' iterations')
@@ -581,6 +582,7 @@ dragknifePath = function(infobject, inflateVal, zstep, zdepth) {
             if (inflateGrp.children.length) {
               inflateGrp.name = 'dragknifeGrp';
               inflateGrp.position = infobject.position;
+              dragknifeGrp.userData.color = dragknifeGrp.material.color.getHex();
               dragknifeGrp.add(inflateGrp)
             } else {
               console.log('Dragknife Operation Failed')

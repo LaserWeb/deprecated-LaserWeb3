@@ -150,7 +150,11 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   socket.on('serialSend', function(data) {
     data = data.split('\n')
     for (i=0; i<data.length; i++) {
-      addQ(data[i])
+      var line = data[i].split(';'); // Remove everything after ; = comment
+	    var tosend = line[0];
+      if (tosend.length > 0) {
+        addQ(tosend)
+      }
     }
   });
 

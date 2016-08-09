@@ -677,12 +677,17 @@ SVGReader = {
 
     if ( typeof d == 'string') {
       // parse path string
-      d = d.match(/([A-Za-z]|-?[0-9]+\.?[0-9]*(?:e-?[0-9]*)?)/g);
-      for (var i=0; i<d.length; i++) {
-        var num = parseFloat(d[i]);
-        if (!isNaN(num)) {
-          d[i] = num;
+      if (d.length > 0) {
+        d = d.match(/([A-Za-z]|-?[0-9]+\.?[0-9]*(?:e-?[0-9]*)?)/g);
+        for (var i=0; i<d.length; i++) {
+          var num = parseFloat(d[i]);
+          if (!isNaN(num)) {
+            d[i] = num;
+          }
         }
+      } else {
+        // console.log(node)
+        printLog("SVG Parser found an empty node: " + node.id + ": IGNORED", errorcolor, "file")
       }
     }
     //console.log('notice', "d: " + d.toString());

@@ -741,7 +741,7 @@ function onMouseClick(e) {
 
         if (obj.name && obj.name != "bullseye" && obj.name != "rastermesh" && obj.name != "XY" && obj.name != "GridHelper") {
             printLog('Clicked on : ' + obj.name, successcolor, "viewer")
-            console.log('Clicked on : ' + obj.name);
+            console.log('Clicked on : ' + obj.parent.name + '.' + obj.name);
             // obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
             attachBB(obj)
         }
@@ -783,6 +783,12 @@ function onMouseClick(e) {
 }
 
 function attachBB(object) {
+  resetColors() // Set all colors back to original
+  if (object.material && object.type != "Mesh") {
+    object.material.color.setRGB(1, 0.1, 0.1);
+  }
+  $('.entity').css('color', 'black');
+  $('#'+object.userData.link).css('color', 'red')
 
   // console.log(object);
   // console.log(object.type);
@@ -794,7 +800,7 @@ function attachBB(object) {
         scene.remove(boundingBox);
     }
 
-      var bbox2 = new THREE.Box3().setFromObject(object);
+    var bbox2 = new THREE.Box3().setFromObject(object);
     // console.log('bbox for Clicked Obj: '+ object +' Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
 
     BBmaterial =  new THREE.LineDashedMaterial( { color: 0xaaaaaa, dashSize: 5, gapSize: 4, linewidth: 2 } );

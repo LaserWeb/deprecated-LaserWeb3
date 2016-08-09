@@ -75,7 +75,7 @@ THREE.BulgeGeometry.prototype = Object.create( THREE.Geometry.prototype );
  * @constructor
  */
 function processDXF(data) {
-  //console.log(data);
+  console.log(data);
 
 	if (typeof(fileObject) !== 'undefined') {
 		scene.remove(fileObject);
@@ -86,6 +86,7 @@ function processDXF(data) {
 
   for(i = 0; i < data.entities.length; i++) {
     entity = data.entities[i];
+		// console.log(entity)
 
     if(entity.type === 'DIMENSION') {
       if(entity.block) {
@@ -156,8 +157,13 @@ function drawLine(entity, index) {
 	window["dxfEntity" + index] = new THREE.Line(geometry, material);
 	//window["dxfEntity" + index].translateX(laserxmax /2 * -1);
 	//window["dxfEntity" + index].translateY(laserymax /2 * -1);
+	if (entity.type) {
+		window["dxfEntity" + index].name = entity.type + index
+	} else {
+		window["dxfEntity" + index].name = "dxfEntity" + index
+	}
+	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
-	window["dxfEntity" + index].name = "dxfEntity" + index
 }
 
 function drawCircle(entity, index) {
@@ -184,6 +190,12 @@ var arcTotalDeg = entity.startAngleDeg - entity.endAngleDeg;
 	window["dxfEntity" + index].translateZ(entity.center.z);
 	//window["dxfEntity" + index].translateX(laserxmax /2 * -1);
 	//window["dxfEntity" + index].translateY(laserymax /2 * -1);
+	if (entity.type) {
+		window["dxfEntity" + index].name = entity.type + index
+	} else {
+		window["dxfEntity" + index].name = "dxfEntity" + index
+	}
+	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
 }
 
@@ -217,10 +229,13 @@ function drawSolid(entity, index) {
   material = new THREE.MeshBasicMaterial({ color: getDXFColor(entity), transparent: true });
 
   window["dxfEntity" + index] = new THREE.Mesh(geometry, material);
-	//window["dxfEntity" + index].translateX(laserxmax /2 * -1);
-	//window["dxfEntity" + index].translateY(laserymax /2 * -1);
+	if (entity.type) {
+		window["dxfEntity" + index].name = entity.type + index
+	} else {
+		window["dxfEntity" + index].name = "dxfEntity" + index
+	}
+	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
-
 }
 
 function drawText(entity, index) {
@@ -236,6 +251,12 @@ function drawText(entity, index) {
 	window["dxfEntity" + index].translateZ(entity.startPoint.z);
 	//window["dxfEntity" + index].translateX(laserxmax /2 * -1);
 	//window["dxfEntity" + index].translateY(laserymax /2 * -1);
+	if (entity.type) {
+		window["dxfEntity" + index].name = entity.type + index
+	} else {
+		window["dxfEntity" + index].name = "dxfEntity" + index
+	}
+	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
 }
 
@@ -262,8 +283,12 @@ function drawPoint(entity, index) {
   material = new THREE.PointCloudMaterial( { size: 0.05, vertexColors: THREE.VertexColors, transparent: true} );
 
 	window["dxfEntity" + index] = new THREE.PointCloud(geometry, material);
-	//window["dxfEntity" + index].translateX(laserxmax /2 * -1);
-	//window["dxfEntity" + index].translateY(laserymax /2 * -1);
+	if (entity.type) {
+		window["dxfEntity" + index].name = entity.type + index
+	} else {
+		window["dxfEntity" + index].name = "dxfEntity" + index
+	}
+	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
 }
 
