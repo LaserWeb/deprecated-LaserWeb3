@@ -150,6 +150,9 @@ function initTree() {
     };
   });
 
+  // Fill it up as empty
+  fillTree()
+
 }
 
 function updateCamUserData(i) {
@@ -187,23 +190,24 @@ function fillTree() {
   $('#toolpathtreeheader').empty();
   $('#toolpathtree').empty();
 
+  var header = `
+  <table style="width: 100%">
+    <tr class="jobsetupfile">
+      <td>
+        <label for="filetreetable">Objects</label>
+      </td>
+      <td>
+        <a class="btn btn-xs btn-success disabled" onclick="addJob();" id="tpaddpath"><i class="fa fa-plus" aria-hidden="true"></i> Add selection to Job</a>
+      </td>
+    </tr>
+  </table>
+  `
+
+  $('#filetreeheader').append(header);
 
   if (objectsInScene.length > 0) {
 
-    var header = `
-    <table style="width: 100%">
-      <tr class="jobsetupfile">
-        <td>
-          <label for="filetreetable">Objects</label>
-        </td>
-        <td>
-          <a class="btn btn-xs btn-success" onclick="addJob();"><i class="fa fa-plus" aria-hidden="true"></i> Add selection to Job</a>
-        </td>
-      </tr>
-    </table>
-    `
-
-    $('#filetreeheader').append(header);
+    $('#tpaddpath').removeClass('disabled');
 
     var table = `<table class="jobsetuptable" style="width: 100%" id="filetreetable">`
     $('#filetree').append(table);
@@ -345,7 +349,11 @@ function fillTree() {
     </table>
     `
     $('#filetree').append(tableend)
-  } // End of if (objectsInScene.length > 0)
+  } else {
+    var instructions = `Please open a file from the <kbd>Open</kbd> button...`
+    $('#filetree').append(instructions)
+
+  }// End of if (objectsInScene.length > 0)
 
   var toolpatheader = `
   <table style="width: 100%">
