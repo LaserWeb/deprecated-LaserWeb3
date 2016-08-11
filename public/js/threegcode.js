@@ -170,13 +170,20 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
     var g = "";
     // get the THREE.Group() that is the txt3d
 
-    var grp = threeGroup;
     var txtGrp = threeGroup;
     var that = this;
     var isLaserOn = false;
     var isAtClearanceHeight = false;
     var isFeedrateSpecifiedAlready = false;
     var isSeekrateSpecifiedAlready = false;
+
+
+    var cncMode = false;
+
+    if  ($('#cncMode').val() == "Enable") {
+      cncMode = true;
+    }
+
     // var subj_path2 = [];
     // var subj_paths = [];
     // console.log(txtGrp);
@@ -188,16 +195,19 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
     txtGrp.traverse(function(child) {
         // console.log(child);
         if (child.type == "Line") {
+
+            var xpos_offset = child.position.x;
+            var ypos_offset = child.position.y;
+
+
             // let's create gcode for all points in line
             for (i = 0; i < child.geometry.vertices.length; i++) {
 
                 // Convert to World Coordinates
                 var localPt = child.geometry.vertices[i];
-                var worldPt = grp.localToWorld(localPt.clone());
-                var xpos_offset = (parseFloat(child.position.x.toFixed(3)));
-                var ypos_offset = (parseFloat(child.position.y.toFixed(3)));
-                var xpos = parseFloat((parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2)).toFixed(3));
-                var ypos = parseFloat((parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2)).toFixed(3));
+                var worldPt = txtGrp.localToWorld(localPt.clone());
+                var xpos = worldPt.x + (parseFloat(laserxmax) / 2);
+                var ypos = worldPt.y + (parseFloat(laserymax) / 2);
 
 
                 if (child.geometry.type == "CircleGeometry") {
@@ -206,7 +216,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                 }
 
 
-                var zpos = parseFloat(worldPt.z.toFixed(3));
+                var zpos = worldPt.z;
 
                 if (zoffset) {
                   zpos = zpos - zoffset;
@@ -223,21 +233,20 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                         // console.log('Rapid Speed: ', rapidSpeed);
                         if (rapidSpeed) {
                             seekrate = " F" + rapidSpeed;
-                            isSeekrateSpecifiedAlready = true;
+                            isSeekrateSpecifiedAlready = true; 
                         } else {
                             seekrate = "";
                         }
 
                     }
-                    cncMode = $('#cncMode').val()
-                    if (cncMode == "Enable") {
+                    if (cncMode) {
                       if (!isAtClearanceHeight) {
                         g += "\nG0 Z" + clearanceHeight + "\n"; // Position Before Plunge!
                       }
                     };
                     g += "G0" + seekrate;
                     g += " X" + xpos + " Y" + ypos + "\n";
-                    if (cncMode == "Enable") {
+                    if (cncMode) {
                       g += "\nG0 Z1\n";  // G0 to Z0 then Plunge!
                       g += "G1 F"+plungeSpeed+" Z" + zpos + "\n";  // Plunge!!!!
                     } else {
