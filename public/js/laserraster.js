@@ -144,16 +144,22 @@ Rasterizer.prototype.figureSpeed = function(passedGrey) {
     return calcspeed;
 };
 
-Rasterizer.prototype.init = function(div) {
+Rasterizer.prototype.init = function(object) {
     // console.log('INIT Container: ', this.config.div)
     this.startTime = Date.now();
 
     // Initialise
     project.clear();
 
+    // Old way using DOM
     // Create a raster item using the image tag 'origImage'
-    var container = this.config.div;
-    this.raster = new Raster(container);
+    // var container = this.config.div
+    // this.raster = new Raster(container);
+
+    // New way using img dataurl
+    // var object = this.config.object.userData.imgdata;
+    this.raster = new Raster(object.userData.imgdata);
+
     this.raster.visible = false;
 
     // Log it as a sanity check
@@ -188,7 +194,7 @@ Rasterizer.prototype.rasterRow = function(y) {
     // posy = (posy * this.config.spotSize1) - parseFloat(this.config.yOffset);
     if (this.config.imagePos == "TopLeft") {
     //   posy = (posy * this.config.spotSize1) - parseFloat(this.config.yOffset) + ((laserymax / 2) + this.config.imgheight);
-      posy = (posy * this.config.beamSize1) + parseFloat(this.config.yOffset) - parseFloat(laserymax) + parseFloat(this.config.physicalHeight);
+      posy = (posy * this.config.beamSize1) - parseFloat(this.config.yOffset) - parseFloat(laserymax) + parseFloat(this.config.physicalHeight);
     } else {
       posy = (posy * this.config.beamSize1) - parseFloat(this.config.yOffset);
     }
@@ -374,8 +380,8 @@ Rasterizer.prototype.onFinish = function() {
 this.RasterNow = function(config) {
     console.time("Process Raster");
     printLog('Process Raster', msgcolor, "raster")
-    var div = config.div;
+    var object = config.object;
     var rasterizer = new Rasterizer(config);
     // console.log('from Container: ', div)
-    rasterizer.init(div);
+    rasterizer.init(object);
 };

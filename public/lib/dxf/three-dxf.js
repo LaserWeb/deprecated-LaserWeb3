@@ -108,7 +108,7 @@ function processDXF(data) {
 
 
 function drawEntity(index, entity) {
-	//console.log('inside drawEntity:  Entity ', entity, '  Index: ', index)
+	// console.log('inside drawEntity:  Entity ', entity, '  Index: ', index)
   if(entity.type === 'CIRCLE' || entity.type === 'ARC') {
     drawCircle(entity, index);
 	} else if(entity.type === 'LWPOLYLINE' || entity.type === 'LINE' || entity.type === 'POLYLINE') {
@@ -162,6 +162,12 @@ function drawLine(entity, index) {
 	} else {
 		window["dxfEntity" + index].name = "dxfEntity" + index
 	}
+
+	if (entity.layer) {
+		window["dxfEntity" + index].userData.layer = entity.layer
+		console.log('Adding layer' + entity.layer)
+	}
+
 	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
 }
@@ -195,6 +201,11 @@ var arcTotalDeg = entity.startAngleDeg - entity.endAngleDeg;
 	} else {
 		window["dxfEntity" + index].name = "dxfEntity" + index
 	}
+
+	if (entity.layer) {
+		window["dxfEntity" + index].userData.layer = entity.layer
+	}
+
 	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
 }
@@ -234,6 +245,11 @@ function drawSolid(entity, index) {
 	} else {
 		window["dxfEntity" + index].name = "dxfEntity" + index
 	}
+
+	if (entity.layer) {
+		window["dxfEntity" + index].userData.layer = entity.layer
+	}
+
 	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
 }
@@ -256,6 +272,11 @@ function drawText(entity, index) {
 	} else {
 		window["dxfEntity" + index].name = "dxfEntity" + index
 	}
+
+	if (entity.layer) {
+		window["dxfEntity" + index].userData.layer = entity.layer
+	}
+
 	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
 }
@@ -288,6 +309,11 @@ function drawPoint(entity, index) {
 	} else {
 		window["dxfEntity" + index].name = "dxfEntity" + index
 	}
+
+	if (entity.layer) {
+		window["dxfEntity" + index].userData.layer = entity.layer
+	}
+
 	window["dxfEntity" + index].userData.color = window["dxfEntity" + index].material.color.getHex();
 	fileObject.add(window["dxfEntity" + index]);
 }

@@ -105,7 +105,10 @@ button:focus {outline:0 !important;}
       padding: 10px;
 }
 
-
+.mobtab {
+  margin: 0;
+  padding: 0;
+}
 
 #renderArea {
     /*background-color: #ffffff;*/

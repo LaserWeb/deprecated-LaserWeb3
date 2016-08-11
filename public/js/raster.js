@@ -37,11 +37,10 @@ function drawRaster(name, data) {
 
     console.group('Raster File')
 
-    var currentIdx = objectsInScene.length + 100;
+    // console.log(data);
 
-    var img = document.createElement("img");
-    img.style.display = "none";
-    img.id = "origImage"+currentIdx;
+    var img = new Image();
+
     img.title = name;
     // All of this will happen after the image is loaded.
     // The actual load happens after this def.
@@ -51,8 +50,8 @@ function drawRaster(name, data) {
         var imgwidth = img.naturalWidth;
         var imgheight = img.naturalHeight;
 
-        $('#rasterProgressShroud').hide();
-        $('#rasterparams').show();
+        // $('#rasterProgressShroud').hide();
+        // $('#rasterparams').show();
         $("body").trigger("click") // close dropdown menu
 
         if ($('#useRasterBlackWhiteSpeeds').prop('checked')) {
@@ -81,17 +80,17 @@ function drawRaster(name, data) {
         rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
         rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
         rastermesh.position.z = -0.9;
-        rastermesh.name = name
+        rastermesh.name = name;
+        rastermesh.userData.imgdata = data;  // store B64 image data in the userData for later use
 
         scene.add(rastermesh);
         putFileObjectAtZero(rastermesh);
         calcZeroOffset(rastermesh)
-        rastermesh.userData.seq = currentIdx;
         rastermesh.userData.color = rastermesh.material.color.getHex();
         objectsInScene.push(rastermesh)
         // resetView();
         // setImgDims(currentIdx);
-        $('#rasterresize').modal('show')
+        // $('#rasterresize').modal('show')
     };
     // This actually loads the image, and fires the onload above.
     img.src = data;
@@ -101,8 +100,7 @@ function drawRaster(name, data) {
 
 function runRaster(index) {
   // console.group("Preparing Raster..")
-  var seq = objectsInScene[index].userData.seq;
-  var toRaster = 'origImage'+seq;
+  var threejsobject = objectsInScene[index];
   var spotSizeMul = parseFloat($('#spotSize').val());
   var laserRapid = parseFloat($('#rapidspeed').val()) * 60;
   // console.log("RAPIDSPEED", laserRapid)
@@ -117,14 +115,20 @@ function runRaster(index) {
   var yoffset = parseFloat($('#rasteryoffset'+index).val());
   var minpwr = $("#minpwr"+index).val();;
   var maxpwr = $("#maxpwr"+index).val();;
-  rasterNow(toRaster, index, rasterDPI, spotSizeMul, laserRapid, blackspeed, whitespeed, xoffset, yoffset, imagePosition, minpwr, maxpwr )
+  rasterNow(threejsobject, index, rasterDPI, spotSizeMul, laserRapid, blackspeed, whitespeed, xoffset, yoffset, imagePosition, minpwr, maxpwr )
 }
 
 
-function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, blackspeed, whitespeed, xoffset, yoffset, imagePosition, minpwr, maxpwr ) {
+function rasterNow(threejsobject, objectid, rasterDPI, spotSizeMul, laserRapid, blackspeed, whitespeed, xoffset, yoffset, imagePosition, minpwr, maxpwr ) {
 
     dpival = rasterDPI * 0.03937007874016;
-    var img = document.getElementById(toRaster);
+    var img = new Image();
+    img.onload = function(){
+      height = img.naturalHeight;
+      width = img.naturalWidth;
+    };
+    img.src = threejsobject.userData.imgdata;
+    // var img = document.getElementById(toRaster);
     // console.log(toRaster)
     height = img.naturalHeight;
     width = img.naturalWidth;
@@ -132,11 +136,10 @@ function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, black
     var physwidth = (width / dpival) ;
     var spotSize = (physwidth / width);
 
-
     // $('#rasterProgressShroud').hide();
 
-
     paper.RasterNow({
+        object: threejsobject,
         objectid: objectid,
         completed: gcodereceived,
         minIntensity: [minpwr],
@@ -152,8 +155,8 @@ function rasterNow(toRaster, objectid, rasterDPI, spotSizeMul, laserRapid, black
         yOffset: [yoffset],
         imagePos: [imagePosition],
         physicalHeight: [physheight],
-        physicalWidth: [physwidth],
-        div: toRaster // Div Containing the image to raster
+        physicalWidth: [physwidth]
+
     });
 };
 

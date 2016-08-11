@@ -9,7 +9,7 @@
     <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator">
     <meta name="google-site-verification" content="Q5N27jmbSMfsf_oC4UmRlNDVXKta7BP4DaDq1h0Ox5Y" />
     <meta name="author" content="github.com/openhardwarecoza/LaserWeb2/">
-    <meta name="version" content="30229">
+    <meta name="version" content="30253">
 
     <!--IE Compatibility modes-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -228,7 +228,7 @@
                     <li><a target="_blank" href="https://plus.google.com/communities/115879488566665599508">Support Community</a></li>
                     <li><a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/issues">Open a Bug Report</a></li>
                     <li><a href="#" onclick="tour.restart()">Take a Tour of LaserWeb</a></li>
-                    <li><a href="https://github.com/openhardwarecoza/LaserWeb3/wiki">Instruction / Wiki</a></li>
+                    <li><a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/wiki">Instruction / Wiki</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3">Fork Me!</a></li>
                   </ul>
@@ -428,15 +428,25 @@
 
 
           <!-- tree cam -->
-          <div id="tree-cam-menu-panel" class="mobtab" style="display: none;">
-            <div class="bs-callout bs-callout-danger" id="filestatus">
+          <div id="tree-cam-menu-panel" class="mobtab" style="display: none; height: 98%;">
+            <!-- <div class="bs-callout bs-callout-danger" id="filestatus" style="height: 60px;">
               <h4><i class="fa fa-fw fa-exclamation" aria-hidden="true"></i>Preview Feature</h4>
-              Note: This is not active yet, we are busy coding up this new feature to replace the existing CAM tab.  For more details see <a href="https://github.com/openhardwarecoza/LaserWeb3/issues/52">Issue 52</a>
+              Note: This is not active yet, see <a href="https://github.com/openhardwarecoza/LaserWeb3/issues/52">Issue 52</a>
+            </div> -->
+
+            <div class="panel panel-success" style="height: 48%;">
+              <div class="panel-heading" id="filetreeheader"></div>
+              <div class="panel-body" id="filetree" style="height:calc(100% - 56px); overflow-y:scroll;"></div>
             </div>
 
-            <div id="filetree">
-
+            <div class="panel panel-success" style="height: 48%;">
+              <div class="panel-heading" id="toolpathtreeheader"></div>
+              <div class="panel-body" id="toolpathtree" style="height:calc(100% - 56px); overflow-y:scroll;"></div>
             </div>
+
+
+
+
           </div>
           <!-- end tree cam -->
 
