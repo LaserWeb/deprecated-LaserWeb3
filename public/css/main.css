@@ -430,3 +430,8 @@ d-grid {border: none; padding: 20px;}
   padding-left: 15px;
   text-align: left;
 }
+
+#tree-cam-menu-panel .panel {
+    resize: vertical;
+    overflow: auto;
+}
