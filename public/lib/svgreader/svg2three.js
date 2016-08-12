@@ -101,11 +101,11 @@ function svg2three(svgfile, fileName, settings) {
  globalpaths = paths;
 
 
- for (i = 0; i < paths.length; i++) {
- console.log('PATH: '+i+', FILL: '+paths[i].node.fill+', STROKE: '+paths[i].node.stroke+', COLOR: '+paths[i].node.color+', OPACTITY: '+paths[i].node.opacity, ' Path ', paths)
- }
+  for (i = 0; i < paths.length; i++) {
+    //console.log('PATH: '+i+', FILL: '+paths[i].node.fill+', STROKE: '+paths[i].node.stroke+', COLOR: '+paths[i].node.color+', OPACTITY: '+paths[i].node.opacity, ' Path ', paths)
+  }
 
- while(idx--) {
+  while(idx--) {
 
    var subidx = paths[idx].length;
    var bounds = { x : Infinity , y : Infinity, x2 : -Infinity, y2: -Infinity, area : 0};
@@ -172,7 +172,7 @@ function svg2three(svgfile, fileName, settings) {
   }
 
   for (var pathIdx = 0, pathLength = paths.length; pathIdx < pathLength; pathIdx++) {
-    console.group("SVG Path " + pathIdx)
+    // console.group("SVG Path " + pathIdx)
 
     path = paths[pathIdx];
     var pathname = path.node.id
@@ -213,6 +213,7 @@ function svg2three(svgfile, fileName, settings) {
       window["svgEntity" + pathIdx].name = "svgEntity" + pathIdx
     }
     window["svgEntity" + pathIdx].userData.color = window["svgEntity" + pathIdx].material.color.getHex();
+    window["svgEntity" + pathIdx].userData.layer = path.node.layer;
     fileObject.add(window["svgEntity" + pathIdx]);
     console.groupEnd();
   }

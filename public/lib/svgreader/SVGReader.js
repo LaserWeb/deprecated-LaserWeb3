@@ -200,6 +200,7 @@ SVGReader = {
           node.color = parentNode.color;
           node.fillOpacity = parentNode.fillOpacity;
           node.strokeOpacity = parentNode.strokeOpacity;
+          node.layer = parentNode.layer;
 
           // 2.) parse own attributes and overwrite
           if (tag.attributes) {
@@ -493,6 +494,32 @@ SVGReader = {
     g : function(parser, tag, node) {
       // http://www.w3.org/TR/SVG11/struct.html#Groups
       // has transform and style attributes
+
+      // parent layer
+      var parent = node.layer;
+      var uid = Math.round(new Date().getTime() + (Math.random() * 100));
+
+      // inkscape
+      var label = tag.getAttribute("inkscape:label");
+      var groupmode = tag.getAttribute("inkscape:groupmode");
+
+      if (label && groupmode && groupmode == 'layer') {
+        node.layer = {
+          id: tag.id + '-' + uid,
+          label: label,
+          parent: parent
+        };
+      }
+
+      // illustrator, etc...
+      else if (tag.id) {
+        node.layer = {
+          id: tag.id + '-' + uid,
+          label: tag.id,
+          parent: parent
+        };
+      }
+
     },
 
 
