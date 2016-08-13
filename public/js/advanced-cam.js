@@ -301,7 +301,6 @@ function fillTree() {
                 `
             }
 
-
             $('#filetreetable').append(file)
 
             if (svgscale) {
@@ -321,12 +320,26 @@ function fillTree() {
                 $('#buttons'+i).prepend(scalebtn)
             }
 
+            $('#filetreetable').append(`
+            <tr>
+            <td colspan="3" class="jobsetupgroup">
+            <ul id="jobsetupgroup`+i+`"></ul>
+            </td>
+            </tr>
+            <tr class="filespacer"><td colspan="3"><hr /></td></tr>
+            `);
+
 // -----------------------------------------------------------------------------
 
             var currentObject = objectsInScene[i];
             var currentChildren = currentObject.children;
             var currentChildrenLength = currentChildren.length;
 
+            var $childGroup = $('#jobsetupgroup' + i);
+
+            var $parentGroup = null;
+            var $currentTable = null;
+            var currentTable = null;
             var currentChild = null;
             var childTemplate = null;
             var childData = null;
@@ -335,28 +348,67 @@ function fillTree() {
                 currentChild = currentChildren[j];
                 childData = currentChild.userData;
                 childData.link = "link"+i+"_"+j;
+                childLayer = childData.layer;
+
+                $parentGroup = $childGroup;
 
                 childTemplate = `
-                <tr class="jobsetupchild children`+i+`">
-                <td class="filename">
+                <li class="children`+i+`">
                 <i class="fa fa-fw fa-sm fa-object-ungroup" aria-hidden="true"></i>&nbsp;
                 <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`].children[`+j+`])" id="link`+i+`_`+j+`">`+currentChild.name+`</a>
-                </td>
-                <td>
-                <a class="btn btn-xs btn-danger" onclick="objectsInScene[`+i+`].remove(objectsInScene[`+i+`].children[`+j+`]); fillTree();"><i class="fa fa-times" aria-hidden="true"></i></a>
-                </td>
-                <td>
-                <input type="checkbox" value="" class="chkaddjob chkchildof`+i+`" id="child.`+i+`.`+j+`" />
-                </td>
-                </tr>
+                </li>
                 `;
 
-                $('#filetreetable').append(childTemplate);
+                if (! childLayer) {
+                    $childGroup.append(childTemplate);
+                }
+                else {
+                    if (childLayer.parent) {
+                        $parentGroup = $('#' + childLayer.parent.id);
+
+                        if (! $parentGroup.length) {
+                            currentTable = `
+                            <li>
+                                <i class="fa fa-fw fa-sm fa-object-group" aria-hidden="true"></i>&nbsp;
+                                <a class="entity toggle" href="#" onclick="return false;">`+childLayer.parent.label+`</a>
+                                <ul id="`+childLayer.parent.id+`"></ul>
+                            </li>
+                            `;
+
+                            $childGroup.append(currentTable);
+                            $parentGroup = $('#' + childLayer.parent.id);
+                        }
+                    }
+
+                    $currentTable = $('#' + childLayer.id);
+
+                    if (! $currentTable.length) {
+                        // create current layer table
+                        var currentTable = `
+                        <li>
+                            <i class="fa fa-fw fa-sm fa-object-group" aria-hidden="true"></i>&nbsp;
+                            <a class="entity toggle" href="#">`+childLayer.label+`</a>
+                            <ul id="`+childLayer.id+`"></ul>
+                        </li>
+                        `;
+
+                        $parentGroup.append(currentTable);
+                        $currentTable = $('#' + childLayer.id);
+                    }
+
+                    $currentTable.append(childTemplate);
+                }
             }
+
+        }
+
+        $('.toggle').on('click', function() {
+            var items = $(this).parent().children('ul').toggleClass('hidden');
+        });
 
 // -----------------------------------------------------------------------------
 
-        }
+
         var tableend = `
         </table>
         `
