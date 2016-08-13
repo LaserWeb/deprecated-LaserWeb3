@@ -420,6 +420,13 @@ d-grid {border: none; padding: 20px;}
     text-align: left;
 }
 
+.jobsetupfile .filename {
+    max-width: 125px;
+    height: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
 .jobsetupchild {
     text-align: right;

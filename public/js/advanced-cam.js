@@ -227,7 +227,7 @@ function fillTree() {
             if (objectsInScene[i].type != "Mesh") {
                 var file = `
                 <tr class="jobsetupfile topborder">
-                <td>
+                <td class="filename">
                 <i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i>&nbsp;
                 <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
                 </td>
@@ -259,7 +259,7 @@ function fillTree() {
             } else {
                 var file = `
                 <tr class="jobsetupfile topborder">
-                <td>
+                <td class="filename">
                 <i class="fa fa-fw fa-file-photo-o" aria-hidden="true"></i>&nbsp;
                 <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
                 </td>
@@ -319,18 +319,28 @@ function fillTree() {
 
                 var scalebtn = `<a class="btn btn-xs btn-primary" onclick="$('#scale`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-expand" aria-hidden="true"></i></a>`
                 $('#buttons'+i).prepend(scalebtn)
-
-
             }
 
-            //  var name = objectsInScene[i].name;
-            for (j = 0; j < objectsInScene[i].children.length; j++) {
+// -----------------------------------------------------------------------------
 
-                var child = `
+            var currentObject = objectsInScene[i];
+            var currentChildren = currentObject.children;
+            var currentChildrenLength = currentChildren.length;
+
+            var currentChild = null;
+            var childTemplate = null;
+            var childData = null;
+
+            for (var j = 0; j < currentChildrenLength; j++) {
+                currentChild = currentChildren[j];
+                childData = currentChild.userData;
+                childData.link = "link"+i+"_"+j;
+
+                childTemplate = `
                 <tr class="jobsetupchild children`+i+`">
-                <td>
+                <td class="filename">
                 <i class="fa fa-fw fa-sm fa-object-ungroup" aria-hidden="true"></i>&nbsp;
-                <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`].children[`+j+`])" id="link`+i+`_`+j+`">`+objectsInScene[i].children[j].name+`</a>
+                <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`].children[`+j+`])" id="link`+i+`_`+j+`">`+currentChild.name+`</a>
                 </td>
                 <td>
                 <a class="btn btn-xs btn-danger" onclick="objectsInScene[`+i+`].remove(objectsInScene[`+i+`].children[`+j+`]); fillTree();"><i class="fa fa-times" aria-hidden="true"></i></a>
@@ -339,11 +349,13 @@ function fillTree() {
                 <input type="checkbox" value="" class="chkaddjob chkchildof`+i+`" id="child.`+i+`.`+j+`" />
                 </td>
                 </tr>
-                `
-                $('#filetreetable').append(child)
-                //  var name = objectsInScene[i].children[j].name;
-                objectsInScene[i].children[j].userData.link = "link"+i+"_"+j
+                `;
+
+                $('#filetreetable').append(childTemplate);
             }
+
+// -----------------------------------------------------------------------------
+
         }
         var tableend = `
         </table>
