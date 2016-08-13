@@ -177,7 +177,6 @@ SVGReader = {
 
 
   parseChildren : function(domNode, parentNode) {
-    // console.log(domNode)
     var childNodes = []
     for (var i=0; i<domNode.childNodes.length; i++) {
       var tag = domNode.childNodes[i]
@@ -200,6 +199,7 @@ SVGReader = {
           node.color = parentNode.color;
           node.fillOpacity = parentNode.fillOpacity;
           node.strokeOpacity = parentNode.strokeOpacity;
+          node.parent = parentNode
 
           // 2.) parse own attributes and overwrite
           if (tag.attributes) {

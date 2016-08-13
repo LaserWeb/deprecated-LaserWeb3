@@ -40,62 +40,78 @@ function drawRaster(name, data) {
     // console.log(data);
 
     var img = new Image();
-
     img.title = name;
+    img.style.display = 'none';
     // All of this will happen after the image is loaded.
     // The actual load happens after this def.
     img.onload = function() {
-        document.body.appendChild(img);
 
+      if (name.match(/.svg$/i)) {
+        var canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+
+        // document.body.appendChild(img);
         var imgwidth = img.naturalWidth;
         var imgheight = img.naturalHeight;
-
-        // $('#rasterProgressShroud').hide();
-        // $('#rasterparams').show();
         $("body").trigger("click") // close dropdown menu
-
-        if ($('#useRasterBlackWhiteSpeeds').prop('checked')) {
-            $("#blackwhitespeedsection").show();
-        } else {
-            $("#blackwhitespeedsection").hide();
-        }
 
         printLog('Bitmap Opened', msgcolor, "raster");
         //tbfleming's threejs texture code
-
-        // console.log('Sanity Check', img, imgwidth, imgheight)
-
         var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
-
-        var texture = new THREE.TextureLoader().load(data);
+        var texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
         texture.minFilter = THREE.LinearFilter
-
         var material = new THREE.MeshBasicMaterial({
             map: texture,
             transparent: true
         });
-
         rastermesh = new THREE.Mesh(geometry, material);
+      } else {
+        // document.body.appendChild(img);
+        var imgwidth = img.naturalWidth;
+        var imgheight = img.naturalHeight;
+        $("body").trigger("click") // close dropdown menu
 
-        rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
-        rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
-        rastermesh.position.z = -0.9;
-        rastermesh.name = name;
-        rastermesh.userData.imgdata = data;  // store B64 image data in the userData for later use
+        printLog('Bitmap Opened', msgcolor, "raster");
+        //tbfleming's threejs texture code
+        var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
+        var texture = new THREE.TextureLoader().load(data);
+        texture.minFilter = THREE.LinearFilter
+        var material = new THREE.MeshBasicMaterial({
+            map: texture,
+            transparent: true
+        });
+        rastermesh = new THREE.Mesh(geometry, material);
+      }
 
-        scene.add(rastermesh);
-        putFileObjectAtZero(rastermesh);
-        calcZeroOffset(rastermesh)
-        rastermesh.userData.color = rastermesh.material.color.getHex();
-        objectsInScene.push(rastermesh)
-        // resetView();
-        // setImgDims(currentIdx);
-        // $('#rasterresize').modal('show')
+      rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
+      rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
+      rastermesh.position.z = -0.9;
+      rastermesh.name = name;
+      rastermesh.userData.imgdata = data;  // store B64 image data in the userData for later use
+
+      scene.add(rastermesh);
+      putFileObjectAtZero(rastermesh);
+      calcZeroOffset(rastermesh)
+      rastermesh.userData.color = rastermesh.material.color.getHex();
+      objectsInScene.push(rastermesh)
     };
     // This actually loads the image, and fires the onload above.
-    img.src = data;
+
+    if (name.match(/.svg$/i)) {
+      img.src = 'data:image/svg+xml;utf8,' + data;
+      // console.log(img)
+    } else {
+      img.src = data;
+      // console.log(img)
+    }
     console.log("Raster Opened")
+
     console.groupEnd();
+
 };
 
 function runRaster(index) {
