@@ -571,7 +571,7 @@ function fillTree() {
                 var toolp = `<tr class="jobsetupfile">
                 <td>
                 <i class="fa fa-fw fa-object-group" aria-hidden="true"></i>&nbsp;
-                <a class="entity-job" href="#">`+toolpathsInScene[i].name+`</a>
+                <span class="entity-job" contenteditable="true" data-id="`+i+`">`+toolpathsInScene[i].name+`</span>
                 </td>
                 <td>
 
@@ -587,7 +587,7 @@ function fillTree() {
                 var toolp = `<tr class="jobsetupfile">
                 <td>
                 <i class="fa fa-fw fa-picture-o" aria-hidden="true"></i>&nbsp;
-                <a class="entity-job" href="#">`+toolpathsInScene[i].name+`</a>
+                <span class="entity-job" contenteditable="true" data-id="`+i+`">`+toolpathsInScene[i].name+`</span>
                 </td>
                 <td>
 
@@ -603,6 +603,13 @@ function fillTree() {
 
             $('#toolpathstable').append(toolp);
         }
+
+        $('#toolpathstable .entity-job').on('input', function() {
+            var $this = $(this);
+            var data = $this.data();
+
+            toolpathsInScene[data.id].name = $this.text();
+        });
 
     } else {
         var instructions = `Please select some entities from the <b>Objects</b> above and add them to a toolpath using the <br><kbd><i class="fa fa-plus" aria-hidden="true"></i> Add selection to Job</kbd> button...`
