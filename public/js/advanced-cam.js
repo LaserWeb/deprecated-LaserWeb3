@@ -6,6 +6,9 @@ function initTree() {
         var newval = parseFloat(inputVal, 3)
         var id = $(this).attr('id');
         var objectseq = $(this).attr('objectseq');
+        if (!id) {
+            return;
+        }
         // console.log('Value for ' +id+ ' changed to ' +newval+ ' for object ' +objectseq );
         if ( id.indexOf('xoffset') == 0 ) {
             objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + newval;
@@ -233,7 +236,7 @@ function fillTree() {
                 </td>
                 <td id="buttons`+i+`">
                 <a class="btn btn-xs btn-primary" onclick="$('#move`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-arrows" aria-hidden="true"></i></a>
-                <a class="btn btn-xs btn-danger" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
+                <a class="btn btn-xs btn-danger remove" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
                 </td>
                 <td>
                 <input type="checkbox" value="" onclick=" $('.chkchildof`+i+`').prop('checked', $(this).prop('checked'));" id="selectall`+i+`" />
@@ -353,7 +356,9 @@ function fillTree() {
                 $parentGroup = $childGroup;
 
                 childTemplate = `
-                <li class="children`+i+`">
+                <li class="item children`+i+`">
+                <input type="checkbox" value="" class="fr chkaddjob chkchildof`+i+`" id="child.`+i+`.`+j+`" />
+                <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
                 <i class="fa fa-fw fa-sm fa-object-ungroup" aria-hidden="true"></i>&nbsp;
                 <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`].children[`+j+`])" id="link`+i+`_`+j+`">`+currentChild.name+`</a>
                 </li>
@@ -368,9 +373,12 @@ function fillTree() {
 
                         if (! $parentGroup.length) {
                             currentTable = `
-                            <li>
+                            <li class="group">
+                                <input type="checkbox" value="" class="fr chkaddjob chkchildof`+i+`" />
+                                <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
                                 <i class="fa fa-fw fa-sm fa-object-group" aria-hidden="true"></i>&nbsp;
                                 <a class="entity toggle" href="#" onclick="return false;">`+childLayer.parent.label+`</a>
+                                (<span class="counter">0</span>)
                                 <ul id="`+childLayer.parent.id+`"></ul>
                             </li>
                             `;
@@ -385,9 +393,12 @@ function fillTree() {
                     if (! $currentTable.length) {
                         // create current layer table
                         var currentTable = `
-                        <li>
+                        <li class="group">
+                            <input type="checkbox" value="" class="fr chkaddjob chkchildof`+i+`" />
+                            <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
                             <i class="fa fa-fw fa-sm fa-object-group" aria-hidden="true"></i>&nbsp;
                             <a class="entity toggle" href="#">`+childLayer.label+`</a>
+                            (<span class="counter">0</span>)
                             <ul id="`+childLayer.id+`"></ul>
                         </li>
                         `;
@@ -402,12 +413,53 @@ function fillTree() {
 
         }
 
-        $('.toggle').on('click', function() {
-            var items = $(this).parent().children('ul').toggleClass('hidden');
+        $('.jobsetuptable .group').each(function(n, group) {
+            group = $(group);
+            var items = group.find('.item');
+            group.children('.counter').html(items.length);
+        });
+
+        $('.jobsetuptable .toggle').on('click', function() {
+            var label = $(this);
+            label.toggleClass('italic');
+            label.parent().children('ul').toggleClass('hidden');
+        });
+
+        $('.jobsetuptable .chkaddjob').on('change', function() {
+            var checked = $(this).prop('checked');
+            $(this).parent().find('ul .chkaddjob').prop('checked', checked);
+        });
+
+        $('.jobsetupgroup .remove').on('click', function() {
+            var parent = $(this).parent();
+            var idx, i, j;
+
+            if (parent.hasClass('item')) {
+                idx = parent.children('input').attr('id').split('.');
+                i = parseInt(idx[1]);
+                j = parseInt(idx[2]);
+                objectsInScene[i].remove(objectsInScene[i].children[j]);
+            }
+            else {
+                var children = [];
+
+                parent.find('.item input').each(function(n, input) {
+                    idx = $(input).attr('id').split('.');
+                    i = parseInt(idx[1]);
+                    j = parseInt(idx[2]);
+                    children.push(objectsInScene[i].children[j]);
+                });
+
+                for (var n = 0; n < children.length; n++) {
+                    objectsInScene[i].remove(children[n]);
+                }
+            }
+
+            fillTree();
+
         });
 
 // -----------------------------------------------------------------------------
-
 
         var tableend = `
         </table>
@@ -501,6 +553,7 @@ function addJob() {
         if($this.is(":checked")){
             // console.log($this.attr("id"));
             var id = $this.attr("id");
+            if (!id) return true;
             var id = id.split(".");
             if (id[2]) {
                 var child = objectsInScene[id[1]].children[id[2]];

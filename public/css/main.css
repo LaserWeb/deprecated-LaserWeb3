@@ -476,6 +476,15 @@ d-grid {border: none; padding: 20px;}
     display: none;
 }
 
+.jobsetuptable .btn.remove {
+    margin-right: 5px;
+}
+
+.jobsetuptable .counter {
+    font-size: 11px;
+    font-weight: bold;
+}
+
 .jobsetuptable .filespacer {
     height: 10px;
 }
@@ -493,3 +502,8 @@ d-grid {border: none; padding: 20px;}
     resize: vertical;
     overflow: auto;
 }
+
+.fr { float: right; }
+.fl { float: left; }
+
+.italic { font-style: italic; }
