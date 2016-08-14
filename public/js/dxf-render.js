@@ -26,8 +26,10 @@ function drawDXF(file, fileName) {
     parser2 = new window.DxfParser();
     dxf2 = parser2.parseSync(file);
 
+    var fileLayers = [];
+
     for (i = 0; i < dxf2.entities.length; i++) {
-        row[i] = dxf2.entities[i].layer
+        fileLayers.push(dxf2.entities[i].layer)
         console.log('drawEntity - DXF: ' + i)
         drawEntity(i, dxf2.entities[i]);
         // console.log( dxf2.entities[i].type + i)
@@ -35,6 +37,7 @@ function drawDXF(file, fileName) {
 
 
     fileObject.name = fileName;
+    fileObject.userData.layers = $.unique(fileLayers);
     fileObject.translateX((laserxmax / 2) * -1);
     fileObject.translateY((laserymax / 2) * -1);
     putFileObjectAtZero(fileObject);

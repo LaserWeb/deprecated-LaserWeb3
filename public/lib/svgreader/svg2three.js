@@ -100,7 +100,6 @@ function svg2three(svgfile, fileName, settings) {
 
  globalpaths = paths;
 
-
   for (i = 0; i < paths.length; i++) {
     //console.log('PATH: '+i+', FILL: '+paths[i].node.fill+', STROKE: '+paths[i].node.stroke+', COLOR: '+paths[i].node.color+', OPACTITY: '+paths[i].node.opacity, ' Path ', paths)
   }
