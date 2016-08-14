@@ -481,8 +481,7 @@ d-grid {border: none; padding: 20px;}
 }
 
 .jobsetuptable .counter {
-    font-size: 11px;
-    font-weight: bold;
+    margin-right: 5px;
 }
 
 .jobsetuptable .filespacer {
@@ -497,10 +496,14 @@ d-grid {border: none; padding: 20px;}
     display: none;
 }
 
-.jobsetuptable .entity {
+.jobsetuptable .entity.toggle {
+    width: calc(100% - 110px);
+    margin-bottom: -3px;
+    display: inline-block;
     font-weight: bold;
-    resize: vertical;
-    overflow: auto;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .fr { float: right; }

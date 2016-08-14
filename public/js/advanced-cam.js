@@ -346,6 +346,7 @@ function fillTree() {
             var currentChild = null;
             var childTemplate = null;
             var childData = null;
+            var groupName = null;
 
             for (var j = 0; j < currentChildrenLength; j++) {
                 currentChild = currentChildren[j];
@@ -376,9 +377,9 @@ function fillTree() {
                             <li class="group">
                                 <input type="checkbox" value="" class="fr chkaddjob chkchildof`+i+`" />
                                 <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                <span class="fr counter label label-info">0</span>
                                 <i class="fa fa-fw fa-sm fa-object-group" aria-hidden="true"></i>&nbsp;
                                 <a class="entity toggle" href="#" onclick="return false;">`+childLayer.parent.label+`</a>
-                                (<span class="counter">0</span>)
                                 <ul id="`+childLayer.parent.id+`"></ul>
                             </li>
                             `;
@@ -391,14 +392,14 @@ function fillTree() {
                     $currentTable = $('#' + childLayer.id);
 
                     if (! $currentTable.length) {
-                        // create current layer table
-                        var currentTable = `
+                        groupName = childLayer.label || childLayer;
+                        currentTable = `
                         <li class="group">
                             <input type="checkbox" value="" class="fr chkaddjob chkchildof`+i+`" />
                             <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
+                            <span class="fr counter label label-info">0</span>
                             <i class="fa fa-fw fa-sm fa-object-group" aria-hidden="true"></i>&nbsp;
-                            <a class="entity toggle" href="#">`+childLayer.label+`</a>
-                            (<span class="counter">0</span>)
+                            <a class="entity toggle" href="#">`+groupName+`</a>
                             <ul id="`+childLayer.id+`"></ul>
                         </li>
                         `;
