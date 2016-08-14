@@ -2,7 +2,7 @@
     AUTHOR: Peter van der Walt
     Based on code from:  John Lauer, Todd Fleming, Nicholas Raynaud and others
 */
-var inflateGrp, fileParentGroup, fileParentGroupOriginal, fileObjectOriginal, fileGroup, svgPath, fileInflatePath, i, il, y, yl, shape, lines, line;
+var inflateGrp, fileParentGroup, svgPath, y, shape, lines, line;
 var options = {};
 
 $(document).ready(function() {
@@ -40,16 +40,12 @@ $(document).ready(function() {
           scene.add(objectsInScene[j]);
         }
 
-
-
-
-        scene.updateMatrixWorld();
-
         scene.updateMatrixWorld();
         pwr = [];
         cutSpeed = [];
+
         for (j = 0; j < objectsInScene.length; j++) {
-            printLog('Processing ' + objectsInScene[j].name, msgcolor, "file")
+            printLog('Processing ' + objectsInScene[j].name, msgcolor, "file");
             // This step converts each object in objectsInScene, to gcode and puts that gcode into objectsInScene[j].userData.gcode - to be later assembled into a gcode file with proper sequence
             objectsInScene[j].updateMatrix();
             if (objectsInScene[j].name != 'object') {
@@ -57,13 +53,13 @@ $(document).ready(function() {
                 console.log('Object: '+objectsInScene[j].name+' is a Raster')
                 runRaster(j)
               } else {
-                console.log('Object: '+objectsInScene[j].name+' is a Vector')
+                console.log('Object: '+objectsInScene[j].name+' is a Vector');
                 var cutSpeed0 = parseFloat( $("#speed"+(j)).val() ) * 60;
                 var pwr0 = parseFloat( $("#power"+(j)).val() );
                 var plungeSpeed0 = parseFloat( $("#plungespeed"+(j)).val() ) * 60;
                 var passes = parseInt( $("#passes"+(j)).val() );
                 var passdepth = parseFloat( $("#depth"+(j)).val() );
-                rapidSpeed = parseFloat(document.getElementById('rapidspeed').value) * 60;
+                var rapidSpeed = parseFloat(document.getElementById('rapidspeed').value) * 60;
                 if (objectsInScene[j].userData.inflated) {
                   // g += generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                   printLog('Seperate Operation for ' + objectsInScene[j].name, msgcolor, "file")
@@ -71,10 +67,10 @@ $(document).ready(function() {
                 } else {
                   // g += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                   if (passes > 1) {
-                    console.log("Mulipass Layers to generate: " + passes)
+                    console.log("Mulipass Layers to generate: " + passes);
                     var gcodewithmultipass = "";
                     for (m = 0; m < passes; m++) {
-                      console.log("Mulipass Layer: " + m)
+                      console.log("Mulipass Layer: " + m);
                       var zoffset = passdepth * m;
                        gcodewithmultipass += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
                     }
@@ -130,13 +126,13 @@ function prepgcodefile() {
   }
 
   for (j = 0; j < objectsInScene.length; j++) {
-      printLog('Preparing Gcode File: ' + objectsInScene[j].name, msgcolor, "file")
-      console.log('Preparing Gcode File: ' + objectsInScene[j].name)
+      printLog('Preparing Gcode File: ' + objectsInScene[j].name, msgcolor, "file");
+      console.log('Preparing Gcode File: ' + objectsInScene[j].name);
       // document.getElementById('gcodepreview').value = "";
       if (typeof(objectsInScene[j].userData.gcode) != "undefined") {
-       g += objectsInScene[j].userData.gcode
+       g += objectsInScene[j].userData.gcode;
      } else {
-       console.log(objectsInScene[j].name + ' does not have valid gcode yet')
+       console.log(objectsInScene[j].name + ' does not have valid gcode yet');
      }
   }
   g += "\n";
@@ -170,13 +166,20 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
     var g = "";
     // get the THREE.Group() that is the txt3d
 
-    var grp = threeGroup;
     var txtGrp = threeGroup;
     var that = this;
     var isLaserOn = false;
     var isAtClearanceHeight = false;
     var isFeedrateSpecifiedAlready = false;
     var isSeekrateSpecifiedAlready = false;
+
+
+    var cncMode = false;
+
+    if  ($('#cncMode').val() == "Enable") {
+      cncMode = true;
+    }
+
     // var subj_path2 = [];
     // var subj_paths = [];
     // console.log(txtGrp);
@@ -188,16 +191,19 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
     txtGrp.traverse(function(child) {
         // console.log(child);
         if (child.type == "Line") {
+
+            var xpos_offset = child.position.x;
+            var ypos_offset = child.position.y;
+
+
             // let's create gcode for all points in line
             for (i = 0; i < child.geometry.vertices.length; i++) {
 
                 // Convert to World Coordinates
                 var localPt = child.geometry.vertices[i];
-                var worldPt = grp.localToWorld(localPt.clone());
-                var xpos_offset = (parseFloat(child.position.x.toFixed(3)));
-                var ypos_offset = (parseFloat(child.position.y.toFixed(3)));
-                var xpos = parseFloat((parseFloat(worldPt.x.toFixed(3)) + (parseFloat(laserxmax) / 2)).toFixed(3));
-                var ypos = parseFloat((parseFloat(worldPt.y.toFixed(3)) + (parseFloat(laserymax) / 2)).toFixed(3));
+                var worldPt = txtGrp.localToWorld(localPt.clone());
+                var xpos = worldPt.x + (parseFloat(laserxmax) / 2);
+                var ypos = worldPt.y + (parseFloat(laserymax) / 2);
 
 
                 if (child.geometry.type == "CircleGeometry") {
@@ -206,7 +212,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                 }
 
 
-                var zpos = parseFloat(worldPt.z.toFixed(3));
+                var zpos = worldPt.z;
 
                 if (zoffset) {
                   zpos = zpos - zoffset;
@@ -223,21 +229,20 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                         // console.log('Rapid Speed: ', rapidSpeed);
                         if (rapidSpeed) {
                             seekrate = " F" + rapidSpeed;
-                            isSeekrateSpecifiedAlready = true;
+                            isSeekrateSpecifiedAlready = true; 
                         } else {
                             seekrate = "";
                         }
 
                     }
-                    cncMode = $('#cncMode').val()
-                    if (cncMode == "Enable") {
+                    if (cncMode) {
                       if (!isAtClearanceHeight) {
                         g += "\nG0 Z" + clearanceHeight + "\n"; // Position Before Plunge!
                       }
                     };
                     g += "G0" + seekrate;
                     g += " X" + xpos + " Y" + ypos + "\n";
-                    if (cncMode == "Enable") {
+                    if (cncMode) {
                       g += "\nG0 Z1\n";  // G0 to Z0 then Plunge!
                       g += "G1 F"+plungeSpeed+" Z" + zpos + "\n";  // Plunge!!!!
                     } else {
@@ -310,44 +315,29 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
 
 addOperation = function(index, operation, zstep, zdepth) {
 
+  // This assumes that operation is one of a fixed set of values.
+  halfToolDiameter = $("#tooldia").val()/2;
+
   if (operation == "Laser (no path offset)") {
     objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], 0, zstep, zdepth );
-    objectsInScene[index].userData.operation = operation;
-    objectsInScene[index].userData.zstep = zstep;
-    objectsInScene[index].userData.zdepth = zdepth;
+  } else if (operation == "Inside") {
+    objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], -halfToolDiameter, zstep, zdepth );
+  } else if (operation == "Outside") {
+    objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], halfToolDiameter, zstep, zdepth );
+  } else if (operation == "Pocket") {
+    objectsInScene[index].userData.inflated = pocketPath(objectsInScene[index], halfToolDiameter, zstep, zdepth );
+  } else if (operation == "Drag Knife") {
+    objectsInScene[index].userData.inflated = dragknifePath(objectsInScene[index], halfToolDiameter, zstep, zdepth );
   }
 
-  if (operation == "Inside") {
-    objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], -($("#tooldia").val()/2), zstep, zdepth );
-    objectsInScene[index].userData.operation = operation;
-    objectsInScene[index].userData.zstep = zstep;
-    objectsInScene[index].userData.zdepth = zdepth;
-  }
+  objectsInScene[index].userData.operation = operation;
+  objectsInScene[index].userData.zstep = zstep;
+  objectsInScene[index].userData.zdepth = zdepth;
 
-  if (operation == "Outside") {
-    objectsInScene[index].userData.inflated = inflatePath(objectsInScene[index], ($("#tooldia").val()/2), zstep, zdepth );
-    objectsInScene[index].userData.operation = operation;
-    objectsInScene[index].userData.zstep = zstep;
-    objectsInScene[index].userData.zdepth = zdepth;
-  }
-
-  if (operation == "Pocket") {
-    objectsInScene[index].userData.inflated = pocketPath(objectsInScene[index], ($("#tooldia").val()/2), zstep, zdepth );
-    objectsInScene[index].userData.operation = operation;
-    objectsInScene[index].userData.zstep = zstep;
-    objectsInScene[index].userData.zdepth = zdepth;
-  }
-
-  if (operation == "Drag Knife") {
-    objectsInScene[index].userData.inflated = dragknifePath(objectsInScene[index], ($("#tooldia").val()/2), zstep, zdepth );
-    objectsInScene[index].userData.operation = operation;
-    objectsInScene[index].userData.zstep = zstep;
-    objectsInScene[index].userData.zdepth = zdepth;
-  }
   setTimeout(function(){ fillLayerTabs(); }, 100);
   setTimeout(function(){ fillTree(); }, 101);
 
-}
+};
 
 inflatePath = function(infobject, inflateVal, zstep, zdepth) {
     var zstep = parseFloat(zstep, 2);
@@ -375,8 +365,8 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
                 for (i = 0; i < child.geometry.vertices.length; i++) {
                     var localPt = child.geometry.vertices[i];
                     var worldPt = grp.localToWorld(localPt.clone());
-                    var xpos = (parseFloat(worldPt.x.toFixed(3)));
-                    var ypos = (parseFloat(worldPt.y.toFixed(3)));
+                    var xpos = worldPt.x;
+                    var ypos = worldPt.y;
 
                     var xpos_offset = (parseFloat(child.position.x.toFixed(3)));
                     var ypos_offset = (parseFloat(child.position.y.toFixed(3)));
@@ -406,7 +396,7 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
 
         if (newClipperPaths.length < 1) {
             console.error("Clipper Simplification Failed!:");
-            printLog('Clipper Simplification Failed!', errorcolor, "viewer")
+            printLog('Clipper Simplification Failed!', errorcolor, "viewer");
         }
 
         // get the inflated/deflated path
@@ -417,10 +407,10 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
             inflateGrp.name = 'inflateGrp';
             inflateGrp.userData.color = inflateGrp.material.color.getHex();
             inflateGrp.position = infobject.position;
-            console.log(i)
-            inflateGrpZ.add(inflateGrp)
+            console.log(i);
+            inflateGrpZ.add(inflateGrp);
         }
-        return inflateGrpZ
+        return inflateGrpZ;
     // }
 };
 
@@ -484,7 +474,7 @@ pocketPath = function(infobject, inflateVal, zstep, zdepth) {
 
         if (newClipperPaths.length < 1) {
             console.error("Clipper Simplification Failed!:");
-            printLog('Clipper Simplification Failed!', errorcolor, "viewer")
+            printLog('Clipper Simplification Failed!', errorcolor, "viewer");
         }
 
         for (j = 0; j < zdepth; j += zstep) {
@@ -498,14 +488,14 @@ pocketPath = function(infobject, inflateVal, zstep, zdepth) {
               inflateGrp.name = 'inflateGrp';
               inflateGrp.position = infobject.position;
               // pocketGrp.userData.color = pocketGrp.material.color.getHex();
-              pocketGrp.add(inflateGrp)
+              pocketGrp.add(inflateGrp);
             } else {
-              console.log('Pocket already done after ' + i + ' iterations')
+              console.log('Pocket already done after ' + i + ' iterations');
               break;
             }
           }
         }
-        return pocketGrp
+        return pocketGrp;
     }
 };
 
@@ -536,11 +526,11 @@ dragknifePath = function(infobject, inflateVal, zstep, zdepth) {
                 for (i = 0; i < child.geometry.vertices.length; i++) {
                     var localPt = child.geometry.vertices[i];
                     var worldPt = grp.localToWorld(localPt.clone());
-                    var xpos = (parseFloat(worldPt.x.toFixed(3)));
-                    var ypos = (parseFloat(worldPt.y.toFixed(3)));
+                    var xpos = worldPt.x;
+                    var ypos = worldPt.y;
 
-                    var xpos_offset = (parseFloat(child.position.x.toFixed(3)));
-                    var ypos_offset = (parseFloat(child.position.y.toFixed(3)));
+                    var xpos_offset = child.position.x;
+                    var ypos_offset = child.position.y;
 
                     if (child.geometry.type == "CircleGeometry") {
                      xpos = (xpos + xpos_offset);
@@ -681,15 +671,15 @@ addCornerActions = function (clipperPolyline, clipperRadius, toleranceAngleRadia
 
 polarPoint = function (r, theta) {
   return new Point(r * Math.cos(theta), r * Math.sin(theta));
-}
+};
 
 
 simplifyPolygons = function(paths) {
-    console.log('Simplifying: ', paths)
+    console.log('Simplifying: ', paths);
     var scale = 10000;
     ClipperLib.JS.ScaleUpPaths(paths, scale);
     var newClipperPaths = ClipperLib.Clipper.SimplifyPolygons(paths, ClipperLib.PolyFillType.pftEvenOdd);
-    console.log('Simplified: ', newClipperPaths)
+    console.log('Simplified: ', newClipperPaths);
     // scale back down
     ClipperLib.JS.ScaleDownPaths(newClipperPaths, scale);
     ClipperLib.JS.ScaleDownPaths(paths, scale);
@@ -701,7 +691,7 @@ getInflatePath = function(paths, delta, joinType) {
     ClipperLib.JS.ScaleUpPaths(paths, scale);
     var miterLimit = 2;
     var arcTolerance = 10;
-    joinType = joinType ? joinType : ClipperLib.JoinType.jtRound
+    joinType = joinType ? joinType : ClipperLib.JoinType.jtRound;
     var co = new ClipperLib.ClipperOffset(miterLimit, arcTolerance);
     co.AddPaths(paths, joinType, ClipperLib.EndType.etClosedPolygon);
     //var delta = 0.0625; // 1/16 inch endmill
@@ -737,9 +727,13 @@ drawClipperPaths = function(paths, color, opacity, z, isClosed, name) {
             lineUnionGeo.vertices.push(new THREE.Vector3(paths[i][j].X, paths[i][j].Y, z));
         }
         // close it by connecting last point to 1st point
-        if (isClosed) lineUnionGeo.vertices.push(new THREE.Vector3(paths[i][0].X, paths[i][0].Y, z));
+        if (isClosed) {
+          lineUnionGeo.vertices.push(new THREE.Vector3(paths[i][0].X, paths[i][0].Y, z));
+        }
         var lineUnion = new THREE.Line(lineUnionGeo, lineUnionMat);
-        if (name) lineUnion.name = name;
+        if (name) {
+          lineUnion.name = name;
+        }
         group.add(lineUnion);
     }
     return group;

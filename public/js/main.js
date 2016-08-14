@@ -322,6 +322,11 @@ function readFile(evt) {
                 svg2three(svgfile, f.name);
                 printLog('SVG Opened', msgcolor, "file");
                 resetView()
+
+                // Lets also try Rastering for SVG
+                // var name = evt.target.files[0].name;
+                // var data = event.target.result;
+                // drawRaster(name, data);
             };
 
 
