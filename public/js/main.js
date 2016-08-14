@@ -295,14 +295,23 @@ function readFile(evt) {
     console.groupEnd();
     // Close the menu
     $("#drop1").dropdown("toggle");
+
+    // Files
+    var files = evt.target.files;
+
+    for (var i = 0; i < files.length; i++) {
+        loadFile(files[i]);
+    }
+}
+
+function loadFile(f) {
     // Filereader
-    var f = evt.target.files[0];
     if (f) {
         var r = new FileReader();
         if (f.name.match(/.dxf$/i)) {
             // console.log(f.name + " is a DXF file");
             // console.log('Reader: ', r)
-            r.readAsText(evt.target.files[0]);
+            r.readAsText(f);
             r.onload = function(e) {
                 dxf = r.result
                 drawDXF(dxf, f.name);
@@ -313,7 +322,7 @@ function readFile(evt) {
 
         } else if (f.name.match(/.svg$/i)) {
             // console.log(f.name + " is a SVG file");
-            r.readAsText(evt.target.files[0]);
+            r.readAsText(f);
             r.onload = function(event) {
                 svg = r.result
                 var svgpreview = document.getElementById('svgpreview');
@@ -324,14 +333,14 @@ function readFile(evt) {
                 resetView()
 
                 // Lets also try Rastering for SVG
-                // var name = evt.target.files[0].name;
+                // var name = f.name;
                 // var data = event.target.result;
                 // drawRaster(name, data);
             };
 
 
         } else if (f.name.match(/.gcode$/i)) {
-            r.readAsText(evt.target.files[0]);
+            r.readAsText(f);
             r.onload = function(event) {
                 // cleanupThree();
                 $("#gcodefile").show();
@@ -341,7 +350,7 @@ function readFile(evt) {
                 resetView()
             };
         } else if (f.name.match(/.stl$/i)) {
-            //r.readAsText(evt.target.files[0]);
+            //r.readAsText(f);
             // Remove the UI elements from last run
             console.group("STL File");
             var stlloader = new MeshesJS.STLLoader;
@@ -366,14 +375,14 @@ function readFile(evt) {
                 if (!binary) {
                     // get the file contents as string
                     // (faster than convert array buffer)
-                    r.readAsText(evt.target.files[0]);
+                    r.readAsText(f);
                     return;
                 }
                 // parse binary STL
-                stlloader.loadBinaryData(view, faces, 100, window, evt.target.files[0]);
+                stlloader.loadBinaryData(view, faces, 100, window, f);
             };
             // start reading file as array buffer
-            r.readAsArrayBuffer(evt.target.files[0]);
+            r.readAsArrayBuffer(f);
             printLog('STL Opened', msgcolor, "file");
             console.log("Opened STL, and asking user for Slice settings")
             console.groupEnd();
@@ -381,9 +390,9 @@ function readFile(evt) {
         } else {
             console.log(f.name + " is probably a Raster");
             $('#origImage').empty();
-            r.readAsDataURL(evt.target.files[0]);
+            r.readAsDataURL(f);
             r.onload = function(event) {
-                var name = evt.target.files[0].name;
+                var name = f.name;
                 var data = event.target.result;
                 drawRaster(name, data);
             };
