@@ -783,12 +783,28 @@ function onMouseClick(e) {
 }
 
 function attachBB(object) {
-  resetColors() // Set all colors back to original
+  var $link = $('#'+object.userData.link);
+  var $parent = $link.parent();
+  var $input = $parent.children('input');
+
   if (object.material && object.type != "Mesh") {
-    object.material.color.setRGB(1, 0.1, 0.1);
+      var checked = $input.prop('checked');
+
+      if (checked) {
+          object.material.color.setHex(object.userData.color);
+          object.userData.selected = false;
+          $input.prop('checked', false);
+          $link.css('color', 'black');
+          return;
+      }
+
+      object.material.color.setRGB(1, 0.1, 0.1);
   }
-  $('.entity').css('color', 'black');
-  $('#'+object.userData.link).css('color', 'red')
+
+  $link.css('color', 'red');
+  $input.prop('checked', true);
+
+  object.userData.selected = true;
 
   // console.log(object);
   // console.log(object.type);

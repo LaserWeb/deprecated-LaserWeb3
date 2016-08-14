@@ -187,6 +187,8 @@ function updateRasterUserData(i) {
 
 };
 
+var collapsedGroups = {};
+
 function fillTree() {
     $('#filetreeheader').empty();
     $('#filetree').empty();
@@ -410,33 +412,105 @@ function fillTree() {
 
                     $currentTable.append(childTemplate);
                 }
+
+                if (childData.selected) {
+                    attachBB(currentChild);
+                }
             }
 
         }
 
-        $('.jobsetuptable .group').each(function(n, group) {
-            group = $(group);
-            var items = group.find('.item');
-            group.children('.counter').html(items.length);
+        function updateTreeSelection() {
+            $('.jobsetuptable .chkaddjob').each(function(n, input) {
+                var $input = $(input);
+                var $parent = $input.parent();
+
+                if (! $parent.hasClass('item')) {
+                    var items = $parent.find('.item').length;
+                    var checkedItems = $parent.find('.item > input:checked').length;
+
+                    $input.prop('checked', items == checkedItems);
+                }
+            });
+        }
+
+        updateTreeSelection();
+
+        $('.jobsetuptable').on('lw:attachBB', function(e, $target) {
+            updateTreeSelection();
         });
 
         $('.jobsetuptable .toggle').on('click', function() {
-            var label = $(this);
-            label.toggleClass('italic');
-            label.parent().children('ul').toggleClass('hidden');
+            var $label = $(this);
+            var $group = $label.parent().children('ul');
+            var groupId = $group.attr('id');
+
+            $label.toggleClass('italic');
+            $group.toggleClass('hidden');
+
+            collapsedGroups[groupId] = $group.hasClass('hidden');
         });
 
-        $('.jobsetuptable .chkaddjob').on('change', function() {
-            var checked = $(this).prop('checked');
-            $(this).parent().find('ul .chkaddjob').prop('checked', checked);
+        $('.jobsetuptable .group').each(function(n, group) {
+            var $group = $(group);
+            var $items = $group.find('.item');
+            var $counter = $group.children('.counter');
+            var groupId = $group.children('ul').attr('id');
+
+            $counter.html($items.length);
+
+            if (collapsedGroups[groupId]) {
+                $group.children('.toggle').trigger('click');
+            }
+        });
+
+        $('.jobsetuptable .chkaddjob').on('change', function(e) {
+            var $input = $(this);
+            var $parent = $input.parent();
+            var checked = $input.prop('checked');
+            var idx, i, j;
+
+            if ($parent.hasClass('item')) {
+                if (checked == $input.prop('checked')) {
+                    $input.prop('checked', !checked);
+                }
+
+                idx = $parent.children('input').attr('id').split('.');
+                i = parseInt(idx[1]);
+                j = parseInt(idx[2]);
+
+                attachBB(objectsInScene[i].children[j]);
+                updateTreeSelection();
+                return false;
+            }
+
+            $input.parent().find('ul .chkaddjob').each(function(n, input) {
+                $input = $(input);
+                $parent = $input.parent();
+
+                if ($parent.hasClass('item')) {
+                    if (checked == $input.prop('checked')) {
+                        $input.prop('checked', !checked);
+                    }
+
+                    idx = $parent.children('input').attr('id').split('.');
+                    i = parseInt(idx[1]);
+                    j = parseInt(idx[2]);
+
+                    attachBB(objectsInScene[i].children[j]);
+                }
+                else {
+                    $input.prop('checked', checked);
+                }
+            });
         });
 
         $('.jobsetupgroup .remove').on('click', function() {
-            var parent = $(this).parent();
+            var $parent = $(this).parent();
             var idx, i, j;
 
-            if (parent.hasClass('item')) {
-                idx = parent.children('input').attr('id').split('.');
+            if ($parent.hasClass('item')) {
+                idx = $parent.children('input').attr('id').split('.');
                 i = parseInt(idx[1]);
                 j = parseInt(idx[2]);
                 objectsInScene[i].remove(objectsInScene[i].children[j]);
@@ -444,7 +518,7 @@ function fillTree() {
             else {
                 var children = [];
 
-                parent.find('.item input').each(function(n, input) {
+                $parent.find('.item input').each(function(n, input) {
                     idx = $(input).attr('id').split('.');
                     i = parseInt(idx[1]);
                     j = parseInt(idx[2]);
@@ -615,11 +689,11 @@ function clearScene() {
 }
 
 function resetColors() {
-    for (i = 0; i < objectsInScene.length; i++) {
-        for (j = 0; j < objectsInScene[i].children.length; j++) {
-            objectsInScene[i].children[j].material.color.setHex(objectsInScene[i].children[j].userData.color);
-        }
-    }
+    // for (i = 0; i < objectsInScene.length; i++) {
+    //     for (j = 0; j < objectsInScene[i].children.length; j++) {
+    //         objectsInScene[i].children[j].material.color.setHex(objectsInScene[i].children[j].userData.color);
+    //     }
+    // }
 }
 
 function makeRed(tpath) {
