@@ -245,7 +245,7 @@ function fillTree() {
             if (currentObject.name.indexOf('.svg') != -1) {
                 if (currentObjectData.editor) {
                     var localKey = currentObjectData.editor.name + 'DPI';
-                    var dpi = localStorage.getItem(localKey) || 24.0;
+                    var dpi = localStorage.getItem(localKey) || localStorage.getItem('defaultDPI') || 24;
                     svgscale = 25.4 / parseFloat(dpi);
                     scaleSVGObject(currentObject, svgscale);
                 }

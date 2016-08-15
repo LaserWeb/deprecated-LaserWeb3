@@ -9,7 +9,7 @@ localParams = [
     'laserYMax', 'spotSize', 'startgcode', 'laseron', 'laseroff',
     'lasermultiply', 'homingseq', 'endgcode', 'imagePosition', 'useNumPad',
     'useVideo', 'cncMode', 'webcamUrl',
-    'illustratorDPI', 'inkscapeDPI'
+    'defaultDPI', 'illustratorDPI', 'inkscapeDPI'
 ];
 
 function saveSettingsLocal() {
