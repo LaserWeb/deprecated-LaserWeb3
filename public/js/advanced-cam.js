@@ -371,6 +371,7 @@ function fillTree() {
             var childTemplate = null;
             var childData = null;
             var groupName = null;
+            var groupId = null;
 
             for (var j = 0; j < currentChildrenLength; j++) {
                 currentChild = currentChildren[j];
@@ -416,14 +417,13 @@ function fillTree() {
                     $currentTable = $('#' + childLayer.id);
 
                     if (! $currentTable.length) {
-                        groupName = childLayer.label || childLayer;
                         currentTable = `
                         <li class="group">
                             <input type="checkbox" value="" class="fr chkaddjob chkchildof`+i+`" />
                             <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
                             <span class="fr counter label label-info">0</span>
                             <i class="fa fa-fw fa-sm fa-object-group" aria-hidden="true"></i>&nbsp;
-                            <a class="entity toggle" href="#">`+groupName+`</a>
+                            <a class="entity toggle" href="#">`+childLayer.label+`</a>
                             <ul id="`+childLayer.id+`"></ul>
                         </li>
                         `;
