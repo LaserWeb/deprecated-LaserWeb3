@@ -28,7 +28,7 @@ localParams = [
   ['useVideo', true],
   ['cncMode', true],
   ['webcamUrl', false],
-  ['defaultDPI', false],
+  ['defaultDPI', true],
   ['illustratorDPI', false],
   ['inkscapeDPI', false]
 ];
