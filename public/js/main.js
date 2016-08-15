@@ -31,6 +31,7 @@ $(document).ready(function() {
     initTour();
     initSmoothie();
     initTree();
+    initDragDrop();
 
 
     // Tooltips
@@ -297,13 +298,33 @@ function readFile(evt) {
     $("#drop1").dropdown("toggle");
 
     // Files
-    var files = evt.target.files;
+    var files = evt.target.files || evt.dataTransfer.files;
 
     for (var i = 0; i < files.length; i++) {
         loadFile(files[i]);
     }
 }
 
+// drag/drop
+function initDragDrop() {
+    var dropTarget = document.getElementById('container1');
+
+    var onDragLeave = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+
+    var onDrop = function(e) {
+        onDragLeave(e);
+        readFile(e);
+    }
+
+    dropTarget.addEventListener('drop', onDrop, false);
+    dropTarget.addEventListener('dragover', onDragLeave, false);
+    dropTarget.addEventListener('dragleave', onDragLeave, false);
+}
+
+// load file
 function loadFile(f) {
     // Filereader
     if (f) {
