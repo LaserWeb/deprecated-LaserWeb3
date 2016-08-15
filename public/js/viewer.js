@@ -272,8 +272,8 @@ function gotStream(stream)
             bullseye.name = "Bullseye";
 
             scene.add(bullseye);
-            bullseye.position.x = -(laserxmax / 2) + 50;
-            bullseye.position.y = -(laserymax / 2) + 50;
+            bullseye.position.x = -(laserxmax / 2);
+            bullseye.position.y = -(laserymax / 2);
 
 
             if (cursor) {
