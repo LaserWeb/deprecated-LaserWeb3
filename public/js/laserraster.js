@@ -148,30 +148,16 @@ Rasterizer.prototype.init = function(object) {
     // console.log('INIT Container: ', this.config.div)
     this.startTime = Date.now();
 
-    // Initialise
     project.clear();
 
-    // Old way using DOM
-    // Create a raster item using the image tag 'origImage'
-    // var container = this.config.div
-    // this.raster = new Raster(container);
 
-    // New way using img dataurl
-    // var object = this.config.object.userData.imgdata;
-    this.raster = new Raster(object.userData.imgdata);
+    this.raster = new Raster({
+        source: object.userData.imgdata
+    });
 
     this.raster.visible = false;
-
-    // Log it as a sanity check
-    // console.log('Constraining Laser power between {0}% and {1}%'.format(this.config.minIntensity, this.config.maxIntensity));
-    // console.log('Height: {0}px, Width: {1}px'.format(this.config.physHeight, this.config.physWidth));
-    // console.log('Spot Size: {0}mm'.format(this.config.spotSize1));
-    // console.log('Raster Width: {0} Height: {1}'.format(this.raster.width, this.raster.height));
-    // console.log('G0: {0}mm/s, G1: {1}mm/s'.format(this.config.rapidRate, this.config.feedRate));
-    // console.log('Black speed: {0} Whitespeed: {1}'.format(this.config.blackRate, this.config.whiteRate));
-    // As the web is asynchronous, we need to wait for the raster to load before we can perform any operation on its pixels.
     this.raster.on('load', this.onRasterLoaded.bind(this));
-    // console.log('Raster: ', this.raster)
+
 };
 
 
@@ -326,12 +312,6 @@ Rasterizer.prototype.rasterInterval = function() {
 };
 
 Rasterizer.prototype.onRasterLoaded = function() {
-    // console.log('[Rasterizer] onRasterLoaded');
-    var rasterSendToLaserButton = document.getElementById("rasterWidgetSendRasterToLaser");
-    $('#rasterparams').hide();
-    $('#rasterProgressShroud').show();
-    $('.progress').removeClass('active');
-    $('#rasterProgressShroud .progress-bar').width(0);
     // Iterate through the Pixels asynchronously
 
         // spotSize1 = size in mm that each physical pixel needs to fill
@@ -366,9 +346,7 @@ Rasterizer.prototype.onFinish = function() {
     console.timeEnd("Process Raster");
     var currentTime = Date.now();
     var elapsed = (currentTime - this.startTime);
-    $('#console')
-        .append('<p class="pf" style="color: #009900;"><b>Raster completed in {0}ms</b></p>'.format(elapsed))
-        .scrollTop($("#console")[0].scrollHeight - $("#console").height());
+    printLog('<p class="pf" style="color: #009900;"><b>Raster completed in '+elapsed+'ms</b></p>', msgcolor, "viewer");
 
     if (this.config.completed) {
         this.config.completed(this.config.objectid);

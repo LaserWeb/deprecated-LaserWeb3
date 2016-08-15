@@ -17,6 +17,9 @@
     <!--Mobile first-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Extend javascript Prototypes -->
+    <script src="js/helpers.js"></script>
+
     <!-- Bootstrap and UX -->
     <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css" id="theme_css" />
     <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-callouts.css" />
@@ -49,6 +52,7 @@
 
     <!-- CAM populated from threejs objects -->
     <script src="js/simple-cam.js"></script>
+    <script src="js/svgcnctool.js"></script>
     <script src="js/advanced-cam.js"></script>
 
     <!-- https://github.com/kabachello/jQuery.NumPad -->
@@ -133,6 +137,8 @@
 
     <!-- Tabbed CAM -->
     <script src="js/tabs.js"></script>
+
+
 
 </head>
 
@@ -520,18 +526,23 @@
                       <br>
                       <i>(NB: Page needs a refresh for these settings to take effect!)</i>
                       <form class="form-horizontal">
-                          <!-- <div class="form-group"> -->
-                              <label for="laserXMax" class="control-label">X-Length <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control numpad" id="laserXMax" placeholder="600">
-                          <!-- </div>
-                          <div class="form-group"> -->
-                              <label for="laserYMax" class="control-label">Y-Length <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control numpad" id="laserYMax" placeholder="400">
+                        <label for="laserXMax" class="control-label">X-Length <span style="color:red;">(Required)</span></label>
+                        <input type="text" class="form-control numpad" id="laserXMax" placeholder="600">
 
-                              <label for="SpotSize" class="control-label">Laser Beam Diameter <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control numpad" id="spotSize" placeholder="0.5">
-                          </form>
-                        </p>
+                        <label for="laserYMax" class="control-label">Y-Length <span style="color:red;">(Required)</span></label>
+                        <input type="text" class="form-control numpad" id="laserYMax" placeholder="400">
+
+                        <label for="SpotSize" class="control-label">Laser Beam Diameter <span style="color:red;">(Required)</span></label>
+                        <input type="text" class="form-control numpad" id="spotSize" placeholder="0.5">
+                      </form>
+                      <hr />
+                      <form class="form-horizontal">
+                        <h4>SVG defaults DPI</h4>
+                        <label for="inkscapeDPI" class="control-label">Inkscape</label>
+                        <input type="text" class="form-control numpad" id="inkscapeDPI" placeholder="24">
+
+                        <label for="illustratorDPI" class="control-label">Illustrator</label>
+                        <input type="text" class="form-control numpad" id="illustratorDPI" placeholder="24">
                       </form>
                   </div>
                   <div id="menu2" class="tab-pane fade">
@@ -627,6 +638,8 @@
                       </form>
                   </div>
 
+                  <hr />
+
                   <button type="button" class="btn btn-lg btn-success" data-dismiss="modal" id="savesettings">Save</button>
                   <button type="button" class="btn btn-lg btn-default" data-dismiss="modal">Cancel</button>
               </div>
@@ -642,7 +655,7 @@
             <!--Tabs for Layers-->
 
           <table><tr><td>
-            <span class="btn btn-primary btn-lg btn-file" title="Open a png, .jpg, .jpeg, .bmp, .gcode, .tap, .nc, .gc, .svg, .dxf, or .stl file" id="openbutton"><i class="fa fa-folder-open fa-fw"></i>Open<input id="file" type="file" accept=".png,.jpg,.jpeg,.bmp,.gcode,.g,.svg,.dxf,.stl,.tap,.gc,.nc" /></span>
+            <span class="btn btn-primary btn-lg btn-file" title="Open a png, .jpg, .jpeg, .bmp, .gcode, .tap, .nc, .gc, .svg, .dxf, or .stl file" id="openbutton"><i class="fa fa-folder-open fa-fw"></i>Open<input id="file" type="file" accept=".png,.jpg,.jpeg,.bmp,.gcode,.g,.svg,.dxf,.stl,.tap,.gc,.nc" multiple /></span>
           </td><td>
             <ul class="nav nav-tabs" accesskey=""id="tabsLayers">
               <li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li>

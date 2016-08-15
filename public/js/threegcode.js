@@ -54,14 +54,12 @@ $(document).ready(function() {
                 runRaster(j)
               } else {
                 console.log('Object: '+objectsInScene[j].name+' is a Vector');
-
                 var cutSpeed0 = parseFloat( $("#speed"+(j)).val() ) * 60;
                 var pwr0 = parseFloat( $("#power"+(j)).val() );
                 var plungeSpeed0 = parseFloat( $("#plungespeed"+(j)).val() ) * 60;
                 var passes = parseInt( $("#passes"+(j)).val() );
                 var passdepth = parseFloat( $("#depth"+(j)).val() );
                 var rapidSpeed = parseFloat($("#rapidspeed").val() ) * 60;
-
                 if (objectsInScene[j].userData.inflated) {
                   // g += generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                   printLog('Separate Operation for ' + objectsInScene[j].name, msgcolor, "file")
