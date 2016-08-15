@@ -526,18 +526,23 @@
                       <br>
                       <i>(NB: Page needs a refresh for these settings to take effect!)</i>
                       <form class="form-horizontal">
-                          <!-- <div class="form-group"> -->
-                              <label for="laserXMax" class="control-label">X-Length <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control numpad" id="laserXMax" placeholder="600">
-                          <!-- </div>
-                          <div class="form-group"> -->
-                              <label for="laserYMax" class="control-label">Y-Length <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control numpad" id="laserYMax" placeholder="400">
+                        <label for="laserXMax" class="control-label">X-Length <span style="color:red;">(Required)</span></label>
+                        <input type="text" class="form-control numpad" id="laserXMax" placeholder="600">
 
-                              <label for="SpotSize" class="control-label">Laser Beam Diameter <span style="color:red;">(Required)</span></label>
-                              <input type="text" class="form-control numpad" id="spotSize" placeholder="0.5">
-                          </form>
-                        </p>
+                        <label for="laserYMax" class="control-label">Y-Length <span style="color:red;">(Required)</span></label>
+                        <input type="text" class="form-control numpad" id="laserYMax" placeholder="400">
+
+                        <label for="SpotSize" class="control-label">Laser Beam Diameter <span style="color:red;">(Required)</span></label>
+                        <input type="text" class="form-control numpad" id="spotSize" placeholder="0.5">
+                      </form>
+                      <hr />
+                      <form class="form-horizontal">
+                        <h4>SVG defaults DPI</h4>
+                        <label for="inkscapeDPI" class="control-label">Inkscape</label>
+                        <input type="text" class="form-control numpad" id="inkscapeDPI" placeholder="24">
+
+                        <label for="illustratorDPI" class="control-label">Illustrator</label>
+                        <input type="text" class="form-control numpad" id="illustratorDPI" placeholder="24">
                       </form>
                   </div>
                   <div id="menu2" class="tab-pane fade">
@@ -632,6 +637,8 @@
                           <!-- </div> -->
                       </form>
                   </div>
+
+                  <hr />
 
                   <button type="button" class="btn btn-lg btn-success" data-dismiss="modal" id="savesettings">Save</button>
                   <button type="button" class="btn btn-lg btn-default" data-dismiss="modal">Cancel</button>

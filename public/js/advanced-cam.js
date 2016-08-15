@@ -1,5 +1,13 @@
 var toolpathsInScene = [];
 
+function scaleSVGObject(obj, scale) {
+    obj.scale.x = scale;
+    obj.scale.y = scale;
+    obj.scale.z = scale;
+    putFileObjectAtZero(obj);
+    //attachBB(obj);
+}
+
 function initTree() {
     $('#filetree').on('keyup change','input', function() {
         var inputVal = $(this).val();
@@ -32,10 +40,11 @@ function initTree() {
             $("#rasteryoffset"+objectseq).val('0')
         } else if ( id.indexOf('svgresol') == 0 ) {
             var svgscale = (25.4 / newval );
-            objectsInScene[objectseq].scale.x = svgscale;
-            objectsInScene[objectseq].scale.y = svgscale;
-            objectsInScene[objectseq].scale.z = svgscale;
-            putFileObjectAtZero(objectsInScene[objectseq]);
+            scaleSVGObject(objectsInScene[objectseq], svgscale);
+            // objectsInScene[objectseq].scale.x = svgscale;
+            // objectsInScene[objectseq].scale.y = svgscale;
+            // objectsInScene[objectseq].scale.z = svgscale;
+            // putFileObjectAtZero(objectsInScene[objectseq]);
             attachBB(objectsInScene[objectseq]);
         }
     });
@@ -218,15 +227,31 @@ function fillTree() {
         $('#filetree').append(table);
 
 
+        var currentObject, currentObjectData;
+
         for (i = 0; i < objectsInScene.length; i++) {
 
-            var xoffset = objectsInScene[i].userData.offsetX.toFixed(1);
-            var yoffset = objectsInScene[i].userData.offsetY.toFixed(1);
-            var xpos = objectsInScene[i].position.x.toFixed(1);
-            var ypos = objectsInScene[i].position.y.toFixed(1);
-            var scale = objectsInScene[i].scale.y;
-            if (objectsInScene[i].name.indexOf('.svg') != -1) {
-                var svgscale = objectsInScene[i].scale.x
+            currentObject = objectsInScene[i];
+            currentObjectData = currentObject.userData;
+
+            var xoffset = currentObjectData.offsetX.toFixed(1);
+            var yoffset = currentObjectData.offsetY.toFixed(1);
+            var xpos = currentObject.position.x.toFixed(1);
+            var ypos = currentObject.position.y.toFixed(1);
+            var scale = currentObject.scale.y;
+
+            var svgscale = null;
+
+            if (currentObject.name.indexOf('.svg') != -1) {
+                if (currentObjectData.editor) {
+                    var localKey = currentObjectData.editor.name + 'DPI';
+                    var dpi = localStorage.getItem(localKey) || 24.0;
+                    svgscale = 25.4 / parseFloat(dpi);
+                    scaleSVGObject(currentObject, svgscale);
+                }
+                else {
+                    svgscale = currentObject.scale.x
+                }
             }
 
             if (objectsInScene[i].type != "Mesh") {
@@ -306,7 +331,7 @@ function fillTree() {
                 `
             }
 
-            $('#filetreetable').append(file)
+            $('#filetreetable').append(file);
 
             if (svgscale) {
                 var svgfile =`
@@ -334,9 +359,6 @@ function fillTree() {
             <tr class="filespacer"><td colspan="3"><hr /></td></tr>
             `);
 
-// -----------------------------------------------------------------------------
-
-            var currentObject = objectsInScene[i];
             var currentChildren = currentObject.children;
             var currentChildrenLength = currentChildren.length;
 
@@ -533,8 +555,6 @@ function fillTree() {
             fillTree();
 
         });
-
-// -----------------------------------------------------------------------------
 
         var tableend = `
         </table>

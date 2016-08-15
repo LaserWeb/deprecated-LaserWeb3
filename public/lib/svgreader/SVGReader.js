@@ -166,16 +166,39 @@ SVGReader = {
             svgRootElement = xmlDoc.documentElement;
         }
 
-        // Parse editor vendor/version/etc...
-        console.log();
-
         // let the fun begin
-        var node = {}
-        this.boundarys.allcolors = []  // TODO: sort by color
+        var node = {};
+        this.boundarys.allcolors = [];  // TODO: sort by color
         node.stroke = [255,0,0];
-        node.xformToWorld = [1,0,0,1,0,0]
-        this.parseChildren(svgRootElement, node)
-        return this.boundarys
+        node.xformToWorld = [1,0,0,1,0,0];
+        this.parseChildren(svgRootElement, node);
+
+        // Parse editor vendor/version/etc...
+        // Editor tag stay on line 2
+        var fingerprint = svgstring.split('\n')[1];
+        var inkscape = fingerprint.match(/^<!-- Created with Inkscape/i);
+        var illustrator = fingerprint.match(/^<!-- Generator: Adobe Illustrator ([^,]+),/i);
+
+        if (inkscape) {
+            config.editor = {
+                name: 'inkscape',
+                version: null,
+                fingerprint: fingerprint.substring(18, fingerprint.length-4).trim()
+            };
+        }
+        else if (illustrator) {
+            config.editor = {
+                name: 'illustrator',
+                version: illustrator[1],
+                fingerprint: fingerprint.substring(16, fingerprint.length-4).trim()
+            };
+        }
+        else {
+            config.editor = null;
+        }
+
+        // return...
+        return this.boundarys;
     },
 
 
