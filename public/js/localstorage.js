@@ -8,6 +8,7 @@ function initLocalStorage() {
 // $("#settings-menu-panel input, #settings-menu-panel textarea, #settings-menu-panel select, #ethernetConnect input").each(function() {console.log(this.id + ": " + $(this).val())});
 
 localParams = [
+  // [paramName, required]
   ['rapidspeed', true],
   ['subnet1', false],
   ['subnet2', false],
@@ -27,9 +28,9 @@ localParams = [
   ['useVideo', true],
   ['cncMode', true],
   ['webcamUrl', false],
+  ['defaultDPI', false],
   ['illustratorDPI', false],
   ['inkscapeDPI', false]
-
 ];
 
 function saveSettingsLocal() {
