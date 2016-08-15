@@ -38,7 +38,8 @@ function initTabs() {
   });
 
 
-  $('#tabsLayers').on('click','.close',function(){
+  $('#tabsLayers').on('click','.close',function(e){
+     e.stopPropagation();
      var tabID = $(this).parents('a').attr('href');
      $(this).parents('li').remove();
      $(tabID).remove();
