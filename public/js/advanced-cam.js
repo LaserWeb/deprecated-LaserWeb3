@@ -323,7 +323,7 @@ function fillTree() {
                 <td colspan="3">
                 <label>Bitmap Resolution</label>
                 <div class="input-group">
-                <input type="number" class="form-control input-xs" value="`+(25.4/scale)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-xs" value="`+(25.4/scale).toFixed(1)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon input-group-addon-xs">DPI</span>
                 </div>
                 </td>
@@ -339,7 +339,7 @@ function fillTree() {
                 <td colspan="3">
                 <label>SVG Resolution</label>
                 <div class="input-group">
-                <input type="number" class="form-control input-xs" value="`+(25.4/svgscale)+`" id="svgresol`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-xs" value="`+(25.4/svgscale).toFixed(1)+`" id="svgresol`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon input-group-addon-xs">DPI</span>
                 </div>
                 </td>

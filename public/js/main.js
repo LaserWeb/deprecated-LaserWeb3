@@ -434,8 +434,8 @@ function loadFile(f) {
         scene.remove(control);
         controls.reset();
     }
-    setTimeout(function(){ fillLayerTabs(); }, 250);
     setTimeout(function(){ fillTree(); }, 250);
+    setTimeout(function(){ fillLayerTabs(); }, 300);
     setTimeout(function(){ viewExtents(objectsInScene[objectsInScene.length - 1]); }, 300);
 
 };
