@@ -312,6 +312,13 @@ function initDragDrop() {
     var onDragLeave = function(e) {
         e.stopPropagation();
         e.preventDefault();
+        $('#draganddrop').hide();
+    }
+
+    var onDragOver = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        $('#draganddrop').show();
     }
 
     var onDrop = function(e) {
@@ -319,8 +326,9 @@ function initDragDrop() {
         readFile(e);
     }
 
+
     dropTarget.addEventListener('drop', onDrop, false);
-    dropTarget.addEventListener('dragover', onDragLeave, false);
+    dropTarget.addEventListener('dragover', onDragOver, false);
     dropTarget.addEventListener('dragleave', onDragLeave, false);
 }
 
