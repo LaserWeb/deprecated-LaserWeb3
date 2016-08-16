@@ -151,12 +151,39 @@ Rasterizer.prototype.init = function(object) {
     project.clear();
 
 
-    this.raster = new Raster({
-        source: object.userData.imgdata
-    });
+      if (object.name.match(/.svg$/i)) {
+        console.log("Inside SVG Raster")
+        var img = new Image();
+        var self = this; // hold parent scope
 
-    this.raster.visible = false;
-    this.raster.on('load', this.onRasterLoaded.bind(this));
+        img.onload = function() {
+          console.log("Inside SVG Raster: Onload")
+          var canvas = document.createElement("canvas");
+          canvas.setAttribute("id", "rastercanv");
+          // document.body.appendChild(img);
+          // document.body.appendChild(canvas);
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          self.raster = new Raster(canvas);
+          // console.log(self)
+          self.raster.visible = false;
+          self.raster.on('load', self.onRasterLoaded.bind(self));
+          // self.raster.on('load', console.log("Event Fires!"));
+        }
+        img.src = 'data:image/svg+xml;utf8,' + object.userData.imgdata;
+      } else {
+        console.log("Inside Bitmap Raster")
+        this.raster = new Raster({
+            source: object.userData.imgdata
+        });
+        console.log(this)
+        this.raster.visible = false;
+        this.raster.on('load', this.onRasterLoaded.bind(this));
+      }
+
+
 
 };
 
@@ -312,7 +339,8 @@ Rasterizer.prototype.rasterInterval = function() {
 };
 
 Rasterizer.prototype.onRasterLoaded = function() {
-    // Iterate through the Pixels asynchronously
+        console.log("Inside onRasterLoaded")
+        // Iterate through the Pixels asynchronously
 
         // spotSize1 = size in mm that each physical pixel needs to fill
         // beamSize1 = size of the laser beam
