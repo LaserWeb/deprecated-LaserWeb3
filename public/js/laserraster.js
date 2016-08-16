@@ -159,7 +159,7 @@ Rasterizer.prototype.init = function(object) {
         img.onload = function() {
           console.log("Inside SVG Raster: Onload")
           var canvas = document.createElement("canvas");
-          canvas.setAttribute("id", "rastercanv");
+          // canvas.setAttribute("id", "rastercanv");
           // document.body.appendChild(img);
           // document.body.appendChild(canvas);
           canvas.width = img.naturalWidth;
