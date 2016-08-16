@@ -9,10 +9,17 @@ function initTabs() {
     if ( id.indexOf('rasterxoffset') == 0 ) {
       objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + newval;
       // console.log('Moving ' +objectsInScene[objectseq].name+ ' to X: '+newval);
+      if (typeof(object) != 'undefined') {
+        scene.remove(object);
+      };
       attachBB(objectsInScene[objectseq]);
+
     } else if ( id.indexOf('rasteryoffset') == 0 ) {
       objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + newval;
       // console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y: '+newval);
+      if (typeof(object) != 'undefined') {
+        scene.remove(object);
+      };
       attachBB(objectsInScene[objectseq]);
     } else if ( id.indexOf('rasterDPI') == 0 ) {
       var bboxpre = new THREE.Box3().setFromObject(objectsInScene[objectseq]);
@@ -23,10 +30,16 @@ function initTabs() {
       objectsInScene[objectseq].scale.y = scale;
       objectsInScene[objectseq].scale.z = scale;
       putFileObjectAtZero(objectsInScene[objectseq]);
+      if (typeof(object) != 'undefined') {
+        scene.remove(object);
+      };
       attachBB(objectsInScene[objectseq]);
       $("#rasterxoffset"+objectseq).val('0')
       $("#rasteryoffset"+objectseq).val('0')
     } else if ( id.indexOf('svgdpi') == 0 ) {
+      if (typeof(object) != 'undefined') {
+        scene.remove(object);
+      };
       var svgscale = (25.4 / newval );
       objectsInScene[objectseq].scale.x = svgscale;
       objectsInScene[objectseq].scale.y = svgscale;
