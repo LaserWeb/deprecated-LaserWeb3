@@ -319,7 +319,7 @@ function fillEasyCam() {
       <div class="form-group">
         <label>SVG Resolution</label>
         <div class="input-group">
-          <input type="number" class="form-control input-sm" value="`+(25.4/svgscale)+`" id="svgdpi`+i+`" objectseq="`+i+`">
+          <input type="number" class="form-control input-sm" value="`+(25.4/svgscale).toFixed(1)+`" id="svgdpi`+i+`" objectseq="`+i+`">
           <span class="input-group-addon">DPI</span>
         </div>
       </div>
