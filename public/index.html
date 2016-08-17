@@ -181,6 +181,7 @@
                     <div id="ethernetConnect" class="navbar-form navbar-left" style="display: none;">
                         <form role="form"><!-- Smoothie Ethernet -->
                             <label for="smoothieIp" class="control-label  icon-white"><i class="fa fa-2x fa-wifi"></i></label>
+                            <input id="smoothieIp" type="text" class="form-control" maxlength="16" placeholder="192.168.137.22" style="width: 140px;" />
                             <div class="btn-group">
                                 <a id="ethConnect" class="btn btn-success" href="#"><span id="ethConnectStatus">Connect</span></a>
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -191,8 +192,11 @@
                                         <h4>Scan network</h4>
                                         <p>Specify the subnet in <code>0.0.0.*</code> format</p>
                                         <div class="input-group" style="width: 95%;">
+                                            <input id="subnet1" style="border-right: none;" type="text" class="form-control" maxlength="16" placeholder="192" style="width: 60px;" />
                                             <span id="basic-addon2" style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon">.</span>
+                                            <input id="subnet2" style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" placeholder="168" style="width: 60px;" />
                                             <span id="basic-addon2" style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon">.</span>
+                                            <input id="subnet3" style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" placeholder="137" style="width: 60px;" />
                                             <span id="basic-addon2" style="border-left: none;  background: #fff; cursur: arrow;" class="input-group-addon">. &nbsp; <b>*</b></span>
                                         </div>
                                         <button id="scansubnet" class="btn btn-default">Scan</button>
@@ -416,12 +420,14 @@
                                         <form id="stepsize">
                                             <div data-toggle="buttons">
                                                 <label class="btn btn-jog btn-default">
+                                                    <input type="radio" name="stp" value="0.1" />
                                                     <span class="fa-stack fa-1x"><i class="fa fa-arrows-h fa-stack-1x"></i>
                                                         <strong class="fa-stack-1x icon-top-text">jog by</strong>
                                                         <strong class="fa-stack-1x icon-bot-text">0.1mm</strong>
                                                     </span>
                                                 </label>
                                                 <label class="btn btn-jog btn-default">
+                                                    <input type="radio" name="stp" value="1" />
                                                     <span class="fa-stack fa-1x">
                                                         <i class="fa fa-arrows-h fa-stack-1x"></i>
                                                         <strong class="fa-stack-1x icon-top-text">jog by</strong>
@@ -429,6 +435,7 @@
                                                     </span>
                                                 </label>
                                                 <label class="btn btn-jog btn-default active">
+                                                    <input type="radio" name="stp" value="10" checked />
                                                     <span class="fa-stack fa-1x">
                                                         <i class="fa fa-arrows-h fa-stack-1x"></i>
                                                         <strong class="fa-stack-1x icon-top-text">jog by</strong>
@@ -436,6 +443,7 @@
                                                     </span>
                                                 </label>
                                                 <label class="btn btn-jog btn-default">
+                                                    <input type="radio" name="stp" value="100" />
                                                     <span class="fa-stack fa-1x">
                                                         <i class="fa fa-arrows-h fa-stack-1x"></i>
                                                         <strong class="fa-stack-1x icon-top-text">jog by</strong>
@@ -462,22 +470,28 @@
                                 <label for="setupcost" class="control-label">Setup Cost (Once off)</label>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
+                                    <input id="setupcost" type="text" class="form-control quoteVar" value="0.00" />
                                     <span class="input-group-addon">=</span>
                                 </div>
                                 <label for="materialcost" class="control-label">Material Cost per cm<sup>2</sup> (each):</label>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
+                                    <input id="materialcost" type="text" class="form-control quoteVar" value="0.00" />
                                     <span class="input-group-addon">x</span>
+                                    <input id="materialqty" type="text" class="form-control" value="0" disabled />
                                     <span class="input-group-addon">cm<sup>2</sup></span>
                                 </div>
                                 <label for="lasertime" class="control-label">Machine moves (G0 + G1) per cm:</label>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
+                                    <input id="lasertime" type="text" class="form-control quoteVar" value="0.05" />
                                     <span class="input-group-addon">x</span>
+                                    <input id="lasertimeqty" type="text" class="form-control" value="0" disabled />
                                     <span class="input-group-addon">cm</span>
                                 </div>
                                 <label for="qtycut" class="control-label">Quantity</label>
                                 <div class="input-group">
+                                    <input id="qtycut" type="text" class="form-control quoteVar" value="1" />
                                     <span class="input-group-addon">units</span>
                                 </div>
                             </form>
@@ -609,15 +623,21 @@
                                     </p>
                                     <form class="form-horizontal">
                                         <label for="laserXMax" class="control-label">X-Length <span style="color:red;">(Required)</span></label>
+                                        <input id="laserXMax" type="text" class="form-control numpad" placeholder="600" />
                                         <label for="laserYMax" class="control-label">Y-Length <span style="color:red;">(Required)</span></label>
+                                        <input id="laserYMax" type="text" class="form-control numpad" placeholder="400" />
                                         <label for="SpotSize" class="control-label">Laser Beam Diameter <span style="color:red;">(Required)</span></label>
+                                        <input id="spotSize" type="text" class="form-control numpad" placeholder="0.5" />
                                     </form>
                                     <hr />
                                     <form class="form-horizontal">
                                         <h4>SVG defaults DPI</h4>
                                         <label for="defaultDPI" class="control-label">Default <span style="color:red;">(Required)</span></label>
+                                        <input id="defaultDPI" type="text" class="form-control numpad" placeholder="24" />
                                         <label for="inkscapeDPI" class="control-label">Inkscape</label>
+                                        <input id="inkscapeDPI" type="text" class="form-control numpad" placeholder="24" />
                                         <label for="illustratorDPI" class="control-label">Illustrator</label>
+                                        <input id="illustratorDPI" type="text" class="form-control numpad" placeholder="24" />
                                     </form>
                                 </div><!-- #menu1 -->
 
@@ -861,6 +881,7 @@
                                             <tr>
                                                 <td>
                                                     <div class="checkbox">
+                                                        <label><input id="3dview" type="checkbox" value="" />Enable 3D View</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -904,6 +925,7 @@
                                         <div id="console"></div><!-- console -->
                                         <div class="input-group btn-group" style="margin-left: 10px;">
                                             <span class="input-group-addon"><i class="fa fa-terminal fa-lg"></i></span>
+                                            <input id="command" type="text" autocomplete="on" class="form-control numpadgcode uppercase" />
                                             <span class="input-group-btn">
                                                 <button id="sendCommand" class="btn btn-default" type="button">
                                                     <i class="fa fa-play" style="margin-right: 10px;"></i> Send
@@ -962,6 +984,7 @@
 
         <canvas id="videoImage" width="160" height="120" style="display: none; visibility: hidden; float:left;"></canvas>
 
+        <img id="imageDetect" crossOrigin width="160" height="120" style="display: none; visibility: hidden; float:left;" /></canvas>
 
         <div id="work-area" style="display: none; visibility: hidden; float:left;">
             <div id="svgpreview"></div>
@@ -986,6 +1009,7 @@
                             <label for="inflateVal" class="control-label">Layer Height:</label>
                             <div class="btn-group btn-group-justified" role="group" aria-label="stltab">
                                 <div class="input-group">
+                                    <input id="layerheight" type="number" step="0.1" class="form-control  numpad input-sm" value="1.5" style="text-align:right;" />
                                     <span class="input-group-addon">mm</span>
                                 </div>
                             </div>
@@ -1015,6 +1039,7 @@
                             <label class="control-label">Filename to save-as on the SD Card:</label>
                             <div class="input-group">
                                 <span class="input-group-addon">Filename: </span>
+                                <input id="saveasname" type="text" class="form-control input-lg" value="job" style="text-align:right;" />
                                 <span class="input-group-addon">.gcode</span>
                             </div>
                         </form>
@@ -1073,6 +1098,7 @@
                     </div>
                     <div class="modal-body">
                         Enter the new PIN<br />
+                        <input type="text" id="setarmpin" /><br />
                         <span id="setpinmsg"></span>
                     </div>
                     <div class="modal-footer"></div>
