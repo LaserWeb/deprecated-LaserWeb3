@@ -246,7 +246,7 @@ Rasterizer.prototype.rasterRow = function(y) {
 
         // The Luma grayscale of the pixel
 	var alpha = pixels[x*4+3]/255.0;                                                   // 0-1.0
-  var lumaGray = (pixels[x*4]*0.3 + pixels[x*4+1]*0.59 + pixels[x*4+2]*0.11)/255.0;  // 0-1.0
+    var lumaGray = (pixels[x*4]*0.3 + pixels[x*4+1]*0.59 + pixels[x*4+2]*0.11)/255.0;  // 0-1.0
 	lumaGray = alpha * lumaGray + (1-alpha)*1.0;
 	this.grayLevel = lumaGray.toFixed(3);
 	this.graLevel = lumaGray.toFixed(1);
