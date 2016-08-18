@@ -1102,74 +1102,10 @@
     <!-- Tabbed CAM -->
     <script type="text/javascript" src="js/tabs.js"></script>
 
-    <script type="text/javascript">
-        var toggle = false;
+    <!-- Left Menu -->
+    <script type="text/javascript" src="js/menu.js"></script>
 
-        $(".sidebar-icon").click(function() {
-            if (toggle) {
-                $(".page-container").addClass("sidebar-collapsed").removeClass("sidebar-collapsed-back");
-                $("#menu span").css({"position":"absolute"});
-            }
-            else {
-                $(".page-container").removeClass("sidebar-collapsed").addClass("sidebar-collapsed-back");
-                setTimeout(function() {
-                    $("#menu span").css({"position":"relative"});
-                }, 100);
-            }
-            toggle = !toggle;
-        });
-
-        $("#cam-menu").click(function() {
-            $('.mobtab').hide();
-            $('.leftmenuitem').removeClass('active');
-            $('#cam-menu-panel').show();
-            $("#cam-menu").addClass('active')
-        });
-
-        $("#settings-menu").click(function() {
-            $('.mobtab').hide();
-            $('.leftmenuitem').removeClass('active');
-            $('#settings-menu-panel').show();
-            $("#settings-menu").addClass('active')
-        });
-
-        $("#gcode-menu").click(function() {
-            $('.mobtab').hide();
-            $('.leftmenuitem').removeClass('active');
-            $('#gcode-menu-panel').show();
-            $("#gcode-menu").addClass('active')
-        });
-
-        $("#quote-menu").click(function() {
-            $('.mobtab').hide();
-            $('.leftmenuitem').removeClass('active');
-            $('#quote-menu-panel').show();
-            $("#quote-menu").addClass('active')
-        });
-
-        $("#tree-cam-menu").click(function() {
-            $('.mobtab').hide();
-            $('.leftmenuitem').removeClass('active');
-            $('#tree-cam-menu-panel').show();
-            $("#tree-cam-menu").addClass('active')
-        });
-
-        $("#jog-menu").click(function() {
-            $('.mobtab').hide();
-            $('.leftmenuitem').removeClass('active');
-            $('#jog-menu-panel').show();
-            $("#jog-menu").addClass('active')
-        });
-
-    </script>
-
-    <script type="text/javascript">
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-        ga('create', 'UA-38524928-3', 'auto');
-        ga('send', 'pageview');
-    </script>
+    <!-- Google Analytics -->
+    <script type="text/javascript" src="js/google-analytics.js"></script>
 
 </html>
