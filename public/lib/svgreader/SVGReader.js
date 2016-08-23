@@ -32,6 +32,9 @@ ToDo:
 * check for out of bounds geometry
 */
 
+if(typeof require === 'function') {
+    var Vec2 = require(__dirname + '/vec2.js').Vec2
+}
 
 SVGReader = {
 
@@ -154,7 +157,9 @@ SVGReader = {
 
         // parse xml
         var svgRootElement;
-        if (window.DOMParser) {
+        var isBrowserEnv = typeof window !== 'undefined'
+        if (!isBrowserEnv || window.DOMParser) {
+            var DOMParser = isBrowserEnv ? window.DOMParser : require('xmldom').DOMParser
             var parser = new DOMParser();
             svgRootElement = parser.parseFromString(svgstring, 'text/xml').documentElement;
         }
@@ -267,6 +272,7 @@ SVGReader = {
                         //console.log('Stroke: '+node.stroke+ ' of type '+ typeof(node.stroke));
                         //console.log('Stroke: '+parsecolor+ ' of type '+ typeof(parsecolor));
                         // Compare object values - as per http://stackoverflow.com/questions/1068834/object-comparison-in-javascript
+                        var parsecolor;
                         if (parsecolor) {
                             if (JSON.stringify(node.stroke) === JSON.stringify(parsecolor) ) {
                                 this.boundarys.allcolors.push(subpath);
@@ -1273,4 +1279,8 @@ if (typeof(String.prototype.strip) === "undefined") {
     String.prototype.strip = function() {
         return String(this).replace(/^\s+|\s+$/g, '');
     };
+}
+
+if(typeof module !== 'undefined' && module.exports){
+    module.exports.SVGReader = SVGReader
 }

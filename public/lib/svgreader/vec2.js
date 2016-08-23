@@ -287,3 +287,8 @@ Vec2.prototype = {
     return new Vec2(-this.y, this.x)
   }
 };
+
+if(typeof module !== 'undefined' && module.exports){
+    module.exports.Vec2 = Vec2
+}
+
