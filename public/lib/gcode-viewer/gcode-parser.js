@@ -152,8 +152,8 @@ function GCodeParser(handlers) {
     }
 
     this.parse = function(gcode) {
-        $('#renderprogressholder').show();
-        $("#gcodelinestbody").empty();
+        console.log('inside this.parse')
+        object = null;
         var lines = gcode.split(/\r{0,1}\n/);
         var count = lines.length;
         var maxTimePerChunk = 500;
@@ -191,6 +191,7 @@ function GCodeParser(handlers) {
                 object.translateX(laserxmax /2 * -1);
                 object.translateY(laserymax /2 * -1);
                 object.name = 'object';
+                console.log('adding to scene')
                 scene.add(object);
                 // objectsInScene.push(object)
             }
@@ -1234,11 +1235,12 @@ createObjectFromGCode = function (gcode, indxMax) {
 
 function drawobject() {
 
+    var newObject = false;
   // console.log("INSIDE DRAWOBJECT");
     // set what units we're using in the gcode
     isUnitsMm = parser.isUnitsMm;
 
-    var newObject = new THREE.Object3D();
+    newObject = new THREE.Object3D();
     newObject.name = 'newObject'
 
     // old approach of monolithic line segment
@@ -1323,14 +1325,6 @@ function drawobject() {
        $('#quoteresult').html('Job moves length: ' + totalDist.toFixed(1) + ' mm<br> Width: ' + width.toFixed(1) + ' mm<br>Height: ' + height.toFixed(1) + ' mm<br>Material: ' + ((width*height) / 1000).toFixed(3) + 'cm<sup>2</sup>' );
        $("#materialqty").val(((width*height) / 1000).toFixed(3));
     }
-    // store meta data in userData of object3d for later use like in animation
-    // of toolhead
-//    newObject.userData.bbbox2 = bbbox2;
-//    newObject.userData.lines = lines;
-//    newObject.userData.layers3d = layers3d;
-//    newObject.userData.center2 = center2;
-//    newObject.userData.extraObjects = extraObjects;
-//    newObject.userData.threeObjs = new3dObj;
 
     console.groupEnd();
     return newObject;

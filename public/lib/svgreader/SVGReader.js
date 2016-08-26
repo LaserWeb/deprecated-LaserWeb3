@@ -176,26 +176,31 @@ SVGReader = {
         // Parse editor vendor/version/etc...
         // Editor tag stay on line 2
         var fingerprint = svgstring.split('\n')[1];
-        var inkscape = fingerprint.match(/^<!-- Created with Inkscape/i);
-        var illustrator = fingerprint.match(/^<!-- Generator: Adobe Illustrator ([^,]+),/i);
+        if (fingerprint) {
+          var inkscape = fingerprint.match(/^<!-- Created with Inkscape/i);
+          var illustrator = fingerprint.match(/^<!-- Generator: Adobe Illustrator ([^,]+),/i);
 
-        if (inkscape) {
-            config.editor = {
-                name: 'inkscape',
-                version: null,
-                fingerprint: fingerprint.substring(18, fingerprint.length-4).trim()
-            };
+          if (inkscape) {
+              config.editor = {
+                  name: 'inkscape',
+                  version: null,
+                  fingerprint: fingerprint.substring(18, fingerprint.length-4).trim()
+              };
+          }
+          else if (illustrator) {
+              config.editor = {
+                  name: 'illustrator',
+                  version: illustrator[1],
+                  fingerprint: fingerprint.substring(16, fingerprint.length-4).trim()
+              };
+          }
+          else {
+              config.editor = null;
+          }
+        } else {
+              config.editor = null;
         }
-        else if (illustrator) {
-            config.editor = {
-                name: 'illustrator',
-                version: illustrator[1],
-                fingerprint: fingerprint.substring(16, fingerprint.length-4).trim()
-            };
-        }
-        else {
-            config.editor = null;
-        }
+
 
         // return...
         return this.boundarys;

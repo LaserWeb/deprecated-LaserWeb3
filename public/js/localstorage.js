@@ -83,7 +83,7 @@ function checkSettingsLocal() {
     if (!val && paramRequired) {
       printLog('Missing required setting: ' + paramName, errorcolor, "settings");
       anyissues = true;
-    
+
     } else if (!val && !paramRequired) {
       printLog('Missing optional setting: ' + paramName, warncolor, "settings");
     } else {
@@ -153,9 +153,8 @@ function receivedText(e) {
      localStorage.setItem(property, o[property]);
     } else {
       // I'm not sure this can happen... I want to log this if it does!
-      console.log("Found a property " + property + " which does not belong to iteself.");
+      console.log("Found a property " + property + " which does not belong to itself.");
     }
   }
   loadSettingsLocal();
 };
-

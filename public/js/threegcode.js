@@ -7,8 +7,13 @@ var options = {};
 
 $(document).ready(function() {
 
-    $('#generategcode').on('click', function() { // DXF job Params to MC
-      console.group("Generating GCODE");
+
+    $('#generategcode').on('click', function() {
+        console.group("Generating GCODE");
+        for (j = 0; j < objectsInScene.length; j++) {
+          // Cleanup Existing GCODE
+          objectsInScene[j].userData.gcode = "";
+        }
         if (typeof(fileObject) == 'undefined') {
             printLog('No file loaded. do, File -> Open, first!', errorcolor, "file")
         };
@@ -106,6 +111,7 @@ $(document).ready(function() {
 
         $('#gcode-menu').click();
         console.groupEnd();
+        console.log('running openGCodeFromText')
         openGCodeFromText();
     });
 });
@@ -229,7 +235,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                         // console.log('Rapid Speed: ', rapidSpeed);
                         if (rapidSpeed) {
                             seekrate = " F" + rapidSpeed;
-                            isSeekrateSpecifiedAlready = true; 
+                            isSeekrateSpecifiedAlready = true;
                         } else {
                             seekrate = "";
                         }
