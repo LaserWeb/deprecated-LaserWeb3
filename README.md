@@ -1,8 +1,8 @@
 # LaserWeb
 
-As this project pushes forward (with the brilliant direction of Peter Van der Waalt at the helm, and some very talented contributors), please remember taht Rome wsn't built in a day. This is a totally non profit open source project, all contributors and testers are volunteers who share a love of all things making. lasers included. That being said, if history has anything to say about it, this project should advance very quickly. (A fourth version is already in the beggining stages)Check the LaserWeb/CNCWeb Google+ community (https://plus.google.com/u/0/communities/115879488566665599508) for updates on the progress of the newest iteration of LaserWeb.
+As this project pushes forward (with the brilliant direction of Peter Van der Waalt at the helm, and some very talented contributors), please remember that Rome wasn't built in a day. This is a totally non profit open source project, all contributors and testers are volunteers who share a love of all things making, lasers included. That being said, if history has anything to say about it, this project should advance very quickly. (A fourth version is already in the beggining stages)Check the LaserWeb/CNCWeb Google+ community (https://plus.google.com/u/0/communities/115879488566665599508) for updates on the progress of the newest iteration of LaserWeb.
 
-
+Donations to the developers to further things along are always welcome, but even if you can not contribute financially, if you use LaserWeb and like it, spread the word around. More users translates into more contributors which then allows for faster, feature rich development.
 
 ## Documentation:
 
