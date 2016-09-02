@@ -382,7 +382,8 @@ Rasterizer.prototype.onFinish = function() {
     console.groupEnd()
 };
 
-
+// This is evaluated inside the paperscript scope, so this
+// becomes paper.RasterNow
 this.RasterNow = function(config) {
     console.time("Process Raster");
     printLog('Process Raster', msgcolor, "raster")
