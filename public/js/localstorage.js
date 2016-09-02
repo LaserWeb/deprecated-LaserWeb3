@@ -30,7 +30,8 @@ localParams = [
   ['webcamUrl', false],
   ['defaultDPI', true],
   ['illustratorDPI', false],
-  ['inkscapeDPI', false]
+  ['inkscapeDPI', false],
+  ['defaultBitmapDPI', true]
 ];
 
 function saveSettingsLocal() {
