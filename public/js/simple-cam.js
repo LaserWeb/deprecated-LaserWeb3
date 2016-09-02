@@ -209,6 +209,13 @@ function fillEasyCam() {
       objectsInScene[i].scale.x = scale;
       objectsInScene[i].scale.y = scale;
 
+      putFileObjectAtZero(objectsInScene[i]);
+      if (typeof(object) != 'undefined') {
+        scene.remove(object);
+      };
+      attachBB(objectsInScene[i]);
+
+
       var xoffset = objectsInScene[i].userData.offsetX
       var yoffset = objectsInScene[i].userData.offsetY
       var xpos = objectsInScene[i].position.x
