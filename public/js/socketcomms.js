@@ -1,4 +1,5 @@
 var socket, isConnected, playing, connectVia;
+var jobStartTime = -1;
 
 function initSocket() {
   socket = io.connect(''); // socket.io init
@@ -81,6 +82,14 @@ function initSocket() {
       $('#playicon').addClass('fa-play');
       playing = false;
       paused = false;
+      if (jobStartTime >= 0) {
+        var jobFinishTime = new Date(Date.now());
+        var elapsedTime = (jobFinishTime.getTime() - jobStartTime.getTime()) / 1000;
+        printLog("Job finished at " + jobFinishTime.toString(), msgcolor, "file");
+        printLog("Elapsed time: " + elapsedTime + " seconds.", msgcolor, "file");
+        jobStartTime = -1;
+        j
+      }
     }
   });
 }
@@ -167,6 +176,8 @@ function playpauseMachine() {
 };
 
 function playGcode() {
+  jobStartTime = new Date(Date.now());
+  printLog("Job started at " + jobStartTime.toString(), msgcolor, "file");
   var connectVia = $('#connectVia').val()
   if (connectVia == "USB") {
     if (isConnected) {
