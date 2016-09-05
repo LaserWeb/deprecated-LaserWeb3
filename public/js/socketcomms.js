@@ -84,12 +84,23 @@ function initSocket() {
       paused = false;
       if (jobStartTime >= 0) {
         var jobFinishTime = new Date(Date.now());
-        var elapsedTime = (jobFinishTime.getTime() - jobStartTime.getTime()) / 1000;
+        var elapsedTimeMS = jobFinishTime.getTime() - jobStartTime.getTime();
+        var elapsedTime = Math.round(elapsedTimeMS / 1000);
         printLog("Job started at " + jobStartTime.toString(), msgcolor, "file");
         printLog("Job finished at " + jobFinishTime.toString(), msgcolor, "file");
         printLog("Elapsed time: " + elapsedTime + " seconds.", msgcolor, "file");
         jobStartTime = -1;
-        j
+
+        // Update accumulated job time
+        var accumulatedJobTimeMS = 0;
+        var accumulatedJobTimeMSString = localStorage.getItem("accumulatedJobTimeMS");
+        if (accumulatedJobTimeMSString != null) {
+          accumulatedJobTimeMS = parseInt(accumulatedJobTimeMSString, 10);
+        }
+        accumulatedJobTimeMS += elapsedTimeMS;
+        localStorage.setItem("accumulatedJobTimeMS", accumulatedJobTimeMS.toString());
+
+        printLog("Total accumulated job time: " + (accumulatedJobTimeMS / 1000).toHHMMSS());
       }
     }
   });
