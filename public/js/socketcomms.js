@@ -92,13 +92,7 @@ function initSocket() {
         jobStartTime = -1;
 
         // Update accumulated job time
-        var accumulatedJobTimeMS = 0;
-        var accumulatedJobTimeMSString = localStorage.getItem("accumulatedJobTimeMS");
-        if (accumulatedJobTimeMSString != null) {
-          accumulatedJobTimeMS = parseInt(accumulatedJobTimeMSString, 10);
-        }
-        accumulatedJobTimeMS += elapsedTimeMS;
-        localStorage.setItem("accumulatedJobTimeMS", accumulatedJobTimeMS.toString());
+        var accumulatedJobTimeMS = accumulateTime(elapsedTimeMS);
 
         printLog("Total accumulated job time: " + (accumulatedJobTimeMS / 1000).toHHMMSS());
       }

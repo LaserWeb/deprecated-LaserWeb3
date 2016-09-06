@@ -15,3 +15,18 @@ Number.prototype.toHHMMSS = function () {
     if (seconds < 10) {seconds = "0"+seconds;}
     return hours+':'+minutes+':'+seconds;
 }
+
+
+//JQuery extension to add additional event triggers
+// This assumes JQuery has been loaded first!
+!function ($) {
+
+	$.each(['show', 'hide'], function (i, ev) {
+		var el = $.fn[ev];
+		$.fn[ev] = function () {
+			this.trigger(ev);
+			return el.apply(this, arguments);
+		};
+	});
+} (jQuery);
+

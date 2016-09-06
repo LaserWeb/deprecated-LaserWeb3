@@ -1,3 +1,4 @@
+// Common Menu Initialization
 var appMenus = [
     "cam",
     "settings",
@@ -24,3 +25,13 @@ appMenus.forEach(function(menu) {
         makeTabActive(menu);
     });
 }, this);
+
+
+
+// Additional custom menu handlers to fire when each panel is shown
+
+$('#stats-menu-panel').on('show', function(){
+    var accumulatedJobTimeMS = parseInt((localStorage.getItem("accumulatedJobTimeMS") || 0),  10);
+    var displayString = (accumulatedJobTimeMS / 1000).toHHMMSS();
+    $("#accumulatedtime").val(displayString);
+});

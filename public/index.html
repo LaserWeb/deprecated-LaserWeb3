@@ -606,6 +606,7 @@
                                                     <i class="fa fa-upload  fa-fw"></i> Restore from file <input id="jsonFile" type="file" accept=".json" />
                                                 </span>
                                             </div>
+
                                         </div>
                                     </form>
                                 </div><!-- #menu4 -->
@@ -618,6 +619,25 @@
                             </div><!-- .tab-content -->
 
                         </div><!-- #settings-menu-panel -->
+
+                        <div id="stats-menu-panel" class="mobtab" style="display: none;">
+                            <h4>Statistics</h4>
+                            <form class="form-horizontal">
+                                <label for="accumulatedtime" class="control-label">Accumulated Job Time</label>
+                                <div class="input-group">
+                                    <input id="accumulatedtime" type="text" class="form-control" value="0" readonly />
+                                    <span class="input-group-addon">HH:MM:SS</span>
+                                </div>
+                                <hr />
+                                <div class="btn-group" role="group">
+                                    <a id="resetAccumulatedTime" class="btn btn-md btn-warning" onclick="resetAccumulatedTime()">
+                                        <i class="fa fa-clock-o"></i> Reset Accumulated Time
+                                    </a>
+                                </div>
+
+                            </form>
+                            <br />
+                        </div><!-- #stats-menu-panel -->
 
                     </div><!-- #col1 (sidebar) -->
 
@@ -865,6 +885,9 @@
                         </li>
                         <li id="settings-menu" class="leftmenuitem">
                             <a href="#"><i class="fa fa-cogs"></i><span>Settings</span></a>
+                        </li>
+                        <li id="stats-menu" class="leftmenuitem">
+                            <a href="#"><i class="fa fa-info-circle"></i><span>Stats</span></a>
                         </li>
                     </ul>
                 </div>
@@ -1116,5 +1139,9 @@
 
     <!-- Google Analytics -->
     <script type="text/javascript" src="js/google-analytics.js"></script>
+
+    <!-- Stats Page -->
+    <script type="text/javascript" src="js/stats.js"></script>    
+
 
 </html>
