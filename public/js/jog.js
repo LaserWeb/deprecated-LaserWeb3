@@ -70,11 +70,20 @@ function initJog() {
     });
 
     // Jog Widget
+    var lastJogSize = parseFloat(localStorage.getItem("lastJogSize") || 10);
+
     $('#stepsize input').on('change', function() {
-       printLog('Jog will use ' +$('input[name=stp]:checked', '#stepsize').val() + ' mm per click', successcolor, "jog");
+      var newJogSize = $('input[name=stp]:checked', '#stepsize').val();
+       printLog('Jog will use ' + newJogSize + ' mm per click', successcolor, "jog");
+
        $(".stepsizeval").empty();
-       $(".stepsizeval").html($('input[name=stp]:checked', '#stepsize').val() + 'mm');
+       $(".stepsizeval").html(newJogSize + 'mm');
+       // Save the setting to local storage once it's been set.
+       localStorage.setItem("lastJogSize", newJogSize.toString());
     });
+
+    // Now set the initial setting from the saved settings
+    $("input[name=stp][value='"+lastJogSize+"']").click();
 
 
 
