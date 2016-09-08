@@ -18,8 +18,8 @@ function fillEasyCam() {
   }
   var hasTools = false;
   for (i = 0; i < objectsInScene.length; i++) {
- pwr = objectsInScene[i].pwr
-    var speed = objectsInScene[i].speed
+    pwr = objectsInScene[i].pwr;
+    var speed = objectsInScene[i].speed;
     if (!pwr) {
       pwr = 100;
     }
@@ -204,7 +204,7 @@ function fillEasyCam() {
         layerprep += template;
       }
     } else if (objectsInScene[i].type == 'Mesh') {
-      var defaultBitmapDPI = localStorage.getItem('defaultBitmapDPI');
+      var defaultBitmapDPI = localStorage.getItem('defaultBitmapDPI') || 25.4;
       var scale = 25.4/defaultBitmapDPI;
       objectsInScene[i].scale.x = scale;
       objectsInScene[i].scale.y = scale;
