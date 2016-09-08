@@ -85,9 +85,16 @@ function drawRaster(name, data) {
     rastermesh.name = name;
     rastermesh.userData.imgdata = data;  // store B64 image data in the userData for later use
 
+    var defaultBitmapDPI = localStorage.getItem('defaultBitmapDPI') || 25.4;
+    var scale = 25.4/defaultBitmapDPI;
+    rastermesh.scale.x = scale;
+    rastermesh.scale.y = scale;
+
     scene.add(rastermesh);
+    // Apply scaling to the mesh before placing at 0.
+
     putFileObjectAtZero(rastermesh);
-    calcZeroOffset(rastermesh)
+
     rastermesh.userData.color = rastermesh.material.color.getHex();
     objectsInScene.push(rastermesh)
   };

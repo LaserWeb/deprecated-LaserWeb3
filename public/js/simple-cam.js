@@ -204,12 +204,7 @@ function fillEasyCam() {
         layerprep += template;
       }
     } else if (objectsInScene[i].type == 'Mesh') {
-      var defaultBitmapDPI = localStorage.getItem('defaultBitmapDPI') || 25.4;
-      var scale = 25.4/defaultBitmapDPI;
-      objectsInScene[i].scale.x = scale;
-      objectsInScene[i].scale.y = scale;
-
-      putFileObjectAtZero(objectsInScene[i]);
+      
       if (typeof(object) != 'undefined') {
         scene.remove(object);
       };
