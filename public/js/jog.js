@@ -85,6 +85,32 @@ function initJog() {
     // Now set the initial setting from the saved settings
     $("input[name=stp][value='"+lastJogSize+"']").click();
 
+    var jogfeedxy = parseFloat(localStorage.getItem("jogFeedXY") || 30);
+    var jogfeedz = parseFloat(localStorage.getItem("jogFeedZ") || 5);
+    $("#jogfeedxy").val(jogfeedxy);
+    $("#jogfeedz").val(jogfeedz);
 
+    $("#jogfeedxy").on('change', function() {
+      var jogfeedxy = parseFloat($("#jogfeedxy").val());
+      localStorage.setItem("jogFeedXY", jogfeedxy.toString());
+      printLog('Jog xy speed settings saved', successcolor, "jog");
+    });
 
-}
+    $("#jogfeedz").on('change', function() {
+      var jogfeedz = parseFloat($("#jogfeedz").val());
+      localStorage.setItem("jogFeedZ", jogfeedz.toString());
+      printLog('Jog z speed settings saved', successcolor, "jog");
+    });
+
+};
+
+function saveJogSpeeds() {
+  var jogfeedxy = parseFloat($("#jogfeedxy").val());
+  var jogfeedz = parseFloat($("#jogfeedz").val());
+
+  localStorage.setItem("jogFeedXY", jogfeedxy.toString());
+  localStorage.setItem("jogFeedZ", jogfeedz.toString());
+
+  printLog('Jog speed settings saved', successcolor, "jog");
+    
+};
