@@ -90,6 +90,18 @@ function initJog() {
     $("#jogfeedxy").val(jogfeedxy);
     $("#jogfeedz").val(jogfeedz);
 
+    $("#jogfeedxy").on('change', function() {
+      var jogfeedxy = parseFloat($("#jogfeedxy").val());
+      localStorage.setItem("jogFeedXY", jogfeedxy.toString());
+      printLog('Jog xy speed settings saved', successcolor, "jog");
+    });
+
+    $("#jogfeedz").on('change', function() {
+      var jogfeedz = parseFloat($("#jogfeedz").val());
+      localStorage.setItem("jogFeedZ", jogfeedz.toString());
+      printLog('Jog z speed settings saved', successcolor, "jog");
+    });
+
 };
 
 function saveJogSpeeds() {
