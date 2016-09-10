@@ -82,12 +82,9 @@ function svg2three(svgfile, fileName, settings) {
     // clean off any preceding whitespace
     svgfile = svgfile.replace(/^[\n\r \t]/gm, '');
     settings = settings || {};
-    settings.scale = settings.scale || -1;
+    settings.scale = settings.scale || 1;
 
-
-    var scale = function(val) {
-        return val * settings.scale;
-    };
+    //console.log("svg2three scale is " + settings.scale);
 
     var config = {};
     var paths = SVGReader.parse(svgfile, config).allcolors,
@@ -215,10 +212,13 @@ function svg2three(svgfile, fileName, settings) {
         window["svgEntity" + pathIdx].userData.layer = path.node.layer;
         fileObject.add(window["svgEntity" + pathIdx]);
         console.groupEnd();
-    }
+    } // while(idx--)
+
     fileObject.userData.editor = config.editor;
     fileObject.translateX((laserxmax / 2) * -1);
     fileObject.translateY((laserymax / 2) * -1);
+    fileObject.scale.x = settings.scale;
+    fileObject.scale.y = settings.scale;
     putFileObjectAtZero(fileObject)
     scene.add(fileObject);
     calcZeroOffset(fileObject)
