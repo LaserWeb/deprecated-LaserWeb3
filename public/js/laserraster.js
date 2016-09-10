@@ -97,7 +97,7 @@ function Rasterizer(config) {
         '; Laser Spot Size: {5}mm',
         '; X Offset: {8}mm',
         '; Y Offset: {9}mm \n',
-        'G1 F{7}\n'
+        'G0 F{7}\n'
     ].join('\n').format(
         this.config.minIntensity,
         this.config.maxIntensity,
