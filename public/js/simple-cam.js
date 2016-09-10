@@ -216,7 +216,13 @@ function fillEasyCam() {
       var xpos = objectsInScene[i].position.x
       var ypos = objectsInScene[i].position.y
       // var seq = objectsInScene[i].userData.seq;
-      //var scale = objectsInScene[i].scale.y;
+      
+      var scale = objectsInScene[i].scale.y;
+      // scale was already initialized during bitmap load, and may have been changed
+      // We want to set the UI to the actual scale value instead of a default value here
+      // dpi should reflect the actual scale value for this raster instead of the program default.
+      var dpi = 25.4 / scale;
+
       var template = `
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -236,7 +242,7 @@ function fillEasyCam() {
             <div class="form-group">
               <label>Bitmap Resolution</label>
               <div class="input-group">
-                <input type="number" class="form-control input-sm" value="`+defaultBitmapDPI+`" id="rasterDPI`+i+`" objectseq="`+i+`">
+                <input type="number" class="form-control input-sm" value="`+dpi+`" id="rasterDPI`+i+`" objectseq="`+i+`">
                 <span class="input-group-addon">DPI</span>
               </div>
             </div>
