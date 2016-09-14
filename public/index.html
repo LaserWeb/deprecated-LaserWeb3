@@ -487,7 +487,7 @@
                         <div id="settings-menu-panel" class="mobtab" style="display: none;">
                             <div id="settingsstatus" class="bs-callout bs-callout-danger">
                                 <h4><i class="fa fa-fw fa-exclamation"></i> Incomplete Config</h4>
-                                <p>Please complete configuration</p>
+                                <p>Please complete configuration and refresh.</p>
                             </div>
                             <ul class="nav nav-pills">
                                 <li class="active">
@@ -529,10 +529,7 @@
                             <div class="tab-content">
 
                                 <div id="menu1" class="tab-pane fade in active">
-                                    <p>
-                                        Configure LaserWeb 3.0 to your machine specifics: <br />
-                                        <i>(NB: Page needs a refresh for these settings to take effect!)</i>
-                                    </p>
+                                    <p>Configure LW3 for your machine</p>
                                     <form class="form-horizontal">
                                         <h4>Machine Settings</h4>
                                         <label for="laserXMax" class="control-label">X-Length <span style="color:red;">(Required)</span></label>
@@ -547,11 +544,25 @@
                                             <span class="input-group-addon">mm</span>
                                         </div>
                                         
+                                        <label for="zFocusHeight" class="control-label">Z-Focus Height <span style="color:red;">(Required)</span></label>
+                                        <div class="input-group">
+                                            <input id="zFocusHeight" type="text" class="form-control numpad" placeholder="50" />
+                                            <span class="input-group-addon">mm</span>
+                                        </div>
+
                                         <label for="SpotSize" class="control-label">Laser Beam Diameter <span style="color:red;">(Required)</span></label>
                                         <div class="input-group">
                                             <input id="spotSize" type="text" class="form-control numpad" placeholder="0.5" />
                                             <span class="input-group-addon">mm</span>
-                                        </div>                                        
+                                        </div>
+
+                                        <label for="zFocusHeight" class="control-label">Cutting Mat Thickness </label>
+                                        <div class="input-group">
+                                            <input id="cuttingMatThickness" type="text" class="form-control numpad" placeholder="3" />
+                                            <span class="input-group-addon">mm</span>
+                                        </div>
+
+
                                     </form>
                                     <hr />
                                     <form class="form-horizontal">
