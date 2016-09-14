@@ -32,7 +32,7 @@ localParams = [
   ['illustratorDPI', false],
   ['inkscapeDPI', false],
   ['defaultBitmapDPI', true],
-  ['airAssistInstalled', false],
+  ['airAssistAttached', false],
   ['cuttingMatThickness', false],
   ['zFocusHeight', true]
 ];
