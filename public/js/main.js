@@ -156,7 +156,7 @@ $(document).ready(function() {
     });
 
 
-    $('#controlmachine').hide();
+    $('[id^=controlmachine]').hide();
     $('#armmachine').show();
     $('#armpin').pincodeInput({
         // 4 input boxes = code of 4 digits long
@@ -178,7 +178,7 @@ $(document).ready(function() {
                 // $("#armButton").addClass('disabled');
             } else {
                 $("#armerror").html("Code correct");
-                $('#controlmachine').show();
+                $('[id^=controlmachine]').show();
                 $('#armmachine').hide();
                 // $("#armButton").removeClass('disabled');
             }
