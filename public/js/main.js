@@ -156,49 +156,8 @@ $(document).ready(function() {
     });
 
 
-    $('[id^=controlmachine]').hide();
-    $('#armmachine').show();
-    $('#armpin').pincodeInput({
-        // 4 input boxes = code of 4 digits long
-        inputs:4,
-        // hide digits like password input
-        hideDigits:true,
-        // keyDown callback
-        keydown : function(e){},
-        // callback when all inputs are filled in (keyup event)
-        complete : function(value, e, errorElement){
-            var val = loadSetting(armpin);
-            if (val) {
-
-            } else {
-                val = "1234"
-            }
-            if ( value != val ){
-                $("#armerror").html("Code incorrect");
-                // $("#armButton").addClass('disabled');
-            } else {
-                $("#armerror").html("Code correct");
-                $('[id^=controlmachine]').show();
-                $('#armmachine').hide();
-                // $("#armButton").removeClass('disabled');
-            }
-        }
-    });
-    $('#setarmpin').pincodeInput({
-        // 4 input boxes = code of 4 digits long
-        inputs:4,
-        // hide digits like password input
-        hideDigits:false,
-        // keyDown callback
-        keydown : function(e){},
-        // callback when all inputs are filled in (keyup event)
-        complete : function(value, e, errorElement){
-            saveSetting(armpin, value);
-            $("#setpinmsg").html("<h3>Pin set to "+value+"</h3>");
-            setTimeout(function(){ $('#pinresetmodal').modal('hide') }, 500);
-            // $('#pinresetmodal').modal('hide');
-        }
-    });
+    setupJogPanel();
+    
 
     cncMode = $('#cncMode').val()
     if (cncMode == "Enable") {
@@ -243,6 +202,60 @@ $(document).ready(function() {
 
 }); // End of document.ready
 
+
+function setupJogPanel() {
+    if ($('#usePINPad').prop('checked') === true) {
+        $('[id^=controlmachine]').hide();
+        $('#armmachine').show();
+        $('#armpin').pincodeInput({
+            // 4 input boxes = code of 4 digits long
+            inputs:4,
+            // hide digits like password input
+            hideDigits:true,
+            // keyDown callback
+            keydown : function(e){},
+            // callback when all inputs are filled in (keyup event)
+            complete : function(value, e, errorElement){
+                var val = loadSetting(armpin);
+                if (val) {
+
+                } else {
+                    val = "1234"
+                }
+                if ( value != val ){
+                    $("#armerror").html("Code incorrect");
+                    // $("#armButton").addClass('disabled');
+                } else {
+                    $("#armerror").html("Code correct");
+                    $('[id^=controlmachine]').show();
+                    $('#armmachine').hide();
+                    // $("#armButton").removeClass('disabled');
+                }
+            }
+        });
+        $('#setarmpin').pincodeInput({
+            // 4 input boxes = code of 4 digits long
+            inputs:4,
+            // hide digits like password input
+            hideDigits:false,
+            // keyDown callback
+            keydown : function(e){},
+            // callback when all inputs are filled in (keyup event)
+            complete : function(value, e, errorElement){
+                saveSetting(armpin, value);
+                $("#setpinmsg").html("<h3>Pin set to "+value+"</h3>");
+                setTimeout(function(){ $('#pinresetmodal').modal('hide') }, 500);
+                // $('#pinresetmodal').modal('hide');
+            }
+        });
+    } else {
+        // PIN Pad is disabled in configuration, so we can 
+        //just hide the PIN panel (actually starts hidden)
+        // and unhide all the machine controls.
+        $('#armmachine').hide();
+        $('[id^=controlmachine]').show();
+    }
+}
 
 
 
