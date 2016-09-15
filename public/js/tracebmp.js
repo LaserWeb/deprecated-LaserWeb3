@@ -1,5 +1,7 @@
 function tracebmp(index, filename) {
-	$("#tracingmodal").modal('show');
+	NProgress.start();
+	traceprogress = setInterval(function() {NProgress.inc();}, 1000);
+
 	var seq = objectsInScene[index].userData.seq;
 	var toTrace = 'origImage'+seq;
 	Potrace.loadImageFromUrl(objectsInScene[index].userData.imgdata);
@@ -9,6 +11,7 @@ function tracebmp(index, filename) {
 		svg2three(Potrace.getSVG(1), "trace"+filename+".svg", settings );
 		fillLayerTabs();
 		fillTree();
-		$("#tracingmodal").modal('hide');
+		clearInterval(traceprogress);
+		NProgress.done();
 	});
 }

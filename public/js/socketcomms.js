@@ -25,8 +25,8 @@ function initSocket() {
     }
     $('#connect').removeClass('disabled')
     // Might as well pre-select the last-used port and buffer
-    var lastUsed = localStorage.getItem("lastUsedPort");
-    var lastBaud = localStorage.getItem("lastUsedBaud");
+    var lastUsed = loadSetting("lastUsedPort");
+    var lastBaud = loadSetting("lastUsedBaud");
     $("#port option:contains(" + lastUsed + ")").attr('selected', 'selected');
     $("#baud option:contains(" + lastBaud + ")").attr('selected', 'selected');
 	});
@@ -52,8 +52,8 @@ function initSocket() {
     var baudRate = $('#baud').val();
     socket.emit('connectTo', portName + ',' + baudRate);
     isConnected = true;
-    localStorage.setItem("lastUsedPort", portName);
-    localStorage.setItem("lastUsedBaud", baudRate);
+    saveSetting("lastUsedPort", portName);
+    saveSetting("lastUsedBaud", baudRate);
     $('#closePort').removeClass('disabled')
   });
 
