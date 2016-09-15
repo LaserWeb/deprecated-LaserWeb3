@@ -34,7 +34,8 @@ localParams = [
   ['defaultBitmapDPI', true],
   ['airAssistAttached', false],
   ['cuttingMatThickness', false],
-  ['zFocusHeight', true]
+  ['zFocusHeight', true],
+  ['usePINPad', false],
 ];
 
 
@@ -53,7 +54,12 @@ function saveSettingsLocal() {
   for (i = 0; i < localParams.length; i++) {
       var localParam = localParams[i];
       var paramName = localParam[0];
-      var val = $('#' + paramName).val(); // Read the value from form
+      var paramSelector = '#' + paramName;
+      var val = $(paramSelector).val(); // Read the value from form
+      // Special handling for checkboxes here
+      if ($(paramSelector).is(':checkbox')) {
+        val = $(paramSelector).prop('checked');
+      }
       console.log('Saving: ' + paramName + ' : ' + val);
       printLog('Saving: ' + paramName + ' : ' + val, successcolor);
       saveSetting(paramName, val);
@@ -71,7 +77,18 @@ function loadSettingsLocal() {
 
     if (val) {
       console.log('Loading: ' + paramName + ' : ' + val);
-      $('#' + paramName).val(val);// Set the value to Form from Storage
+      // Checkboxes need special handling
+      // If we have a checkbox setting, and the value is "on", we set it to checked.
+      var paramSelector = '#' + paramName;
+      if ($(paramSelector).is(':checkbox')) {
+        if (val === 'true') {
+          $(paramSelector).prop('checked', true);
+        } else {
+          $(paramSelector).prop('checked', false);
+        }
+      } else {
+        $(paramSelector).val(val);// Set the value to Form from Storage
+      }
     } else {
       console.log('Not in local storage: ' +  paramName);
     }
