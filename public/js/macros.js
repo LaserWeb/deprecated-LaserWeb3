@@ -131,7 +131,7 @@ function saveMacros() {
       var colorVal = $("#colorValue"+i).html();
       macro.push(colorVal);
       var name = 'macro' + i;
-      localStorage.setItem(name, macro);
+      saveSetting(name, macro);
   };
 
   // Lets fire off initial Populate
@@ -143,7 +143,7 @@ function readMacros() {
     $('#macro_pad').append('<h4 >Macro Buttons</h4>');
     for (i = 1; i < 24; i++) {
         var name = 'macro' + i;
-        var val = localStorage.getItem(name);
+        var val = loadSetting(name);
         if (val) {
             // Found a macro, so lets hide the error message
             $('#macrostatus').hide();

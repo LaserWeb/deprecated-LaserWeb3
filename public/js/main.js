@@ -156,7 +156,7 @@ $(document).ready(function() {
     });
 
 
-    $('#controlmachine').hide();
+    $('[id^=controlmachine]').hide();
     $('#armmachine').show();
     $('#armpin').pincodeInput({
         // 4 input boxes = code of 4 digits long
@@ -167,7 +167,7 @@ $(document).ready(function() {
         keydown : function(e){},
         // callback when all inputs are filled in (keyup event)
         complete : function(value, e, errorElement){
-            var val = localStorage.getItem(armpin);
+            var val = loadSetting(armpin);
             if (val) {
 
             } else {
@@ -178,7 +178,7 @@ $(document).ready(function() {
                 // $("#armButton").addClass('disabled');
             } else {
                 $("#armerror").html("Code correct");
-                $('#controlmachine').show();
+                $('[id^=controlmachine]').show();
                 $('#armmachine').hide();
                 // $("#armButton").removeClass('disabled');
             }
@@ -193,7 +193,7 @@ $(document).ready(function() {
         keydown : function(e){},
         // callback when all inputs are filled in (keyup event)
         complete : function(value, e, errorElement){
-            localStorage.setItem(armpin, value);
+            saveSetting(armpin, value);
             $("#setpinmsg").html("<h3>Pin set to "+value+"</h3>");
             setTimeout(function(){ $('#pinresetmodal').modal('hide') }, 500);
             // $('#pinresetmodal').modal('hide');

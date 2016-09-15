@@ -31,8 +31,22 @@ localParams = [
   ['defaultDPI', true],
   ['illustratorDPI', false],
   ['inkscapeDPI', false],
-  ['defaultBitmapDPI', true]
+  ['defaultBitmapDPI', true],
+  ['airAssistAttached', false],
+  ['cuttingMatThickness', false],
+  ['zFocusHeight', true]
 ];
+
+
+// Wrappers for direct access to local storage -- these will get swapped with profiles laster
+function saveSetting(setting, value) {
+  localStorage.setItem(setting, value);
+};
+
+function loadSetting(setting) {
+  return localStorage.getItem(setting);
+};
+
 
 function saveSettingsLocal() {
   console.group("Saving settings to LocalStorage");
@@ -42,7 +56,7 @@ function saveSettingsLocal() {
       var val = $('#' + paramName).val(); // Read the value from form
       console.log('Saving: ' + paramName + ' : ' + val);
       printLog('Saving: ' + paramName + ' : ' + val, successcolor);
-      localStorage.setItem(paramName, val);
+      saveSetting(paramName, val);
   }
   printLog('<b>Saved Settings: <br>NB:</b> Please refresh page for settings to take effect', errorcolor, "settings");
   console.groupEnd();
@@ -53,7 +67,7 @@ function loadSettingsLocal() {
   for (i = 0; i < localParams.length; i++) {
     var localParam = localParams[i];
     var paramName = localParam[0];
-    var val = localStorage.getItem(paramName);
+    var val = loadSetting(paramName);
 
     if (val) {
       console.log('Loading: ' + paramName + ' : ' + val);
@@ -99,39 +113,6 @@ function checkSettingsLocal() {
     $("#settingsstatus").show();
   }
 
-  // Check from version 20160726 - new spotsize feature
-  var spotsize2 = localStorage.getItem("spotSize")
-  if (spotsize2 == "0.1") {
-    $('#statusmodal').modal('show');
-    $('#statusTitle').empty();
-    $('#statusTitle').html('New feature needs configuration!');
-    $('#statusBody').empty();
-    $('#statusBody2').empty();
-    $('#statusBody').html('In this version of LaserWeb, we added a new function that actually matches raster engraving resolution to the size of your laser beam (in previous version it matched image resolution)  Most of you have the laserbeam set as 0.1mm in <kbd>Settings <i class="fa fa-cogs"></i></kbd>.  However, most lasers actually work better with a slightly defocussed spot for engraving.  Thus a 0.5mm spot size for example, may work better.  It is up to you to determine the best value for your machine, but note that very small spot sizes needs a LOT more memory/time/data/gcode/machine-time to process. ' );
-    var template2 = `
-    <hr>Enter a Laser Beam Diameter below:
-
-      <div class="form-group">
-        <label for="SpotSize" class="control-label">Laser Beam Diameter <span style="color:red;">(Required)</span></label>
-        <div class="input-group">
-        <input type="text" class="form-control numpad" id="spotSize2" placeholder="0.5">
-        <span class="input-group-addon">mm</span>
-        </div>
-        </div>
-
-        <button type="button" class="btn btn-lg btn-success" data-dismiss="modal" id="savespotsize">Save</button>
-        <hr>
-        Note: We'll only ask on startup until you set it to something other than the default.  In future, adjust it from <kbd>Settings <i class="fa fa-cogs"></i></kbd> on the left
-        `
-        $('#statusBody2').html(template2);
-
-        $('#savespotsize').on('click', function() {
-            printLog("Updating Spot Size", msgcolor, "settings")
-            localStorage.setItem("spotSize", $('#spotSize2').val());
-            $('#spotSize').val($('#spotSize2').val())
-        });
-
-    }
 
 };
 
@@ -151,7 +132,7 @@ function receivedText(e) {
   var o = JSON.parse(lines);
   for (var property in o) {
     if (o.hasOwnProperty(property)) {
-     localStorage.setItem(property, o[property]);
+     saveSetting(property, o[property]);
     } else {
       // I'm not sure this can happen... I want to log this if it does!
       console.log("Found a property " + property + " which does not belong to itself.");

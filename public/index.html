@@ -7,12 +7,12 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <title>&#128295; LaserWeb</title>
+        <title>&#128295; LaserWeb3</title>
 
         <meta name="description" content="Free Web Based Lasercutter Control Software for machines running on Grbl, Marlin, Smoothieware etc. Supports PNG/JPG/BMP Raster Engraving,  DXF/SVG Cutting" />
         <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator" />
         <meta name="google-site-verification" content="Q5N27jmbSMfsf_oC4UmRlNDVXKta7BP4DaDq1h0Ox5Y" />
-        <meta name="author" content="github.com/openhardwarecoza/LaserWeb2/" />
+        <meta name="author" content="github.com/openhardwarecoza/LaserWeb3/" />
         <meta name="version" content="30253" />
 
         <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css" />
@@ -149,7 +149,7 @@
                             <table>
                                 <tr>
                                     <td colspan="5">
-                                        <div id="armmachine" class="bs-callout bs-callout-danger">
+                                        <div id="armmachine" class="bs-callout bs-callout-danger" style="display:none">
                                             <h4><i class="fa fa-fw fa-exclamation"></i>Machine Control Disabled</h4>
                                             <table>
                                                 <tr>
@@ -172,8 +172,11 @@
                                                 </tr>
                                             </table>
                                         </div><!-- #armmachine -->
-
-                                        <div id="controlmachine" class="btn-group" role="group" aria-label="controljob">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">
+                                        <div id="controlmachine1" class="btn-group" role="group" aria-label="controljob" style="display:none">
                                             <div class="btn-group">
                                                 <button id="homeBtn" type="button" class="btn btn-ctl btn-default" onclick="homeMachine();">
                                                     <span class="fa-stack fa-1x">
@@ -228,7 +231,7 @@
                                                     </span>
                                                 </button>
                                             </div>
-                                        </div><!-- controlmachine -->
+                                        </div><!--controlmachine1-->
                                     </td>
                                 </tr>
                                 <tr>
@@ -237,6 +240,7 @@
                                 <tr>
                                     <td></td>
                                     <td>
+                                        <div id="controlmachine2" style="display:none">
                                         <button id="yP" type="button" data-title="Jog Y+" class="btn btn-ctl btn-default">
                                             <span class="fa-stack fa-1x">
                                                 <i class="fa fa-arrow-up fa-stack-1x"></i>
@@ -244,20 +248,24 @@
                                                 <strong class="fa-stack-1x stepsizeval icon-bot-text">10mm</strong>
                                             </span>
                                         </button>
+                                        </div>
                                     </td>
                                     <td></td>
                                     <td></td>
                                     <td>
+                                        <div id="controlmachine3" style="display:none">
                                         <button id="zP" type="button" data-title="Jog X+" class="btn btn-ctl btn-default">
                                             <span class="fa-stack fa-1x"><i class="fa fa-arrow-up fa-stack-1x"></i>
                                                 <strong class="fa-stack-1x icon-top-text">Z+</strong>
                                                 <strong class="fa-stack-1x stepsizeval icon-bot-text">10mm</strong>
                                             </span>
                                         </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
+                                        <div id="controlmachine4" style="display:none">
                                         <button id="xM" type="button" data-title="Jog X-" class="btn btn-ctl btn-default">
                                             <span class="fa-stack fa-1x">
                                                 <i class="fa fa-arrow-left fa-stack-1x"></i>
@@ -265,8 +273,10 @@
                                                 <strong class="fa-stack-1x stepsizeval icon-bot-text">10mm</strong>
                                             </span>
                                         </button>
+                                        </div>
                                     </td>
                                     <td>
+                                        <div id="controlmachine5" style="display:none">
                                         <button id="yM" type="button" data-title="Jog Y-" class="btn btn-ctl btn-default">
                                             <span class="fa-stack fa-1x">
                                                 <i class="fa fa-arrow-down fa-stack-1x"></i>
@@ -274,8 +284,10 @@
                                                 <strong class="fa-stack-1x stepsizeval icon-bot-text">10mm</strong>
                                             </span>
                                         </button>
+                                        </div>
                                     </td>
                                     <td>
+                                        <div id="controlmachine6" style="display:none">
                                         <button id="xP" type="button" data-title="Jog X+" class="btn btn-ctl btn-default">
                                             <span class="fa-stack fa-1x">
                                                 <i class="fa fa-arrow-right fa-stack-1x"></i>
@@ -283,11 +295,13 @@
                                                 <strong class="fa-stack-1x stepsizeval icon-bot-text">10mm</strong>
                                             </span>
                                         </button>
+                                        </div>
                                     </td>
                                     <td>
                                         <div style="width: 8px;"></div>
                                     </td>
                                     <td>
+                                        <div id="controlmachine7" style="display:none">
                                         <button id="zM" type="button" data-title="Jog X+" class="btn btn-ctl btn-default">
                                             <span class="fa-stack fa-1x">
                                                 <i class="fa fa-arrow-down fa-stack-1x"></i>
@@ -295,12 +309,13 @@
                                                 <strong class="fa-stack-1x stepsizeval icon-bot-text">10mm</strong>
                                             </span>
                                         </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="5">
                                         <br />
-                                        <div class="input-group">
+                                        <div id="controlmachine8" class="input-group" style="display:none">
                                             <span class="input-group-addon">X/Y</span>
                                             <input id="jogfeedxy" type="text" class="form-control numpad input-sm" value="30" />
                                             <span class="input-group-addon">Z</span>
@@ -311,42 +326,44 @@
                                 </tr>
                                 <tr>
                                     <td colspan="5">
+                                        <div id="controlmachine9" style="display:none">
                                         <br />
-                                        <form id="stepsize">
-                                            <div data-toggle="buttons">
-                                                <label class="btn btn-jog btn-default">
-                                                    <input type="radio" name="stp" value="0.1" />
-                                                    <span class="fa-stack fa-1x"><i class="fa fa-arrows-h fa-stack-1x"></i>
-                                                        <strong class="fa-stack-1x icon-top-text">jog by</strong>
-                                                        <strong class="fa-stack-1x icon-bot-text">0.1mm</strong>
-                                                    </span>
-                                                </label>
-                                                <label class="btn btn-jog btn-default">
-                                                    <input type="radio" name="stp" value="1" />
-                                                    <span class="fa-stack fa-1x">
-                                                        <i class="fa fa-arrows-h fa-stack-1x"></i>
-                                                        <strong class="fa-stack-1x icon-top-text">jog by</strong>
-                                                        <strong class="fa-stack-1x icon-bot-text">1mm</strong>
-                                                    </span>
-                                                </label>
-                                                <label class="btn btn-jog btn-default">
-                                                    <input type="radio" name="stp" value="10" />
-                                                    <span class="fa-stack fa-1x">
-                                                        <i class="fa fa-arrows-h fa-stack-1x"></i>
-                                                        <strong class="fa-stack-1x icon-top-text">jog by</strong>
-                                                        <strong class="fa-stack-1x icon-bot-text">10mm</strong>
-                                                    </span>
-                                                </label>
-                                                <label class="btn btn-jog btn-default">
-                                                    <input type="radio" name="stp" value="100" />
-                                                    <span class="fa-stack fa-1x">
-                                                        <i class="fa fa-arrows-h fa-stack-1x"></i>
-                                                        <strong class="fa-stack-1x icon-top-text">jog by</strong>
-                                                        <strong class="fa-stack-1x icon-bot-text">100mm</strong>
-                                                    </span>
-                                                </label>
-                                            </div>
-                                        </form><!-- #stepsize -->
+                                            <form id="stepsize">
+                                                <div data-toggle="buttons">
+                                                    <label class="btn btn-jog btn-default">
+                                                        <input type="radio" name="stp" value="0.1" />
+                                                        <span class="fa-stack fa-1x"><i class="fa fa-arrows-h fa-stack-1x"></i>
+                                                            <strong class="fa-stack-1x icon-top-text">jog by</strong>
+                                                            <strong class="fa-stack-1x icon-bot-text">0.1mm</strong>
+                                                        </span>
+                                                    </label>
+                                                    <label class="btn btn-jog btn-default">
+                                                        <input type="radio" name="stp" value="1" />
+                                                        <span class="fa-stack fa-1x">
+                                                            <i class="fa fa-arrows-h fa-stack-1x"></i>
+                                                            <strong class="fa-stack-1x icon-top-text">jog by</strong>
+                                                            <strong class="fa-stack-1x icon-bot-text">1mm</strong>
+                                                        </span>
+                                                    </label>
+                                                    <label class="btn btn-jog btn-default">
+                                                        <input type="radio" name="stp" value="10" />
+                                                        <span class="fa-stack fa-1x">
+                                                            <i class="fa fa-arrows-h fa-stack-1x"></i>
+                                                            <strong class="fa-stack-1x icon-top-text">jog by</strong>
+                                                            <strong class="fa-stack-1x icon-bot-text">10mm</strong>
+                                                        </span>
+                                                    </label>
+                                                    <label class="btn btn-jog btn-default">
+                                                        <input type="radio" name="stp" value="100" />
+                                                        <span class="fa-stack fa-1x">
+                                                            <i class="fa fa-arrows-h fa-stack-1x"></i>
+                                                            <strong class="fa-stack-1x icon-top-text">jog by</strong>
+                                                            <strong class="fa-stack-1x icon-bot-text">100mm</strong>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </form><!-- #stepsize -->
+                                        </div>
                                     </td>
                                 </tr>
                             </table>
@@ -470,7 +487,7 @@
                         <div id="settings-menu-panel" class="mobtab" style="display: none;">
                             <div id="settingsstatus" class="bs-callout bs-callout-danger">
                                 <h4><i class="fa fa-fw fa-exclamation"></i> Incomplete Config</h4>
-                                <p>Please complete configuration</p>
+                                <p>Please complete configuration and refresh.</p>
                             </div>
                             <ul class="nav nav-pills">
                                 <li class="active">
@@ -512,33 +529,76 @@
                             <div class="tab-content">
 
                                 <div id="menu1" class="tab-pane fade in active">
-                                    <p>
-                                        Configure LaserWeb 3.0 to your machine specifics: <br />
-                                        <i>(NB: Page needs a refresh for these settings to take effect!)</i>
-                                    </p>
+                                    <p>Configure LW3 for your machine</p>
                                     <form class="form-horizontal">
+                                        <h4>Machine Settings</h4>
                                         <label for="laserXMax" class="control-label">X-Length <span style="color:red;">(Required)</span></label>
-                                        <input id="laserXMax" type="text" class="form-control numpad" placeholder="600" />
+                                        <div class="input-group">
+                                            <input id="laserXMax" type="text" class="form-control numpad" placeholder="600" />
+                                            <span class="input-group-addon">mm</span>
+                                        </div>
+                                        
                                         <label for="laserYMax" class="control-label">Y-Length <span style="color:red;">(Required)</span></label>
-                                        <input id="laserYMax" type="text" class="form-control numpad" placeholder="400" />
+                                        <div class="input-group">
+                                            <input id="laserYMax" type="text" class="form-control numpad" placeholder="400" />
+                                            <span class="input-group-addon">mm</span>
+                                        </div>
+                                        
+                                        <label for="zFocusHeight" class="control-label">Z-Focus Height <span style="color:red;">(Required)</span></label>
+                                        <div class="input-group">
+                                            <input id="zFocusHeight" type="text" class="form-control numpad" placeholder="50" />
+                                            <span class="input-group-addon">mm</span>
+                                        </div>
+
                                         <label for="SpotSize" class="control-label">Laser Beam Diameter <span style="color:red;">(Required)</span></label>
-                                        <input id="spotSize" type="text" class="form-control numpad" placeholder="0.5" />
+                                        <div class="input-group">
+                                            <input id="spotSize" type="text" class="form-control numpad" placeholder="0.5" />
+                                            <span class="input-group-addon">mm</span>
+                                        </div>
+
+                                        <label for="zFocusHeight" class="control-label">Cutting Mat Thickness </label>
+                                        <div class="input-group">
+                                            <input id="cuttingMatThickness" type="text" class="form-control numpad" placeholder="3" />
+                                            <span class="input-group-addon">mm</span>
+                                        </div>
+
+                                        <div class="checkbox">
+                                            <label class="control-label"><input id="airAssistAttached" type="checkbox" value="">Air Assist Attached</label>
+                                        </div>
+
+
                                     </form>
                                     <hr />
                                     <form class="form-horizontal">
-                                        <h4>SVG defaults DPI</h4>
+                                        <h4>SVG Settings</h4>
+                                        
                                         <label for="defaultDPI" class="control-label">Default <span style="color:red;">(Required)</span></label>
-                                        <input id="defaultDPI" type="text" class="form-control numpad" placeholder="24" />
-                                        <label for="inkscapeDPI" class="control-label">Inkscape</label>
-                                        <input id="inkscapeDPI" type="text" class="form-control numpad" placeholder="24" />
-                                        <label for="illustratorDPI" class="control-label">Illustrator</label>
-                                        <input id="illustratorDPI" type="text" class="form-control numpad" placeholder="24" />
-                                    </form>
+                                        <div class="input-group">
+                                            <input id="defaultDPI" type="text" class="form-control numpad" placeholder="24" />
+                                            <span class="input-group-addon">DPI</span>
+                                        </div>
+                                        
+                                        <label for="inkscapeDPI" class="control-label">Inkscape </label>
+                                        <div class="input-group">
+                                            <input id="inkscapeDPI" type="text" class="form-control numpad" placeholder="24" />
+                                            <span class="input-group-addon">DPI</span>
+                                        </div>
+                                        
+                                        <label for="illustratorDPI" class="control-label">Illustrator </label>
+                                        <div class="input-group">
+                                            <input id="illustratorDPI" type="text" class="form-control numpad" placeholder="24" />
+                                            <span class="input-group-addon">DPI</span>
+                                        </div>
+
+                                     </form>
                                     <hr />
                                     <form class="form-horizontal">
-                                        <h4>BMP defaults DPI</h4>
+                                        <h4>BMP Settings</h4>
                                         <label for="defaultBitmapDPI" class="control-label">Default <span style="color:red;">(Required)</span></label>
-                                        <input id="defaultBitmapDPI" type="text" class="form-control numpad" placeholder="24" />
+                                        <div class="input-group">
+                                            <input id="defaultBitmapDPI" type="text" class="form-control numpad" placeholder="24" />
+                                            <span class="input-group-addon">DPI</span>
+                                        </div>
                                     </form>
                                 </div><!-- #menu1 -->
 
@@ -557,8 +617,11 @@
                                         <input id="homingseq" type="text" class="form-control numpadgcode uppercase" placeholder="For example G28, or $H" />
                                         <label for="endgcode" class="control-label">End G-Code <span style="color:#FFA500;">(Optional)</span></label>
                                         <textarea id="endgcode" class="form-control numpadgcode uppercase" placeholder="For example M81 G28 - supports multi line commands"></textarea>
-                                        <label for="rapidspeed" class="control-label">Travel Moves (mm/s) <span style="color:red;">(Required)</span></label>
-                                        <input id="rapidspeed" class="form-control numpad uppercase" placeholder="For example 30" />
+                                        <label for="rapidspeed" class="control-label">Travel Move Speed <span style="color:red;">(Required)</span></label>
+                                        <div class="input-group">
+                                            <input id="rapidspeed" class="form-control numpad uppercase" placeholder="For example 30" />
+                                            <span class="input-group-addon">mm/s</span>
+                                        </div>
                                     </form>
                                 </div><!-- #menu2 -->
 

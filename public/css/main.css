@@ -526,3 +526,7 @@ d-grid {border: none; padding: 20px;}
     text-align:center;
     pointer-events: none;
 }
+
+.checkbox label {
+    font-weight: bold;
+}

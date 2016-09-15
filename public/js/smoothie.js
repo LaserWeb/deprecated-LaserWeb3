@@ -43,7 +43,7 @@ $('#uploadsdbtn').on('click', function () {
 
   $('#ethConnect').on('click', function() {
     var smoothieIp = $('#smoothieIp').val();
-    localStorage.setItem('smoothieIp', smoothieIp);
+    saveSetting('smoothieIp', smoothieIp);
     $.ajax({
      type: 'GET',
         url: 'http://' +smoothieIp + '/',
@@ -90,9 +90,9 @@ function scanSubnet() {
     var ip = subnet + ctr
     var result = scanIP(ip)
   }
-  localStorage.setItem("subnet1", subnet1);
-  localStorage.setItem("subnet2", subnet2);
-  localStorage.setItem("subnet3", subnet3);
+  saveSetting("subnet1", subnet1);
+  saveSetting("subnet2", subnet2);
+  saveSetting("subnet3", subnet3);
 };
 
 function  scanIP(ip) {
