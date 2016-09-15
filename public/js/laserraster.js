@@ -96,8 +96,9 @@ function Rasterizer(config) {
         '; Resolution (mm per pixel): {4}mm',
         '; Laser Spot Size: {5}mm',
         '; X Offset: {8}mm',
-        '; Y Offset: {9}mm \n',
-        'G0 F{7}\n'
+        '; Y Offset: {9}mm',
+        '; Z Height: {10}mm\n',
+        'G0 Z{10} F{7}\n'
     ].join('\n').format(
         this.config.minIntensity,
         this.config.maxIntensity,
@@ -108,7 +109,8 @@ function Rasterizer(config) {
         this.config.feedRate,
         this.config.rapidRate,
         this.config.xOffset,
-        this.config.yOffset);
+        this.config.yOffset,
+        this.config.zHeight);
 }
 
 Rasterizer.prototype.figureIntensity = function() {

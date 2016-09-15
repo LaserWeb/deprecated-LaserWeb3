@@ -16,6 +16,10 @@ Number.prototype.toHHMMSS = function () {
     return hours+':'+minutes+':'+seconds;
 }
 
+Number.prototype.clamp = function(min, max) {
+  return Math.min(Math.max(this, min), max);
+};
+
 
 //JQuery extension to add additional event triggers
 // This assumes JQuery has been loaded first!
