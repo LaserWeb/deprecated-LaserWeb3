@@ -218,7 +218,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                 }
 
 
-                // FIXME
+                // FIXME airassist
                 // Think this needs to be clamped when air assist is connected
                 var zpos = worldPt.z;
 

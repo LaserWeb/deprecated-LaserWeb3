@@ -131,7 +131,7 @@ function runRaster(index) {
   var minpwr = $("#minpwr"+index).val();
   var maxpwr = $("#maxpwr"+index).val();
 
-  // FIXME
+  // FIXME material
   // This might need to go into common code
   var zHeightRaw = (parseFloat($('#cuttingMatThickness').val() || 0) +
                 parseFloat($('#materialThickness').val() || 0));
