@@ -33,6 +33,7 @@ localParams = [
   ['inkscapeDPI', false],
   ['defaultBitmapDPI', true],
   ['airAssistAttached', false],
+  ['materialThickness', false],
   ['cuttingMatThickness', false],
   ['zFocusHeight', true],
   ['usePINPad', false],

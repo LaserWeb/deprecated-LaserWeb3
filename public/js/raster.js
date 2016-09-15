@@ -131,6 +131,14 @@ function runRaster(index) {
   var minpwr = $("#minpwr"+index).val();
   var maxpwr = $("#maxpwr"+index).val();
 
+  // FIXME
+  // This might need to go into common code
+  var zHeightRaw = (parseFloat($('#cuttingMatThickness').val() || 0) +
+                parseFloat($('#materialThickness').val() || 0));
+
+  var zHeight = zHeightRaw.clamp(0, 50) +
+                parseFloat($('zFocusHeight').val() || 50);
+
   var img = new Image();
   // This is deferred until the image is loaded, then the actual raster is run. 
   img.onload = function() {
@@ -156,6 +164,7 @@ function runRaster(index) {
         rapidRate: [laserRapid],
         xOffset: [xoffset],
         yOffset: [yoffset],
+        zHeight: [zHeight],
         imagePos: [imagePosition],
         physicalHeight: [physheight],
         physicalWidth: [physwidth]
@@ -163,7 +172,7 @@ function runRaster(index) {
     });
   };
 
-  // Loadsing the image, which will cause the onload callback
+  // Loading the image, which will cause the onload callback
   img.src = threejsobject.userData.imgdata;
 };
 
