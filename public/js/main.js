@@ -165,7 +165,7 @@ $(document).ready(function() {
         $("#statusmodal").modal('show');
         $("#statusTitle").html("<h4>CNC Mode Activated</h4>");
         $("#statusBody").html("Note: You have activated <b>CNC mode</b> from <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>");
-        $("#statusBody2").html("While in CNC mode, Laser Raster Engraving is not enabled.  Please only open GCODE, DXF or SVG files.<hr>To revert to Laser Mode, go to <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>, and change it to <kbd>Disabled</kbd><hr>Please help us improve this experimental feature by giving feedback, asking for improvements, sharing ideas and posting bugs in the <a class='btn btn-sm btn-success' target='_blank' href='https://plus.google.com/communities/115879488566665599508'>Support Community</a>");
+        $("#statusBody2").html("While in CNC mode, Laser Raster Engraving is not enabled.  Please only open GCode, DXF or SVG files.<hr>To revert to Laser Mode, go to <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>, and change it to <kbd>Disabled</kbd><hr>Please help us improve this experimental feature by giving feedback, asking for improvements, sharing ideas and posting bugs in the <a class='btn btn-sm btn-success' target='_blank' href='https://plus.google.com/communities/115879488566665599508'>Support Community</a>");
     };
 
     // Command Console History
@@ -285,7 +285,7 @@ function checkNumPad() {
             textDelete: 'Del',
             textClear: 'Clear',
             textCancel: 'Cancel',
-            headerText: 'Enter GCODE',
+            headerText: 'Enter GCode',
         });
     }
 }
@@ -388,7 +388,7 @@ function loadFile(f) {
                 $("#gcodefile").show();
                 document.getElementById('gcodepreview').value = this.result;
                 openGCodeFromText();
-                printLog('GCODE Opened', msgcolor, "file");
+                printLog('GCode Opened', msgcolor, "file");
                 resetView()
             };
         } else if (f.name.match(/.stl$/i)) {

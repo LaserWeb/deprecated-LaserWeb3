@@ -9,26 +9,19 @@ $(document).ready(function() {
 
 
     $('#generategcode').on('click', function() {
-        console.group("Generating GCODE");
-        for (j = 0; j < objectsInScene.length; j++) {
-          // Cleanup Existing GCODE
-          objectsInScene[j].userData.gcode = "";
-        }
+
+        // FIXME
+        // What is this check for?
         if (typeof(fileObject) == 'undefined') {
             printLog('No file loaded. do, File -> Open, first!', errorcolor, "file")
         };
-        // Lets get the machine specific Gcode from the settings Modal (:
-        var startgcode = document.getElementById('startgcode').value;
-        var laseron = document.getElementById('laseron').value;
-        var laseroff = document.getElementById('laseroff').value;
-        var lasermultiply = document.getElementById('lasermultiply').value;
-        var homingseq = document.getElementById('homingseq').value;
-        var endgcode = document.getElementById('endgcode').value;
-        cncMode = $('#cncMode').val()
-        if (cncMode == "Enable") {
-          var clearanceHeight = document.getElementById('clearanceHeight').value;
-        } else {
-          var clearanceHeight = 0
+
+        console.group("Generating GCode");
+
+        console.log("Removing any existing GCode");
+        for (j = 0; j < objectsInScene.length; j++) {
+          // Cleanup Existing GCode
+          objectsInScene[j].userData.gcode = "";
         }
 
         // Remove old Gcode
@@ -46,8 +39,6 @@ $(document).ready(function() {
         }
 
         scene.updateMatrixWorld();
-        pwr = [];
-        cutSpeed = [];
 
         for (j = 0; j < objectsInScene.length; j++) {
             printLog('Processing ' + objectsInScene[j].name, msgcolor, "file");
@@ -59,6 +50,24 @@ $(document).ready(function() {
                 runRaster(j)
               } else {
                 console.log('Object: '+objectsInScene[j].name+' is a Vector');
+
+                // Lets get the machine specific Gcode from the settings Modal (:
+                var startgcode = document.getElementById('startgcode').value;
+                var laseron = document.getElementById('laseron').value;
+                var laseroff = document.getElementById('laseroff').value;
+                var lasermultiply = document.getElementById('lasermultiply').value;
+                var homingseq = document.getElementById('homingseq').value;
+                var endgcode = document.getElementById('endgcode').value;
+
+                cncMode = $('#cncMode').val()
+                if (cncMode == "Enable") {
+                  var clearanceHeight = document.getElementById('clearanceHeight').value;
+                } else {
+                  var clearanceHeight = 0
+                }
+
+
+
                 var cutSpeed0 = parseFloat( $("#speed"+(j)).val() ) * 60;
                 var pwr0 = parseFloat( $("#power"+(j)).val() );
                 var plungeSpeed0 = parseFloat( $("#plungespeed"+(j)).val() ) * 60;
@@ -118,7 +127,7 @@ $(document).ready(function() {
 
 function prepgcodefile() {
 
-  console.group("Consolidating GCODE file");
+  console.group("Consolidating GCode file");
   var startgcode = document.getElementById('startgcode').value;
   var endgcode = document.getElementById('endgcode').value;
   var g = ""
