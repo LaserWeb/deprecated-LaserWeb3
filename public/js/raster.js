@@ -131,13 +131,15 @@ function runRaster(index) {
   var minpwr = $("#minpwr"+index).val();
   var maxpwr = $("#maxpwr"+index).val();
 
-  // FIXME
+  // FIXME material
   // This might need to go into common code
   var zHeightRaw = (parseFloat($('#cuttingMatThickness').val() || 0) +
                 parseFloat($('#materialThickness').val() || 0));
 
-  var zHeight = zHeightRaw.clamp(0, 50) +
-                parseFloat($('zFocusHeight').val() || 50);
+  // FIXME
+  // The clamp assumes material can go up to 50mm high -- this assumption might be bad.
+  var zHeight = zHeightRaw.clamp(0,50) +
+                parseFloat($('zFocusHeight').val() || 0);
 
   var img = new Image();
   // This is deferred until the image is loaded, then the actual raster is run. 

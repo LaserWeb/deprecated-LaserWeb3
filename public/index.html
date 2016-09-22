@@ -428,7 +428,7 @@
                                 <h3><i class="fa fa-fw fa-exclamation"></i> No File to work with</h3>
                                 <p>
                                     Please <a href="#" onclick="$('#file').click()">open a file from the "Open" button</a>:<br />
-                                    SVG (Paths only, single group), DXF (R14 Lines/Polylines/Circles), BMP/PNG/JPEG (Raster Engraving) and GCODE (External CAM) are all supported.
+                                    SVG (Paths only, single group), DXF (R14 Lines/Polylines/Circles), BMP/PNG/JPEG (Raster Engraving) and GCode (External CAM) are all supported.
                                 </p>
                             </div>
                             <div class="btn-group btn-group-justified" role="group" aria-label="gengcode">
@@ -453,20 +453,20 @@
 
                         <div id="gcode-menu-panel" class="mobtab" style="display: none;">
                             <h4>G-CODE</h4>
-                            <button class="btn btn-lg btn-default btn-file" title="Export GCODE to a file" onclick="saveFile()">
+                            <button class="btn btn-lg btn-default btn-file" title="Export GCode to a file" onclick="saveFile()">
                                 <i class="fa fa-save fa-fw"></i> Export to File
                             </button>
                             <form class="form-horizontal">
-                                <label for="startgcodefinal" class="control-label">Start GCODE</label>
+                                <label for="startgcodefinal" class="control-label">Start GCode</label>
                                 <textarea id="startgcodefinal" spellcheck="false" style="width: 100%; height: 80px;" disabled></textarea>
                             </form>
                             <form id="gcodefile" class="form-horizontal" style="display: none;">
-                                <label for="gcodepreview" class="control-label">GCODE opened from File</label>
+                                <label for="gcodepreview" class="control-label">GCode opened from File</label>
                                 <textarea id="gcodepreview" spellcheck="false" style="width: 100%; height: 80px;" disabled></textarea>
                             </form>
                             <div id="gcodejobs"></div>
                             <form class="form-horizontal">
-                                <label for="endgcodefinal" class="control-label">End GCODE</label>
+                                <label for="endgcodefinal" class="control-label">End GCode</label>
                                 <textarea id="endgcodefinal" spellcheck="false" style="width: 100%; height: 80px;" disabled></textarea>
                             </form>
                             <nav>
@@ -502,7 +502,7 @@
                                     <a data-toggle="tab" href="#menu2">
                                         <span class="fa-stack">
                                             <i class="fa fa-codepen fa-stack-1x"></i>
-                                            <strong class="fa-stack-1x icon-text" style="margin-left: -6px;">GCODE</strong>
+                                            <strong class="fa-stack-1x icon-text" style="margin-left: -6px;">GCode</strong>
                                         </span>
                                     </a>
                                 </li>
@@ -546,7 +546,7 @@
                                         
                                         <label for="zFocusHeight" class="control-label">Z-Focus Height <span style="color:red;">(Required)</span></label>
                                         <div class="input-group">
-                                            <input id="zFocusHeight" type="text" class="form-control numpad" placeholder="50" />
+                                            <input id="zFocusHeight" type="text" class="form-control numpad" placeholder="0" />
                                             <span class="input-group-addon">mm</span>
                                         </div>
 
@@ -731,7 +731,7 @@
                                             <a href="#">All Layers</a>
                                         </li>
                                         <li id="gCodeView" role="presentation" class="layertab">
-                                            <a href="#">GCODE View</a>
+                                            <a href="#">GCode View</a>
                                         </li>
                                     </ul>
                                 </td>

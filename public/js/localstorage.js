@@ -3,7 +3,7 @@ function initLocalStorage() {
     settingsOpen.addEventListener('change', restoreSettingsLocal, false);
 }
 
-// FIXME
+// FIXME settings
 // A way to access all of the settings
 // $("#settings-menu-panel input, #settings-menu-panel textarea, #settings-menu-panel select, #ethernetConnect input").each(function() {console.log(this.id + ": " + $(this).val())});
 

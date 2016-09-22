@@ -5,7 +5,7 @@
     AUTHOR:  Peter van der Walt
     Addional work by Nathaniel Stenzel and Sven Hecht
 
-    LaserWeb Raster to GCODE Paperscript
+    LaserWeb Raster to GCode Paperscript
     Copyright (C) 2015 Peter van der Walt
 
     THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
@@ -71,7 +71,7 @@ function Rasterizer(config) {
     this.startTime = 0;
     this.rasterIntervalTimer = null;
 
-    // GCODE Header
+    // GCode Header
     // var useVariableSpeed = this.config.useVariableSpeed;
 
     startgcode = $('#startgcode').val();

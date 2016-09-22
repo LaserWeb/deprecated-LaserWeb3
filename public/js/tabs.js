@@ -94,7 +94,9 @@ function initTabs() {
       if (typeof(object) != 'undefined') {
           scene.add(object);
       }
-      scene.remove(boundingBox)
+      if (typeof(boundingBox) != 'undefined') {
+        scene.remove(boundingBox)
+      }
       resetColors()
     } else if (tabName == "jobView") {
       clearScene();
