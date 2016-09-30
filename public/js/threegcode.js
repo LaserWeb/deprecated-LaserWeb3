@@ -411,7 +411,9 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
         for (i = 0; i < zdepth; i += zstep) {
             inflateGrp = drawClipperPaths(inflatedPaths, 0xff00ff, 0.8, -i, true, "inflatedGroup"); // (paths, color, opacity, z, zstep, isClosed, isAddDirHelper, name, inflateVal)
             inflateGrp.name = 'inflateGrp';
-            inflateGrp.userData.color = inflateGrp.material.color.getHex();
+            if (inflateGrp.userData.color) {
+              inflateGrp.userData.color = inflateGrp.material.color.getHex();
+            }
             inflateGrp.position = infobject.position;
             console.log(i);
             inflateGrpZ.add(inflateGrp);
