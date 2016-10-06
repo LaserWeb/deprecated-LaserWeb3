@@ -247,10 +247,10 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                       }
                     };
                     g += "G0" + seekrate;
-                    g += " X" + xpos + " Y" + ypos + "\n";
+                    g += " X" + xpos.toFixed(4) + " Y" + ypos.toFixed(4) + "\n";
                     if (cncMode) {
                       g += "\nG0 Z1\n";  // G0 to Z0 then Plunge!
-                      g += "G1 F"+plungeSpeed+" Z" + zpos + "\n";  // Plunge!!!!
+                      g += "G1 F"+plungeSpeed+" Z" + zpos.toFixed(4) + "\n";  // Plunge!!!!
                     } else {
                       if (isFeedrateSpecifiedAlready) {
                       } else {
@@ -262,7 +262,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                               feedrate = "";
                           }
                       }
-                      g +=  "G1" + feedrate + " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
+                      g +=  "G1" + feedrate + " X" + xpos.toFixed(4) + " Y" + ypos.toFixed(4) + " Z" + zpos.toFixed(4) + "\n";
                     };
                     isAtClearanceHeight = false;
                 // Else Cut move
@@ -292,9 +292,9 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                         }
                     }
                     g += "G1" + feedrate;
-                    g += " X" + xpos;
-                    g += " Y" + ypos;
-                    g += " Z" + zpos;
+                    g += " X" + xpos.toFixed(4);
+                    g += " Y" + ypos.toFixed(4);
+                    g += " Z" + zpos.toFixed(4);
                     g += " S" + laserPwrVal + "\n";
                 }
             }
