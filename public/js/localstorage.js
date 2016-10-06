@@ -67,6 +67,7 @@ function saveSettingsLocal() {
   }
   printLog('<b>Saved Settings: <br>NB:</b> Please refresh page for settings to take effect', errorcolor, "settings");
   console.groupEnd();
+  location.reload();
 };
 
 function loadSettingsLocal() {
