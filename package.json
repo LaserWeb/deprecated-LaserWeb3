@@ -16,11 +16,15 @@
   "build": {
     "appId": "xyz.laserweb",
     "productName": "LaserWeb",
-    "category": "public.app-category.graphics-design",
     "files": [
       "**/*"
     ],
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "public.app-category.graphics-design"
+    },
     "dmg": {
+      "icon": "build/icon.icns",
       "contents": [
         {
           "x": 410,

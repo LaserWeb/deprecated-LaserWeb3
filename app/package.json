@@ -21,7 +21,8 @@
     "electron-debug": "^1.0.1",
     "node-static": "*",
     "request": "*",
-    "serialport": "*"
+    "serialport": "*",
+    "socket.io": "^1.4.8"
   },
   "devDependencies": {
     "electron": "^1.3.4"
