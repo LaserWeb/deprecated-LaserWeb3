@@ -189,7 +189,7 @@
 
 	        			if(!this._isTouchDevice()){
 		        			// on backspace go to previous input box
-		        			if(e.keyCode == 8 || e.keyCode == 48){
+		        			if(e.keyCode == 8 || e.keyCode == 46){
 		        				// goto previous
 		        				$(e.currentTarget).prev().select();
 		    					$(e.currentTarget).prev().focus();
