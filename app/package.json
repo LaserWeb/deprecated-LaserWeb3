@@ -1,0 +1,56 @@
+{
+  "name": "laserweb",
+  "version": "3.254.0",
+  "description": "a fully featured web ui for laser cutter/engravers, reprap and other 3d printers",
+  "contributors": [
+    "Peter van der Walt <peter.plaaswerf@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openhardwarecoza/LaserWeb3.git"
+  },
+  "licenses": [
+    {
+      "type": "AGPL-3.0",
+      "url": "http://www.gnu.org/licenses/agpl-3.0.txt"
+    }
+  ],
+  "dependencies": {
+    "chalk": "*",
+    "dotenv": "*",
+    "electron-debug": "^1.0.1",
+    "node-static": "*",
+    "request": "*",
+    "serialport": "*",
+    "socket.io": "^1.4.8"
+  },
+  "devDependencies": {
+    "electron": "^1.3.4"
+  },
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/openhardwarecoza/LaserWeb3/issues"
+  },
+  "homepage": "https://github.com/openhardwarecoza/LaserWeb3#readme",
+  "main": "server-smoothie.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "laser",
+    "cnc",
+    "laserweb",
+    "cncweb",
+    "grbl",
+    "smoothieware",
+    "threejs",
+    "dxf",
+    "svg",
+    "stl",
+    "raster",
+    "lasercutter",
+    "engrave"
+  ],
+  "author": "Peter van der Walt"
+}

@@ -2,7 +2,7 @@ var socket, isConnected, playing, connectVia;
 var jobStartTime = -1;
 
 function initSocket() {
-  socket = io.connect(''); // socket.io init
+  socket = io.connect('http://localhost:8000'); // socket.io init
   socket.emit('firstLoad', 1);
 
   socket.on('data', function (data) {

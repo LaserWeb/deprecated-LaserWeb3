@@ -33,7 +33,7 @@ ToDo:
 */
 
 if(typeof require === 'function') {
-    var Vec2 = require(__dirname + '/vec2.js').Vec2
+    var Vec2 = require(__dirname + '/lib/svgreader/vec2.js').Vec2
 }
 
 SVGReader = {

@@ -1122,7 +1122,9 @@
 
     </body>
 
-    <script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript">
+      window.$ = window.jQuery = require('./lib/jquery/jquery.min.js');
+    </script>
     <script type="text/javascript" src="lib/jquery/mindmup-editabletable.js"></script>
 
     <script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
@@ -1163,8 +1165,8 @@
     <script type="text/javascript" src="js/viewer.js"></script>
 
     <!-- Socket.io -->
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/js/socketcomms.js"></script>
+    <script type="text/javascript" src="lib/socketio/socket.io-1.4.5.js"></script>
+    <script type="text/javascript" src="js/socketcomms.js"></script>
 
     <!-- DXF Library -->
     <script type="text/javascript" src="lib/dxf/dxf-parser.js"></script>

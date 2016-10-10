@@ -44,3 +44,12 @@ node_modules
 # Local settings #
 ##################
 .env
+.idea
+*.iml
+
+# Electron files #
+##################
+app/node_modules/*
+app/public/*
+app/*.js
+dist/*
