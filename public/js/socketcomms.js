@@ -107,7 +107,10 @@ function sendGcode(gcode) {
     socket.emit('serialSend', gcode);
   } else if (connectVia == "Ethernet") {
     runCommand(gcode);
+  } else if (connectVia == "ESP8266") {
+    ws.send(gcode);
   }
+
 }
 
 function stopMachine () {

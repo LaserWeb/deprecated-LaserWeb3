@@ -30,6 +30,7 @@ $(document).ready(function() {
     initSocket();
     initTour();
     initSmoothie();
+    initEsp8266();
     initTree();
     initDragDrop();
 

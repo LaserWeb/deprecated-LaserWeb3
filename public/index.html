@@ -47,6 +47,7 @@
                         <select id="connectVia" class="form-control">
                             <option>USB</option>
                             <option>Ethernet</option>
+                            <option>ESP8266</option>
                         </select>
                     </form><!-- .navbar-form -->
 
@@ -102,6 +103,38 @@
                             </div>
                         </form>
                     </div><!-- ethernetConnect -->
+
+                    <div id="espConnect" class="navbar-form navbar-left" style="display: none;">
+                        <form role="form"><!-- Smoothie Ethernet -->
+                            <label for="espIp" class="control-label  icon-white"><i class="fa fa-2x fa-wifi"></i></label>
+                            <input id="espIp" type="text" class="form-control" maxlength="16" placeholder="192.168.137.22" style="width: 140px;" />
+                            <!-- <div class="btn-group"> -->
+                                <a id="espConnectBtn" class="btn btn-success" href="#"><span id="espConnectStatus">Connect</span></a>
+                                <a id="espDisconnectBtn" class="btn btn-danger" href="#" style="display: none;" onclick="stopWS();">Disconnect</a>
+                                <!-- <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Scan <span class="caret"></span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right form-scan stop-propagation" role="menu" style="width: 350px;">
+                                    <div class="form-group">
+                                        <h4>Scan network</h4>
+                                        <p>Specify the subnet in <code>0.0.0.*</code> format</p>
+                                        <div class="input-group" style="width: 95%;">
+                                            <input id="subnet1" style="border-right: none;" type="text" class="form-control" maxlength="16" placeholder="192" style="width: 60px;" />
+                                            <span id="basic-addon2" style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon">.</span>
+                                            <input id="subnet2" style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" placeholder="168" style="width: 60px;" />
+                                            <span id="basic-addon2" style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon">.</span>
+                                            <input id="subnet3" style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" placeholder="137" style="width: 60px;" />
+                                            <span id="basic-addon2" style="border-left: none;  background: #fff; cursur: arrow;" class="input-group-addon">. &nbsp; <b>*</b></span>
+                                        </div>
+                                        <button id="scansubnet" class="btn btn-default">Scan</button>
+                                        <div id="scannumber"></div>
+                                        <hr />
+                                        <div id="foundIp"></div>
+                                    </div>
+                                </div> -->
+                            <!-- </div> -->
+                        </form>
+                    </div><!-- espConnect -->
 
                     <form class="navbar-form navbar-right" role="form">
                         <a id="toggleFullScreen" data-placement="bottom" data-original-title="Fullscreen" data-toggle="tooltip" class="btn btn-default" onclick="toggleFullScreen();">
@@ -1129,6 +1162,10 @@
 
     <!-- Smoothie Ethernet -->
     <script type="text/javascript" src="js/smoothie.js"></script>
+
+    <!-- ESP8266 Websocket Bridge -->
+    <script type="text/javascript" src="js/esp8266.js"></script>
+
 
     <!-- Grbl -->
     <script type="text/javascript" src="js/grbl.js"></script>
