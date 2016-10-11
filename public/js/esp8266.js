@@ -1,4 +1,8 @@
 ws =  null;
+queryLoop = null;
+var blocked;
+var gcodeQueue; gcodeQueue = [];
+var heap;
 
 function initEsp8266() {
   $('#espConnectBtn').on('click', function() {
@@ -7,6 +11,39 @@ function initEsp8266() {
   });
 }
 
+
+function espQueue(data) {
+  data = data.split('\n')
+  for (i=0; i<data.length; i++) {
+    addQ(data[i])
+    // console.log(data[i])
+  }
+}
+
+function addQ(gcode) {
+  gcodeQueue.push(gcode);
+}
+
+function uploadLine() {
+  if (gcodeQueue.length > 0 && !blocked) {
+      var gcode = gcodeQueue.shift()
+      // console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length)
+      $('#queueCnt').html('Queued: ' + gcodeQueue.length)
+      lastSent = gcode
+      sendGcode(gcode + '\n');
+      blocked = true;
+    }
+
+
+}
+
+function espUpload() {
+    // espQueue("M28 "+ $('#saveasname').val() + "\n")
+    g = prepgcodefile();
+    espQueue(g);
+    // espQueue("M29\n");
+    uploadLine();
+}
 
 function stopWS() {
   // Close WS if already opened
@@ -23,7 +60,7 @@ function startWS(url) {
   if (url === undefined )
     url = document.location.host;
   stopWS();
-  ws = new WebSocket('ws://'+url+'/ws');
+  ws = new WebSocket('ws://'+url+'/');
   saveSetting('espIpAddress', url);
   ws.binaryType = "arraybuffer";
 
@@ -33,9 +70,11 @@ function startWS(url) {
     $('#espConnectBtn').hide();
     $('#espDisconnectBtn').show();
     console.log(e);
-    sendGcode('baud 115200');
     sendGcode('version');
-    sendGcode('who');
+    // queryLoop = setInterval(function() {
+    //   // console.log('StatusChkc')
+    //     sendGcode('?');
+    // }, 200);
   };
 
   ws.onclose = function(e){
@@ -62,14 +101,19 @@ function startWS(url) {
     } else {
       data = e.data;
     }
+    console.log(data);
+
     $('#syncstatus').html('Socket OK');
     isConnected = true;
-    if (data.indexOf('<') == 0) {
-      updateStatus(data);
-    } else if (data =='ok') {
+    if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
       printLog(data, '#cccccc', "wifi")
+      blocked = false;
+      uploadLine()
+    } else if (data.indexOf('<') == 0) {
+      updateStatus(data);
     } else {
       printLog(data, msgcolor, "wifi")
     }
+
   };
 }

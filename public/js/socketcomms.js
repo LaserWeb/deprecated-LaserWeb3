@@ -101,16 +101,17 @@ function initSocket() {
 }
 
 function sendGcode(gcode) {
-  console.log('Sending', gcode)
-  var connectVia = $('#connectVia').val()
-  if (connectVia == "USB") {
-    socket.emit('serialSend', gcode);
-  } else if (connectVia == "Ethernet") {
-    runCommand(gcode);
-  } else if (connectVia == "ESP8266") {
-    ws.send(gcode);
+  if(gcode) {
+    // console.log('Sending', gcode)
+    var connectVia = $('#connectVia').val()
+    if (connectVia == "USB") {
+      socket.emit('serialSend', gcode);
+    } else if (connectVia == "Ethernet") {
+      runCommand(gcode);
+    } else if (connectVia == "ESP8266") {
+      ws.send(gcode);
+    }
   }
-
 }
 
 function stopMachine () {
@@ -201,6 +202,8 @@ function playGcode() {
     }
   } else if (connectVia == "Ethernet") {
     // Upload to SD Wizard
+  } else if (connectVia == "ESP8266") {
+    // Upload to SD
   }
 };
 
@@ -215,7 +218,7 @@ function updateStatus(data) {
   // remove first <
   var t = data.substr(1);
     // remove last >
-  t = t.substr(0,t.length-2);
+  t = t.substr(0,t.length-3);
   // split on , and :
   t = t.split(/,|:/);
   //<Idle,MPos:26.7550,0.0850,0.0000,WPos:26.7550,0.0850,0.0000>
