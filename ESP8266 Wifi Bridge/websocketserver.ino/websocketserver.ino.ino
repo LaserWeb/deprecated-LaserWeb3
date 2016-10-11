@@ -6,20 +6,17 @@
  */
 
 #include <Arduino.h>
-
 #include <ESP8266WiFi.h>
-
 #include <WebSocketsServer.h>
 #include <Hash.h>
 
-const char* ssid = "openhardwarecoza";
-const char* password = "aabbccddeeff";
+#include <DNSServer.h>
+#include <ESP8266WebServer.h>
+#include <WiFiManager.h>         //https://github.com/tzapu/WiFiManager
 
 WebSocketsServer webSocket = WebSocketsServer(80);
 
-
 #define SEND_SERIAL_TIME (50)
-
 
 class SerialTerminal {
     public:
@@ -124,14 +121,16 @@ void setup()
 
     Serial1.printf("[SETUP] HEAP: %d\n", ESP.getFreeHeap());
 
+
+    WiFiManager wifiManager;
+    wifiManager.resetSettings();    
+        
+    wifiManager.autoConnect("Emblaser2");
+
     webSocket.begin();
     webSocket.onEvent(webSocketEvent);
 
-    WiFi.mode(WIFI_AP_STA);
-    WiFi.begin(ssid, password);
-    WiFi.softAP("ESP_SLDT", "yesSecureHere");
-
-
+    
     term.setup();
 
     // disable WiFi sleep for more performance
