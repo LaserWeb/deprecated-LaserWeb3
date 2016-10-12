@@ -502,6 +502,7 @@ function invokeSaveAsDialog(file, fileName) {
     }
 }
 function printLog(text, color, logclass) {
+    text = text.replace(/\n/g, "<br />")
     if ($('#console p').length > 300) {
         // remove oldest if already at 300 lines
         $('#console p').first().remove();

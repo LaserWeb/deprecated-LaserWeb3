@@ -25,19 +25,19 @@ function addQ(gcode) {
 }
 
 function uploadLine() {
-  if (gcodeQueue.length > 0 && !blocked) {
-      var gcode = gcodeQueue.shift()
-      // console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length)
-      $('#queueCnt').html('Queued: ' + gcodeQueue.length)
-      lastSent = gcode
-      sendGcode(gcode + '\n');
-      blocked = true;
-    }
-
-
+  if(paused==false) {
+    if (gcodeQueue.length > 0 && !blocked) {
+        var gcode = gcodeQueue.shift()
+        // console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length)
+        $('#queueCnt').html('Queued: ' + gcodeQueue.length)
+        lastSent = gcode
+        sendGcode(gcode + '\n');
+        blocked = true;
+      }
+  }
 }
 
-function espUpload() {
+function espPlay() {
     // espQueue("M28 "+ $('#saveasname').val() + "\n")
     g = prepgcodefile();
     espQueue(g);
@@ -72,9 +72,14 @@ function startWS(url) {
     console.log(e);
     sendGcode('version');
     // queryLoop = setInterval(function() {
-    //   // console.log('StatusChkc')
+    //     // console.log('StatusChkc')
     //     sendGcode('?');
     // }, 200);
+    $("#machineStatus").addClass('badge-ok')
+    $("#machineStatus").removeClass('badge-notify')
+    $("#machineStatus").removeClass('badge-warn')
+    $("#machineStatus").removeClass('badge-busy')
+    $('#machineStatus').html("Wifi Connected");
   };
 
   ws.onclose = function(e){

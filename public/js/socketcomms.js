@@ -1,5 +1,7 @@
-var socket, isConnected, playing, connectVia;
+var socket, isConnected, connectVia;
 var jobStartTime = -1;
+var playing = false;
+var paused = false;
 
 function initSocket() {
   socket = io.connect(''); // socket.io init
@@ -135,19 +137,38 @@ function stopMachine () {
       runCommand('abort');
       runCommand('\030');
     }
+  } else if (connectVia == "ESP8266") {
+    if (laseroffcmd) {
+      gcodeQueue = [];
+      sendGcode(laseroffcmd);
+      sendGcode('abort');
+      sendGcode(laseroffcmd);
+    } else {
+      gcodeQueue = [];
+      sendGcode('abort');
+    }
+    $('#queueCnt').html('Queued: ' + gcodeQueue.length)
   }
+  $('#playicon').addClass('fa-play');
+  $('#playicon').removeClass('fa-pause');
+  playing = false;
+
 }
 
 function playpauseMachine() {
   if (isConnected) {
-    if (playing) {
-      if (paused) {
+    if (playing == true) {
+      if (paused == true) {
         // sendGcode('~');
         var connectVia = $('#connectVia').val()
         if (connectVia == "USB") {
           socket.emit('unpause', 1);
         } else if (connectVia == "Ethernet") {
           runCommand('resume');
+        } else if (connectVia == "ESP8266") {
+          // Do nothing.  The paused var starts the uploadLine function
+          paused = false;
+          uploadLine();
         }
         paused = false;
         $('#playicon').removeClass('fa-play');
@@ -160,15 +181,23 @@ function playpauseMachine() {
           var connectVia = $('#connectVia').val()
           if (connectVia == "USB") {
             socket.emit('pause', laseroffcmd);
+            paused = true;
           } else if (connectVia == "Ethernet") {
             runCommand('suspend');
             runCommand(laseroffcmd)
+            paused = true;
+          } else if (connectVia == "ESP8266") {
+            sendGcode("suspend");
+            sendGcode(laseroffcmd)
+            paused = true;
           }
         } else {
           if (connectVia == "USB") {
             socket.emit('pause', 0);
           } else if (connectVia == "Ethernet") {
             runCommand('pause');
+          } else if (connectVia == "ESP8266") {
+            // Do nothing.  The paused var stops the uploadLine function
           }
         }
         paused = true;
@@ -204,6 +233,10 @@ function playGcode() {
     // Upload to SD Wizard
   } else if (connectVia == "ESP8266") {
     // Upload to SD
+    $('#playicon').removeClass('fa-play');
+    $('#playicon').addClass('fa-pause');
+    playing = true;
+    espPlay();
   }
 };
 
@@ -220,7 +253,7 @@ function updateStatus(data) {
     // remove last >
   t = t.substr(0,t.length-3);
   // split on , and :
-  t = t.split(/,|:/);
+  t = t.split(/,|:|>/);
   //<Idle,MPos:26.7550,0.0850,0.0000,WPos:26.7550,0.0850,0.0000>
   //0 status
   //1 MPos

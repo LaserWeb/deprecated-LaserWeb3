@@ -35,8 +35,8 @@ $('#uploadsdbtn').on('click', function () {
       $('#espConnect').show();
       $('#usbConnect').hide();
       $('#ethernetConnect').hide();
-      $('#playBtn').hide();
-      $('#uploadBtn').show();
+      $('#playBtn').show();
+      $('#uploadBtn').hide();
       var espIpAddress = loadSetting('espIpAddress');
       if (espIpAddress) {
         $('#espIp').val(espIpAddress);
