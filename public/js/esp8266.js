@@ -142,7 +142,7 @@ function scanWifiSubnet() {
   scanned = 254;
   scanok = 0;
   scanfail = 0;
-  $("#foundIpWifi").empty();
+  $("#foundIpwifi").empty();
   var subnet1 = $("#wifisubnet1").val();
   var subnet2 = $("#wifisubnet2").val();
   var subnet3 = $("#wifisubnet3").val();
@@ -177,7 +177,7 @@ function  scanWifiIP(ip) {
     scanned = scanned - 1;
     scanok += 1
     $("#scannumberwifi").html('Scanning: <span style="color: #00cc00">'+scanok+ '</span>+<span style="color: #cc0000">'+scanfail+ '</span> done. '+scanned+' to go.' )
-    $("#foundIpwifi").append("<div class='panel panel-primary'><div class='panel-heading'><h3 class='panel-title'><a onclick='setWifiIP(\""+ip+"\")' href='#'>"+ip+"</a></h3></div><div class='panel-body'></div></div>");
+    $("#foundIpwifi").append("<div class='panel panel-primary'><div class='panel-heading'><h3 class='panel-title'><a onclick='setWifiIP(\""+ip+"\")' href='#'>"+ip+"</a></h3></div></div>");
   }
 
   posting.onclose = function(e){
@@ -190,4 +190,5 @@ function  scanWifiIP(ip) {
 
 function setWifiIP(ipaddr) {
   $("#espIp").val(ipaddr);
+  $('#espConnectBtn').click();
 }
