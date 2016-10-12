@@ -31,7 +31,8 @@ localParams = [
   ['defaultDPI', true],
   ['illustratorDPI', false],
   ['inkscapeDPI', false],
-  ['defaultBitmapDPI', true]
+  ['defaultBitmapDPI', true],
+  ['safetyLockDisabled', false]
 ];
 
 

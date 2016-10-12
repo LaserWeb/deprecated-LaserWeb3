@@ -201,6 +201,12 @@ $(document).ready(function() {
         }
     });
 
+    var overridePinCode = loadSetting('safetyLockDisabled');
+    if (overridePinCode == 'Enable') {
+      $('#controlmachine').show();
+      $('#armmachine').hide();
+    }
+
     cncMode = $('#cncMode').val()
     if (cncMode == "Enable") {
         document.title = "&#128295; CNCWeb";
