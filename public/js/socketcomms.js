@@ -249,7 +249,6 @@ function homeMachine() {
 function updateStatus(data) {
   // https://github.com/grbl/grbl/wiki/Configuring-Grbl-v0.8#---current-status
   // remove first <
-  console.log(data)
   var t = data.substr(1);
     // remove last >
   t = t.substr(0,t.length-3);

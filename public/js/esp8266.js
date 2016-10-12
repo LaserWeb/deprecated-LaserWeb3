@@ -103,6 +103,7 @@ function startWS(url) {
   };
 
   ws.onmessage = function(e){
+    console.log(e.data)
     var data = "";
     if(e.data instanceof ArrayBuffer){
       var bytes = new Uint8Array(e.data);

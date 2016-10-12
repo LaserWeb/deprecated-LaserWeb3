@@ -13,6 +13,7 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>         //https://github.com/tzapu/WiFiManager
+#include <ArduinoOTA.h>
 
 WebSocketsServer webSocket = WebSocketsServer(80);
 
@@ -134,11 +135,15 @@ void setup()
 
     // disable WiFi sleep for more performance
     WiFi.setSleepMode(WIFI_NONE_SLEEP);
+
+     ArduinoOTA.begin();
 }
 
 
 void loop()
 {
+
+    ArduinoOTA.handle();
     term.loop();
     webSocket.loop();
    
