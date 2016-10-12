@@ -9,6 +9,12 @@ function initEsp8266() {
     var espIP = $('#espIp').val();
     startWS(espIP);
   });
+
+  $('#scanwifi').on('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation(); // only neccessary if something above is listening to the (default-)event too
+      scanWifiSubnet()
+  });
 }
 
 
@@ -129,4 +135,59 @@ function startWS(url) {
       blocked = false;
     }
   };
+}
+
+
+function scanWifiSubnet() {
+  scanned = 254;
+  scanok = 0;
+  scanfail = 0;
+  $("#foundIpWifi").empty();
+  var subnet1 = $("#wifisubnet1").val();
+  var subnet2 = $("#wifisubnet2").val();
+  var subnet3 = $("#wifisubnet3").val();
+  if (!subnet1) {
+    subnet1 = "192";
+  }
+  if (!subnet2) {
+    subnet2 = "168";
+  }
+  if (!subnet3) {
+    subnet3 = "137";
+  }
+  var subnet = subnet1 + '.' +  subnet2 + '.' + subnet3 + '.' ;
+
+  for (var ctr = 1; ctr < 255; ctr++) {
+    var ip = subnet + ctr
+    var result = scanWifiIP(ip)
+  }
+  saveSetting("wifisubnet1", subnet1);
+  saveSetting("wifisubnet2", subnet2);
+  saveSetting("wifisubnet3", subnet3);
+};
+
+function  scanWifiIP(ip) {
+  printLog('Wifi Checking: '+ip, successcolor, "wifi")
+  var cmd = "version\n";
+  var url = "http://" + ip + "/command";
+  // Send the data using post
+  var posting = new WebSocket('ws://'+ip+'/');
+
+  posting.onopen = function(e) {
+    scanned = scanned - 1;
+    scanok += 1
+    $("#scannumberwifi").html('Scanning: <span style="color: #00cc00">'+scanok+ '</span>+<span style="color: #cc0000">'+scanfail+ '</span> done. '+scanned+' to go.' )
+    $("#foundIpwifi").append("<div class='panel panel-primary'><div class='panel-heading'><h3 class='panel-title'><a onclick='setWifiIP(\""+ip+"\")' href='#'>"+ip+"</a></h3></div><div class='panel-body'></div></div>");
+  }
+
+  posting.onclose = function(e){
+    scanned = scanned - 1;
+    scanfail += 1
+    $("#scannumberwifi").html('Scanning: <span style="color: #00cc00">'+scanok+ '</span>+<span style="color: #cc0000">'+scanfail+ '</span> done. '+scanned+' to go.' )
+  }
+
+}
+
+function setWifiIP(ipaddr) {
+  $("#espIp").val(ipaddr);
 }
