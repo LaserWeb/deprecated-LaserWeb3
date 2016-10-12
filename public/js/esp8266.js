@@ -71,10 +71,11 @@ function startWS(url) {
     $('#espDisconnectBtn').show();
     console.log(e);
     sendGcode('version');
-    // queryLoop = setInterval(function() {
-    //     // console.log('StatusChkc')
-    //     sendGcode('?');
-    // }, 200);
+    queryLoop = setInterval(function() {
+        // console.log('StatusChkc')
+        sendGcode('?\n');
+        uploadLine();
+    }, 200);
     $("#machineStatus").addClass('badge-ok')
     $("#machineStatus").removeClass('badge-notify')
     $("#machineStatus").removeClass('badge-warn')
@@ -86,6 +87,11 @@ function startWS(url) {
     printLog("ESP8266 closed! ", errorcolor, 'wifi');
     $('#espConnectBtn').show();
     $('#espDisconnectBtn').hide();
+    $("#machineStatus").removeClass('badge-ok')
+    $("#machineStatus").addClass('badge-notify')
+    $("#machineStatus").removeClass('badge-warn')
+    $("#machineStatus").removeClass('badge-busy')
+    $('#machineStatus').html("Disconnected");
     console.log(e);
   };
 
@@ -106,19 +112,20 @@ function startWS(url) {
     } else {
       data = e.data;
     }
-    console.log(data);
+    // console.log(data);
 
     $('#syncstatus').html('Socket OK');
     isConnected = true;
-    if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
-      printLog(data, '#cccccc', "wifi")
+    if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0){
+      if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
+        printLog(data, '#cccccc', "wifi")
+        uploadLine()
+      } else if (data.indexOf('<') != -1) {
+        updateStatus(data);
+      } else {
+        printLog(data, msgcolor, "wifi")
+      }
       blocked = false;
-      uploadLine()
-    } else if (data.indexOf('<') == 0) {
-      updateStatus(data);
-    } else {
-      printLog(data, msgcolor, "wifi")
     }
-
   };
 }
