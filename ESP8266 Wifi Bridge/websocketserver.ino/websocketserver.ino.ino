@@ -97,7 +97,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
             if(lenght > 0) {
                 Serial.write((const char *) (payload), (lenght));
             }
-            Serial.print('\n');
+            Serial.print('\n'); 
             break;
         
     }
@@ -123,7 +123,7 @@ void setup()
 
 
     WiFiManager wifiManager;
-    wifiManager.resetSettings();    
+    //wifiManager.resetSettings();    
         
     wifiManager.autoConnect("Emblaser2");
 
