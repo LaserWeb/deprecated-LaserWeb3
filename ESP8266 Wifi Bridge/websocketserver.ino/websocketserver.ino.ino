@@ -1,19 +1,13 @@
-/*
- * WebSocketServer.ino
- *
- *  Created on: 22.05.2015
- *
- */
-
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <WebSocketsServer.h>
+#include <WebSocketsServer.h>    //https://github.com/Links2004/arduinoWebSockets/issues/61
 #include <Hash.h>
-
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>         //https://github.com/tzapu/WiFiManager
 #include <ArduinoOTA.h>
+
+// Transparent Serial Bridge code from Marcus https://github.com/Links2004/arduinoWebSockets/issues/61
 
 WebSocketsServer webSocket = WebSocketsServer(80);
 
@@ -54,7 +48,7 @@ class SerialTerminal {
             if(len > (WEBSOCKETS_MAX_HEADER_SIZE + 1)) {
                 if(((t - _lastRX) > SEND_SERIAL_TIME) || forceSend) {
                     //Serial1.printf("broadcastBIN forceSend: %d\n", forceSend);
-                    webSocket.broadcastBIN(&_buffer[0], (len - WEBSOCKETS_MAX_HEADER_SIZE), true);
+                    webSocket.broadcastTXT(&_buffer[0], (len - WEBSOCKETS_MAX_HEADER_SIZE), true);
                     resetBuffer();
                 }
             }
@@ -80,7 +74,6 @@ class SerialTerminal {
 SerialTerminal term;
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght) {
-
     switch(type) {
         case WStype_DISCONNECTED:
             Serial1.printf("[%u] Disconnected!\n", num);
@@ -88,7 +81,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
         case WStype_CONNECTED: {
             IPAddress ip = webSocket.remoteIP(num);
             Serial1.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
-
             // send message to client
             webSocket.sendTXT(num, "Connected");
         }
@@ -99,9 +91,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
                 Serial.write((const char *) (payload), (lenght));
             }
             break;
-        
     }
-
 }
 
 void setup()
@@ -121,7 +111,6 @@ void setup()
 
     Serial1.printf("[SETUP] HEAP: %d\n", ESP.getFreeHeap());
 
-
     WiFiManager wifiManager;
     //wifiManager.resetSettings();    
         
@@ -130,21 +119,19 @@ void setup()
     webSocket.begin();
     webSocket.onEvent(webSocketEvent);
 
-    
     term.setup();
 
     // disable WiFi sleep for more performance
     WiFi.setSleepMode(WIFI_NONE_SLEEP);
 
-     ArduinoOTA.begin();
+    ArduinoOTA.setHostname("Emblaser2");
+    ArduinoOTA.begin();
 }
 
 
 void loop()
 {
-
     ArduinoOTA.handle();
     term.loop();
-    webSocket.loop();
-   
+    webSocket.loop(); 
 }
