@@ -111,7 +111,15 @@ function sendGcode(gcode) {
     } else if (connectVia == "Ethernet") {
       runCommand(gcode);
     } else if (connectVia == "ESP8266") {
-      ws.send(gcode);
+      if (ws) {
+        if (ws.readyState == '1') {
+          ws.send(gcode);
+        } else {
+          printLog("Unable to send gcode: Not connected to Websocket: "+ gcode, errorcolor, "wifi")
+        }
+      } else {
+        printLog("Unable to send gcode: Not connected: "+ gcode, errorcolor, "wifi")
+      }
     }
   }
 }

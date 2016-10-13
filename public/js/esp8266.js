@@ -91,6 +91,7 @@ function startWS(url) {
 
   ws.onclose = function(e){
     printLog("ESP8266 closed! ", errorcolor, 'wifi');
+    clearInterval(queryLoop);
     $('#espConnectBtn').show();
     $('#espDisconnectBtn').hide();
     $("#machineStatus").removeClass('badge-ok')
