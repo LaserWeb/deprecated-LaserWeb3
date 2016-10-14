@@ -186,7 +186,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         // port.write("M115\n"); // Lets check if its Marlin?
         port.write("version\n"); // Lets check if its Smoothieware?
         // port.write("$fb\n"); // Lets check if its TinyG
-        console.log('Connected to ' + port.path + 'at ' + port.options.baudRate)
+        console.log('Connected to ' + port.path + 'at ' + port.options.baudRate);
         isConnected = true;
         connectedTo = port.path;
         queryLoop = setInterval(function() {
@@ -196,7 +196,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         }, 100);
         queueCounter = setInterval(function(){
                  for (i in connections) {   // iterate over the array of connections
-                   connections[i].emit('qCount', gcodeQueue.length)
+                   connections[i].emit('qCount', gcodeQueue.length);
                  };
          },500);
          for (i in connections) {   // iterate over the array of connections
@@ -285,42 +285,43 @@ const BrowserWindow = electron.BrowserWindow
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow;
 
 function createWindow () {
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 800, height: 600, fullscreen: true})
+    mainWindow = new BrowserWindow({width: 800, height: 600, fullscreen: true});
 
     // and load the index.html of the app.
-    mainWindow.loadURL(`file://${__dirname}/public/index.html`)
+    mainWindow.loadURL(`file://${__dirname}/public/index.html`);
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        mainWindow = null
+        mainWindow = null;
     })
-}
+};
 
+electronApp.commandLine.appendSwitch("--ignore-gpu-blacklist");
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-electronApp.on('ready', createWindow)
+electronApp.on('ready', createWindow);
 
 // Quit when all windows are closed.
 electronApp.on('window-all-closed', function () {
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
-        app.quit()
+        app.quit();
     }
-})
+});
 
 electronApp.on('activate', function () {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {
-        createWindow()
+        createWindow();
     }
 })
