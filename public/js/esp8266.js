@@ -131,7 +131,7 @@ function startWS(url) {
       // console.log(split)
       for (i=0; i< split.length; i++) {
         var response = split[i];
-        console.log(response)
+        // console.log(response)
         // trigger line handling event here
         if(response.indexOf("ok") != -1 || response == "start\r" || response.indexOf('<') == 0){
           if (response.indexOf("ok") == 0) { // Got an OK so we are clear to send
