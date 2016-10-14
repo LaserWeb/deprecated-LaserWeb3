@@ -103,6 +103,7 @@ function initSocket() {
 }
 
 function sendGcode(gcode) {
+  // printLog("<i class='fa fa-arrow-right' aria-hidden='true'></i>"+ gcode, msgcolor)
   if(gcode) {
     // console.log('Sending', gcode)
     var connectVia = $('#connectVia').val()

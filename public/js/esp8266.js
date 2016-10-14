@@ -3,6 +3,7 @@ queryLoop = null;
 var blocked;
 var gcodeQueue; gcodeQueue = [];
 var heap;
+var buffer = "";
 
 function initEsp8266() {
   $('#espConnectBtn').on('click', function() {
@@ -110,7 +111,7 @@ function startWS(url) {
   };
 
   ws.onmessage = function(e){
-    console.log(e.data)
+    // console.log(e.data)
     var data = "";
     if(e.data instanceof ArrayBuffer){
       var bytes = new Uint8Array(e.data);
@@ -121,19 +122,28 @@ function startWS(url) {
       data = e.data;
     }
     // console.log(data);
-
     $('#syncstatus').html('Socket OK');
     isConnected = true;
-    if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0){
-      if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
-        printLog(data, '#cccccc', "wifi")
-        uploadLine()
-      } else if (data.indexOf('<') != -1) {
-        updateStatus(data);
-      } else {
-        printLog(data, msgcolor, "wifi")
-      }
-      blocked = false;
+
+      buffer += data
+      var split = buffer.split("\n");
+      buffer = split.pop(); //last not fin data back to buffer
+      // console.log(split)
+      for (i=0; i< split.length; i++) {
+        var response = split[i];
+        console.log(response)
+        // trigger line handling event here
+        if(response.indexOf("ok") != -1 || response == "start\r" || response.indexOf('<') == 0){
+          if (response.indexOf("ok") == 0) { // Got an OK so we are clear to send
+            printLog(response, '#cccccc', "wifi")
+            uploadLine()
+          } else if (response.indexOf('<') != -1) {
+            updateStatus(response);
+          } else {
+            printLog(response, msgcolor, "wifi")
+          }
+          blocked = false;
+        }
     }
   };
 }

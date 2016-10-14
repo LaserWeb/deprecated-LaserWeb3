@@ -54,6 +54,7 @@ class SerialTerminal {
             }
         }
 
+
     protected:
         uint8_t _buffer[1460];
         uint8_t * _bufferWritePtr;
