@@ -30,6 +30,7 @@ $(document).ready(function() {
     initSocket();
     initTour();
     initSmoothie();
+    initEsp8266();
     initTree();
     initDragDrop();
     initKeyboardShortcut();
@@ -158,7 +159,6 @@ $(document).ready(function() {
 
     setupJogPanel();
     
-
     cncMode = $('#cncMode').val()
     if (cncMode == "Enable") {
         document.title = "&#128295; CNCWeb";
@@ -195,7 +195,7 @@ $(document).ready(function() {
 
     // A few gcode input fields need to be caps for the firmware to support it
     $('.uppercase').keyup(function() {
-        this.value = this.value.toLocaleUpperCase();
+        // this.value = this.value.toLocaleUpperCase();
     });
 
 
@@ -204,7 +204,10 @@ $(document).ready(function() {
 
 
 function setupJogPanel() {
-    if ($('#usePINPad').prop('checked') === true) {
+
+    var overridePinCode = loadSetting('safetyLock');
+
+    if (overridePinCode == 'Enable') {
         $('[id^=controlmachine]').hide();
         $('#armmachine').show();
         $('#armpin').pincodeInput({
@@ -514,6 +517,7 @@ function invokeSaveAsDialog(file, fileName) {
     }
 }
 function printLog(text, color, logclass) {
+    text = text.replace(/\n/g, "<br />")
     if ($('#console p').length > 300) {
         // remove oldest if already at 300 lines
         $('#console p').first().remove();

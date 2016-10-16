@@ -18,16 +18,30 @@ $('#uploadsdbtn').on('click', function () {
     var connectVia = $('#connectVia').val()
     if (connectVia == "USB") {
         connectMode = "USB";
+        $('#espConnect').hide();
         $('#usbConnect').show();
         $('#ethernetConnect').hide();
         $('#playBtn').show();
         $('#uploadBtn').hide();
     } else if (connectVia == "Ethernet") {
       connectMode = "ETH";
+      $('#espConnect').hide();
       $('#usbConnect').hide();
       $('#ethernetConnect').show();
       $('#playBtn').hide();
       $('#uploadBtn').show();
+    } else if (connectVia == "ESP8266") {
+      connectMode = "ESP8266";
+      $('#espConnect').show();
+      $('#usbConnect').hide();
+      $('#ethernetConnect').hide();
+      $('#playBtn').show();
+      $('#uploadBtn').hide();
+      var espIpAddress = loadSetting('espIpAddress');
+      if (espIpAddress) {
+        $('#espIp').val(espIpAddress);
+      }
+
     }
   });
 
