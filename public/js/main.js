@@ -159,13 +159,6 @@ $(document).ready(function() {
 
     setupJogPanel();
     
-
-    var overridePinCode = loadSetting('safetyLockDisabled');
-    if (overridePinCode == 'Enable') {
-      $('#controlmachine').show();
-      $('#armmachine').hide();
-    }
-
     cncMode = $('#cncMode').val()
     if (cncMode == "Enable") {
         document.title = "&#128295; CNCWeb";
@@ -211,7 +204,10 @@ $(document).ready(function() {
 
 
 function setupJogPanel() {
-    if ($('#usePINPad').prop('checked') === true) {
+
+    var overridePinCode = loadSetting('safetyLock');
+
+    if (overridePinCode == 'Enable') {
         $('[id^=controlmachine]').hide();
         $('#armmachine').show();
         $('#armpin').pincodeInput({

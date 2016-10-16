@@ -39,7 +39,7 @@ localParams = [
   ['materialThickness', false],
   ['cuttingMatThickness', false],
   ['zFocusHeight', true],
-  ['safetyLockDisabled', false]
+  ['safetyLock', false]
 ];
 
 
