@@ -13,6 +13,9 @@ localParams = [
   ['subnet1', false],
   ['subnet2', false],
   ['subnet3', false],
+  ['wifisubnet1', false],
+  ['wifisubnet2', false],
+  ['wifisubnet3', false],
   ['smoothieIp', false],
   ['laserXMax', true],
   ['laserYMax', true],
@@ -36,7 +39,7 @@ localParams = [
   ['materialThickness', false],
   ['cuttingMatThickness', false],
   ['zFocusHeight', true],
-  ['usePINPad', false],
+  ['safetyLockDisabled', false]
 ];
 
 

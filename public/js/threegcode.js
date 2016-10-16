@@ -258,10 +258,10 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                       }
                     };
                     g += "G0" + seekrate;
-                    g += " X" + xpos + " Y" + ypos + "\n";
+                    g += " X" + xpos.toFixed(4) + " Y" + ypos.toFixed(4) + "\n";
                     if (cncMode) {
                       g += "\nG0 Z1\n";  // G0 to Z0 then Plunge!
-                      g += "G1 F"+plungeSpeed+" Z" + zpos + "\n";  // Plunge!!!!
+                      g += "G1 F"+plungeSpeed+" Z" + zpos.toFixed(4) + "\n";  // Plunge!!!!
                     } else {
                       if (isFeedrateSpecifiedAlready) {
                       } else {
@@ -273,7 +273,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                               feedrate = "";
                           }
                       }
-                      g +=  "G1" + feedrate + " X" + xpos + " Y" + ypos + " Z" + zpos + "\n";
+                      g +=  "G1" + feedrate + " X" + xpos.toFixed(4) + " Y" + ypos.toFixed(4) + " Z" + zpos.toFixed(4) + "\n";
                     };
                     isAtClearanceHeight = false;
                 // Else Cut move
@@ -303,9 +303,9 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                         }
                     }
                     g += "G1" + feedrate;
-                    g += " X" + xpos;
-                    g += " Y" + ypos;
-                    g += " Z" + zpos;
+                    g += " X" + xpos.toFixed(4);
+                    g += " Y" + ypos.toFixed(4);
+                    g += " Z" + zpos.toFixed(4);
                     g += " S" + laserPwrVal + "\n";
                 }
             }
@@ -422,7 +422,9 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
         for (i = 0; i < zdepth; i += zstep) {
             inflateGrp = drawClipperPaths(inflatedPaths, 0xff00ff, 0.8, -i, true, "inflatedGroup"); // (paths, color, opacity, z, zstep, isClosed, isAddDirHelper, name, inflateVal)
             inflateGrp.name = 'inflateGrp';
-            inflateGrp.userData.color = inflateGrp.material.color.getHex();
+            if (inflateGrp.userData.color) {
+              inflateGrp.userData.color = inflateGrp.material.color.getHex();
+            }
             inflateGrp.position = infobject.position;
             console.log(i);
             inflateGrpZ.add(inflateGrp);

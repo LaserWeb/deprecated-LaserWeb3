@@ -18,11 +18,10 @@ function makeTabActive(tabname) {
     $(menuName).addClass('active');
 }
 
-// Each menu name gets an id handler of this pattern: #[menuname]-menu 
+// Each menu name gets an id handler of this pattern: #[menuname]-menu
 appMenus.forEach(function(menu) {
     console.log("Adding menu handler for " + menu);
     $("#" + menu + "-menu").click(function() {
         makeTabActive(menu);
     });
 }, this);
-

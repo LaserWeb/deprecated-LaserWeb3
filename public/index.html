@@ -12,8 +12,8 @@
         <meta name="description" content="Free Web Based Lasercutter Control Software for machines running on Grbl, Marlin, Smoothieware etc. Supports PNG/JPG/BMP Raster Engraving,  DXF/SVG Cutting" />
         <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator" />
         <meta name="google-site-verification" content="Q5N27jmbSMfsf_oC4UmRlNDVXKta7BP4DaDq1h0Ox5Y" />
-        <meta name="author" content="github.com/openhardwarecoza/LaserWeb3/" />
-        <meta name="version" content="30253" />
+        <meta name="author" content="github.com/openhardwarecoza/LaserWeb2/" />
+        <meta name="version" content="30379" />
 
         <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css" />
         <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-callouts.css" />
@@ -47,6 +47,7 @@
                         <select id="connectVia" class="form-control">
                             <option>USB</option>
                             <option>Ethernet</option>
+                            <option>ESP8266</option>
                         </select>
                     </form><!-- .navbar-form -->
 
@@ -102,6 +103,38 @@
                             </div>
                         </form>
                     </div><!-- ethernetConnect -->
+
+                    <div id="espConnect" class="navbar-form navbar-left" style="display: none;">
+                        <form role="form"><!-- Smoothie Wifi -->
+                            <label for="espIp" class="control-label  icon-white"><i class="fa fa-2x fa-wifi"></i></label>
+                            <input id="espIp" type="text" class="form-control" maxlength="16" placeholder="192.168.137.22" style="width: 140px;" />
+                            <div class="btn-group">
+                                <a id="espConnectBtn" class="btn btn-success" href="#"><span id="espConnectStatus">Connect</span></a>
+                                <a id="espDisconnectBtn" class="btn btn-danger" href="#" style="display: none;" onclick="stopWS();">Disconnect</a>
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Scan <span class="caret"></span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right form-scan stop-propagation" role="menu" style="width: 350px;">
+                                    <div class="form-group">
+                                        <h4>Scan Wifi</h4>
+                                        <p>Specify the subnet in <code>0.0.0.*</code> format</p>
+                                        <div class="input-group" style="width: 95%;">
+                                            <input id="wifisubnet1" style="border-right: none;" type="text" class="form-control" maxlength="16" placeholder="192" style="width: 60px;" />
+                                            <span id="basic-addon2" style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon">.</span>
+                                            <input id="wifisubnet2" style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" placeholder="168" style="width: 60px;" />
+                                            <span id="basic-addon2" style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon">.</span>
+                                            <input id="wifisubnet3" style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" placeholder="137" style="width: 60px;" />
+                                            <span id="basic-addon2" style="border-left: none;  background: #fff; cursur: arrow;" class="input-group-addon">. &nbsp; <b>*</b></span>
+                                        </div>
+                                        <button id="scanwifi" class="btn btn-default">Scan</button>
+                                        <div id="scannumberwifi"></div>
+                                        <hr />
+                                        <div id="foundIpwifi"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div><!-- espConnect -->
 
                     <form class="navbar-form navbar-right" role="form">
                         <a id="toggleFullScreen" data-placement="bottom" data-original-title="Fullscreen" data-toggle="tooltip" class="btn btn-default" onclick="toggleFullScreen();">
@@ -441,11 +474,15 @@
                         </div><!-- #cam-menu-panel -->
 
                         <div id="tree-cam-menu-panel" class="mobtab" style="display: none; height: 98%;">
-                            <div class="panel panel-success" style="height: 48%;">
+                            <div class="panel panel-danger" style="height: 18%;">
+                              <div class="panel-heading"><label>Work In Progress</label></div>
+                              <div class="panel-body" style="height:calc(100% - 56px); overflow-y:scroll;">This Tree based CAM is not implemented yet. Check back soon, for now, use CAM menu on the left. See <a href="https://github.com/openhardwarecoza/LaserWeb3/issues/52" target="_blank">issue 52</a> for progress...</div>
+                            </div>
+                            <div class="panel panel-success" style="height: 38%;">
                                 <div id="filetreeheader" class="panel-heading"></div>
                                 <div id="filetree" class="panel-body" style="height:calc(100% - 56px); overflow-y:scroll;"></div>
                             </div>
-                            <div class="panel panel-success" style="height: 48%;">
+                            <div class="panel panel-success" style="height: 38%;">
                                 <div id="toolpathtreeheader" class="panel-heading"></div>
                                 <div id="toolpathtree" class="panel-body" style="height:calc(100% - 56px); overflow-y:scroll;"></div>
                             </div>
@@ -638,6 +675,11 @@
                                 <div id="menu3" class="tab-pane fade">
                                     <p>Configure how the application works, turn on/off features:</p>
                                     <form class="form-horizontal">
+                                        <label for="safetyLockDisabled" class="control-label">Disable Safety Lock</label>
+                                        <select id="safetyLockDisabled" class="form-control">
+                                            <option>Disable</option>
+                                            <option>Enable</option>
+                                        </select>
                                         <label for="cncMode" class="control-label">Enable CNC Cam <span style="color:#FFA500;">(CNCWeb Mode)</span></label>
                                         <select id="cncMode" class="form-control">
                                             <option>Disable</option>
@@ -919,7 +961,7 @@
                                         <div id="console"></div><!-- console -->
                                         <div class="input-group btn-group" style="margin-left: 10px;">
                                             <span class="input-group-addon"><i class="fa fa-terminal fa-lg"></i></span>
-                                            <input id="command" type="text" autocomplete="on" class="form-control numpadgcode uppercase" />
+                                            <input id="command" type="text" autocomplete="on" class="form-control numpadgcode" />
                                             <span class="input-group-btn">
                                                 <button id="sendCommand" class="btn btn-default" type="button">
                                                     <i class="fa fa-play" style="margin-right: 10px;"></i> Send
@@ -957,12 +999,13 @@
                         <li id="quote-menu" class="leftmenuitem">
                             <a href="#"><i class="fa fa-money"></i><span>Quote</span></a>
                         </li>
-                        <li id="settings-menu" class="leftmenuitem">
-                            <a href="#"><i class="fa fa-cogs"></i><span>Settings</span></a>
-                        </li>
                         <li id="stats-menu" class="leftmenuitem">
                             <a href="#"><i class="fa fa-info-circle"></i><span>Stats</span></a>
                         </li>
+                        <li id="settings-menu" class="leftmenuitem">
+                            <a href="#"><i class="fa fa-cogs"></i><span>Settings</span></a>
+                        </li>
+
                     </ul>
                 </div>
             </div><!-- .sidebar-menu -->
@@ -1205,6 +1248,10 @@
     <!-- Smoothie Ethernet -->
     <script type="text/javascript" src="js/smoothie.js"></script>
 
+    <!-- ESP8266 Websocket Bridge -->
+    <script type="text/javascript" src="js/esp8266.js"></script>
+
+
     <!-- Grbl -->
     <script type="text/javascript" src="js/grbl.js"></script>
 
@@ -1234,7 +1281,7 @@
     <script type="text/javascript" src="js/google-analytics.js"></script>
 
     <!-- Stats Page -->
-    <script type="text/javascript" src="js/stats.js"></script>    
+    <script type="text/javascript" src="js/stats.js"></script>
 
 
 </html>

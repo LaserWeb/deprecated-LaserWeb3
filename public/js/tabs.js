@@ -120,6 +120,7 @@ function initTabs() {
             scene.remove(boundingBox);
         }
           if (typeof(object) != 'undefined') {
+          clearScene();
           scene.add(object);
           attachBB(object);
         } else {
