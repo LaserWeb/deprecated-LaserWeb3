@@ -1,6 +1,6 @@
 # LaserWeb
 
-As this project pushes forward (with the brilliant direction of Peter Van der Waalt at the helm, and some very talented contributors), please remember that Rome wasn't built in a day. This is a totally non profit open source project, all contributors and testers are volunteers who share a love of all things making, lasers included. That being said, if history has anything to say about it, this project should advance very quickly. (A fourth version is already in the beggining stages)Check the LaserWeb/CNCWeb Google+ community (https://plus.google.com/u/0/communities/115879488566665599508) for updates on the progress of the newest iteration of LaserWeb.
+Check the LaserWeb/CNCWeb Google+ community (https://plus.google.com/u/0/communities/115879488566665599508) for updates on the progress of the newest iteration of LaserWeb.
 
 Donations to the developers to further things along are always welcome, but even if you can not contribute financially, if you use LaserWeb and like it, spread the word around. More users translates into more contributors which then allows for faster, feature rich development.
 
@@ -29,13 +29,6 @@ By using this software, the user accepts complete responsibility for each and ev
 5. You relieve the author and contributors from any liability arising from the use or distribution of the LaserWeb software.
 6. You are entirely operating at your own risk. Lasers can be lethally dangerous. 
 
-## What's new / planned for LaserWeb 
-
-* A ground up rewrite of the serial comms layer (In progress:  Smoothieware support is done, Marlin support is available for testing and further development, and Grbl support needs to be written next) 
-* A new tabbed multilayer CAM system that allows you to load dxfs, svgs, stls and rasters into the SAME job! (Implemented, needs testing)
-* A new costing estimate module - for those of you who make money out of your lasers - should help you qoute just a little more accurate (Already implemented)
-* Smoothieware Ethernet support (nearly done)
-* Rotary Axis Support (planned)
 
 ![Screenshot](https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/screenshot.png)
 
