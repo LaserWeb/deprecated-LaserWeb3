@@ -726,10 +726,9 @@ function viewToolpath(i) {
 }
 
 function clearScene() {
-    var total = scene.children.length
-    for (var x = 0; x < total; x++) {
-        // console.log('Removing ' + scene.children[x].name + ' from scene')
-        scene.remove(scene.children[x]);
+    // From http://stackoverflow.com/questions/29417374/threejs-remove-all-together-object-from-scene - do -- not ++
+    for ( var i = scene.children.length - 1; i >= 0; i--) {
+        scene.remove(scene.children[i]);
     }
     scene.add(workspace);
 }
