@@ -381,10 +381,9 @@ function loadFile(f) {
                 // cleanupThree();
                 $("#gcodefile").show();
                 document.getElementById('gcodepreview').value = this.result;
-                openGCodeFromText();
                 printLog('GCODE Opened', msgcolor, "file");
                 resetView()
-                setTimeout(function(){ $('#generategcode').click(); }, 500);
+                setTimeout(function(){   openGCodeFromText(); }, 500);
             };
         } else if (f.name.match(/.nc$/i)) {
               r.readAsText(f);
@@ -392,10 +391,9 @@ function loadFile(f) {
                   // cleanupThree();
                   $("#gcodefile").show();
                   document.getElementById('gcodepreview').value = this.result;
-                  openGCodeFromText();
                   printLog('GCODE Opened', msgcolor, "file");
                   resetView()
-                  setTimeout(function(){ $('#generategcode').click(); }, 500);
+                  setTimeout(function(){   openGCodeFromText(); }, 500);
               };
         } else if (f.name.match(/.stl$/i)) {
             //r.readAsText(f);
