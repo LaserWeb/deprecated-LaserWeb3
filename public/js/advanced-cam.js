@@ -398,8 +398,8 @@ function fillTree() {
                 // Polyline Object
                 childTemplate = `
                 <li class="item children`+i+`">
-                  <div class="checkbox">
-                    <input type="checkbox" class="fr chkaddjob chkchildof`+i+`" id="child.`+i+`.`+j+`" />
+                  <div class="checkbox item">
+                    <input type="checkbox" class="fr item chkaddjob chkchildof`+i+`" id="child.`+i+`.`+j+`" />
                     <i class="fa fa-fw fa-sm fa-object-ungroup" aria-hidden="true"></i>
                     <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`].children[`+j+`])" id="link`+i+`_`+j+`">`+currentChild.name+`</a>
                     <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
@@ -554,14 +554,15 @@ function fillTree() {
           var idx, i, j;
 
           if ($parent.hasClass('item')) {
-              idx = $parent.children('input').attr('id').split('.');
+              console.log('has item');
+              idx = $parent.find('input').attr('id').split('.');
               i = parseInt(idx[1]);
               j = parseInt(idx[2]);
               objectsInScene[i].remove(objectsInScene[i].children[j]);
           }
           else {
+              console.log('no item');
               var children = [];
-
               $parent.find('.item input').each(function(n, input) {
                   idx = $(input).attr('id').split('.');
                   i = parseInt(idx[1]);
