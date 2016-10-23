@@ -81,7 +81,7 @@ function drawRaster(name, data) {
 
     rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
     rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
-    rastermesh.position.z = -0.9;
+    rastermesh.position.z = -0.01;
     rastermesh.name = name;
     rastermesh.userData.imgdata = data;  // store B64 image data in the userData for later use
 
@@ -132,13 +132,13 @@ function runRaster(index) {
   var maxpwr = $("#maxpwr"+index).val();
 
   var img = new Image();
-  // This is deferred until the image is loaded, then the actual raster is run. 
+  // This is deferred until the image is loaded, then the actual raster is run.
   img.onload = function() {
     var height = img.naturalHeight;
     var width = img.naturalWidth;
 
     var physheight = (height / rasterDPI) * 25.4;
-    var physwidth = (width / rasterDPI) * 25.4; 
+    var physwidth = (width / rasterDPI) * 25.4;
     var spotSize = (physwidth / width);
 
     paper.RasterNow({
