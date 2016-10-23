@@ -50,4 +50,13 @@ Smoothieware is also a massively faster (up to 120Mhz vs the 16Mhz of the Arduin
 
 `**`Marlin and Grbl Firmwares support grayscale, but don't modulate power according to acceleration: Thus start/end of raster moves burn a little darker.  On some machines / some graphics, this can really look bad, so i'd rather not say "yes" since the experience is not what it could be.  Again, Smoothieware is sooo much better at this!
 
+## Wishlist
 
+If you want to contribute, the below are long standing community-requested enhancements, that a) we don't have time to code or b) don't know how to
+
+* GCODE Optimiser - to cut down on G0 moves (something like http://parano.github.io/GeneticAlgorithm-TSP/)
+* Realtime commands:  Our present implementation adds commands to the back of the queue, we need some code enhancement to do `if playing == true, then prepend the following commands to the front of the queue` for things like feedrate / power / spindle override
+* More Controllers! Help us code up the Marlin and TinyG interfaces
+* Smoothieware Ethernet - is about halfway done - if you'd like to help, please continue on from https://github.com/openhardwarecoza/LaserWeb3/issues/16
+* Rotary Support - initial groundwork is done - but needs a lot of work to be fully usable https://github.com/openhardwarecoza/LaserWeb3/issues/51
+* Vendor specific enhancements (PAID WORK OPPORTUNITY) - there are a few vendor specific enhancements, that companies are willing to pay to get done... See the labels on the Issues page, for example Emblaser/DarklyLabs: https://github.com/openhardwarecoza/LaserWeb3/issues?q=is%3Aissue+is%3Aopen+label%3A%22EMBLASER+%2F+DARKLYLABS%22
