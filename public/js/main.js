@@ -209,7 +209,7 @@ $(document).ready(function() {
 
     cncMode = $('#cncMode').val()
     if (cncMode == "Enable") {
-        document.title = "&#128295; CNCWeb";
+        document.title = "CNCWeb";
         $("#statusmodal").modal('show');
         $("#statusTitle").html("<h4>CNC Mode Activated</h4>");
         $("#statusBody").html("Note: You have activated <b>CNC mode</b> from <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>");

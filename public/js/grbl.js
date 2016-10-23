@@ -126,7 +126,7 @@ Grbl.prototype = function() {
             switch (messageType) {
                 case 'statusReport':
                     // remove first < and last > and split on , and :
-                    var rawMessageArray = data.substr(data.indexOf('<') + 1, data.indexOf('>') - 1).split(/,|:/);
+                    var rawMessageArray = data.substr(data.indexOf('<') + 1, data.indexOf('>') - 1).split(/,|:|\|/);
 
                     if (!_checkStatusReportForError(rawMessageArray)) {
                         grblState = {
