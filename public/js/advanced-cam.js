@@ -257,77 +257,91 @@ function fillTree() {
             if (objectsInScene[i].type != "Mesh") {
                 var file = `
                 <tr class="jobsetupfile topborder">
-                <td class="filename">
-                <i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i>&nbsp;
-                <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
-                </td>
-                <td id="buttons`+i+`">
-                <a class="btn btn-xs btn-primary" onclick="$('#move`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-arrows" aria-hidden="true"></i></a>
-                <a class="btn btn-xs btn-danger remove" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
-                </td>
-                <td>
-                <input type="checkbox" value="" onclick=" $('.chkchildof`+i+`').prop('checked', $(this).prop('checked'));" id="selectall`+i+`" />
-                </td>
+                  <td class="filename">
+                    <i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i>&nbsp;
+                    <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
+                  </td>
+                  <td id="buttons`+i+`">
+                    <a class="btn btn-xs btn-primary" onclick="$('#move`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-arrows" aria-hidden="true"></i></a>
+                    <a class="btn btn-xs btn-danger remove" onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
+                  </td>
+                  <td>
+                    <input type="checkbox" value="" onclick=" $('.chkchildof`+i+`').prop('checked', $(this).prop('checked'));" id="selectall`+i+`" />
+                  </td>
                 </tr>
                 <tr class="jobsetupfile" id="move`+i+`" style="display: none;">
-                <td colspan="3">
-                <label >Position Offset</label>
-                <table><tr><td>
-                <div class="input-group">
-                <span class="input-group-addon input-group-addon-xs">X:</span>
-                <input type="number" class="form-control input-xs" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="xoffset`+i+`" objectseq="`+i+`" step="1"><br>
-                <span class="input-group-addon input-group-addon-xs">mm</span>
-                </div></td><td>
-                <div class="input-group">
-                <span class="input-group-addon input-group-addon-xs">Y:</span>
-                <input type="number" class="form-control input-xs" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="yoffset`+i+`" objectseq="`+i+`" step="1">
-                <span class="input-group-addon input-group-addon-xs">mm</span>
-                </div></td></tr></table>
-                </td>
+                  <td colspan="3">
+                    <label >Position Offset</label>
+                    <table>
+                      <tr>
+                        <td>
+                          <div class="input-group">
+                            <span class="input-group-addon input-group-addon-xs">X:</span>
+                            <input type="number" class="form-control input-xs" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="xoffset`+i+`" objectseq="`+i+`" step="1"><br>
+                            <span class="input-group-addon input-group-addon-xs">mm</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="input-group">
+                            <span class="input-group-addon input-group-addon-xs">Y:</span>
+                            <input type="number" class="form-control input-xs" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="yoffset`+i+`" objectseq="`+i+`" step="1">
+                            <span class="input-group-addon input-group-addon-xs">mm</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
                 </tr>
                 `
             } else {
                 var file = `
                 <tr class="jobsetupfile topborder">
-                <td class="filename">
-                <i class="fa fa-fw fa-file-photo-o" aria-hidden="true"></i>&nbsp;
-                <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
-                </td>
-                <td>
-                <a class="btn btn-xs btn-warning" onclick="tracebmp(`+i+`, '`+objectsInScene[i].name+`')"><i class="fa fa-scissors" aria-hidden="true"></i></a>
-                <a class="btn btn-xs btn-primary" onclick="$('#scale`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-expand" aria-hidden="true"></i></a>
-                <a class="btn btn-xs btn-primary" onclick="$('#move`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-arrows" aria-hidden="true"></i></a>
-                <a class="btn btn-xs btn-danger"  onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
-                </td>
-                <td>
-                <input type="checkbox" value="" class="chkaddjob" id="child.`+i+`" />
-                </td>
+                  <td class="filename">
+                    <i class="fa fa-fw fa-file-photo-o" aria-hidden="true"></i>&nbsp;
+                    <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`]);"><b>` + objectsInScene[i].name + `</b></a>
+                  </td>
+                  <td>
+                    <a class="btn btn-xs btn-warning" onclick="tracebmp(`+i+`, '`+objectsInScene[i].name+`')"><i class="fa fa-scissors" aria-hidden="true"></i></a>
+                    <a class="btn btn-xs btn-primary" onclick="$('#scale`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-expand" aria-hidden="true"></i></a>
+                    <a class="btn btn-xs btn-primary" onclick="$('#move`+i+`').toggle(); $(this).toggleClass('active');"><i class="fa fa-arrows" aria-hidden="true"></i></a>
+                    <a class="btn btn-xs btn-danger"  onclick="objectsInScene.splice('`+i+`', 1); fillTree(); fillLayerTabs();"><i class="fa fa-times" aria-hidden="true"></i></a>
+                  </td>
+                  <td>
+                    <input type="checkbox" value="" class="chkaddjob" id="child.`+i+`" />
+                  </td>
                 </tr>
                 <tr class="jobsetupfile" id="move`+i+`" style="display: none;">
-                <td colspan="3">
-                <label >Position Offset</label>
-                <table><tr><td>
-                <div class="input-group">
-                <span class="input-group-addon input-group-addon-xs">X:</span>
-                <input type="number" class="form-control input-xs" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`" step="1"><br>
-                <span class="input-group-addon input-group-addon-xs">mm</span>
-                </div></td><td>
-                <div class="input-group">
-                <span class="input-group-addon input-group-addon-xs">Y:</span>
-                <input type="number" class="form-control input-xs" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`" step="1">
-                <span class="input-group-addon input-group-addon-xs">mm</span>
-                </div></td></tr></table>
-                </td>
-                </tr>
-                <tr class="jobsetupfile" id="scale`+i+`" style="display: none;">
-                <td colspan="3">
-                <label>Bitmap Resolution</label>
-                <div class="input-group">
-                <input type="number" class="form-control input-xs" value="`+(25.4/scale).toFixed(1)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
-                <span class="input-group-addon input-group-addon-xs">DPI</span>
-                </div>
-                </td>
-                </tr>
+                  <td colspan="3">
+                    <label >Position Offset</label>
+                      <table>
+                        <tr>
+                          <td>
+                            <div class="input-group">
+                              <span class="input-group-addon input-group-addon-xs">X:</span>
+                              <input type="number" class="form-control input-xs" xoffset="`+xoffset+`" value="`+ -(xoffset - xpos)+`"  id="rasterxoffset`+i+`" objectseq="`+i+`" step="1"><br>
+                              <span class="input-group-addon input-group-addon-xs">mm</span>
+                            </div>
+                          </td>
+                          <td>
+                            <div class="input-group">
+                              <span class="input-group-addon input-group-addon-xs">Y:</span>
+                              <input type="number" class="form-control input-xs" yoffset="`+yoffset+`" value="`+ -(yoffset - ypos)+`"  id="rasteryoffset`+i+`" objectseq="`+i+`" step="1">
+                              <span class="input-group-addon input-group-addon-xs">mm</span>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr class="jobsetupfile" id="scale`+i+`" style="display: none;">
+                    <td colspan="3">
+                      <label>Bitmap Resolution</label>
+                        <div class="input-group">
+                          <input type="number" class="form-control input-xs" value="`+(25.4/scale).toFixed(1)+`" id="rasterDPI`+i+`" objectseq="`+i+`">
+                          <span class="input-group-addon input-group-addon-xs">DPI</span>
+                        </div>
+                      </td>
+                    </tr>
                 `
             }
 
@@ -381,12 +395,15 @@ function fillTree() {
 
                 $parentGroup = $childGroup;
 
+                // Polyline Object
                 childTemplate = `
                 <li class="item children`+i+`">
-                <input type="checkbox" value="" class="fr chkaddjob chkchildof`+i+`" id="child.`+i+`.`+j+`" />
-                <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
-                <i class="fa fa-fw fa-sm fa-object-ungroup" aria-hidden="true"></i>&nbsp;
-                <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`].children[`+j+`])" id="link`+i+`_`+j+`">`+currentChild.name+`</a>
+                  <div class="checkbox">
+                    <input type="checkbox" class="fr chkaddjob chkchildof`+i+`" id="child.`+i+`.`+j+`" />
+                    <i class="fa fa-fw fa-sm fa-object-ungroup" aria-hidden="true"></i>
+                    <a class="entity" href="#" onclick="attachBB(objectsInScene[`+i+`].children[`+j+`])" id="link`+i+`_`+j+`">`+currentChild.name+`</a>
+                    <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
+                  </div>
                 </li>
                 `;
 
@@ -398,17 +415,19 @@ function fillTree() {
                         $parentGroup = $('#' + childLayer.parent.id);
 
                         if (! $parentGroup.length) {
+                           // SVG Group
                             currentTable = `
                             <li class="group">
-                                <input type="checkbox" value="" class="fr chkaddjob chkchildof`+i+`" />
-                                <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
-                                <span class="fr counter label label-info">0</span>
+                              <div class="checkbox">
+                                <input type="checkbox" class="fr chkaddjob chkchildof`+i+`" />
                                 <i class="fa fa-fw fa-sm fa-object-group" aria-hidden="true"></i>&nbsp;
                                 <a class="entity toggle" href="#" onclick="return false;">`+childLayer.parent.label+`</a>
+                                <span class="counter label label-info">0</span>
+                                <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
                                 <ul id="`+childLayer.parent.id+`"></ul>
+                              </div>
                             </li>
                             `;
-
                             $childGroup.append(currentTable);
                             $parentGroup = $('#' + childLayer.parent.id);
                         }
@@ -417,14 +436,17 @@ function fillTree() {
                     $currentTable = $('#' + childLayer.id);
 
                     if (! $currentTable.length) {
+                        // Layer
                         currentTable = `
                         <li class="group">
-                            <input type="checkbox" value="" class="fr chkaddjob chkchildof`+i+`" />
-                            <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
-                            <span class="fr counter label label-info">0</span>
+                          <div class="checkbox">
+                            <input type="checkbox" class="fr chkaddjob chkchildof`+i+`" />
                             <i class="fa fa-fw fa-sm fa-object-group" aria-hidden="true"></i>&nbsp;
                             <a class="entity toggle" href="#">`+childLayer.label+`</a>
+                            <span class="counter label label-info">0</span>
+                            <a class="fr remove btn btn-xs btn-danger"><i class="fa fa-times" aria-hidden="true"></i></a>
                             <ul id="`+childLayer.id+`"></ul>
+                          </div>
                         </li>
                         `;
 
@@ -476,9 +498,8 @@ function fillTree() {
         $('.jobsetuptable .group').each(function(n, group) {
             var $group = $(group);
             var $items = $group.find('.item');
-            var $counter = $group.children('.counter');
+            var $counter = $group.find('.counter');
             var groupId = $group.children('ul').attr('id');
-
             $counter.html($items.length);
 
             if (collapsedGroups[groupId]) {
@@ -528,31 +549,32 @@ function fillTree() {
         });
 
         $('.jobsetupgroup .remove').on('click', function() {
-            var $parent = $(this).parent();
-            var idx, i, j;
+          var $parent = $(this).parent();
+          console.log($parent)
+          var idx, i, j;
 
-            if ($parent.hasClass('item')) {
-                idx = $parent.children('input').attr('id').split('.');
-                i = parseInt(idx[1]);
-                j = parseInt(idx[2]);
-                objectsInScene[i].remove(objectsInScene[i].children[j]);
-            }
-            else {
-                var children = [];
+          if ($parent.hasClass('item')) {
+              idx = $parent.children('input').attr('id').split('.');
+              i = parseInt(idx[1]);
+              j = parseInt(idx[2]);
+              objectsInScene[i].remove(objectsInScene[i].children[j]);
+          }
+          else {
+              var children = [];
 
-                $parent.find('.item input').each(function(n, input) {
-                    idx = $(input).attr('id').split('.');
-                    i = parseInt(idx[1]);
-                    j = parseInt(idx[2]);
-                    children.push(objectsInScene[i].children[j]);
-                });
+              $parent.find('.item input').each(function(n, input) {
+                  idx = $(input).attr('id').split('.');
+                  i = parseInt(idx[1]);
+                  j = parseInt(idx[2]);
+                  children.push(objectsInScene[i].children[j]);
+              });
 
-                for (var n = 0; n < children.length; n++) {
-                    objectsInScene[i].remove(children[n]);
-                }
-            }
+              for (var n = 0; n < children.length; n++) {
+                  objectsInScene[i].remove(children[n]);
+              }
+          }
 
-            fillTree();
+          fillTree();
 
         });
 

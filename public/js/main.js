@@ -384,7 +384,19 @@ function loadFile(f) {
                 openGCodeFromText();
                 printLog('GCODE Opened', msgcolor, "file");
                 resetView()
+                setTimeout(function(){ $('#generategcode').click(); }, 500);
             };
+        } else if (f.name.match(/.nc$/i)) {
+              r.readAsText(f);
+              r.onload = function(event) {
+                  // cleanupThree();
+                  $("#gcodefile").show();
+                  document.getElementById('gcodepreview').value = this.result;
+                  openGCodeFromText();
+                  printLog('GCODE Opened', msgcolor, "file");
+                  resetView()
+                  setTimeout(function(){ $('#generategcode').click(); }, 500);
+              };
         } else if (f.name.match(/.stl$/i)) {
             //r.readAsText(f);
             // Remove the UI elements from last run
