@@ -727,15 +727,11 @@ function viewToolpath(i) {
 
 function clearScene() {
     var total = scene.children.length
-    for (var x = 7; x < total; x++) {
+    for (var x = 0; x < total; x++) {
         // console.log('Removing ' + scene.children[x].name + ' from scene')
         scene.remove(scene.children[x]);
     }
-    var total = scene.children.length
-    for (var x = 7; x < total; x++) {
-        // console.log('Removing ' + scene.children[x].name + ' from scene')
-        scene.remove(scene.children[x]);
-    }
+    scene.add(workspace);
 }
 
 function resetColors() {
