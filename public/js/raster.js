@@ -131,15 +131,7 @@ function runRaster(index) {
   var minpwr = $("#minpwr"+index).val();
   var maxpwr = $("#maxpwr"+index).val();
 
-  var optimisegcode = false;
-  var optimisegcodeval = $('#optimisegcode').val()
-  if (optimisegcodeval == "Enable") {
-    optimisegcode = true;
-    console.log("Raster:  GCODE Concatenation is Enabled")
-  } else {
-    optimisegcode = false;
-    console.log("Raster:  GCODE Concatenation is Disabled")
-  }
+  var optimisegcode = $('#optimisegcode').val()
 
 
   var img = new Image();
