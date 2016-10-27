@@ -95,9 +95,9 @@ function Rasterizer(config) {
         '; White Speed: {3}mm/m',
         '; Resolution (mm per pixel): {4}mm',
         '; Laser Spot Size: {5}mm',
-        '; X Offset: {8}mm',
-        '; Y Offset: {9}mm \n',
-        'G0 F{7}\n'
+        '; X Offset: {7}mm',
+        '; Y Offset: {8}mm \n',
+        'G0 F{6}\n'
     ].join('\n').format(
         this.config.minIntensity,
         this.config.maxIntensity,
@@ -105,10 +105,15 @@ function Rasterizer(config) {
         this.config.whiteRate,
         this.config.spotSize1,
         this.config.beamSize1,
-        this.config.feedRate,
         this.config.rapidRate,
         this.config.xOffset,
         this.config.yOffset);
+
+      if (this.config.optimiseGcode == "Enable") {
+        console.log("Raster:  GCODE Concatenation is Enabled")
+      } else {
+        console.log("Raster:  GCODE Concatenation is Disabled")
+      }
 }
 
 Rasterizer.prototype.figureIntensity = function() {
@@ -221,6 +226,7 @@ Rasterizer.prototype.rasterRow = function(y) {
     // Clear grayscale values on each line change
     var lastGrey = -1;
     var lastIntensity = -1;
+    var lastFeed = -1;
 
     // Get a row of pixels to work with
     var ImgData = this.raster.getImageData(0, y, this.raster.width, 1);
@@ -251,7 +257,8 @@ Rasterizer.prototype.rasterRow = function(y) {
 	this.grayLevel = lumaGray.toFixed(3);
 	this.graLevel = lumaGray.toFixed(1);
 
-	var speed = this.config.feedRate;
+
+	var speed = lastFeed;
         if (lastGrey != this.grayLevel) {
             intensity = this.figureIntensity();
             speed = this.figureSpeed(lastGrey);
@@ -267,11 +274,12 @@ Rasterizer.prototype.rasterRow = function(y) {
         }
 
         // If we dont match the grayscale, we need to write some gcode...
-        if (intensity != lastIntensity) {
+        if ((intensity != lastIntensity) || (this.config.optimiseGcode != "Enable")) {
+
             this.moveCount++;
 
             //console.log('From: ' + this.lastPosx + ', ' + lastPosy + '  - To: ' + posx + ', ' + posy + ' at ' + lastIntensity + '%');
-            if (lastIntensity > 0) {
+            if (lastIntensity > 0.05) {
               if (!isLaserOn) {
                 if (laseron) {
                     this.result += laseron
@@ -279,13 +287,19 @@ Rasterizer.prototype.rasterRow = function(y) {
                 }
                 isLaserOn = true;
               }
-              this.result += 'G1 X{0} S{2} F{3}\n'.format(posx, gcodey, lastIntensity, speed);
+              if (lastFeed == speed) {
+                // console.log("SAME " + lastFeed + " " + speed)
+                this.result += 'G1 X{0} S{2}\n'.format(posx, gcodey, lastIntensity);
+              } else {
+                // console.log("DIFF " + lastFeed + " " + speed)
+                this.result += 'G1 X{0} S{2} F{3}\n'.format(posx, gcodey, lastIntensity, speed);
+              }
               // if (laseroff) {
               //     this.result += laseroff
               //     this.result += '\n'
               // }
             } else {
-              if ((intensity > 0) || (this.config.optimizelineends == false)) {
+              if ((intensity > 0.05) || (this.config.optimizelineends == false)) {
                 if (isLaserOn) {
                   if (laseroff) {
                       this.result += laseroff
@@ -298,6 +312,7 @@ Rasterizer.prototype.rasterRow = function(y) {
               }
             }
         } else {
+            console.log("Skipped")
             this.skip++
         }
         // End of write a line of gcode
@@ -306,6 +321,7 @@ Rasterizer.prototype.rasterRow = function(y) {
         // Store values to use in next loop
         if (intensity != lastIntensity) {
             lastIntensity = intensity;
+            lastFeed = speed;
         }
     }
     isLaserOn = false;

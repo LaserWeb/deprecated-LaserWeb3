@@ -131,6 +131,9 @@ function runRaster(index) {
   var minpwr = $("#minpwr"+index).val();
   var maxpwr = $("#maxpwr"+index).val();
 
+  var optimisegcode = $('#optimisegcode').val()
+
+
   var img = new Image();
   // This is deferred until the image is loaded, then the actual raster is run.
   img.onload = function() {
@@ -158,8 +161,8 @@ function runRaster(index) {
         yOffset: [yoffset],
         imagePos: [imagePosition],
         physicalHeight: [physheight],
-        physicalWidth: [physwidth]
-
+        physicalWidth: [physwidth],
+        optimiseGcode: [optimisegcode]
     });
   };
 

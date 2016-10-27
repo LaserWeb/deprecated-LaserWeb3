@@ -303,4 +303,5 @@ function updateStatus(data) {
     if (bullseye) {
       setBullseyePosition(pos[0], pos[1], pos[2]); // Also updates #mX #mY #mZ
     }
-}}
+  }
+}
