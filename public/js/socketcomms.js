@@ -256,58 +256,51 @@ function homeMachine() {
 };
 
 function updateStatus(data) {
-  // https://github.com/grbl/grbl/wiki/Configuring-Grbl-v0.8#---current-status
-  // remove first <
-  var t = data.substr(1);
-    // remove last >
-  t = t.substr(0,t.length-3);
-  // split on , and :
-  t = t.split(/,|:|>/);
-  //<Idle,MPos:26.7550,0.0850,0.0000,WPos:26.7550,0.0850,0.0000>
+  // till GRBL v0.9: <Idle,MPos:0.000,0.000,0.000,WPos:0.000,0.000,0.000>
+  // since GRBL v1.1: <Idle|WPos:0.000,0.000,0.000|Bf:15,128|FS:0,0|Pn:S|WCO:0.000,0.000,0.000> (when $10=2!)
 
-  var state = t[0].replace(/(\r\n|\n|\r|<)/gm,"");
+  // Extract state
+  var state = data.substring(data.indexOf('<') + 1, data.search(/(,|\|)/));
 
+  // Extract WPos
+  var start = data.search(/wpos:/i) + 5;
+  if (start){
+    var pos = data.replace('>','').substr(start).split(/,|\|/, 3);
+  }
 
-  //0 status
-  //1 MPos
-  //2 mx
-  //3 my
-  //4 mz
-  //5 WPos
-  //6 wx
-  //7 wy
-  //8 wz
   if (state == 'Alarm') {
-    $("#machineStatus").removeClass('badge-ok')
-    $("#machineStatus").addClass('badge-notify')
-    $("#machineStatus").removeClass('badge-warn')
-    $("#machineStatus").removeClass('badge-busy')
+    $("#machineStatus").removeClass('badge-ok');
+    $("#machineStatus").addClass('badge-notify');
+    $("#machineStatus").removeClass('badge-warn');
+    $("#machineStatus").removeClass('badge-busy');
   } else if (state == 'Home') {
-    $("#machineStatus").removeClass('badge-ok')
-    $("#machineStatus").removeClass('badge-notify')
-    $("#machineStatus").removeClass('badge-warn')
-    $("#machineStatus").addClass('badge-busy')
+    $("#machineStatus").removeClass('badge-ok');
+    $("#machineStatus").removeClass('badge-notify');
+    $("#machineStatus").removeClass('badge-warn');
+    $("#machineStatus").addClass('badge-busy');
   } else if (state == 'Hold') {
-    $("#machineStatus").removeClass('badge-ok')
-    $("#machineStatus").removeClass('badge-notify')
-    $("#machineStatus").addClass('badge-warn')
-    $("#machineStatus").removeClass('badge-busy')
+    $("#machineStatus").removeClass('badge-ok');
+    $("#machineStatus").removeClass('badge-notify');
+    $("#machineStatus").addClass('badge-warn');
+    $("#machineStatus").removeClass('badge-busy');
   } else if (state == 'Idle') {
-    $("#machineStatus").addClass('badge-ok')
-    $("#machineStatus").removeClass('badge-notify')
-    $("#machineStatus").removeClass('badge-warn')
-    $("#machineStatus").removeClass('badge-busy')
+    $("#machineStatus").addClass('badge-ok');
+    $("#machineStatus").removeClass('badge-notify');
+    $("#machineStatus").removeClass('badge-warn');
+    $("#machineStatus").removeClass('badge-busy');
   } else if (state == 'Run') {
-    $("#machineStatus").removeClass('badge-ok')
-    $("#machineStatus").removeClass('badge-notify')
-    $("#machineStatus").removeClass('badge-warn')
-    $("#machineStatus").addClass('badge-busy')
+    $("#machineStatus").removeClass('badge-ok');
+    $("#machineStatus").removeClass('badge-notify');
+    $("#machineStatus").removeClass('badge-warn');
+    $("#machineStatus").addClass('badge-busy');
   }
   $('#machineStatus').html(state);
-  $('#mX').html(t[6]);
-  $('#mY').html(t[7]);
-  $('#mZ').html(t[8]);
-  if (bullseye) {
-    setBullseyePosition(t[6], t[7], t[8]); // Also updates #mX #mY #mZ
-  }
-}
+
+  if (Array.isArray(pos)){
+    $('#mX').html(pos[0]);
+    $('#mY').html(pos[1]);
+    $('#mZ').html(pos[2]);
+    if (bullseye) {
+      setBullseyePosition(pos[0], pos[1], pos[2]); // Also updates #mX #mY #mZ
+    }
+}}
