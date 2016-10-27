@@ -582,6 +582,11 @@
                                 <div id="menu2" class="tab-pane fade">
                                     Configure pre/post/control GCode commands:
                                     <form class="form-horizontal">
+                                        <label for="optimisegcode" class="control-label">Concatenate Raster X Moves <span style="color:#FFA500;">(Less serial, but more jerky movement on Smoothie)</span></label>
+                                        <select id="optimisegcode" class="form-control">
+                                            <option>Disable</option>
+                                            <option>Enable</option>
+                                        </select>
                                         <label for="startgcode" class="control-label">Start G-Code <span style="color:#FFA500;">(Optional)</span></label>
                                         <textarea id="startgcode" class="form-control numpadgcode uppercase" placeholder="For example G28 G90 M80 - supports multi line commands"></textarea>
                                         <label for="laseron" class="control-label">Laser ON Command <span style="color:#FFA500;">(Optional)</span></label>

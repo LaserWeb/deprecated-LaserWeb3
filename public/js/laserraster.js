@@ -109,6 +109,12 @@ function Rasterizer(config) {
         this.config.rapidRate,
         this.config.xOffset,
         this.config.yOffset);
+
+      // if (this.config.optimiseGcode == false) {
+      //   console.log("Raster:  GCODE Concatenation is Disabled")
+      // } else {
+      //   console.log("Raster:  GCODE Concatenation is Enabled")
+      // }
 }
 
 Rasterizer.prototype.figureIntensity = function() {
@@ -267,11 +273,11 @@ Rasterizer.prototype.rasterRow = function(y) {
         }
 
         // If we dont match the grayscale, we need to write some gcode...
-        if (intensity != lastIntensity) {
+        if (intensity != lastIntensity || this.config.optimiseGcode == false) {
             this.moveCount++;
 
             //console.log('From: ' + this.lastPosx + ', ' + lastPosy + '  - To: ' + posx + ', ' + posy + ' at ' + lastIntensity + '%');
-            if (lastIntensity > 0) {
+            if (lastIntensity > 0.05) {
               if (!isLaserOn) {
                 if (laseron) {
                     this.result += laseron
@@ -285,7 +291,7 @@ Rasterizer.prototype.rasterRow = function(y) {
               //     this.result += '\n'
               // }
             } else {
-              if ((intensity > 0) || (this.config.optimizelineends == false)) {
+              if ((intensity > 0.05) || (this.config.optimizelineends == false)) {
                 if (isLaserOn) {
                   if (laseroff) {
                       this.result += laseroff
