@@ -258,10 +258,6 @@ function homeMachine() {
 function updateStatus(data) {
   // till GRBL v0.9: <Idle,MPos:0.000,0.000,0.000,WPos:0.000,0.000,0.000>
   // since GRBL v1.1: <Idle|WPos:0.000,0.000,0.000|Bf:15,128|FS:0,0|Pn:S|WCO:0.000,0.000,0.000> (when $10=2!)
-  var version = 0;
-  if (data.search('|')){
-	version = 1;  
-  }
 
   // Extract state
   var state = data.substring(data.indexOf('<') + 1, data.search(/(,|\|)/));
