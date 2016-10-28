@@ -13,9 +13,9 @@ function initSocket() {
     if (data.indexOf('<') == 0) {
       updateStatus(data);
     } else if (data =='ok') {
-    printLog(data, '#cccccc', "usb")
+      printLog(data, '#cccccc', "usb");
     } else {
-    printLog(data, msgcolor, "usb")
+      printLog(data, msgcolor, "usb");
     }
   });
 
@@ -25,26 +25,26 @@ function initSocket() {
     for (i = 0; i< data.length; i++) {
       options.append($("<option />").val(data[i].comName).text(data[i].comName));
     }
-    $('#connect').removeClass('disabled')
+    $('#connect').removeClass('disabled');
     // Might as well pre-select the last-used port and buffer
     var lastUsed = loadSetting("lastUsedPort");
     var lastBaud = loadSetting("lastUsedBaud");
     $("#port option:contains(" + lastUsed + ")").attr('selected', 'selected');
     $("#baud option:contains(" + lastBaud + ")").attr('selected', 'selected');
-	});
+  });
 
   socket.on('activePorts', function (data) {
-    console.log('activePorts' + data)
+    console.log('activePorts' + data);
   });
 
   socket.on('connectStatus', function (data) {
-		console.log(data);
-    $('#connectStatus').html(data)
+	console.log(data);
+    $('#connectStatus').html(data);
     $('#syncstatus').html('Socket OK');
-	});
+  });
 
   $('#refreshPort').on('click', function() {
-    $('#port').find('option').remove().end()
+    $('#port').find('option').remove().end();
     socket.emit('refreshPorts', 1);
     $('#syncstatus').html('Socket Refreshed');
   });
@@ -56,18 +56,18 @@ function initSocket() {
     isConnected = true;
     saveSetting("lastUsedPort", portName);
     saveSetting("lastUsedBaud", baudRate);
-    $('#closePort').removeClass('disabled')
+    $('#closePort').removeClass('disabled');
   });
 
   $('#closePort').on('click', function() {
     socket.emit('closePort', 1);
     isConnected = false;
-    $('#closePort').addClass('disabled')
+    $('#closePort').addClass('disabled');
     $('#machineStatus').html('Not Connected');
-    $("#machineStatus").removeClass('badge-ok')
-    $("#machineStatus").addClass('badge-notify')
-    $("#machineStatus").removeClass('badge-warn')
-    $("#machineStatus").removeClass('badge-busy')
+    $("#machineStatus").removeClass('badge-ok');
+    $("#machineStatus").addClass('badge-notify');
+    $("#machineStatus").removeClass('badge-warn');
+    $("#machineStatus").removeClass('badge-busy');
   });
 
   $('#sendCommand').on('click', function() {
@@ -78,7 +78,7 @@ function initSocket() {
 
   socket.on('qCount', function (data) {
     data = parseInt(data);
-    $('#queueCnt').html('Queued: ' + data)
+    $('#queueCnt').html('Queued: ' + data);
     if (data < 1) {
       $('#playicon').removeClass('fa-pause');
       $('#playicon').addClass('fa-play');
@@ -106,7 +106,7 @@ function sendGcode(gcode) {
   // printLog("<i class='fa fa-arrow-right' aria-hidden='true'></i>"+ gcode, msgcolor)
   if(gcode) {
     // console.log('Sending', gcode)
-    var connectVia = $('#connectVia').val()
+    var connectVia = $('#connectVia').val();
     if (connectVia == "USB") {
       socket.emit('serialSend', gcode);
     } else if (connectVia == "Ethernet") {
@@ -116,10 +116,10 @@ function sendGcode(gcode) {
         if (ws.readyState == '1') {
           ws.send(gcode);
         } else {
-          printLog("Unable to send gcode: Not connected to Websocket: "+ gcode, errorcolor, "wifi")
+          printLog("Unable to send gcode: Not connected to Websocket: "+ gcode, errorcolor, "wifi");
         }
       } else {
-        printLog("Unable to send gcode: Not connected: "+ gcode, errorcolor, "wifi")
+        printLog("Unable to send gcode: Not connected: "+ gcode, errorcolor, "wifi");
       }
     }
   }
@@ -128,7 +128,7 @@ function sendGcode(gcode) {
 function stopMachine () {
   var laseroffcmd;
   laseroffcmd = document.getElementById('laseroff').value;
-  var connectVia = $('#connectVia').val()
+  var connectVia = $('#connectVia').val();
   if (connectVia == "USB") {
     if (laseroffcmd) {
       socket.emit('stop', laseroffcmd);
@@ -156,12 +156,11 @@ function stopMachine () {
       gcodeQueue = [];
       sendGcode('abort');
     }
-    $('#queueCnt').html('Queued: ' + gcodeQueue.length)
+    $('#queueCnt').html('Queued: ' + gcodeQueue.length);
   }
   $('#playicon').addClass('fa-play');
   $('#playicon').removeClass('fa-pause');
   playing = false;
-
 }
 
 function playpauseMachine() {
@@ -169,7 +168,7 @@ function playpauseMachine() {
     if (playing == true) {
       if (paused == true) {
         // sendGcode('~');
-        var connectVia = $('#connectVia').val()
+        var connectVia = $('#connectVia').val();
         if (connectVia == "USB") {
           socket.emit('unpause', 1);
         } else if (connectVia == "Ethernet") {
@@ -187,17 +186,17 @@ function playpauseMachine() {
         var laseroffcmd;
         laseroffcmd = document.getElementById('laseroff').value;
         if (laseroffcmd) {
-          var connectVia = $('#connectVia').val()
+          var connectVia = $('#connectVia').val();
           if (connectVia == "USB") {
             socket.emit('pause', laseroffcmd);
             paused = true;
           } else if (connectVia == "Ethernet") {
             runCommand('suspend');
-            runCommand(laseroffcmd)
+            runCommand(laseroffcmd);
             paused = true;
           } else if (connectVia == "ESP8266") {
             sendGcode("suspend");
-            sendGcode(laseroffcmd)
+            sendGcode(laseroffcmd);
             paused = true;
           }
         } else {
@@ -219,14 +218,14 @@ function playpauseMachine() {
     }
   // end isConnected
   } else {
-    printLog('You have to Connect to a machine First!', errorcolor, "usb")
+    printLog('You have to Connect to a machine First!', errorcolor, "usb");
   }
-};
+}
 
 function playGcode() {
   jobStartTime = new Date(Date.now());
   printLog("Job started at " + jobStartTime.toString(), msgcolor, "file");
-  var connectVia = $('#connectVia').val()
+  var connectVia = $('#connectVia').val();
   if (connectVia == "USB") {
     if (isConnected) {
       var g;
@@ -236,7 +235,7 @@ function playGcode() {
       $('#playicon').removeClass('fa-play');
       $('#playicon').addClass('fa-pause');
     } else {
-      printLog('Not Connected', errorcolor, "usb")
+      printLog('Not Connected', errorcolor, "usb");
     }
   } else if (connectVia == "Ethernet") {
     // Upload to SD Wizard
@@ -247,27 +246,21 @@ function playGcode() {
     playing = true;
     espPlay();
   }
-};
+}
 
 function homeMachine() {
     var homecommand;
     homecommand = document.getElementById('homingseq').value;
     sendGcode(homecommand);
-};
+}
 
 function updateStatus(data) {
+  // Smoothieware: <Idle,MPos:49.5756,279.7644,-15.0000,WPos:0.0000,0.0000,0.0000>  
   // till GRBL v0.9: <Idle,MPos:0.000,0.000,0.000,WPos:0.000,0.000,0.000>
-  // since GRBL v1.1: <Idle|WPos:0.000,0.000,0.000|Bf:15,128|FS:0,0|Pn:S|WCO:0.000,0.000,0.000> (when $10=2!)
+  // since GRBL v1.1: <Idle|WPos:0.000,0.000,0.000|Bf:15,128|FS:0,0|Pn:S|WCO:0.000,0.000,0.000> (when $10=0 or 2!)
 
   // Extract state
   var state = data.substring(data.indexOf('<') + 1, data.search(/(,|\|)/));
-
-  // Extract WPos
-  var start = data.search(/wpos:/i) + 5;
-  if (start){
-    var pos = data.replace('>','').substr(start).split(/,|\|/, 3);
-  }
-
   if (state == 'Alarm') {
     $("#machineStatus").removeClass('badge-ok');
     $("#machineStatus").addClass('badge-notify');
@@ -296,6 +289,16 @@ function updateStatus(data) {
   }
   $('#machineStatus').html(state);
 
+  // Extract Pos
+  var startPos = data.search(/wpos:/i) + 5;
+  if (startPos){
+    var pos = data.replace('>','').substr(startPos).split(/,|\|/, 3);
+  } else {
+	  var startPos = data.search(/mpos:/i) + 5;
+	  if (startPos){
+		var pos = data.replace('>','').substr(startPos).split(/,|\|/, 3);
+	  }
+  }
   if (Array.isArray(pos)){
     $('#mX').html(pos[0]);
     $('#mY').html(pos[1]);
