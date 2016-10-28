@@ -369,9 +369,9 @@ function loadFile(f) {
                 resetView()
 
                 // Lets also try Rastering for SVG
-                // var name = f.name;
-                // var data = event.target.result;
-                // drawRaster(name, data);
+                var name = f.name;
+                var data = event.target.result;
+                drawRaster(name, data);
             };
 
 

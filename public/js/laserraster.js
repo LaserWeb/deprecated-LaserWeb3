@@ -152,17 +152,17 @@ Rasterizer.prototype.figureSpeed = function(passedGrey) {
 Rasterizer.prototype.init = function(object) {
     // console.log('INIT Container: ', this.config.div)
     this.startTime = Date.now();
-
+    // console.log("Inside SVG Raster: Init")
     project.clear();
 
 
       if (object.name.match(/.svg$/i)) {
-        console.log("Inside SVG Raster")
+        // console.log("Inside SVG Raster")
         var img = new Image();
         var self = this; // hold parent scope
-
+        // console.log("Inside SVG Raster: Setup")
         img.onload = function() {
-          console.log("Inside SVG Raster: Onload")
+          // console.log("Inside SVG Raster: Onload")
           var canvas = document.createElement("canvas");
           // canvas.setAttribute("id", "rastercanv");
           // document.body.appendChild(img);
@@ -172,9 +172,9 @@ Rasterizer.prototype.init = function(object) {
           var ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0);
           self.raster = new Raster(canvas);
-          // console.log(self)
+          console.log(self)
           self.raster.visible = false;
-          self.raster.on('load', self.onRasterLoaded.bind(self));
+          self.raster.on('load', self.onRasterLoaded(self));
           // self.raster.on('load', console.log("Event Fires!"));
         }
         img.src = 'data:image/svg+xml;utf8,' + object.userData.imgdata;

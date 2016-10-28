@@ -193,7 +193,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           // console.log('StatusChkc')
             port.write('?');
             send1Q()
-        }, 100);
+        }, 200);
         queueCounter = setInterval(function(){
                  for (i in connections) {   // iterate over the array of connections
                    connections[i].emit('qCount', gcodeQueue.length)
@@ -267,6 +267,8 @@ function jumpQ(gcode) {
 function send1Q() {
   if (gcodeQueue.length > 0 && !blocked && !paused) {
     var gcode = gcodeQueue.shift()
+    // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth
+    gcode = gcode.replace(/\s+/g, '');
     console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length)
     lastSent = gcode
     port.write(gcode + '\n');
