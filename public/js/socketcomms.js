@@ -265,7 +265,7 @@ function updateStatus(data) {
   // Extract WPos
   var start = data.search(/wpos:/i) + 5;
   if (start){
-    var pos = data.substr(start).split(/,|\|/, 3);
+    var pos = data.replace('>','').substr(start).split(/,|\|/, 3);
   }
 
   if (state == 'Alarm') {
