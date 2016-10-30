@@ -257,7 +257,7 @@ function homeMachine() {
 function updateStatus(data) {
   // Smoothieware: <Idle,MPos:49.5756,279.7644,-15.0000,WPos:0.0000,0.0000,0.0000>  
   // till GRBL v0.9: <Idle,MPos:0.000,0.000,0.000,WPos:0.000,0.000,0.000>
-  // since GRBL v1.1: <Idle|WPos:0.000,0.000,0.000|Bf:15,128|FS:0,0|Pn:S|WCO:0.000,0.000,0.000> (when $10=0 or 2!)
+  // since GRBL v1.1: <Idle|WPos:0.000,0.000,0.000|Bf:15,128|FS:0,0|Pn:S|WCO:0.000,0.000,0.000> (when $10=2)
 
   // Extract state
   var state = data.substring(data.indexOf('<') + 1, data.search(/(,|\|)/));
@@ -306,5 +306,67 @@ function updateStatus(data) {
     if (bullseye) {
       setBullseyePosition(pos[0], pos[1], pos[2]); // Also updates #mX #mY #mZ
     }
+  }
+
+  // Extract override values
+  startOv = data.search(/Ov:/i) + 3;
+  if (startOv){
+    var ov = data.replace('>','').substr(startOv).split(/,|\|/, 3);
+    printLog("Overrides: " + ov[0] + ',' + ov[1] + ',' + ov[2],  msgcolor, "USB");
+	if (Array.isArray(ov)){
+	  $('#oF').val(ov[0]);
+	  //$('#oR').val(ov[1]);
+	  $('#oS').val(ov[2]);
+	}
+  }
+  
+  // Extract realtime Feedrate
+  var startFS = data.search(/FS:/i) + 3;
+  if (startFS){
+    var fs = data.replace('>','').substr(startFS).split(/,|\|/, 2);
+	if (Array.isArray(fs)){
+	  //$('#mF').html(fs[0].trim());
+	  //$('#mS').html(fs[1].trim());
+	}
+  }
+}
+
+function override(cmd) {
+  if (isConnected) {
+    var connectVia = $('#connectVia').val()
+    if (connectVia == "USB") {
+      var code;
+      switch (cmd) {
+        case 'Fr':
+          code = 0x90;
+          break;
+        case 'F+':
+          code = 0x91;
+          break;
+        case 'F-':
+          code = 0x92;
+          break;
+        case 'Sr':
+          code = 0x99;
+          break;
+        case 'S+':
+          code = 0x90;
+          break;
+        case 'S-':
+          code = 0x9B;
+          break;
+      }
+      if (code) {
+        socket.emit('override', code); //String.fromCharCode(parseInt(code, 16)));
+	  }
+    } else if (connectVia == "Ethernet") {
+      //runCommand('suspend');
+      //runCommand(laseroffcmd)
+    } else if (connectVia == "ESP8266") {
+      //sendGcode("suspend");
+      //sendGcode(laseroffcmd)
+    }
+  } else {
+    printLog('You have to Connect to a machine First!', errorcolor, "usb");
   }
 }
