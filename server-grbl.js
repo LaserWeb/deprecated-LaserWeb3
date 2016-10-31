@@ -158,7 +158,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
   socket.on('override', function(data) {
-    console.log('OVERRIDE: '+parseInt(data));
+    console.log('OVERRIDE: '+data);
     if (data) {
       jumpQ(data);
     }

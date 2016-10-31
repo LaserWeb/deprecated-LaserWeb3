@@ -190,6 +190,11 @@
                                             <i class="fa fa-arrow-down fa-stack-1x"></i>
                                         </span>
                                     </button>
+                                    <button id="rF" type="button" class="btn btn-sm" onclick="override('Fr');" style="padding:0;">
+                                        <span class="fa-stack fa-1x">
+                                            <i class="fa fa-home fa-stack-1x"></i>
+                                        </span>
+                                    </button>
                                 </div><br />
                                 <div class="drolabel">S:</div><div id="oS" class="droL">100</div>
                                 <div class="btn-group">
@@ -201,6 +206,11 @@
                                     <button id="dS" type="button" class="btn btn-sm" onclick="override('S-');" style="padding:0;">
                                         <span class="fa-stack fa-1x">
                                             <i class="fa fa-arrow-down fa-stack-1x"></i>
+                                        </span>
+                                    </button>
+                                    <button id="rS" type="button" class="btn btn-sm" onclick="override('Sr');" style="padding:0;">
+                                        <span class="fa-stack fa-1x">
+                                            <i class="fa fa-home fa-stack-1x"></i>
                                         </span>
                                     </button>
                                 </div>
@@ -1165,8 +1175,8 @@
     <script type="text/javascript" src="js/viewer.js"></script>
 
     <!-- Socket.io -->
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/js/socketcomms.js"></script>
+    <script type="text/javascript" src="lib/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="js/socketcomms.js"></script>
 
     <!-- DXF Library -->
     <script type="text/javascript" src="lib/dxf/dxf-parser.js"></script>
