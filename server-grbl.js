@@ -36,9 +36,10 @@ var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
+var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, queryLoop, infoLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
+var firmware = 'GRBL';
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -158,12 +159,49 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
   socket.on('override', function(data) {
-    console.log('OVERRIDE: '+data);
-    if (data) {
-      jumpQ(data);
+    console.log('OVERRIDE: ' + data);
+    var code;
+    switch (data) {
+      case 'Fr':
+        code = 144;
+        break;
+      case 'F++':
+        code = 145;
+        break;
+      case 'F--':	
+        code = 146;
+        break;
+      case 'F+':
+        code = 147;
+        break;
+      case 'F-':
+        code = 148;
+        break;
+      case 'Sr':
+        code = 153;
+        break;
+      case 'S++':
+        code = 154;
+        break;
+      case 'S--':
+        code = 155;
+        break;
+      case 'S+':
+        code = 156;
+        break;
+      case 'S-':
+        code = 157;
+        break;
+    }
+    if (code) {
+      jumpQ(String.fromCharCode(parseInt(code)));
     }
   });
 
+  socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
+    socket.emit("firmware", firmware);
+  });
+  
   socket.on('refreshPorts', function(data) { // Or when asked
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
@@ -191,18 +229,23 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.on('open', function() {
         socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
         socket.emit("connectStatus", 'opened:'+port.path);
-        // port.write("?\n"); // Lets check if its LasaurGrbl?
+        port.write("?"); // Lets check if its Grbl?
+        //port.write("?\n"); // Lets check if its LasaurGrbl?
         // port.write("M115\n"); // Lets check if its Marlin?
-        port.write("version\n"); // Lets check if its Smoothieware?
+        //port.write("version\n"); // Lets check if its Smoothieware?
         // port.write("$fb\n"); // Lets check if its TinyG
         console.log('Connected to ' + port.path + 'at ' + port.options.baudRate);
         isConnected = true;
         connectedTo = port.path;
         queryLoop = setInterval(function() {
           // console.log('StatusChkc')
+          //port.write('?');
+          send1Q();
+        }, 2000);
+        infoLoop = setInterval(function() {
           port.write('?');
           send1Q();
-        }, 100);
+        }, 250);
         queueCounter = setInterval(function(){
           for (var i in connections) {   // iterate over the array of connections
             connections[i].emit('qCount', gcodeQueue.length);
@@ -216,6 +259,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.on('close', function(err) { // open errors will be emitted as an error event
         clearInterval(queueCounter);
         clearInterval(queryLoop);
+		clearInterval(infoLoop);
         socket.emit("connectStatus", 'closed:'+port.path);
         isConnected = false;
         connectedTo = false;

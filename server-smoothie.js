@@ -39,6 +39,9 @@ var chalk = require('chalk');
 var isConnected, port, isBlocked, lastsent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
+var controllerVersion = 'Smoothie';
+var fOverride = 100;
+var sOverride = 100;
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -154,6 +157,54 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     }
   });
 
+  socket.on('override', function(data) {
+    console.log('OVERRIDE: ' + data);
+	var sType = data.substr(0,1);
+    switch (data) {
+      case 'Fr':
+        fOverride = 100;
+        break;
+      case 'F++':
+        fOverride += 10;
+        break;
+      case 'F--':	
+        fOverride -= 10;
+        break;
+      case 'F+':
+        fOverride += 1;
+        break;
+      case 'F-':
+        fOverride -= 1;
+        break;
+      case 'Sr':
+        sOverride = 100;
+        break;
+      case 'S++':
+        sOverride += 10;
+        break;
+      case 'S--':
+        sOverride -= 10;
+        break;
+      case 'S+':
+        sOverride += 1;
+        break;
+      case 'S-':
+        sOverride -= 1;
+        break;
+    }
+    switch (sType) {
+      case 'F': //Feed
+        jumpQ('M220 F' + fOverride);
+        break;
+      case 'R': // Rapid
+        //jumpQ('M220 R' + rOverride);
+        break;
+      case 'S': // Spindle/Laser PWM
+        jumpQ('M220 S' + sOverride);
+        break;
+    }
+  });
+
   socket.on('refreshPorts', function(data) { // Or when asked
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
@@ -261,7 +312,7 @@ function addQ(gcode) {
 }
 
 function jumpQ(gcode) {
-  gcodeQueue.unshift(gcode)
+  gcodeQueue.unshift(gcode);
 }
 
 function send1Q() {

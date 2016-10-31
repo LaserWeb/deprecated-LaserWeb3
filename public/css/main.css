@@ -227,6 +227,9 @@ font-family: '8bit'; /*a name to be used later*/
     margin-right: 0px;
     /*font-family: '8bit';*/
 }
+.hide {
+	display: none;
+}
 #console {
     height: 110px;
     width: 100%;

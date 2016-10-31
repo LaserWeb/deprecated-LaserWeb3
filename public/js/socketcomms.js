@@ -2,6 +2,7 @@ var socket, isConnected, connectVia;
 var jobStartTime = -1;
 var playing = false;
 var paused = false;
+var firmware;
 
 function initSocket() {
   socket = io.connect(''); // socket.io init
@@ -16,6 +17,10 @@ function initSocket() {
       printLog(data, '#cccccc', "usb");
     } else {
       printLog(data, msgcolor, "usb");
+    }
+	if (data.search('Grbl 1.1')) {
+      firmware = 'GRBL';
+	  $('#overrides').removeClass('hide');
     }
   });
 
@@ -68,6 +73,8 @@ function initSocket() {
     $("#machineStatus").addClass('badge-notify');
     $("#machineStatus").removeClass('badge-warn');
     $("#machineStatus").removeClass('badge-busy');
+	firmware = '';
+    $('#overrides').addClass('hide');
   });
 
   $('#sendCommand').on('click', function() {
@@ -332,37 +339,14 @@ function override(cmd) {
   if (isConnected) {
     var connectVia = $('#connectVia').val();
     if (connectVia === "USB") {
-      var code;
-      switch (cmd) {
-        case 'Fr':
-          code = 144;
-          break;
-        case 'F+':
-          code = 145;
-          break;
-        case 'F-':
-          code = 146;
-          break;
-        case 'Sr':
-          code = 153;
-          break;
-        case 'S+':
-          code = 154;
-          break;
-        case 'S-':
-          code = 155;
-          break;
-      }
-      if (code) {
-        //printLog("send override " + code, msgcolor, "USB");
-        socket.emit('override', String.fromCharCode(code) );
+      if (cmd) {
+        //printLog("send override " + cmd, msgcolor, "USB");
+        socket.emit('override', cmd );
 	  }
     } else if (connectVia === "Ethernet") {
-      //runCommand('suspend');
-      //runCommand(laseroffcmd)
+      // needs to be programmed
     } else if (connectVia === "ESP8266") {
-      //sendGcode("suspend");
-      //sendGcode(laseroffcmd)
+      // needs to be programmed
     }
   } else {
     printLog('You have to Connect to a machine First!', errorcolor, "usb");
