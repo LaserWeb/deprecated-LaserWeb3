@@ -1,5 +1,4 @@
-console.log("%c%s","color: #000; background: green; font-size: 24px;",
-"STARTING LASERWEB")
+console.log("%c%s","color: #000; background: green; font-size: 24px;","STARTING LASERWEB");
 // colors for the consolelog
 var msgcolor = '#000000';
 var successcolor = '#00aa00';
@@ -9,7 +8,7 @@ var warncolor = '#ff6600';
 var debug = false;
 
 var useNumPad;
-var activeObject, fileName
+var activeObject, fileName;
 
 // Place all document.ready tasks into functions and ONLY run the functions from doument.ready
 $(document).ready(function() {
@@ -33,7 +32,6 @@ $(document).ready(function() {
     initEsp8266();
     initTree();
     initDragDrop();
-
 
     // Tooltips
     $(document).tooltip();
@@ -172,7 +170,7 @@ $(document).ready(function() {
             if (val) {
 
             } else {
-                val = "1234"
+                val = "1234";
             }
             if ( value != val ){
                 $("#armerror").html("Code incorrect");
@@ -196,7 +194,9 @@ $(document).ready(function() {
         complete : function(value, e, errorElement){
             saveSetting(armpin, value);
             $("#setpinmsg").html("<h3>Pin set to "+value+"</h3>");
-            setTimeout(function(){ $('#pinresetmodal').modal('hide') }, 500);
+            setTimeout(function() { 
+				$('#pinresetmodal').modal('hide');
+			}, 500);
             // $('#pinresetmodal').modal('hide');
         }
     });
@@ -207,14 +207,14 @@ $(document).ready(function() {
       $('#armmachine').hide();
     }
 
-    cncMode = $('#cncMode').val()
+    cncMode = $('#cncMode').val();
     if (cncMode == "Enable") {
         document.title = "CNCWeb";
         $("#statusmodal").modal('show');
         $("#statusTitle").html("<h4>CNC Mode Activated</h4>");
         $("#statusBody").html("Note: You have activated <b>CNC mode</b> from <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>");
         $("#statusBody2").html("While in CNC mode, Laser Raster Engraving is not enabled.  Please only open GCODE, DXF or SVG files.<hr>To revert to Laser Mode, go to <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>, and change it to <kbd>Disabled</kbd><hr>Please help us improve this experimental feature by giving feedback, asking for improvements, sharing ideas and posting bugs in the <a class='btn btn-sm btn-success' target='_blank' href='https://plus.google.com/communities/115879488566665599508'>Support Community</a>");
-    };
+    }
 
     // Command Console History
     $("#command").inputHistory({
@@ -231,12 +231,12 @@ $(document).ready(function() {
 
     var version = $('meta[name=version]').attr("content");
     $.get( "https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/version.txt", function( data ) {
-        printLog("Version currently Installed : " + version , msgcolor, "git")
-        printLog("Version available online on Github : " + data , msgcolor, "git")
+        printLog("Version currently Installed : " + version , msgcolor, "git");
+        printLog("Version available online on Github : " + data , msgcolor, "git");
         if ( parseInt(version) < parseInt(data) ) {
-            printLog("<b><u>NB:  UPDATE AVAILABLE!</u></b>  - Execute 'git pull' from your laserweb terminal " , errorcolor, "git")
+            printLog("<b><u>NB:  UPDATE AVAILABLE!</u></b>  - Execute 'git pull' from your laserweb terminal " , errorcolor, "git");
         } else {
-            printLog("Your version of LaserWeb is Up To Date! " , successcolor, "git")
+            printLog("Your version of LaserWeb is Up To Date! " , successcolor, "git");
         }
 
     });
@@ -254,12 +254,12 @@ $(document).ready(function() {
 
 
 function checkNumPad() {
-    useNumPad = $('#useNumPad').val()
+    useNumPad = $('#useNumPad').val();
     if (useNumPad.indexOf('Enable') == 0) {
         $.fn.numpad.defaults.gridTpl = '<table class="table modal-content"></table>';
         $.fn.numpad.defaults.backgroundTpl = '<div class="modal-backdrop in"></div>';
         $.fn.numpad.defaults.displayTpl = '<input type="text" class="form-control" />';
-        $.fn.numpad.defaults.dblCellTpl = '<td colspan="2"></td>',
+        $.fn.numpad.defaults.dblCellTpl = '<td colspan="2"></td>';
         $.fn.numpad.defaults.buttonNumberTpl =  '<button type="button" class="btn btn-numpad btn-default" style="width: 100%;"></button>';
         $.fn.numpad.defaults.buttonFunctionTpl = '<button type="button" class="btn  btn-numpad" style="width: 100%;"></button>';
         //$.fn.numpad.defaults.onKeypadCreate = function(){$(this).find('.done').addClass('btn-primary');};
@@ -298,7 +298,7 @@ errorHandlerJS = function() {
 
 // Function to execute when opening file (triggered by fileOpen.addEventListener('change', readFile, false); )
 function readFile(evt) {
-    console.group("New FileOpen Event:")
+    console.group("New FileOpen Event:");
     console.log(evt);
     console.groupEnd();
     // Close the menu
@@ -320,19 +320,18 @@ function initDragDrop() {
         e.stopPropagation();
         e.preventDefault();
         $('#draganddrop').hide();
-    }
+    };
 
     var onDragOver = function(e) {
         e.stopPropagation();
         e.preventDefault();
         $('#draganddrop').show();
-    }
+    };
 
     var onDrop = function(e) {
         onDragLeave(e);
         readFile(e);
-    }
-
+    };
 
     dropTarget.addEventListener('drop', onDrop, false);
     dropTarget.addEventListener('dragover', onDragOver, false);
@@ -349,24 +348,24 @@ function loadFile(f) {
             // console.log('Reader: ', r)
             r.readAsText(f);
             r.onload = function(e) {
-                dxf = r.result
+                dxf = r.result;
                 drawDXF(dxf, f.name);
                 printLog('DXF Opened', msgcolor, "file");
                 // putFileObjectAtZero();
-                resetView()
+                resetView();
             };
 
         } else if (f.name.match(/.svg$/i)) {
             // console.log(f.name + " is a SVG file");
             r.readAsText(f);
             r.onload = function(event) {
-                svg = r.result
+                svg = r.result;
                 var svgpreview = document.getElementById('svgpreview');
                 svgpreview.innerHTML = r.result;
                 var svgfile = $('#svgpreview').html();
                 svg2three(svgfile, f.name);
                 printLog('SVG Opened', msgcolor, "file");
-                resetView()
+                resetView();
 
                 // Lets also try Rastering for SVG
                 // var name = f.name;
@@ -382,8 +381,8 @@ function loadFile(f) {
                 $("#gcodefile").show();
                 document.getElementById('gcodepreview').value = this.result;
                 printLog('GCODE Opened', msgcolor, "file");
-                resetView()
-                setTimeout(function(){   openGCodeFromText(); }, 500);
+                resetView();
+                setTimeout(function(){ openGCodeFromText(); }, 500);
             };
         } else if (f.name.match(/.nc$/i)) {
               r.readAsText(f);
@@ -392,8 +391,8 @@ function loadFile(f) {
                   $("#gcodefile").show();
                   document.getElementById('gcodepreview').value = this.result;
                   printLog('GCODE Opened', msgcolor, "file");
-                  resetView()
-                  setTimeout(function(){   openGCodeFromText(); }, 500);
+                  resetView();
+                  setTimeout(function(){ openGCodeFromText(); }, 500);
               };
         } else if (f.name.match(/.stl$/i)) {
             //r.readAsText(f);
@@ -430,9 +429,9 @@ function loadFile(f) {
             // start reading file as array buffer
             r.readAsArrayBuffer(f);
             printLog('STL Opened', msgcolor, "file");
-            console.log("Opened STL, and asking user for Slice settings")
+            console.log("Opened STL, and asking user for Slice settings");
             console.groupEnd();
-            $('#stlslice').modal('show')
+            $('#stlslice').modal('show');
         } else {
             console.log(f.name + " is probably a Raster");
             $('#origImage').empty();
@@ -455,14 +454,14 @@ function loadFile(f) {
     setTimeout(function(){ fillLayerTabs(); }, 300);
     setTimeout(function(){ viewExtents(objectsInScene[objectsInScene.length - 1]); }, 300);
 
-};
+}
 
 function saveFile() {
     var textToWrite = prepgcodefile();
     var blob = new Blob([textToWrite], {type: "text/plain"});
     invokeSaveAsDialog(blob, 'file.gcode');
 
-};
+}
 
 /**
 * @param {Blob} file - File or Blob object. This parameter is required.
@@ -518,56 +517,57 @@ function invokeSaveAsDialog(file, fileName) {
     }
 }
 function printLog(text, color, logclass) {
-    text = text.replace(/\n/g, "<br />")
+	if (text.isString) {
+      text = text.replace(/\n/g, "<br />");
+	}
     if ($('#console p').length > 300) {
         // remove oldest if already at 300 lines
         $('#console p').first().remove();
     }
-    var template = '<p class="pf" style="color: ' + color + ';">'
+    var template = '<p class="pf" style="color: ' + color + ';">';
     if (logclass) {
         if (logclass == "settings") {
-            template += '<i class="fa fa-cogs fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-cogs fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
         if (logclass == "file") {
-            template += '<i class="fa fa-file-text-o fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-file-text-o fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
         if (logclass == "google") {
-            template += '<i class="fa fa-google fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-google fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
         if (logclass == "jog") {
-            template += '<i class="fa fa-arrows fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-arrows fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
         if (logclass == "macro") {
-            template += '<i class="fa fa-th-large fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-th-large fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
         if (logclass == "fullscreen") {
-            template += '<i class="fa fa-fullscreen fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-fullscreen fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
         if (logclass == "raster") {
-            template += '<i class="fa fa-file-image-o fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-file-image-o fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
         if (logclass == "usb") {
-            template += '<i class="fa fa-usb fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-usb fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
         if (logclass == "wifi") {
-            template += '<i class="fa fa-wifi fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-wifi fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
         if (logclass == "viewer") {
-            template += '<i class="fa fa-search fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-search fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
         if (logclass == "git") {
-            template += '<i class="fa fa-github fa-fw" aria-hidden="true"></i>:&nbsp;'
+            template += '<i class="fa fa-github fa-fw" aria-hidden="true"></i>:&nbsp;';
         }
     }
-    template += text
+    template += text;
     $('#console').append(template);
     $('#console').scrollTop($("#console")[0].scrollHeight - $("#console").height());
-};
+}
 
 
 function toggleFullScreen() {
-    if ((document.fullScreenElement && document.fullScreenElement !== null) ||
-    (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+    if ((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
         if (document.documentElement.requestFullScreen) {
             document.documentElement.requestFullScreen();
         } else if (document.documentElement.mozRequestFullScreen) {
