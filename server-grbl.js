@@ -1,3 +1,4 @@
+"use strict";
 /*
 
     AUTHOR:  Peter van der Walt openhardwarecoza.github.io/donate
@@ -29,7 +30,7 @@ var SerialPort = serialport;
 var app = require('http').createServer(handler);
 var io = require('socket.io').listen(app);
 var fs = require('fs');
-var static = require('node-static');
+var nstatic = require('node-static');
 var EventEmitter = require('events').EventEmitter;
 var url = require('url');
 var qs = require('querystring');
@@ -39,7 +40,7 @@ var chalk = require('chalk');
 var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, queryLoop, infoLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
-var firmware = 'GRBL';
+var firmware = 'grbl';
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -67,7 +68,7 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
 
 // Webserver
 app.listen(config.webPort);
-var fileServer = new static.Server('./public');
+var fileServer = new nstatic.Server('./public');
 function handler (req, res) {
 
   var queryData = url.parse(req.url, true).query;

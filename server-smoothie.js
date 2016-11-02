@@ -1,3 +1,4 @@
+"use strict";
 /*
 
     AUTHOR:  Peter van der Walt openhardwarecoza.github.io/donate
@@ -25,21 +26,21 @@
 */
 var config = require('./config');
 var serialport = require("serialport");
-var SerialPort = serialport
-var app = require('http').createServer(handler)
-  , io = require('socket.io').listen(app)
-  , fs = require('fs');
-var static = require('node-static');
+var SerialPort = serialport;
+var app = require('http').createServer(handler);
+var io = require('socket.io').listen(app);
+var fs = require('fs');
+var nstatic = require('node-static');
 var EventEmitter = require('events').EventEmitter;
 var url = require('url');
 var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-var isConnected, port, isBlocked, lastsent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
+var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
-var controllerVersion = 'Smoothie';
+var controllerVersion = 'smoothie';
 var fOverride = 100;
 var sOverride = 100;
 
@@ -64,13 +65,13 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log(chalk.red('* Support: '));
     console.log(chalk.green('  If you need help / support, come over to '));
     console.log(chalk.green(' '), chalk.yellow('https://plus.google.com/communities/115879488566665599508'));
-})
+});
 
 
 
 // Webserver
 app.listen(config.webPort);
-var fileServer = new static.Server('./public');
+var fileServer = new nstatic.Server('./public');
 function handler (req, res) {
 
   var queryData = url.parse(req.url, true).query;
@@ -94,11 +95,10 @@ function handler (req, res) {
       			console.error(chalk.red('ERROR:'), chalk.yellow(' fileServer error:'+req.url+' : '), err.message);
       		}
       	});
-      };
+      }
 }
 function ConvChar( str ) {
-  c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;',
-       '#':'&#035;' };
+  var c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;', '#':'&#035;' };
   return str.replace( /[<&>'"#]/g, function(s) { return c[s]; } );
 }
 
@@ -124,10 +124,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     gcodeQueue.length = 0; // dump the queye
     if (data == 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
-      console.log('PAUSING:  Sending Laser Off Command as ' + data)
+      console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
-      port.write("M5\n")  //  Hopefully M5!
-      console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!')
+      port.write("M5\n");  //  Hopefully M5!
+      console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
     }
   });
 
@@ -135,10 +135,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     console.log(chalk.red('PAUSE'));
     if (data == 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
-      console.log('PAUSING:  Sending Laser Off Command as ' + data)
+      console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
-      port.write("M5\n")  //  Hopefully M5!
-      console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!')
+      port.write("M5\n");  //  Hopefully M5!
+      console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
     }
     socket.emit("connectStatus", 'paused:'+port.path);
     paused = true;
@@ -147,19 +147,18 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   socket.on('unpause', function(data) {
     socket.emit("connectStatus", 'unpaused:'+port.path);
     paused = false;
-    send1Q()
+    send1Q();
   });
 
   socket.on('serialSend', function(data) {
-    data = data.split('\n')
-    for (i=0; i<data.length; i++) {
-      addQ(data[i])
+    data = data.split('\n');
+    for (var i=0; i<data.length; i++) {
+      addQ(data[i]);
     }
   });
 
   socket.on('override', function(data) {
     console.log('OVERRIDE: ' + data);
-	var sType = data.substr(0,1);
     switch (data) {
       case 'Fr':
         fOverride = 100;
@@ -192,15 +191,15 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         sOverride -= 1;
         break;
     }
-    switch (sType) {
+    switch (data.substr(0,1)) {
       case 'F': //Feed
-        jumpQ('M220 F' + fOverride);
+        jumpQ('M220S' + fOverride);
         break;
       case 'R': // Rapid
         //jumpQ('M220 R' + rOverride);
         break;
       case 'S': // Spindle/Laser PWM
-        jumpQ('M220 S' + sOverride);
+        jumpQ('M221S' + sOverride);
         break;
     }
   });
@@ -237,22 +236,22 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         // port.write("M115\n"); // Lets check if its Marlin?
         port.write("version\n"); // Lets check if its Smoothieware?
         // port.write("$fb\n"); // Lets check if its TinyG
-        console.log('Connected to ' + port.path + 'at ' + port.options.baudRate)
+        console.log('Connected to ' + port.path + 'at ' + port.options.baudRate);
         isConnected = true;
         connectedTo = port.path;
         queryLoop = setInterval(function() {
           // console.log('StatusChkc')
             port.write('?');
-            send1Q()
+            send1Q();
         }, 200);
         queueCounter = setInterval(function(){
-                 for (i in connections) {   // iterate over the array of connections
-                   connections[i].emit('qCount', gcodeQueue.length)
-                 };
+			 for (var i in connections) {   // iterate over the array of connections
+			   connections[i].emit('qCount', gcodeQueue.length);
+			 }
          },500);
-         for (i in connections) {   // iterate over the array of connections
+         for (var i in connections) {   // iterate over the array of connections
            connections[i].emit("activePorts", port.path + ',' + port.options.baudRate);
-         };
+         }
       });
 
       port.on('close', function(err) { // open errors will be emitted as an error event
@@ -266,31 +265,36 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.on('error', function(err) { // open errors will be emitted as an error event
         console.log('Error: ', err.message);
         socket.broadcast.emit("data", data);
-      })
+      });
+
       port.on("data", function (data) {
-        console.log('Recv: ' + data)
+        console.log('Recv: ' + data);
+		var i;
         if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0){
             if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
               blocked = false;
             }
             for (i in connections) {   // iterate over the array of connections
               connections[i].emit("data", data);
-            };
+            }
             // setTimeout(function(){
                  if(paused !== true){
-                     send1Q()
+                     send1Q();
                  } else {
                    for (i in connections) {   // iterate over the array of connections
                      connections[i].emit("data", 'paused...');
-                   };
+                   }
                  }
             //  },1);
 
 
          } else {
+           for (i in connections) {   // iterate over the array of connections
              connections[i].emit("data", data);
+		   }
          }
       });
+
     } else {
       socket.emit("connectStatus", 'resume:'+port.path);
       port.write("?\n"); // Lets check if its LasaurGrbl?
@@ -301,7 +305,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
 
-  };
+  }
 // End Websocket <-> Serial
 
 
@@ -317,11 +321,11 @@ function jumpQ(gcode) {
 
 function send1Q() {
   if (gcodeQueue.length > 0 && !blocked && !paused) {
-    var gcode = gcodeQueue.shift()
+    var gcode = gcodeQueue.shift();
     // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth
     gcode = gcode.replace(/\s+/g, '');
-    console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length)
-    lastSent = gcode
+    console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
+    lastSent = gcode;
     port.write(gcode + '\n');
     blocked = true;
   }

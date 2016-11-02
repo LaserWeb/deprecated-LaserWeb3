@@ -1,3 +1,4 @@
+"use strict";
 var socket, isConnected, connectVia;
 var jobStartTime = -1;
 var playing = false;
@@ -18,9 +19,15 @@ function initSocket() {
     } else {
       printLog(data, msgcolor, "usb");
     }
-	if (data.search('Grbl 1.1')) {
-      firmware = 'GRBL';
-	  $('#overrides').removeClass('hide');
+	if (data.search('Grbl')) {
+      if (parseFloat(data) >= 1.1) {
+        firmware = 'grbl';
+	    $('#overrides').removeClass('hide');
+      }
+    }
+	if (data.search('LPC1768')) {
+      firmware = 'smoothie';
+      $('#overrides').removeClass('hide');
     }
   });
 
@@ -318,9 +325,9 @@ function updateStatus(data) {
     var ov = data.replace('>','').substr(startOv).split(/,|\|/, 3);
     //printLog("Overrides: " + ov[0] + ',' + ov[1] + ',' + ov[2],  msgcolor, "USB");
 	//if (Array.isArray(ov)){
-	  $('#oF').html(ov[0]);
-	  //$('#oR').html(ov[1]);
-	  $('#oS').html(ov[2]);
+	  $('#oF').html(ov[0] + ' %');
+	  //$('#oR').html(ov[1] + ' %');
+	  $('#oS').html(ov[2] + ' %');
 	//}
   }
   
@@ -340,8 +347,12 @@ function override(cmd) {
     var connectVia = $('#connectVia').val();
     if (connectVia === "USB") {
       if (cmd) {
-        //printLog("send override " + cmd, msgcolor, "USB");
-        socket.emit('override', cmd );
+        if (firmware === 'grbl') {
+          //printLog("send override " + cmd, msgcolor, "USB");
+          socket.emit('override', cmd);
+		} else if (firmware === 'smoothie') {
+          socket.emit('override', cmd);
+		}
 	  }
     } else if (connectVia === "Ethernet") {
       // needs to be programmed

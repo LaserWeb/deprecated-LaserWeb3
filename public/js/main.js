@@ -1,3 +1,4 @@
+"use strict";
 console.log("%c%s","color: #000; background: green; font-size: 24px;","STARTING LASERWEB");
 // colors for the consolelog
 var msgcolor = '#000000';
@@ -398,7 +399,7 @@ function loadFile(f) {
             //r.readAsText(f);
             // Remove the UI elements from last run
             console.group("STL File");
-            var stlloader = new MeshesJS.STLLoader;
+            var stlloader = new MeshesJS.STLLoader();
             r.onload = function(event) {
                 // cleanupThree();
                 // Parse ASCII STL
@@ -409,8 +410,9 @@ function loadFile(f) {
                 // buffer reader
                 var view = new DataView(this.result);
                 // get faces number
+				var faces;
                 try {
-                    var faces = view.getUint32(80, true);
+                    faces = view.getUint32(80, true);
                 } catch (error) {
                     self.onError(error);
                     return;
