@@ -165,7 +165,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 	}
 	jumpQ('M220S' + feedOverride);
     for (var i in connections) {   // iterate over the array of connections
-      connections[i].emit('data', 'F:' + feedOverride.toString());
+      connections[i].emit('feedOverride', feedOverride);
     }
     console.log('Feed Override ' + feedOverride.toString() + '%');
   });
@@ -181,7 +181,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 	}
 	jumpQ('M221S' + spindleOverride);	
     for (var i in connections) {   // iterate over the array of connections
-      connections[i].emit('data', 'S:' + spindleOverride.toString());
+      connections[i].emit('spindleOverride', spindleOverride);
     }
     console.log('Spindle (Laser) Override ' + spindleOverride.toString() + '%');
   });

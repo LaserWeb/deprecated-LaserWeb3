@@ -14,12 +14,6 @@ function initSocket() {
       updateStatus(data);
     } else if (data ==='ok') {
       printLog(data, '#cccccc', "usb");
-    } else if (data.substr(0,1) === 'F') {
-      // smoothie feed override report (from server)
-	  $('#oF').html(data.substr(2) + ' %');
-    } else if (data.substr(0,1) === 'S') {
-      // smoothie spindle override report (from server)
-	  $('#oS').html(data.substr(2) + ' %');
     } else {
       printLog(data, msgcolor, "usb");
     }
@@ -35,12 +29,12 @@ function initSocket() {
 
   // smoothie feed override report (from server)
   socket.on('feedOverride', function (data) {
-    $('#oF').html(data);
+    $('#oF').html(data.toString() + ' %');
   });
 
   // smoothie spindle override report (from server)
   socket.on('spindleOverride', function (data) {
-    $('#oS').html(data);
+    $('#oS').html(data.toString() + ' %');
   });
 
   socket.on('ports', function (data) {
