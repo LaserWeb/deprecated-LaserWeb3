@@ -157,10 +157,51 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     }
   });
 
-  socket.on('override', function(data) {
-    console.log('OVERRIDE: '+data);
-    if (data) {
-      jumpQ(data);
+  socket.on('feedOverride', function(data) {
+	var code;
+    switch (data) {
+      case 0:
+        code = 144;	// set to 100%
+        break;
+      case 10:
+        code = 145;	// +10%
+        break;
+      case -10:
+        code = 146;	// -10%	
+        break;
+      case 1:
+        code = 147;	// +1%
+        break;
+      case -1:
+        code = 148;	// -1%
+        break;
+    }
+    if (code) {
+      jumpQ(String.fromCharCode(parseInt(code)));
+    }
+  });
+
+  socket.on('spindleOverride', function(data) {
+	var code;
+    switch (data) {
+      case 0:
+        code = 153;	// set to 100%
+        break;
+      case 10:
+        code = 154;	// +10%
+        break;
+      case -10:
+        code = 155;	// -10%
+        break;
+      case 1:
+        code = 156;	// +1%
+        break;
+      case -1:
+        code = 157;	// -1%
+        break;
+    }
+    if (code) {
+      jumpQ(String.fromCharCode(parseInt(code)));
     }
   });
 

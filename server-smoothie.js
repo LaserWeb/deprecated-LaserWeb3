@@ -25,10 +25,10 @@
 */
 var config = require('./config');
 var serialport = require("serialport");
-var SerialPort = serialport
-var app = require('http').createServer(handler)
-  , io = require('socket.io').listen(app)
-  , fs = require('fs');
+var SerialPort = serialport;
+var app = require('http').createServer(handler);
+var io = require('socket.io').listen(app);
+var fs = require('fs');
 var static = require('node-static');
 var EventEmitter = require('events').EventEmitter;
 var url = require('url');
@@ -36,9 +36,11 @@ var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-var isConnected, port, isBlocked, lastsent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
+var isConnected, connectedTo, port, isBlocked, lastsent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
+var feedOverride = 100;
+var spindleOverride = 100;
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -61,8 +63,7 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log(chalk.red('* Support: '));
     console.log(chalk.green('  If you need help / support, come over to '));
     console.log(chalk.green(' '), chalk.yellow('https://plus.google.com/communities/115879488566665599508'));
-})
-
+});
 
 
 // Webserver
@@ -91,11 +92,10 @@ function handler (req, res) {
       			console.error(chalk.red('ERROR:'), chalk.yellow(' fileServer error:'+req.url+' : '), err.message);
       		}
       	});
-      };
+      }
 }
 function ConvChar( str ) {
-  c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;',
-       '#':'&#035;' };
+  var c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;', '#':'&#035;' };
   return str.replace( /[<&>'"#]/g, function(s) { return c[s]; } );
 }
 
@@ -121,10 +121,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     gcodeQueue.length = 0; // dump the queye
     if (data == 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
-      console.log('PAUSING:  Sending Laser Off Command as ' + data)
+      console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
-      port.write("M5\n")  //  Hopefully M5!
-      console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!')
+      port.write("M5\n");  //  Hopefully M5!
+      console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
     }
   });
 
@@ -132,10 +132,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     console.log(chalk.red('PAUSE'));
     if (data == 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
-      console.log('PAUSING:  Sending Laser Off Command as ' + data)
+      console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
-      port.write("M5\n")  //  Hopefully M5!
-      console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!')
+      port.write("M5\n");  //  Hopefully M5!
+      console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
     }
     socket.emit("connectStatus", 'paused:'+port.path);
     paused = true;
@@ -144,20 +144,52 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   socket.on('unpause', function(data) {
     socket.emit("connectStatus", 'unpaused:'+port.path);
     paused = false;
-    send1Q()
+    send1Q();
   });
 
   socket.on('serialSend', function(data) {
-    data = data.split('\n')
-    for (i=0; i<data.length; i++) {
-      addQ(data[i])
+    data = data.split('\n');
+    for (var i=0; i<data.length; i++) {
+      addQ(data[i]);
     }
+  });
+
+  socket.on('feedOverride', function(data) {
+    if (data === 0) {
+      feedOverride = 100;
+	} else {
+	  if ((feedOverride + data <= 200) && (feedOverride + data > 0)) {
+	    // valid range is 1..200, else ignore!
+        feedOverride += data;
+	  }
+	}
+	jumpQ('M220S' + feedOverride);
+    for (var i in connections) {   // iterate over the array of connections
+      connections[i].emit('data', 'F:' + feedOverride.toString());
+    }
+    console.log('Feed Override ' + feedOverride.toString() + '%');
+  });
+
+  socket.on('spindleOverride', function(data) {
+    if (data === 0) {
+      spindleOverride = 100;
+	} else {
+	  if ((spindleOverride + data <= 200) && (spindleOverride + data > 0)) {
+	    // valid range is 1..200, else ignore!
+        spindleOverride += data;
+	  }
+	}
+	jumpQ('M221S' + spindleOverride);	
+    for (var i in connections) {   // iterate over the array of connections
+      connections[i].emit('data', 'S:' + spindleOverride.toString());
+    }
+    console.log('Spindle (Laser) Override ' + spindleOverride.toString() + '%');
   });
 
   socket.on('refreshPorts', function(data) { // Or when asked
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
-    socket.emit("ports", ports);
+      socket.emit("ports", ports);
     });
   });
 
@@ -165,7 +197,6 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
     socket.emit("connectStatus", 'closed:'+port.path);
     port.close();
-
   });
 
   socket.on('areWeLive', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
@@ -186,22 +217,22 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         // port.write("M115\n"); // Lets check if its Marlin?
         port.write("version\n"); // Lets check if its Smoothieware?
         // port.write("$fb\n"); // Lets check if its TinyG
-        console.log('Connected to ' + port.path + 'at ' + port.options.baudRate)
+        console.log('Connected to ' + port.path + 'at ' + port.options.baudRate);
         isConnected = true;
         connectedTo = port.path;
         queryLoop = setInterval(function() {
           // console.log('StatusChkc')
             port.write('?');
-            send1Q()
+            send1Q();
         }, 200);
         queueCounter = setInterval(function(){
-                 for (i in connections) {   // iterate over the array of connections
-                   connections[i].emit('qCount', gcodeQueue.length)
-                 };
-         },500);
-         for (i in connections) {   // iterate over the array of connections
-           connections[i].emit("activePorts", port.path + ',' + port.options.baudRate);
-         };
+          for (var i in connections) {   // iterate over the array of connections
+            connections[i].emit('qCount', gcodeQueue.length);
+          }
+        },500);
+        for (var i in connections) {   // iterate over the array of connections
+          connections[i].emit("activePorts", port.path + ',' + port.options.baudRate);
+        }
       });
 
       port.on('close', function(err) { // open errors will be emitted as an error event
@@ -215,29 +246,31 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.on('error', function(err) { // open errors will be emitted as an error event
         console.log('Error: ', err.message);
         socket.broadcast.emit("data", data);
-      })
+      });
+	  
       port.on("data", function (data) {
-        console.log('Recv: ' + data)
+        console.log('Recv: ' + data);
         if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0){
             if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
               blocked = false;
             }
-            for (i in connections) {   // iterate over the array of connections
+            for (var i in connections) {   // iterate over the array of connections
               connections[i].emit("data", data);
-            };
+            }
             // setTimeout(function(){
-                 if(paused !== true){
-                     send1Q()
-                 } else {
-                   for (i in connections) {   // iterate over the array of connections
-                     connections[i].emit("data", 'paused...');
-                   };
-                 }
+              if(paused !== true){
+                send1Q();
+              } else {
+                for (i in connections) {   // iterate over the array of connections
+                  connections[i].emit("data", 'paused...');
+                }
+              }
             //  },1);
 
-
          } else {
+           for (var i in connections) {   // iterate over the array of connections
              connections[i].emit("data", data);
+		   }
          }
       });
     } else {
@@ -250,7 +283,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
 
-  };
+}
 // End Websocket <-> Serial
 
 
@@ -261,16 +294,16 @@ function addQ(gcode) {
 }
 
 function jumpQ(gcode) {
-  gcodeQueue.unshift(gcode)
+  gcodeQueue.unshift(gcode);
 }
 
 function send1Q() {
   if (gcodeQueue.length > 0 && !blocked && !paused) {
-    var gcode = gcodeQueue.shift()
+    var gcode = gcodeQueue.shift();
     // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth
     gcode = gcode.replace(/\s+/g, '');
-    console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length)
-    lastSent = gcode
+    console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
+    lastSent = gcode;
     port.write(gcode + '\n');
     blocked = true;
   }
