@@ -158,8 +158,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     if (data === 0) {
       feedOverride = 100;
 	} else {
-	  if ((feedOverride + data <= 200) && (feedOverride + data > 0)) {
-	    // valid range is 1..200, else ignore!
+	  if ((feedOverride + data <= 200) && (feedOverride + data >= 10)) {
+	    // valid range is 10..200, else ignore!
         feedOverride += data;
 	  }
 	}
@@ -174,8 +174,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     if (data === 0) {
       spindleOverride = 100;
 	} else {
-	  if ((spindleOverride + data <= 200) && (spindleOverride + data > 0)) {
-	    // valid range is 1..200, else ignore!
+	  if ((spindleOverride + data <= 200) && (spindleOverride + data >= 0)) {
+	    // valid range is 0..200, else ignore!
         spindleOverride += data;
 	  }
 	}
