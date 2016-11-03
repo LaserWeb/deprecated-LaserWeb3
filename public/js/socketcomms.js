@@ -17,7 +17,7 @@ function initSocket() {
     } else {
       printLog(data, msgcolor, "usb");
     }
-    if (data.indexOf('LPC1768')) {
+    if (data.indexOf('LPC176')) {	//LPC1768 or LPC1769 should be Smoothie
       $('#overrides').removeClass('hide');
     }
     if (data.indexOf('Grbl')) {
