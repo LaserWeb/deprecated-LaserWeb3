@@ -1165,8 +1165,11 @@
 
     </body>
 
+    <script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
     <script type="text/javascript">
-      window.$ = window.jQuery = require('./lib/jquery/jquery.min.js');
+      if (require) {
+        window.$ = window.jQuery = require('./lib/jquery/jquery.min.js');
+      }
     </script>
     <script type="text/javascript" src="lib/jquery/mindmup-editabletable.js"></script>
 
