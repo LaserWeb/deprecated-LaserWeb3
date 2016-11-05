@@ -3,6 +3,8 @@ var jobStartTime = -1;
 var playing = false;
 var paused = false;
 var firmware;
+var ovStep = 1;
+var ovLoop;
 
 function initSocket() {
   socket = io.connect(''); // socket.io init
@@ -107,6 +109,108 @@ function initSocket() {
       }
     }
   });
+
+	$('#overrides').on('keydown', function(ev) {
+		if (ev.keyCode === 17) {
+			//CTRL key down > set override stepping to 10
+			ovStep = 10;
+		}
+	});
+
+	$('#overrides').on('keyup', function(ev) {
+		if (ev.keyCode === 17) {
+			//CTRL key released-> reset override stepping to 1
+			ovStep = 1;
+		}
+	});
+
+	// increase feed override
+	$('#iF').on('mousedown', function(ev) {
+		console.log("F+ mousedown");
+		override('F+');
+		ovLoop = setInterval(function() {
+			override('F+');
+		}, 300);
+	});
+
+	$('#iF').on('mouseup', function(ev) {
+		console.log("F+ mouseup");
+		clearInterval(ovLoop);
+	});
+
+	$('#iF').on('mouseout', function(ev) {
+		console.log("F+ mouseout");
+		clearInterval(ovLoop);
+	});
+
+	// decrease feed override
+	$('#dF').on('mousedown', function(ev) {
+		console.log("F- mousedown");
+		override('F-');
+		ovLoop = setInterval(function() {
+			override('F-');
+		}, 300);
+	});
+
+	$('#dF').on('mouseup', function(ev) {
+		console.log("F- mouseup");
+		clearInterval(ovLoop);
+	});
+
+	$('#dF').on('mouseout', function(ev) {
+		console.log("F- mouseout");
+		clearInterval(ovLoop);
+	});
+
+	// reset feed override
+	$('#rF').on('click', function(ev) {
+		console.log("F reset");
+		override('Fr');
+	});
+
+	// increase spindle override
+	$('#iS').on('mousedown', function(ev) {
+		console.log("S+ mousedown");
+		override('S+');
+		ovLoop = setInterval(function() {
+			override('S+');
+		}, 300);
+	});
+
+	$('#iS').on('mouseup', function(ev) {
+		console.log("S+ mouseup");
+		clearInterval(ovLoop);
+	});
+
+	$('#iS').on('mouseout', function(ev) {
+		console.log("S+ mouseout");
+		clearInterval(ovLoop);
+	});
+
+	// increase feed override
+	$('#dS').on('mousedown', function(ev) {
+		console.log("S- mousedown");
+		override('S-');
+		ovLoop = setInterval(function() {
+			override('S-');
+		}, 300);
+	});
+
+	$('#dS').on('mouseup', function(ev) {
+		console.log("S- mouseup");
+		clearInterval(ovLoop);
+	});
+
+	$('#dS').on('mouseout', function(ev) {
+		console.log("S- mouseout");
+		clearInterval(ovLoop);
+	});
+
+	// reset spindle override
+	$('#rS').on('click', function(ev) {
+		console.log("S reset");
+		override('Sr');
+	});
 }
 
 function sendGcode(gcode) {
@@ -318,9 +422,9 @@ function updateStatus(data) {
     var ov = data.replace('>','').substr(startOv).split(/,|\|/, 3);
     //printLog("Overrides: " + ov[0] + ',' + ov[1] + ',' + ov[2],  msgcolor, "USB");
 	//if (Array.isArray(ov)){
-	  $('#oF').html(ov[0]);
-	  //$('#oR').html(ov[1]);
-	  $('#oS').html(ov[2]);
+	  $('#oF').html(ov[0] + '%');
+	  //$('#oR').html(ov[1] + '%');
+	  $('#oS').html(ov[2] + '%');
 	//}
   }
   
@@ -341,7 +445,7 @@ function override(cmd) {
     if (connectVia === "USB") {
       if (cmd) {
         //printLog("send override " + cmd, msgcolor, "USB");
-        socket.emit('override', cmd );
+        socket.emit('override', cmd + ovStep );
 	  }
     } else if (connectVia === "Ethernet") {
       // needs to be programmed

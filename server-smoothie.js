@@ -161,34 +161,36 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     console.log('OVERRIDE: ' + data);
 	var sType = data.substr(0,1);
     switch (data) {
-      case 'Fr':
+      case 'Fr1':
+      case 'Fr10':
         fOverride = 100;
         break;
-      case 'F++':
+      case 'F+10':
         fOverride += 10;
         break;
-      case 'F--':	
+      case 'F-10':	
         fOverride -= 10;
         break;
-      case 'F+':
+      case 'F+1':
         fOverride += 1;
         break;
-      case 'F-':
+      case 'F-1':
         fOverride -= 1;
         break;
-      case 'Sr':
+      case 'Sr1':
+      case 'Sr10':
         sOverride = 100;
         break;
-      case 'S++':
+      case 'S+10':
         sOverride += 10;
         break;
-      case 'S--':
+      case 'S-10':
         sOverride -= 10;
         break;
-      case 'S+':
+      case 'S+1':
         sOverride += 1;
         break;
-      case 'S-':
+      case 'S-1':
         sOverride -= 1;
         break;
     }
