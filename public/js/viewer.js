@@ -47,7 +47,12 @@ function initWebcam() {
         printLog('Sorry. WebRTC is not available.', errorcolor, "viewer");
         scene.remove(movieScreen);
     } else {
-        navigator.getUserMedia({video: true}, gotStream, noStream);
+        var constraints = {
+            video: {
+                optional: [{sourceId: window.localStorage.getItem('videoSource')}]
+            }
+        };
+        navigator.getUserMedia(constraints, gotStream, noStream);
     }
 }
 

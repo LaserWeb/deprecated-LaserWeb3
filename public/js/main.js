@@ -68,7 +68,6 @@ $(document).ready(function() {
         resetView();
     });
 
-
     $('#savesettings').on('click', function() {
         saveSettingsLocal();
     });
@@ -140,6 +139,8 @@ $(document).ready(function() {
         showSpinner: false
     });
 
+    setupVideoSources();
+
     checkNumPad();
 
     checkSettingsLocal();
@@ -202,6 +203,20 @@ $(document).ready(function() {
 
 }); // End of document.ready
 
+function setupVideoSources() {
+    $('#videoSource').html();
+
+    if (window.navigator.mediaDevices && window.navigator.mediaDevices.enumerateDevices) {
+        window.navigator.mediaDevices.enumerateDevices().then(function(mediaDeviceInfos) {
+            mediaDeviceInfos.filter(function(mediaDeviceInfo) {
+                return mediaDeviceInfo.kind === 'videoinput';
+            }).forEach(function(mediaDeviceInfo) {
+                var option = $('<option value="' + mediaDeviceInfo.deviceId + '">' + mediaDeviceInfo.label + '</option>')
+                $('#videoSource').append(option);
+            });
+        });
+    }
+}
 
 function setupJogPanel() {
 
