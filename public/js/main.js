@@ -34,6 +34,7 @@ $(document).ready(function() {
     initTree();
     initDragDrop();
     initKeyboardShortcut();
+    invalidateVideoSettingsDisplay();
 
     // Tooltips
     $(document).tooltip();
@@ -72,6 +73,10 @@ $(document).ready(function() {
         saveSettingsLocal();
     });
 
+    $('#useVideo').on('change', function() {
+        invalidateVideoSettingsDisplay();
+    });
+
     // Tabs on right side
     $('#drotabtn').on('click', function() {
         $('#drotab').show();
@@ -79,7 +84,6 @@ $(document).ready(function() {
         $("#drotabtn").addClass("active");
         $("#gcodetabbtn").removeClass("active");
     });
-
 
     $('#gcodetabbtn').on('click', function() {
         $('#drotab').hide();
@@ -202,6 +206,12 @@ $(document).ready(function() {
 
 
 }); // End of document.ready
+
+function invalidateVideoSettingsDisplay() {
+    var useVideo = $('#useVideo').val();
+    $('#webcamUrl').attr('disabled', useVideo === 'Remote' ? null : 'disabled');
+    $('#videoSource').attr('disabled', useVideo === 'Enable' ? null : 'disabled');
+}
 
 function setupVideoSources() {
     $('#videoSource').html();
