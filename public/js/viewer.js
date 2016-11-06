@@ -56,6 +56,14 @@ function initWebcam() {
     }
 }
 
+function hideCameraOverlay() {
+    movieScreen.visible = false;
+}
+
+function showCameraOverlay() {
+    movieScreen.visible = true;
+}
+
 function gotStream(stream)
 {
     if (window.URL)
@@ -179,17 +187,17 @@ function gotStream(stream)
             // renderer.setSize(window.innerWidth - 10, window.innerHeight - 10);
             renderer.clear();
 
-            sceneWidth = document.getElementById("renderArea").offsetWidth,
+            sceneWidth = document.getElementById("renderArea").offsetWidth;
             sceneHeight = document.getElementById("renderArea").offsetHeight;
             camera.aspect = sceneWidth / sceneHeight;
-            renderer.setSize(sceneWidth, sceneHeight)
+            renderer.setSize(sceneWidth, sceneHeight);
             camera.updateProjectionMatrix();
 
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.target.set(0, 0, 0); // view direction perpendicular to XY-plane
 
-            cncMode = $('#cncMode').val()
+            cncMode = $('#cncMode').val();
             if (cncMode == "Enable") {
                 controls.enableRotate = true;
                 $('#3dview').prop('checked', true);
@@ -210,11 +218,11 @@ function gotStream(stream)
 
             var light = new THREE.DirectionalLight(0xffffff);
             light.position.set(-500, -500, 1).normalize();
-            light.name = "Light1;"
+            light.name = "Light1";
             scene.add(light);
 
             var light2 = new THREE.DirectionalLight(0xffffff);
-            light2.name = "Light2"
+            light2.name = "Light2";
             light2.position.set(1, 0, 1).normalize();
             scene.add(light2);
 
@@ -228,11 +236,11 @@ function gotStream(stream)
 
             if (!laserxmax) {
                 laserxmax = 200;
-            };
+            }
 
             if (!laserymax) {
                 laserymax = 200;
-            };
+            }
 
             helper = new THREE.GridHelper(laserxmax, laserymax, 10);
             helper.setColors(0x0000ff, 0x707070);
@@ -434,7 +442,7 @@ function gotStream(stream)
 
 
             // Webcam Texture
-            useVideo = $('#useVideo').val()
+            useVideo = $('#useVideo').val();
             if (useVideo) {
                 if (useVideo.indexOf('Enable') == 0) {
                     initWebcam();
@@ -455,7 +463,7 @@ function gotStream(stream)
                     var movieGeometry = new THREE.PlaneGeometry( laserxmax, laserymax, 1, 1 );
                     movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
                     movieScreen.position.set(0,0,-0.2);
-                    movieScreen.name ="Video Overlay WebRTC"
+                    movieScreen.name ="Video Overlay WebRTC";
                     scene.add(movieScreen);
                     videoTexture.needsUpdate = true;
                 }
