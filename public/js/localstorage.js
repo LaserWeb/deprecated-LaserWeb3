@@ -29,7 +29,7 @@ localParams = [
   ['imagePosition', true],
   ['useNumPad', true],
   ['useVideo', true],
-  ['videoSource', ''],
+  ['videoSource', true],
   ['cncMode', true],
   ['webcamUrl', false],
   ['defaultDPI', true],
