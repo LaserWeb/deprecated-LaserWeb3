@@ -163,34 +163,36 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     console.log('OVERRIDE: ' + data);
     var code;
     switch (data) {
-      case 'Fr':
+      case 'Fr1':
+	  case 'Fr10':
         code = 144;
         break;
-      case 'F++':
+      case 'F+10':
         code = 145;
         break;
-      case 'F--':	
+      case 'F-10':	
         code = 146;
         break;
-      case 'F+':
+      case 'F+1':
         code = 147;
         break;
-      case 'F-':
+      case 'F-1':
         code = 148;
         break;
-      case 'Sr':
+      case 'Sr1':
+      case 'Sr10':
         code = 153;
         break;
-      case 'S++':
+      case 'S+10':
         code = 154;
         break;
-      case 'S--':
+      case 'S-10':
         code = 155;
         break;
-      case 'S+':
+      case 'S+1':
         code = 156;
         break;
-      case 'S-':
+      case 'S-1':
         code = 157;
         break;
     }
