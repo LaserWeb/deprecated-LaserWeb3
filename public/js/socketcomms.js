@@ -1,4 +1,4 @@
-"use strict";
+//"use strict";
 var socket, isConnected, connectVia;
 var jobStartTime = -1;
 var playing = false;
@@ -287,9 +287,14 @@ function playpauseMachine() {
     var connectVia = $('#connectVia').val();
     if (playing == true) {
       if (paused == true) {
+        // unpause
         // sendGcode('~');
+        var laseroncmd = document.getElementById('laseron').value;
+		if (laseroncmd.length === 0) {
+			laseroncmd = 0;
+		}
         if (connectVia === "USB") {
-          socket.emit('unpause', 1);
+          socket.emit('unpause', laseroncmd);
         } else if (connectVia === "Ethernet") {
           runCommand('resume');
         } else if (connectVia === "ESP8266") {
@@ -302,6 +307,7 @@ function playpauseMachine() {
         $('#playicon').addClass('fa-pause');
       // end ifPaused
       } else {
+        // pause
         var laseroffcmd = document.getElementById('laseroff').value;
         if (laseroffcmd) {
           if (connectVia === "USB") {

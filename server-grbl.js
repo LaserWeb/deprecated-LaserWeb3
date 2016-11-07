@@ -120,7 +120,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   socket.on('stop', function(data) {
     socket.emit("connectStatus", 'stopped:'+port.path);
     gcodeQueue.length = 0; // dump the queye
-    if (data == 0) {
+    if (data !== 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
       console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
@@ -131,7 +131,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
   socket.on('pause', function(data) {
     console.log(chalk.red('PAUSE'));
-    if (data == 0) {
+    if (data !== 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
       console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
@@ -143,6 +143,12 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
   socket.on('unpause', function(data) {
+    console.log(chalk.red('UNPAUSE'));
+    if (data !== 0) {
+      port.write(data+"\n");
+    } else {
+      port.write("M3\n");
+	}
     socket.emit("connectStatus", 'unpaused:'+port.path);
     paused = false;
     send1Q();
@@ -247,7 +253,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         }, 2000);
         infoLoop = setInterval(function() {
           port.write('?');
-          send1Q();
+          //send1Q();
         }, 250);
         queueCounter = setInterval(function(){
           for (var i in connections) {   // iterate over the array of connections
