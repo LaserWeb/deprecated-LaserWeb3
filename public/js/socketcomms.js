@@ -119,14 +119,14 @@ function initSocket() {
     }
   });
 
-	$('#overrides').on('keydown', function(ev) {
+	$('body').on('keydown', function(ev) {
 		if (ev.keyCode === 17) {
 			//CTRL key down > set override stepping to 10
 			ovStep = 10;
 		}
 	});
 
-	$('#overrides').on('keyup', function(ev) {
+	$('body').on('keyup', function(ev) {
 		if (ev.keyCode === 17) {
 			//CTRL key released-> reset override stepping to 1
 			ovStep = 1;
@@ -437,9 +437,9 @@ function updateStatus(data) {
     var ov = data.replace('>','').substr(startOv).split(/,|\|/, 3);
     //printLog("Overrides: " + ov[0] + ',' + ov[1] + ',' + ov[2],  msgcolor, "USB");
 	if (Array.isArray(ov)){
-	  $('#oF').html(ov[0] + '%');
-	  //$('#oR').html(ov[1] + '%');
-	  $('#oS').html(ov[2] + '%');
+	  $('#oF').html(ov[0].trim() + '%');
+	  //$('#oR').html(ov[1].trim() + '%');
+	  $('#oS').html(ov[2].trim() + '%');
 	}
   }
   
