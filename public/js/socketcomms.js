@@ -19,13 +19,15 @@ function initSocket() {
     } else {
       printLog(data, msgcolor, "usb");
     }
+	// is it GRBL >= v1.1?
 	if (data.search('Grbl')) {
       if (parseFloat(data) >= 1.1) {
         firmware = 'grbl';
 	    $('#overrides').removeClass('hide');
       }
     }
-	if (data.search('LPC1768')) {
+	// is it Smoothie?
+	if (data.search('LPC176')) {
       firmware = 'smoothie';
       $('#overrides').removeClass('hide');
     }
