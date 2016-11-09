@@ -34,6 +34,7 @@ $(document).ready(function() {
     initTree();
     initDragDrop();
     initKeyboardShortcut();
+    invalidateVideoSettingsDisplay();
 
     // Tooltips
     $(document).tooltip();
@@ -68,9 +69,12 @@ $(document).ready(function() {
         resetView();
     });
 
-
     $('#savesettings').on('click', function() {
         saveSettingsLocal();
+    });
+
+    $('#useVideo').on('change', function() {
+        invalidateVideoSettingsDisplay();
     });
 
     // Tabs on right side
@@ -80,7 +84,6 @@ $(document).ready(function() {
         $("#drotabtn").addClass("active");
         $("#gcodetabbtn").removeClass("active");
     });
-
 
     $('#gcodetabbtn').on('click', function() {
         $('#drotab').hide();
@@ -139,6 +142,8 @@ $(document).ready(function() {
     NProgress.configure({
         showSpinner: false
     });
+
+    setupVideoSources();
 
     checkNumPad();
 
@@ -202,6 +207,26 @@ $(document).ready(function() {
 
 }); // End of document.ready
 
+function invalidateVideoSettingsDisplay() {
+    var useVideo = $('#useVideo').val();
+    $('#webcamUrl').attr('disabled', useVideo === 'Remote' ? null : 'disabled');
+    $('#videoSource').attr('disabled', useVideo === 'Enable' ? null : 'disabled');
+}
+
+function setupVideoSources() {
+    $('#videoSource').html();
+
+    if (window.navigator.mediaDevices && window.navigator.mediaDevices.enumerateDevices) {
+        window.navigator.mediaDevices.enumerateDevices().then(function(mediaDeviceInfos) {
+            mediaDeviceInfos.filter(function(mediaDeviceInfo) {
+                return mediaDeviceInfo.kind === 'videoinput';
+            }).forEach(function(mediaDeviceInfo) {
+                var option = $('<option value="' + mediaDeviceInfo.deviceId + '">' + mediaDeviceInfo.label + '</option>')
+                $('#videoSource').append(option);
+            });
+        });
+    }
+}
 
 function setupJogPanel() {
 

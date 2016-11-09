@@ -703,14 +703,16 @@ function viewToolpath(i) {
 }
 
 function clearScene() {
-    var total = scene.children.length
+    var total = scene.children.length;
     for (var x = 7; x < total; x++) {
         // console.log('Removing ' + scene.children[x].name + ' from scene')
+        if (scene.children[x] === movieScreen) continue;
         scene.remove(scene.children[x]);
     }
-    var total = scene.children.length
+    var total = scene.children.length;
     for (var x = 7; x < total; x++) {
         // console.log('Removing ' + scene.children[x].name + ' from scene')
+        if (scene.children[x] === movieScreen) continue;
         scene.remove(scene.children[x]);
     }
 }
