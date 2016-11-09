@@ -196,7 +196,7 @@ function initSocket() {
 		clearInterval(ovLoop);
 	});
 
-	// increase feed override
+	// decrease spindle override
 	$('#dS').on('mousedown', function(ev) {
 		console.log("S- mousedown");
 		override('S-');
