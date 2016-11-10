@@ -37,7 +37,7 @@ $('#uploadsdbtn').on('click', function () {
       $('#ethernetConnect').hide();
       $('#playBtn').show();
       $('#uploadBtn').hide();
-      var espIpAddress = loadSetting('espIpAddress');
+      var espIpAddress = lw.store.get('espIpAddress');
       if (espIpAddress) {
         $('#espIp').val(espIpAddress);
       }
@@ -57,7 +57,7 @@ $('#uploadsdbtn').on('click', function () {
 
   $('#ethConnect').on('click', function() {
     var smoothieIp = $('#smoothieIp').val();
-    saveSetting('smoothieIp', smoothieIp);
+    lw.store.set('smoothieIp', smoothieIp);
     $.ajax({
      type: 'GET',
         url: 'http://' +smoothieIp + '/',
@@ -104,9 +104,9 @@ function scanSubnet() {
     var ip = subnet + ctr
     var result = scanIP(ip)
   }
-  saveSetting("subnet1", subnet1);
-  saveSetting("subnet2", subnet2);
-  saveSetting("subnet3", subnet3);
+  lw.store.set("subnet1", subnet1);
+  lw.store.set("subnet2", subnet2);
+  lw.store.set("subnet3", subnet3);
 };
 
 function  scanIP(ip) {

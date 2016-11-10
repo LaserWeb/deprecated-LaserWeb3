@@ -245,7 +245,7 @@ function fillTree() {
             if (currentObject.name.indexOf('.svg') != -1) {
                 if (currentObjectData.editor) {
                     var localKey = currentObjectData.editor.name + 'DPI';
-                    var dpi = loadSetting(localKey) || loadSetting('defaultDPI') || 24;
+                    var dpi = lw.store.get(localKey) || lw.store.get('defaultDPI') || 24;
                     svgscale = 25.4 / parseFloat(dpi);
                     scaleSVGObject(currentObject, svgscale);
                 }

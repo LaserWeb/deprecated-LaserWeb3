@@ -85,7 +85,7 @@ function drawRaster(name, data) {
     rastermesh.name = name;
     rastermesh.userData.imgdata = data;  // store B64 image data in the userData for later use
 
-    var defaultBitmapDPI = loadSetting('defaultBitmapDPI') || 25.4;
+    var defaultBitmapDPI = lw.store.get('defaultBitmapDPI') || 25.4;
     var scale = 25.4/defaultBitmapDPI;
     rastermesh.scale.x = scale;
     rastermesh.scale.y = scale;

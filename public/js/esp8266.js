@@ -68,7 +68,7 @@ function startWS(url) {
     url = document.location.host;
   stopWS();
   ws = new WebSocket('ws://'+url+'/');
-  saveSetting('espIpAddress', url);
+  lw.store.set('espIpAddress', url);
   ws.binaryType = "arraybuffer";
 
 
@@ -172,9 +172,9 @@ function scanWifiSubnet() {
     var ip = subnet + ctr
     var result = scanWifiIP(ip)
   }
-  saveSetting("wifisubnet1", subnet1);
-  saveSetting("wifisubnet2", subnet2);
-  saveSetting("wifisubnet3", subnet3);
+  lw.store.set("wifisubnet1", subnet1);
+  lw.store.set("wifisubnet2", subnet2);
+  lw.store.set("wifisubnet3", subnet3);
 };
 
 function  scanWifiIP(ip) {

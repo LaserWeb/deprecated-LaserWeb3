@@ -12,9 +12,8 @@ var useNumPad, activeObject, fileName;
 
 // Intialise
 lw.menu.init();
+lw.store.init();
 
-loadSettingsLocal();
-initLocalStorage();
 init3D();
 animate();
 filePrepInit();
@@ -66,9 +65,12 @@ $('#viewReset').on('click', function() {
     resetView();
 });
 
-
 $('#savesettings').on('click', function() {
-    saveSettingsLocal();
+    lw.store.refreshStore();
+});
+
+$('#backup').on('click', function() {
+    lw.store.backupStore();
 });
 
 // Tabs on right side
@@ -140,7 +142,8 @@ NProgress.configure({
 
 checkNumPad();
 
-checkSettingsLocal();
+// Check if all required settings are loaded
+lw.store.checkParams();
 
 // Bind Quote System
 $('.quoteVar').keyup(function(){
@@ -166,7 +169,7 @@ $('#armpin').pincodeInput({
     keydown : function(e){},
     // callback when all inputs are filled in (keyup event)
     complete : function(value, e, errorElement){
-        var val = loadSetting(armpin);
+        var val = lw.store.get(armpin);
         if (val) {
 
         } else {
@@ -192,14 +195,14 @@ $('#setarmpin').pincodeInput({
     keydown : function(e){},
     // callback when all inputs are filled in (keyup event)
     complete : function(value, e, errorElement){
-        saveSetting(armpin, value);
+        lw.store.set(armpin, value);
         $("#setpinmsg").html("<h3>Pin set to "+value+"</h3>");
         setTimeout(function(){ $('#pinresetmodal').modal('hide') }, 500);
         // $('#pinresetmodal').modal('hide');
     }
 });
 
-var overridePinCode = loadSetting('safetyLockDisabled');
+var overridePinCode = lw.store.get('safetyLockDisabled');
 if (overridePinCode == 'Enable') {
     $('#controlmachine').show();
     $('#armmachine').hide();

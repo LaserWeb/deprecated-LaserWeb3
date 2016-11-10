@@ -70,7 +70,7 @@ function initJog() {
     });
 
     // Jog Widget
-    var lastJogSize = parseFloat(loadSetting("lastJogSize") || 10);
+    var lastJogSize = parseFloat(lw.store.get("lastJogSize") || 10);
 
     $('#stepsize input').on('change', function() {
       var newJogSize = $('input[name=stp]:checked', '#stepsize').val();
@@ -79,26 +79,26 @@ function initJog() {
        $(".stepsizeval").empty();
        $(".stepsizeval").html(newJogSize + 'mm');
        // Save the setting to local storage once it's been set.
-       saveSetting("lastJogSize", newJogSize.toString());
+       lw.store.set("lastJogSize", newJogSize.toString());
     });
 
     // Now set the initial setting from the saved settings
     $("input[name=stp][value='"+lastJogSize+"']").click();
 
-    var jogfeedxy = parseFloat(loadSetting("jogFeedXY") || 30);
-    var jogfeedz = parseFloat(loadSetting("jogFeedZ") || 5);
+    var jogfeedxy = parseFloat(lw.store.get("jogFeedXY") || 30);
+    var jogfeedz = parseFloat(lw.store.get("jogFeedZ") || 5);
     $("#jogfeedxy").val(jogfeedxy);
     $("#jogfeedz").val(jogfeedz);
 
     $("#jogfeedxy").on('change', function() {
       var jogfeedxy = parseFloat($("#jogfeedxy").val());
-      saveSetting("jogFeedXY", jogfeedxy.toString());
+      lw.store.set("jogFeedXY", jogfeedxy.toString());
       printLog('Jog xy speed settings saved', successcolor, "jog");
     });
 
     $("#jogfeedz").on('change', function() {
       var jogfeedz = parseFloat($("#jogfeedz").val());
-      saveSetting("jogFeedZ", jogfeedz.toString());
+      lw.store.set("jogFeedZ", jogfeedz.toString());
       printLog('Jog z speed settings saved', successcolor, "jog");
     });
 
@@ -108,8 +108,8 @@ function saveJogSpeeds() {
   var jogfeedxy = parseFloat($("#jogfeedxy").val());
   var jogfeedz = parseFloat($("#jogfeedz").val());
 
-  saveSetting("jogFeedXY", jogfeedxy.toString());
-  saveSetting("jogFeedZ", jogfeedz.toString());
+  lw.store.set("jogFeedXY", jogfeedxy.toString());
+  lw.store.set("jogFeedZ", jogfeedz.toString());
 
   printLog('Jog speed settings saved', successcolor, "jog");
     
