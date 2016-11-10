@@ -42,6 +42,9 @@ var lw = lw || {};
         ['optimisegcode'     , false]
     ];
 
+    // Callbacks collection
+    lw.store.callbacks = [];
+
     // -------------------------------------------------------------------------
 
     // Store console log
@@ -83,30 +86,61 @@ var lw = lw || {};
         });
     };
 
+    // -------------------------------------------------------------------------
+
+    // Register an callback
+    lw.store.on = function(event, callback, context) {
+        // Create event callbacks collection
+        if (! this.callbacks[event]) {
+            this.callbacks[event] = [];
+        }
+
+        var callbacks = this.callbacks[event];
+            callback  = [callback, context || null];
+
+        // If not already registered
+        if (callbacks.indexOf(callback) === -1) {
+            callbacks.push(callback);
+        }
+    };
+
+    // Trigger an event
+    lw.store.trigger = function(event, data) {
+        // If event defined
+        if (this.callbacks[event]) {
+            // For each callback
+            this.callbacks[event].forEach(function(callback) {
+                callback[0].call(callback[1] || lw.store, data);
+            });
+        }
+    };
+
+    // -------------------------------------------------------------------------
+
     // Set setting item in local storage
-    lw.store.set = function(setting, value) {
-        localStorage.setItem(setting, value);
+    lw.store.set = function(name, value) {
+        this.trigger('set', { name: name, value: value });
+        localStorage.setItem(name, value);
     };
 
     // Get setting item from local storage
-    lw.store.get = function(setting) {
-        return localStorage.getItem(setting);
+    lw.store.get = function(name) {
+        return localStorage.getItem(name);
     };
+
+    // -------------------------------------------------------------------------
 
     // (Re)load all settings from local storage and populate the form
     lw.store.refreshForm = function() {
         this.logStart('Loading settings from LocalStorage');
 
         // Param
-        var index, name, value;
+        var name, value;
 
         // For each declared param
-        for (index in this.params) {
-            if (! this.params.hasOwnProperty(index)) {
-                continue;
-            }
-
-            name  = this.params[index][0];
+        this.params.forEach(function(param) {
+            // Get param name and value
+            name  = param[0];
             value = this.get(name);
 
             if (value) {
@@ -116,7 +150,7 @@ var lw = lw || {};
             else {
                 this.log('Undefined: ' +  name);
             }
-        }
+        }, this);
 
         this.logEnd();
     };
@@ -126,26 +160,26 @@ var lw = lw || {};
         this.logStart('Saving settings to LocalStorage');
 
         // Param
-        var index, name, value;
+        var name, value;
 
         // For each declared param
-        for (index in this.params) {
-            if (! this.params.hasOwnProperty(index)) {
-                continue;
-            }
-
-            name  = this.params[index][0];
+        this.params.forEach(function(param) {
+            // Get param name and value
+            name  = param[0];
             value = $('#' + name).val();
 
+            // Update store value
             this.set(name, value);
 
             this.log('Saving: ' + name + ' : ' + value);
             printLog('Saving: ' + name + ' : ' + value, successcolor);
-        }
+        }, this);
 
         this.logEnd();
         printLog('<b>Saved Settings: <br>NB:</b> Please refresh page for settings to take effect', errorcolor, 'settings');
     };
+
+    // -------------------------------------------------------------------------
 
     // (Re)load settings from JSON file
     lw.store.loadFile = function(file) {
@@ -161,19 +195,19 @@ var lw = lw || {};
             var json = JSON.parse(text);
 
             // Param
-            var index, name;
+            var name, value;
 
             // For each declared param
-            for (index in lw.store.params) {
+            lw.store.params.forEach(function(param) {
                 // Get param name
-                name = lw.store.params[index][0];
+                name = param[0];
 
                 // If defined in JSON object
                 if (json.hasOwnProperty(name)) {
                     // Update local setting
                     lw.store.set(name, json[name]);
                 }
-            }
+            });
 
             // Refresh the Form
             lw.store.refreshForm();
@@ -184,11 +218,13 @@ var lw = lw || {};
     };
 
     // Make and download a backup file
-    lw.store.backupStore = function() {
+    lw.store.saveFile = function() {
         var json = JSON.stringify(localStorage, null, '  ');
         var blob = new Blob([json], {type: 'application/json'});
         invokeSaveAsDialog(blob, 'laserweb-settings-backup.json');
     };
+
+    // -------------------------------------------------------------------------
 
     // Check if all required settings are loaded
     lw.store.checkParams = function() {
@@ -198,16 +234,13 @@ var lw = lw || {};
         $('#settingsstatus').hide();
 
         // Param
-        var index, name, required, value;
+        var name, required, value;
 
         // For each declared param
-        for (index in this.params) {
-            if (! this.params.hasOwnProperty(index)) {
-                continue;
-            }
-
-            name     = this.params[index][0];
-            required = this.params[index][1];
+        lw.store.params.forEach(function(param) {
+            // Get param name, value and if required
+            name     = param[0];
+            required = param[1];
             value    = $('#' + name).val();
 
             if (! value) {
@@ -222,7 +255,7 @@ var lw = lw || {};
             else {
                 printLog('Found setting: ' + name + ' : ' + value, msgcolor, 'settings');
             }
-        }
+        });
 
         if (anyissues) {
             printLog('<b>MISSING CONFIG: You need to configure LaserWeb for your setup. </b>. Click <kbd>Settings <i class="fa fa-cogs"></i></kbd> on the left, and work through all the options', errorcolor, 'settings');

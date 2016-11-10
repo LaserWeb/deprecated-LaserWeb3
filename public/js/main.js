@@ -70,7 +70,7 @@ $('#savesettings').on('click', function() {
 });
 
 $('#backup').on('click', function() {
-    lw.store.backupStore();
+    lw.store.saveFile();
 });
 
 // Tabs on right side
