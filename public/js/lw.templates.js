@@ -11,7 +11,7 @@ var lw = lw || {};
     lw.templates.init = function() {
         for (var id in lw.templates) {
             if (lw.templates.hasOwnProperty(id)) {
-                $('#' + id + '-tpl').replaceWith(lw.templates[id]);
+                $('[data-template="' + id + '"]').replaceWith(lw.templates[id]);
             }
         }
     };
