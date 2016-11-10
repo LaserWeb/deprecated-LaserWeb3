@@ -203,8 +203,8 @@ $(document).ready(function() {
 
     var overridePinCode = loadSetting('safetyLockDisabled');
     if (overridePinCode == 'Enable') {
-      $('#controlmachine').show();
-      $('#armmachine').hide();
+        $('#controlmachine').show();
+        $('#armmachine').hide();
     }
 
     cncMode = $('#cncMode').val()
@@ -386,15 +386,15 @@ function loadFile(f) {
                 setTimeout(function(){   openGCodeFromText(); }, 500);
             };
         } else if (f.name.match(/.nc$/i)) {
-              r.readAsText(f);
-              r.onload = function(event) {
-                  // cleanupThree();
-                  $("#gcodefile").show();
-                  document.getElementById('gcodepreview').value = this.result;
-                  printLog('GCODE Opened', msgcolor, "file");
-                  resetView()
-                  setTimeout(function(){   openGCodeFromText(); }, 500);
-              };
+            r.readAsText(f);
+            r.onload = function(event) {
+                // cleanupThree();
+                $("#gcodefile").show();
+                document.getElementById('gcodepreview').value = this.result;
+                printLog('GCODE Opened', msgcolor, "file");
+                resetView()
+                setTimeout(function(){   openGCodeFromText(); }, 500);
+            };
         } else if (f.name.match(/.stl$/i)) {
             //r.readAsText(f);
             // Remove the UI elements from last run
