@@ -23,7 +23,7 @@ var lw = lw || {};
                 lw.menu.show(this.name);
             });
         });
-    }
+    };
 
     // Make tab active and disable all others
     lw.menu.show = function(itemName) {
@@ -31,14 +31,14 @@ var lw = lw || {};
         var itemId  = '#' + itemName + '-menu';
         var panelId = itemId + '-panel';
 
-        // Desactivate all
+        // Hide all items
         $mobtab.hide();
         $leftmenuitem.removeClass('active');
 
-        // Activate selected
+        // Show selected item
         $(itemId).addClass('active');
         $(panelId).show();
-    }
+    };
 
 // End menu scope
 })();
