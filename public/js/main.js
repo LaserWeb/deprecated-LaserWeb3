@@ -2,249 +2,247 @@
 console.log("%c%s","color: #000; background: green; font-size: 12px;", "STARTING LASERWEB");
 
 // colors for the consolelog
-var msgcolor = '#000000';
+var msgcolor     = '#000000';
 var successcolor = '#00aa00';
-var errorcolor = '#cc0000';
-var warncolor = '#ff6600';
+var errorcolor   = '#cc0000';
+var warncolor    = '#ff6600';
 
-var debug = false;
+// ????
+var useNumPad, activeObject, fileName;
 
-var useNumPad;
-var activeObject, fileName
+// Intialise
+lw.menu.init();
 
-
-
-    // Intialise
-    loadSettingsLocal();
-    initLocalStorage();
-    init3D();
-    animate();
-    filePrepInit();
-    initTabs();
-    initJog();
-    errorHandlerJS();
-    var paperscript = {};
-    rasterInit();
-    macrosInit();
-    svgInit();
-    initSocket();
-    initTour();
-    initSmoothie();
-    initEsp8266();
-    initTree();
-    initDragDrop();
+loadSettingsLocal();
+initLocalStorage();
+init3D();
+animate();
+filePrepInit();
+initTabs();
+initJog();
+errorHandlerJS();
+var paperscript = {};
+rasterInit();
+macrosInit();
+svgInit();
+initSocket();
+initTour();
+initSmoothie();
+initEsp8266();
+initTree();
+initDragDrop();
 
 
-    // Tooltips
-    $(document).tooltip();
-    $(document).click(function() {
-        $(this).tooltip("option", "hide", {
-            effect: "clip",
-            duration: 500
-        }).off("focusin focusout");
-    });
+// Tooltips
+$(document).tooltip();
+$(document).click(function() {
+    $(this).tooltip("option", "hide", {
+        effect: "clip",
+        duration: 500
+    }).off("focusin focusout");
+});
 
-    $('#g-open').on('click', function() {
-        $('#googledrive').modal('show');
-    });
-    // Top toolbar Menu
+$('#g-open').on('click', function() {
+    $('#googledrive').modal('show');
+});
+// Top toolbar Menu
 
-    //File -> Open
-    var fileOpen = document.getElementById('file');
-    fileOpen.addEventListener('change', readFile, false);
+//File -> Open
+var fileOpen = document.getElementById('file');
+fileOpen.addEventListener('change', readFile, false);
 
-    // Fix for opening same file from http://stackoverflow.com/questions/32916687/uploading-same-file-into-text-box-after-clearing-it-is-not-working-in-chrome?lq=1
-    $('#file').bind('click', function() {
-        $('#file').val(null);
-    });
+// Fix for opening same file from http://stackoverflow.com/questions/32916687/uploading-same-file-into-text-box-after-clearing-it-is-not-working-in-chrome?lq=1
+$('#file').bind('click', function() {
+    $('#file').val(null);
+});
 
-    // File -> Save
-    $('#save').on('click', function() {
-        saveFile();
-    });
+// File -> Save
+$('#save').on('click', function() {
+    saveFile();
+});
 
-    // View -> reset
-    $('#viewReset').on('click', function() {
-        resetView();
-    });
-
-
-    $('#savesettings').on('click', function() {
-        saveSettingsLocal();
-    });
-
-    // Tabs on right side
-    $('#drotabtn').on('click', function() {
-        $('#drotab').show();
-        $('#gcodetab').hide();
-        $("#drotabtn").addClass("active");
-        $("#gcodetabbtn").removeClass("active");
-    });
+// View -> reset
+$('#viewReset').on('click', function() {
+    resetView();
+});
 
 
-    $('#gcodetabbtn').on('click', function() {
-        $('#drotab').hide();
-        $('#gcodetab').show();
-        $("#drotabtn").removeClass("active");
-        $("#gcodetabbtn").addClass("active");
-    });
+$('#savesettings').on('click', function() {
+    saveSettingsLocal();
+});
 
-    // Show/Hide Macro Pad
-    $('#toggleviewer').on('click', function() {
-        if ($( "#toggleviewer" ).hasClass( "active" )) {
+// Tabs on right side
+$('#drotabtn').on('click', function() {
+    $('#drotab').show();
+    $('#gcodetab').hide();
+    $("#drotabtn").addClass("active");
+    $("#gcodetabbtn").removeClass("active");
+});
+
+
+$('#gcodetabbtn').on('click', function() {
+    $('#drotab').hide();
+    $('#gcodetab').show();
+    $("#drotabtn").removeClass("active");
+    $("#gcodetabbtn").addClass("active");
+});
+
+// Show/Hide Macro Pad
+$('#toggleviewer').on('click', function() {
+    if ($( "#toggleviewer" ).hasClass( "active" )) {
+
+    } else {
+        $('#hometab').show();
+        $('#camleftcol').hide();
+        $('#settingscol').hide();
+        $("#toggleviewer").addClass("active");
+        $("#togglefile").removeClass("active");
+        $("#togglesettings").removeClass("active");
+    }
+});
+
+$('#togglefile').on('click', function() {
+    if ($( "#togglefile" ).hasClass( "active" )) {
+
+    } else {
+        $('#hometab').hide();
+        $('#camleftcol').show();
+        $('#settingscol').hide();
+        $("#toggleviewer").removeClass("active");
+        $("#togglefile").addClass("active");
+        $("#togglesettings").removeClass("active");
+    }
+});
+
+$('#togglesettings').on('click', function() {
+    if ($( "#togglesettings" ).hasClass( "active" )) {
+
+    } else {
+        $('#hometab').hide();
+        $('#camleftcol').hide();
+        $('#settingscol').show();
+        $("#toggleviewer").removeClass("active");
+        $("#togglefile").removeClass("active");
+        $("#togglesettings").addClass("active");
+    }
+});
+
+
+// Viewer
+var viewer = document.getElementById('renderArea');
+
+
+// Progressbar
+// NProgress.configure({ parent: '#gcode-menu-panel' });
+NProgress.configure({
+    showSpinner: false
+});
+
+checkNumPad();
+
+checkSettingsLocal();
+
+// Bind Quote System
+$('.quoteVar').keyup(function(){
+    var setupfee = ( parseFloat($("#setupcost").val()) ).toFixed(2);
+    var materialcost = ( parseFloat($("#materialcost").val()) * parseFloat($("#materialqty").val()) ).toFixed(2);
+    var timecost = ( parseFloat($("#lasertime").val()) * parseFloat($("#lasertimeqty").val()) ).toFixed(2);
+    var unitqty = ( parseFloat($("#qtycut").val()) ).toFixed(2);
+    var grandtot = (materialcost*unitqty) + (timecost*unitqty) + parseFloat(setupfee);
+    var grandtotal = grandtot.toFixed(2);
+    $("#quoteprice").empty();
+    $("#quoteprice").html('<div class="table-responsive"><table class="table table-condensed"><thead><tr><td class="text-center"><strong>Qty</strong></td><td class="text-center"><strong>Description</strong></td><td class="text-right"><strong>Unit</strong></td><td class="text-right"><strong>Total</strong></td></tr></thead><tbody><tr><td>1</td><td>Setup Cost</td><td class="text-right">'+setupfee+'</td><td class="text-right">'+setupfee+'</td></tr><tr><td>'+unitqty+'</td><td>Material</td><td class="text-right">'+materialcost+'</td><td class="text-right">'+(materialcost*unitqty).toFixed(2)+'</td></tr><tr><td>'+unitqty+'</td><td>Laser Time</td><td class="text-right">'+timecost+'</td><td class="text-right">'+(timecost*unitqty).toFixed(2)+'</td></tr><tr><td class="thick-line"></td><td class="thick"></td><td class="thick-line text-center"><strong>Total</strong></td><td class="thick-line text-right">'+ grandtotal +'</td></tr></tbody></table></div>' );
+});
+
+
+$('#controlmachine').hide();
+$('#armmachine').show();
+$('#armpin').pincodeInput({
+    // 4 input boxes = code of 4 digits long
+    inputs:4,
+    // hide digits like password input
+    hideDigits:true,
+    // keyDown callback
+    keydown : function(e){},
+    // callback when all inputs are filled in (keyup event)
+    complete : function(value, e, errorElement){
+        var val = loadSetting(armpin);
+        if (val) {
 
         } else {
-            $('#hometab').show();
-            $('#camleftcol').hide();
-            $('#settingscol').hide();
-            $("#toggleviewer").addClass("active");
-            $("#togglefile").removeClass("active");
-            $("#togglesettings").removeClass("active");
+            val = "1234"
         }
-    });
-
-    $('#togglefile').on('click', function() {
-        if ($( "#togglefile" ).hasClass( "active" )) {
-
+        if ( value != val ){
+            $("#armerror").html("Code incorrect");
+            // $("#armButton").addClass('disabled');
         } else {
-            $('#hometab').hide();
-            $('#camleftcol').show();
-            $('#settingscol').hide();
-            $("#toggleviewer").removeClass("active");
-            $("#togglefile").addClass("active");
-            $("#togglesettings").removeClass("active");
+            $("#armerror").html("Code correct");
+            $('#controlmachine').show();
+            $('#armmachine').hide();
+            // $("#armButton").removeClass('disabled');
         }
-    });
+    }
+});
+$('#setarmpin').pincodeInput({
+    // 4 input boxes = code of 4 digits long
+    inputs:4,
+    // hide digits like password input
+    hideDigits:false,
+    // keyDown callback
+    keydown : function(e){},
+    // callback when all inputs are filled in (keyup event)
+    complete : function(value, e, errorElement){
+        saveSetting(armpin, value);
+        $("#setpinmsg").html("<h3>Pin set to "+value+"</h3>");
+        setTimeout(function(){ $('#pinresetmodal').modal('hide') }, 500);
+        // $('#pinresetmodal').modal('hide');
+    }
+});
 
-    $('#togglesettings').on('click', function() {
-        if ($( "#togglesettings" ).hasClass( "active" )) {
+var overridePinCode = loadSetting('safetyLockDisabled');
+if (overridePinCode == 'Enable') {
+    $('#controlmachine').show();
+    $('#armmachine').hide();
+}
 
-        } else {
-            $('#hometab').hide();
-            $('#camleftcol').hide();
-            $('#settingscol').show();
-            $("#toggleviewer").removeClass("active");
-            $("#togglefile").removeClass("active");
-            $("#togglesettings").addClass("active");
-        }
-    });
+cncMode = $('#cncMode').val()
+if (cncMode == "Enable") {
+    document.title = "CNCWeb";
+    $("#statusmodal").modal('show');
+    $("#statusTitle").html("<h4>CNC Mode Activated</h4>");
+    $("#statusBody").html("Note: You have activated <b>CNC mode</b> from <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>");
+    $("#statusBody2").html("While in CNC mode, Laser Raster Engraving is not enabled.  Please only open GCODE, DXF or SVG files.<hr>To revert to Laser Mode, go to <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>, and change it to <kbd>Disabled</kbd><hr>Please help us improve this experimental feature by giving feedback, asking for improvements, sharing ideas and posting bugs in the <a class='btn btn-sm btn-success' target='_blank' href='https://plus.google.com/communities/115879488566665599508'>Support Community</a>");
+};
 
+// Command Console History
+$("#command").inputHistory({
+    enter: function () {
+        var commandValue = $('#command').val();
+        sendGcode(commandValue);
+    }
+});
 
-    // Viewer
-    var viewer = document.getElementById('renderArea');
-
-
-    // Progressbar
-    // NProgress.configure({ parent: '#gcode-menu-panel' });
-    NProgress.configure({
-        showSpinner: false
-    });
-
-    checkNumPad();
-
-    checkSettingsLocal();
-
-    // Bind Quote System
-    $('.quoteVar').keyup(function(){
-        var setupfee = ( parseFloat($("#setupcost").val()) ).toFixed(2);
-        var materialcost = ( parseFloat($("#materialcost").val()) * parseFloat($("#materialqty").val()) ).toFixed(2);
-        var timecost = ( parseFloat($("#lasertime").val()) * parseFloat($("#lasertimeqty").val()) ).toFixed(2);
-        var unitqty = ( parseFloat($("#qtycut").val()) ).toFixed(2);
-        var grandtot = (materialcost*unitqty) + (timecost*unitqty) + parseFloat(setupfee);
-        var grandtotal = grandtot.toFixed(2);
-        $("#quoteprice").empty();
-        $("#quoteprice").html('<div class="table-responsive"><table class="table table-condensed"><thead><tr><td class="text-center"><strong>Qty</strong></td><td class="text-center"><strong>Description</strong></td><td class="text-right"><strong>Unit</strong></td><td class="text-right"><strong>Total</strong></td></tr></thead><tbody><tr><td>1</td><td>Setup Cost</td><td class="text-right">'+setupfee+'</td><td class="text-right">'+setupfee+'</td></tr><tr><td>'+unitqty+'</td><td>Material</td><td class="text-right">'+materialcost+'</td><td class="text-right">'+(materialcost*unitqty).toFixed(2)+'</td></tr><tr><td>'+unitqty+'</td><td>Laser Time</td><td class="text-right">'+timecost+'</td><td class="text-right">'+(timecost*unitqty).toFixed(2)+'</td></tr><tr><td class="thick-line"></td><td class="thick"></td><td class="thick-line text-center"><strong>Total</strong></td><td class="thick-line text-right">'+ grandtotal +'</td></tr></tbody></table></div>' );
-    });
+setTimeout(function(){ $('#viewReset').click(); }, 100);
 
 
-    $('#controlmachine').hide();
-    $('#armmachine').show();
-    $('#armpin').pincodeInput({
-        // 4 input boxes = code of 4 digits long
-        inputs:4,
-        // hide digits like password input
-        hideDigits:true,
-        // keyDown callback
-        keydown : function(e){},
-        // callback when all inputs are filled in (keyup event)
-        complete : function(value, e, errorElement){
-            var val = loadSetting(armpin);
-            if (val) {
+// Version check
 
-            } else {
-                val = "1234"
-            }
-            if ( value != val ){
-                $("#armerror").html("Code incorrect");
-                // $("#armButton").addClass('disabled');
-            } else {
-                $("#armerror").html("Code correct");
-                $('#controlmachine').show();
-                $('#armmachine').hide();
-                // $("#armButton").removeClass('disabled');
-            }
-        }
-    });
-    $('#setarmpin').pincodeInput({
-        // 4 input boxes = code of 4 digits long
-        inputs:4,
-        // hide digits like password input
-        hideDigits:false,
-        // keyDown callback
-        keydown : function(e){},
-        // callback when all inputs are filled in (keyup event)
-        complete : function(value, e, errorElement){
-            saveSetting(armpin, value);
-            $("#setpinmsg").html("<h3>Pin set to "+value+"</h3>");
-            setTimeout(function(){ $('#pinresetmodal').modal('hide') }, 500);
-            // $('#pinresetmodal').modal('hide');
-        }
-    });
-
-    var overridePinCode = loadSetting('safetyLockDisabled');
-    if (overridePinCode == 'Enable') {
-        $('#controlmachine').show();
-        $('#armmachine').hide();
+var version = $('meta[name=version]').attr("content");
+$.get( "https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/version.txt", function( data ) {
+    printLog("Version currently Installed : " + version , msgcolor, "git")
+    printLog("Version available online on Github : " + data , msgcolor, "git")
+    if ( parseInt(version) < parseInt(data) ) {
+        printLog("<b><u>NB:  UPDATE AVAILABLE!</u></b>  - Execute 'git pull' from your laserweb terminal " , errorcolor, "git")
+    } else {
+        printLog("Your version of LaserWeb is Up To Date! " , successcolor, "git")
     }
 
-    cncMode = $('#cncMode').val()
-    if (cncMode == "Enable") {
-        document.title = "CNCWeb";
-        $("#statusmodal").modal('show');
-        $("#statusTitle").html("<h4>CNC Mode Activated</h4>");
-        $("#statusBody").html("Note: You have activated <b>CNC mode</b> from <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>");
-        $("#statusBody2").html("While in CNC mode, Laser Raster Engraving is not enabled.  Please only open GCODE, DXF or SVG files.<hr>To revert to Laser Mode, go to <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>, and change it to <kbd>Disabled</kbd><hr>Please help us improve this experimental feature by giving feedback, asking for improvements, sharing ideas and posting bugs in the <a class='btn btn-sm btn-success' target='_blank' href='https://plus.google.com/communities/115879488566665599508'>Support Community</a>");
-    };
+});
 
-    // Command Console History
-    $("#command").inputHistory({
-        enter: function () {
-            var commandValue = $('#command').val();
-            sendGcode(commandValue);
-        }
-    });
-
-    setTimeout(function(){ $('#viewReset').click(); }, 100);
-
-
-    // Version check
-
-    var version = $('meta[name=version]').attr("content");
-    $.get( "https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/version.txt", function( data ) {
-        printLog("Version currently Installed : " + version , msgcolor, "git")
-        printLog("Version available online on Github : " + data , msgcolor, "git")
-        if ( parseInt(version) < parseInt(data) ) {
-            printLog("<b><u>NB:  UPDATE AVAILABLE!</u></b>  - Execute 'git pull' from your laserweb terminal " , errorcolor, "git")
-        } else {
-            printLog("Your version of LaserWeb is Up To Date! " , successcolor, "git")
-        }
-
-    });
-
-    // A few gcode input fields need to be caps for the firmware to support it
-    $('.uppercase').keyup(function() {
-        // this.value = this.value.toLocaleUpperCase();
-    });
+// A few gcode input fields need to be caps for the firmware to support it
+$('.uppercase').keyup(function() {
+    // this.value = this.value.toLocaleUpperCase();
+});
 
 
 
