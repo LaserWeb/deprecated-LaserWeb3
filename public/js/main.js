@@ -1,5 +1,6 @@
-console.log("%c%s","color: #000; background: green; font-size: 24px;",
-"STARTING LASERWEB")
+// Console header
+console.log("%c%s","color: #000; background: green; font-size: 12px;", "STARTING LASERWEB");
+
 // colors for the consolelog
 var msgcolor = '#000000';
 var successcolor = '#00aa00';
@@ -11,8 +12,7 @@ var debug = false;
 var useNumPad;
 var activeObject, fileName
 
-// Place all document.ready tasks into functions and ONLY run the functions from doument.ready
-$(document).ready(function() {
+
 
     // Intialise
     loadSettingsLocal();
@@ -248,9 +248,6 @@ $(document).ready(function() {
 
 
 
-}); // End of document.ready
-
-
 
 
 function checkNumPad() {
@@ -285,7 +282,7 @@ function checkNumPad() {
 }
 
 // Error handling
-errorHandlerJS = function() {
+function errorHandlerJS() {
     window.onerror = function(message, url, line) {
         message = message.replace(/^Uncaught /i, "");
         //alert(message+"\n\n("+url+" line "+line+")");
