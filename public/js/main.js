@@ -1,12 +1,6 @@
 // Console header
 console.log("%c%s","color: #000; background: green; font-size: 12px;", "STARTING LASERWEB");
 
-// colors for the consolelog
-//var 'message'     = '#000000';
-//var 'success' = '#00aa00';
-//var 'error'   = '#cc0000';
-//var 'warning'    = '#ff6600';
-
 // ????
 var useNumPad, activeObject, fileName;
 
@@ -446,10 +440,7 @@ function loadFile(f) {
     }
     $('#filestatus').hide();
     $('#cam-menu').click();
-    if (control) {
-        lw.viewer.scene.remove(control);
-        lw.viewer.viewControls.reset();
-    }
+    
     setTimeout(function(){ fillTree(); }, 250);
     setTimeout(function(){ fillLayerTabs(); }, 300);
     setTimeout(function(){ viewExtents(objectsInScene[objectsInScene.length - 1]); }, 300);

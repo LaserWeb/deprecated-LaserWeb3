@@ -12,55 +12,6 @@ var lw = lw || {};
             <table style="width: 100%">
                 <tr>
                     <td style="width: 100px;">
-                        <div id="transformcontrols" class="btn-group" role="group" style="vertical-align: bottom; margin-left: 18px; display: none;">
-                            <div class="btn-group input-group  btn-group-vertical" role="group" style="vertical-align: bottom;">
-                                <button id="rotLeftBtn" type="button" data-title="Move Object" class="btn btn-lg btn-default">
-                                    <span class="fa-stack fa-1x">
-                                        <i class="fa fa-undo fa-stack-1x"></i>
-                                        <strong class="fa-stack-1x icon-top-text">Rotate</strong>
-                                        <strong class="fa-stack-1x rotsizeval icon-bot-text">45&deg;</strong>
-                                    </span>
-                                </button>
-                                <button id="translateBtn" type="button" data-title="Move Object" class="btn btn-lg btn-default">
-                                    <span class="fa-stack fa-1x">
-                                        <i class="fa fa-arrows fa-stack-1x"></i>
-                                        <strong class="fa-stack-1x icon-top-text">Move</strong>
-                                    </span>
-                                </button>
-                            </div>
-                            <div class="btn-group input-group  btn-group-vertical" role="group" style="vertical-align: bottom;">
-                                <button id="rotRightBtn" type="button" data-title="Move Object" class="btn btn-lg btn-default">
-                                    <span class="fa-stack fa-1x">
-                                        <i class="fa fa-repeat fa-stack-1x"></i>
-                                        <strong class="fa-stack-1x icon-top-text">Rotate</strong>
-                                        <strong class="fa-stack-1x rotsizeval icon-bot-text">45&deg;</strong>
-                                    </span>
-                                </button>
-                                <button id="resizeBtn" type="button" data-title="Resize Object" class="btn btn-lg btn-default">
-                                    <span class="fa-stack fa-1x">
-                                        <i class="fa fa-expand fa-stack-1x"></i>
-                                        <strong class="fa-stack-1x icon-top-text">Resize</strong>
-                                    </span>
-                                </button>
-                            </div>
-                            <div class="btn-group input-group  btn-group-vertical" role="group" style="vertical-align: bottom;">
-                                <button id="resetRot" type="button" data-title="Link Aspect" class="btn btn-lg btn-default">
-                                    <span class="fa-stack fa-1x">
-                                        <i class="fa fa-circle-o-notch fa-stack-1x"></i>
-                                        <strong class="fa-stack-1x icon-top-text">Reset</strong>
-                                        <strong class="fa-stack-1x icon-bot-text">Rotation</strong>
-                                    </span>
-                                </button>
-                                <button id="linkAspectBtn" type="button" data-title="Link Aspect" class="btn btn-lg btn-default">
-                                    <span class="fa-stack fa-1x">
-                                        <i id='linkAspect' class="fa fa-link fa-stack-1x"></i>
-                                        <strong class="fa-stack-1x icon-top-text">Aspect</strong>
-                                        <strong id="linkval" class="fa-stack-1x icon-bot-text">Linked</strong>
-                                    </span>
-                                </button>
-                            </div>
-                        </div><!-- #transformcontrols -->
-
                         <div id="viewcontrols" class="btn-group" role="group" style="vertical-align: bottom; margin-left: 18px;">
                             <div class="btn-group input-group  btn-group-vertical" role="group" style="vertical-align: bottom;">
                                 <button id="togglemacro" type="button" data-title="Link Aspect" class="btn btn-lg btn-default">

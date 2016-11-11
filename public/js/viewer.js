@@ -3,7 +3,6 @@ var geometry, material, mesh, helper, axes, axesgrp, light, bullseye;
 var projector, mouseVector, containerWidth, containerHeight;
 
 var container, stats;
-var control;
 var clock = new THREE.Clock();
 
 var marker;
@@ -35,55 +34,7 @@ function setBullseyePosition(x, y, z) {
     }
 }
 
-
-
 function init3D() {
-
-    // var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    //
-    // if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i)) {
-    //     console.log('Running on iOS');
-    // }
-    // else if (userAgent.match(/Android/i)) {
-    //     console.log('Running on Android');
-    // }
-    // else {
-    //     console.log('Running on unknown/Desktop');
-    // }
-
-    //$('#viewermodule').hide();
-    //$('#renderArea').append(lw.viewer.renderer.domElement);
-
-    // lw.viewer.renderer.setClearColor(0xffffff, 1); // Background color of viewer = transparent
-    // lw.viewer.renderer.clear();
-
-    // sceneWidth    = document.getElementById("renderArea").offsetWidth,
-    // sceneHeight   = document.getElementById("renderArea").offsetHeight;
-    // lw.viewer.camera.aspect = sceneWidth / sceneHeight;
-    //
-    // lw.viewer.renderer.setSize(sceneWidth, sceneHeight)
-    // lw.viewer.camera.updateProjectionMatrix();
-
-    // controls = new THREE.OrbitControls(lw.viewer.camera, lw.viewer.renderer.domElement);
-    // lw.viewer.viewControls.target.set(0, 0, 0); // view direction perpendicular to XY-plane
-    //
-    // cncMode = $('#cncMode').val();
-    //
-    // if (cncMode == "Enable") {
-    //     lw.viewer.viewControls.enableRotate = true;
-    //     $('#3dview').prop('checked', true);
-    // }
-    // else {
-    //     lw.viewer.viewControls.enableRotate = false;
-    // }
-    //
-    // lw.viewer.viewControls.enableZoom = true;  // optional
-    // lw.viewer.viewControls.enableKeys = false; // Disable Keyboard on canvas
-
-    control = new THREE.TransformControls(lw.viewer.camera, lw.viewer.renderer.domElement);
-
-    workspace.add(control);
-    control.setMode("translate");
 
     var light = new THREE.DirectionalLight(0xffffff);
     light.position.set(-500, -500, 1).normalize();
@@ -120,10 +71,7 @@ function init3D() {
     helper.material.opacity = 0.15;
     helper.material.transparent = true;
     helper.receiveShadow = false;
-    //console.log("helper grid:", helper);
     this.grid = helper;
-    //lw.viewer.sceneAdd(this.grid);
-    //console.log('[VIEWER] - added Helpert');
     helper.name = "GridHelper"
     workspace.add(helper);
 
@@ -140,7 +88,6 @@ function init3D() {
     cone.overdraw = true;
     cone.rotation.x = -90 * Math.PI / 180;
     cone.position.z = 20;
-    //cylinder.position.z = 40;
     cone.material.opacity = 0.6;
     cone.material.transparent = true;
     cone.castShadow = false;
@@ -153,39 +100,7 @@ function init3D() {
     bullseye.position.x = -(laserxmax / 2);
     bullseye.position.y = -(laserymax / 2);
 
-
-    // if (cursor) {
-    //     workspace.remove(cursor);
-    // }
-    // cursor = new THREE.Object3D();
-    // cursor.name ="cursor"
-
-    // Mouse Cursor
-    // var cursorshape = new THREE.Shape();
-    // cursorshape.moveTo( 0,0 );
-    // cursorshape.lineTo( 0,  -25);
-    // cursorshape.lineTo( 5.5,  -18);
-    // cursorshape.lineTo( 8,  -26);
-    // cursorshape.lineTo( 12, -24.5 );
-    // cursorshape.lineTo( 9,  -17);
-    // cursorshape.lineTo( 17, -17.5 );
-    // cursorshape.lineTo( 0,  0);
-    // var cursorGeom = new THREE.ShapeGeometry( cursorshape );
-    // var cursorArrow = new THREE.Mesh( cursorGeom, new THREE.MeshBasicMaterial( { color: 0xeeeeee } ) ) ;
-    //
-    // // cursor.add(cursorArrow);
-    //
-    // var edges = new THREE.EdgesHelper(cursorArrow , '#000000');
-    // edges.material.linewidth = 3;
-    // edges.matrixAutoUpdate = true;
-    // cursor.add(edges);
-
-
-
-
-
     workspace.add(lw.viewer.cursor)
-
 
     if (axesgrp) {
         lw.viewer.scene.remove(axesgrp);
@@ -338,23 +253,11 @@ function init3D() {
         }
     }
 
-    // $('#3dview').change(function() {
-    //     if($(this).is(":checked")) {
-    //         lw.viewer.viewControls.enableRotate = true;
-    //         resetView();
-    //     } else {
-    //         lw.viewer.viewControls.enableRotate = false;
-    //         resetView();
-    //     }
-    // });
-
     lw.viewer.scene.add(workspace)
 
 }
 
 function animate() {
-
-    //useVideo = $('#useVideo').val()
     if (useVideo) {
         if (useVideo.indexOf('Enable') == 0) {
             if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
@@ -364,28 +267,18 @@ function animate() {
                 }
             }
         }
-
     }
+    
     requestAnimationFrame(animate);
 
-
-    // mesh.rotation.x += 0.01;
-    // mesh.rotation.y += 0.02;
     lw.viewer.renderer.render(lw.viewer.scene, lw.viewer.camera);
     sceneWidth = document.getElementById("renderArea").offsetWidth,
     sceneHeight = document.getElementById("renderArea").offsetHeight;
     lw.viewer.camera.aspect = sceneWidth / sceneHeight;
 }
 
-
-
 viewExtents = function(objecttosee) {
-    //console.log("viewExtents. object.userData:", this.object.userData);
-    // console.log("controls:", controls);
-    //wakeAnimate();
-
-    // lets override the bounding box with a newly
-    // generated one
+    // lets override the bounding box with a newly generated one
     // get its bounding box
     if (objecttosee) {
         var helper = new THREE.BoundingBoxHelper(objecttosee, 0xff0000);
