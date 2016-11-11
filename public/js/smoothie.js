@@ -6,7 +6,7 @@ function initSmoothie() {
 
 $('#uploadsdbtn').on('click', function () {
   var filename = $('#saveasname').val() + '.gcode'
-  printLog("Starting upload of " + filename + '.gcode', msgcolor, "wifi")
+  lw.log.print("Starting upload of " + filename + '.gcode', 'message', "wifi")
   var g;
   g = prepgcodefile();
   upload(filename, g)
@@ -65,7 +65,7 @@ $('#uploadsdbtn').on('click', function () {
           console.log(data, textStatus, XMLHttpRequest);
           if (textStatus = '200') {
             // alert('Found board at' + ip)
-            printLog('Got response from  '+smoothieIp, successcolor, "wifi")
+            lw.log.print('Got response from  '+smoothieIp, 'success', "wifi")
             isConnected = true;
             $('#ethConnectStatus').html("Ethernet OK")
             $('#syncstatus').html('Eth Connected');
@@ -110,7 +110,7 @@ function scanSubnet() {
 };
 
 function  scanIP(ip) {
-  printLog('Checking: '+ip, successcolor, "wifi")
+  lw.log.print('Checking: '+ip, 'success', "wifi")
   var cmd = "version\n";
   var url = "http://" + ip + "/command";
   // Send the data using post
@@ -121,7 +121,7 @@ function  scanIP(ip) {
     scanok += 1
     $("#scannumber").html('Scanning: <span style="color: #00cc00">'+scanok+ '</span>+<span style="color: #cc0000">'+scanfail+ '</span> done. '+scanned+' to go.' )
       $.each(data.split('\n'), function(index) {
-        printLog(this, msgcolor, "wifi")
+        lw.log.print(this, 'message', "wifi")
         var pattern = /Build version: (.*), Build date: (.*), MCU: (.*), System Clock: (.*)/;
          // test the pattern
          var matches = this.match(pattern);
@@ -164,7 +164,7 @@ function runCommand(cmd, silent) {
   if (!silent) {
     posting.done(function(data) {
       $.each(data.split('\n'), function(index) {
-        printLog(this, msgcolor, "wifi")
+        lw.log.print(this, 'message', "wifi")
         console.log(this);
       });
     });
@@ -251,7 +251,7 @@ function upload(filename, gcode) {
             var percentage = Math.round((position/total)*100);
 
             // here you should write your own code how you wish to proces this
-            printLog('uploaded ' + percentage + '%', msgcolor, "wifi");
+            lw.log.print('uploaded ' + percentage + '%', 'message', "wifi");
         });
 
         // state change observer - we need to know when and if the file was successfully uploaded
@@ -262,10 +262,10 @@ function upload(filename, gcode) {
                 if(xhr.status == 200)
                 {
                     // process success
-                    printLog('Uploaded Ok', successcolor, "wifi");
+                    lw.log.print('Uploaded Ok', 'success', "wifi");
                 }else{
                     // process error
-                    printLog('Uploaded Failed' + xhr.status, errorcolor, "wifi");
+                    lw.log.print('Uploaded Failed' + xhr.status, 'error', "wifi");
                     console.log("XHR Failed: ", xhr)
                 }
             }

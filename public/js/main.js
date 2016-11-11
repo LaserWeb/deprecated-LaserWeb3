@@ -2,10 +2,10 @@
 console.log("%c%s","color: #000; background: green; font-size: 12px;", "STARTING LASERWEB");
 
 // colors for the consolelog
-var msgcolor     = '#000000';
-var successcolor = '#00aa00';
-var errorcolor   = '#cc0000';
-var warncolor    = '#ff6600';
+//var 'message'     = '#000000';
+//var 'success' = '#00aa00';
+//var 'error'   = '#cc0000';
+//var 'warning'    = '#ff6600';
 
 // ????
 var useNumPad, activeObject, fileName;
@@ -233,12 +233,12 @@ setTimeout(function(){ $('#viewReset').click(); }, 100);
 
 var version = $('meta[name=version]').attr("content");
 $.get( "https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/version.txt", function( data ) {
-    printLog("Version currently Installed : " + version , msgcolor, "git")
-    printLog("Version available online on Github : " + data , msgcolor, "git")
+    lw.log.print("Version currently Installed : " + version , 'message', "git")
+    lw.log.print("Version available online on Github : " + data , 'message', "git")
     if ( parseInt(version) < parseInt(data) ) {
-        printLog("<b><u>NB:  UPDATE AVAILABLE!</u></b>  - Execute 'git pull' from your laserweb terminal " , errorcolor, "git")
+        lw.log.print("<b><u>NB:  UPDATE AVAILABLE!</u></b>  - Execute 'git pull' from your laserweb terminal " , 'error', "git")
     } else {
-        printLog("Your version of LaserWeb is Up To Date! " , successcolor, "git")
+        lw.log.print("Your version of LaserWeb is Up To Date! " , 'success', "git")
     }
 
 });
@@ -290,7 +290,7 @@ function errorHandlerJS() {
         //alert(message+"\n\n("+url+" line "+line+")");
         console.log(message + "\n\n(" + url + " line " + line + ")");
         if (message.indexOf('updateMatrixWorld') == -1 ) { // Ignoring threejs/google api messages, add more || as discovered
-            printLog(message + "\n(" + url + " on line " + line + ")", errorcolor);
+            lw.log.print(message + "\n(" + url + " on line " + line + ")", 'error');
         }
     };
 };
@@ -350,7 +350,7 @@ function loadFile(f) {
             r.onload = function(e) {
                 dxf = r.result
                 drawDXF(dxf, f.name);
-                printLog('DXF Opened', msgcolor, "file");
+                lw.log.print('DXF Opened', 'message', "file");
                 // putFileObjectAtZero();
                 resetView()
             };
@@ -364,7 +364,7 @@ function loadFile(f) {
                 svgpreview.innerHTML = r.result;
                 var svgfile = $('#svgpreview').html();
                 svg2three(svgfile, f.name);
-                printLog('SVG Opened', msgcolor, "file");
+                lw.log.print('SVG Opened', 'message', "file");
                 resetView()
 
                 // Lets also try Rastering for SVG
@@ -380,7 +380,7 @@ function loadFile(f) {
                 // cleanupThree();
                 $("#gcodefile").show();
                 document.getElementById('gcodepreview').value = this.result;
-                printLog('GCODE Opened', msgcolor, "file");
+                lw.log.print('GCODE Opened', 'message', "file");
                 resetView()
                 setTimeout(function(){   openGCodeFromText(); }, 500);
             };
@@ -390,7 +390,7 @@ function loadFile(f) {
                 // cleanupThree();
                 $("#gcodefile").show();
                 document.getElementById('gcodepreview').value = this.result;
-                printLog('GCODE Opened', msgcolor, "file");
+                lw.log.print('GCODE Opened', 'message', "file");
                 resetView()
                 setTimeout(function(){   openGCodeFromText(); }, 500);
             };
@@ -428,7 +428,7 @@ function loadFile(f) {
             };
             // start reading file as array buffer
             r.readAsArrayBuffer(f);
-            printLog('STL Opened', msgcolor, "file");
+            lw.log.print('STL Opened', 'message', "file");
             console.log("Opened STL, and asking user for Slice settings")
             console.groupEnd();
             $('#stlslice').modal('show')
@@ -516,53 +516,6 @@ function invokeSaveAsDialog(file, fileName) {
         URL.revokeObjectURL(hyperlink.href);
     }
 }
-function printLog(text, color, logclass) {
-    text = text.replace(/\n/g, "<br />")
-    if ($('#console p').length > 300) {
-        // remove oldest if already at 300 lines
-        $('#console p').first().remove();
-    }
-    var template = '<p class="pf" style="color: ' + color + ';">'
-    if (logclass) {
-        if (logclass == "settings") {
-            template += '<i class="fa fa-cogs fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-        if (logclass == "file") {
-            template += '<i class="fa fa-file-text-o fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-        if (logclass == "google") {
-            template += '<i class="fa fa-google fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-        if (logclass == "jog") {
-            template += '<i class="fa fa-arrows fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-        if (logclass == "macro") {
-            template += '<i class="fa fa-th-large fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-        if (logclass == "fullscreen") {
-            template += '<i class="fa fa-fullscreen fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-        if (logclass == "raster") {
-            template += '<i class="fa fa-file-image-o fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-        if (logclass == "usb") {
-            template += '<i class="fa fa-usb fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-        if (logclass == "wifi") {
-            template += '<i class="fa fa-wifi fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-        if (logclass == "viewer") {
-            template += '<i class="fa fa-search fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-        if (logclass == "git") {
-            template += '<i class="fa fa-github fa-fw" aria-hidden="true"></i>:&nbsp;'
-        }
-    }
-    template += text
-    $('#console').append(template);
-    $('#console').scrollTop($("#console")[0].scrollHeight - $("#console").height());
-};
-
 
 function toggleFullScreen() {
     if ((document.fullScreenElement && document.fullScreenElement !== null) ||
@@ -574,7 +527,7 @@ function toggleFullScreen() {
         } else if (document.documentElement.webkitRequestFullScreen) {
             document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
         }
-        printLog('Going Fullscreen', successcolor, "fullscreen");
+        lw.log.print('Going Fullscreen', 'success', "fullscreen");
     } else {
         if (document.cancelFullScreen) {
             document.cancelFullScreen();
@@ -583,6 +536,6 @@ function toggleFullScreen() {
         } else if (document.webkitCancelFullScreen) {
             document.webkitCancelFullScreen();
         }
-        printLog('Exiting Fullscreen', successcolor, "fullscreen");
+        lw.log.print('Exiting Fullscreen', 'success', "fullscreen");
     }
 }

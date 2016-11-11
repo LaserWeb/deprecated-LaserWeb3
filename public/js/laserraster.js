@@ -81,7 +81,7 @@ function Rasterizer(config) {
       lasermultiply = $('#lasermultiply').val();
     } else {
       lasermultiply = 100;
-      printLog('NB - generated with default value of S100 since you have not yet configured LaserWeb for your machine.  Click that settings button and configure the Max PWM S Value (and all the other settings please).... ', errorcolor, "raster")
+      lw.log.print('NB - generated with default value of S100 since you have not yet configured LaserWeb for your machine.  Click that settings button and configure the Max PWM S Value (and all the other settings please).... ', 'error', "raster")
     }
     homingseq = $('#homingseq').val();
     endgcode = $('#endgcode').val();
@@ -201,7 +201,7 @@ Rasterizer.prototype.rasterRow = function(y) {
   // // For example:  If I draw a square of 10x10mm at 72dpi,  it only has 28x28 pixels.  If I want to engrave that square with a beam size of 0.1mm I need 100x100 pixels.  So we need to resize the 28x28 raster to 100x100 raster using http://paperjs.org/reference/raster/#size as shown in the example on http://paperjs.org/tutorials/images/using-pixel-colors/
   // var ypixels = ( parseFloat(this.config.physicalHeight) * parseFloat(this.config.beamSize1) );
   // var xpixels = ( parseFloat(this.config.physicalWidth) * parseFloat(this.config.beamSize1) );
-  // printLog("Raster needs " + xpixels + " x " + ypixels +  " px at " + parseFloat(this.config.beamSize1) , msgcolor, "raster")
+  // lw.log.print("Raster needs " + xpixels + " x " + ypixels +  " px at " + parseFloat(this.config.beamSize1) , 'message', "raster")
   // this.raster.size = new Size(xpixels,ypixels);
 
 
@@ -343,7 +343,7 @@ Rasterizer.prototype.rasterInterval = function() {
         var progress = Math.round((this.currentPosy / this.raster.height) * 100.0);
         $('#rasterProgressPerc').html(progress + "%");
         NProgress.set(progress / 100);
-        printLog('[Rasterizer] ' + progress + '% done', msgcolor, "raster");
+        lw.log.print('[Rasterizer] ' + progress + '% done', 'message', "raster");
     } else {
         this.onFinish();
         NProgress.done();
@@ -364,7 +364,7 @@ Rasterizer.prototype.onRasterLoaded = function() {
         // For example:  If I draw a square of 10x10mm at 72dpi,  it only has 28x28 pixels.  If I want to engrave that square with a beam size of 0.1mm I need 100x100 pixels.  So we need to resize the 28x28 raster to 100x100 raster using http://paperjs.org/reference/raster/#size as shown in the example on http://paperjs.org/tutorials/images/using-pixel-colors/
         var ypixels = ( parseFloat(this.config.physicalHeight) / parseFloat(this.config.beamSize1) );
         var xpixels = ( parseFloat(this.config.physicalWidth) / parseFloat(this.config.beamSize1) );
-        printLog("Raster needs " + xpixels + " x " + ypixels +  " px at " + parseFloat(this.config.beamSize1) , msgcolor, "raster")
+        lw.log.print("Raster needs " + xpixels + " x " + ypixels +  " px at " + parseFloat(this.config.beamSize1) , 'message', "raster")
         this.raster.size = new Size(xpixels,ypixels);
         // console.log('After Resize Raster: ', this.raster)
 
@@ -390,7 +390,7 @@ Rasterizer.prototype.onFinish = function() {
     console.timeEnd("Process Raster");
     var currentTime = Date.now();
     var elapsed = (currentTime - this.startTime);
-    printLog('<p class="pf" style="color: #009900;"><b>Raster completed in '+elapsed+'ms</b></p>', msgcolor, "viewer");
+    lw.log.print('<p class="pf" style="color: #009900;"><b>Raster completed in '+elapsed+'ms</b></p>', 'message', "viewer");
 
     if (this.config.completed) {
         this.config.completed(this.config.objectid);
@@ -402,7 +402,7 @@ Rasterizer.prototype.onFinish = function() {
 // becomes paper.RasterNow
 this.RasterNow = function(config) {
     console.time("Process Raster");
-    printLog('Process Raster', msgcolor, "raster")
+    lw.log.print('Process Raster', 'message', "raster")
     var object = config.object;
     var rasterizer = new Rasterizer(config);
     // console.log('from Container: ', div)

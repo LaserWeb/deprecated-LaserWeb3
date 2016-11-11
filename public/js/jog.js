@@ -3,7 +3,7 @@ function initJog() {
   $('#bounding').on('click', function() {
     var bbox2 = new THREE.Box3().setFromObject(object);
     console.log('bbox for Draw Bounding Box: '+ object +' Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
-    printLog("Drawing Bounding Box...", msgcolor, "jog");
+    lw.log.print("Drawing Bounding Box...", 'message', "jog");
     var moves = `
     G90\n
     G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F2000\n
@@ -74,7 +74,7 @@ function initJog() {
 
     $('#stepsize input').on('change', function() {
       var newJogSize = $('input[name=stp]:checked', '#stepsize').val();
-       printLog('Jog will use ' + newJogSize + ' mm per click', successcolor, "jog");
+       lw.log.print('Jog will use ' + newJogSize + ' mm per click', 'success', "jog");
 
        $(".stepsizeval").empty();
        $(".stepsizeval").html(newJogSize + 'mm');
@@ -93,13 +93,13 @@ function initJog() {
     $("#jogfeedxy").on('change', function() {
       var jogfeedxy = parseFloat($("#jogfeedxy").val());
       lw.store.set("jogFeedXY", jogfeedxy.toString());
-      printLog('Jog xy speed settings saved', successcolor, "jog");
+      lw.log.print('Jog xy speed settings saved', 'success', "jog");
     });
 
     $("#jogfeedz").on('change', function() {
       var jogfeedz = parseFloat($("#jogfeedz").val());
       lw.store.set("jogFeedZ", jogfeedz.toString());
-      printLog('Jog z speed settings saved', successcolor, "jog");
+      lw.log.print('Jog z speed settings saved', 'success', "jog");
     });
 
 };
@@ -111,6 +111,6 @@ function saveJogSpeeds() {
   lw.store.set("jogFeedXY", jogfeedxy.toString());
   lw.store.set("jogFeedZ", jogfeedz.toString());
 
-  printLog('Jog speed settings saved', successcolor, "jog");
+  lw.log.print('Jog speed settings saved', 'success', "jog");
     
 };

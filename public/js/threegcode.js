@@ -15,7 +15,7 @@ $(document).ready(function() {
           objectsInScene[j].userData.gcode = "";
         }
         if (typeof(fileObject) == 'undefined') {
-            printLog('No file loaded. do, File -> Open, first!', errorcolor, "file")
+            lw.log.print('No file loaded. do, File -> Open, first!', 'error', "file")
         };
         // Lets get the machine specific Gcode from the settings Modal (:
         var startgcode = document.getElementById('startgcode').value;
@@ -50,7 +50,7 @@ $(document).ready(function() {
         cutSpeed = [];
 
         for (j = 0; j < objectsInScene.length; j++) {
-            printLog('Processing ' + objectsInScene[j].name, msgcolor, "file");
+            lw.log.print('Processing ' + objectsInScene[j].name, 'message', "file");
             // This step converts each object in objectsInScene, to gcode and puts that gcode into objectsInScene[j].userData.gcode - to be later assembled into a gcode file with proper sequence
             objectsInScene[j].updateMatrix();
             if (objectsInScene[j].name != 'object') {
@@ -67,7 +67,7 @@ $(document).ready(function() {
                 var rapidSpeed = parseFloat($("#rapidspeed").val() ) * 60;
                 if (objectsInScene[j].userData.inflated) {
                   // g += generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
-                  printLog('Separate Operation for ' + objectsInScene[j].name, msgcolor, "file")
+                  lw.log.print('Separate Operation for ' + objectsInScene[j].name, 'message', "file")
                   objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                 } else {
                   // g += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
@@ -101,7 +101,7 @@ $(document).ready(function() {
                   $('#startgcodefinal').val(startgcode)
                   $('#endgcodefinal').val(endgcode);
 
-                  printLog('Gcode Data Generated for ' +objectsInScene[j].name , successcolor, "file");
+                  lw.log.print('Gcode Data Generated for ' +objectsInScene[j].name , 'success', "file");
                   // prepgcodefile();
 
               }
@@ -132,7 +132,7 @@ function prepgcodefile() {
   }
 
   for (j = 0; j < objectsInScene.length; j++) {
-      printLog('Preparing Gcode File: ' + objectsInScene[j].name, msgcolor, "file");
+      lw.log.print('Preparing Gcode File: ' + objectsInScene[j].name, 'message', "file");
       console.log('Preparing Gcode File: ' + objectsInScene[j].name);
       // document.getElementById('gcodepreview').value = "";
       if (typeof(objectsInScene[j].userData.gcode) != "undefined") {
@@ -402,7 +402,7 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
 
         if (newClipperPaths.length < 1) {
             console.error("Clipper Simplification Failed!:");
-            printLog('Clipper Simplification Failed!', errorcolor, "viewer");
+            lw.log.print('Clipper Simplification Failed!', 'error', "viewer");
         }
 
         // get the inflated/deflated path
@@ -482,7 +482,7 @@ pocketPath = function(infobject, inflateVal, zstep, zdepth) {
 
         if (newClipperPaths.length < 1) {
             console.error("Clipper Simplification Failed!:");
-            printLog('Clipper Simplification Failed!', errorcolor, "viewer");
+            lw.log.print('Clipper Simplification Failed!', 'error', "viewer");
         }
 
         for (j = 0; j < zdepth; j += zstep) {
@@ -565,7 +565,7 @@ dragknifePath = function(infobject, inflateVal, zstep, zdepth) {
 
         if (newClipperPaths.length < 1) {
             console.error("Clipper Simplification Failed!:");
-            printLog('Clipper Simplification Failed!', errorcolor, "viewer")
+            lw.log.print('Clipper Simplification Failed!', 'error', "viewer")
         }
 
 

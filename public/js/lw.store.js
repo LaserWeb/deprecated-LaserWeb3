@@ -172,11 +172,11 @@ var lw = lw || {};
             this.set(name, value);
 
             this.log('Saving: ' + name + ' : ' + value);
-            printLog('Saving: ' + name + ' : ' + value, successcolor);
+            lw.log.print('Saving: ' + name + ' : ' + value, 'success');
         }, this);
 
         this.logEnd();
-        printLog('<b>Saved Settings: <br>NB:</b> Please refresh page for settings to take effect', errorcolor, 'settings');
+        lw.log.print('<b>Saved Settings: <br>NB:</b> Please refresh page for settings to take effect', 'error', 'settings');
     };
 
     // -------------------------------------------------------------------------
@@ -228,7 +228,7 @@ var lw = lw || {};
 
     // Check if all required settings are loaded
     lw.store.checkParams = function() {
-        printLog('<b>Checking whether you have configured LaserWeb :</b><p>', msgcolor, 'settings');
+        lw.log.print('<b>Checking whether you have configured LaserWeb :</b><p>', 'message', 'settings');
 
         var anyissues = false;
         $('#settingsstatus').hide();
@@ -246,19 +246,19 @@ var lw = lw || {};
             if (! value) {
                 if (required) {
                     anyissues = true;
-                    printLog('Missing required setting: ' + name, errorcolor, 'settings');
+                    lw.log.print('Missing required setting: ' + name, 'error', 'settings');
                 }
                 else {
-                    printLog('Missing optional setting: ' + name, warncolor, 'settings');
+                    lw.log.print('Missing optional setting: ' + name, 'warning', 'settings');
                 }
             }
             else {
-                printLog('Found setting: ' + name + ' : ' + value, msgcolor, 'settings');
+                lw.log.print('Found setting: ' + name + ' : ' + value, 'message', 'settings');
             }
         });
 
         if (anyissues) {
-            printLog('<b>MISSING CONFIG: You need to configure LaserWeb for your setup. </b>. Click <kbd>Settings <i class="fa fa-cogs"></i></kbd> on the left, and work through all the options', errorcolor, 'settings');
+            lw.log.print('<b>MISSING CONFIG: You need to configure LaserWeb for your setup. </b>. Click <kbd>Settings <i class="fa fa-cogs"></i></kbd> on the left, and work through all the options', 'error', 'settings');
             $('#togglesettings').click();
             $('#settingsstatus').show();
         }

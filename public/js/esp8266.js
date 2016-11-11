@@ -73,7 +73,7 @@ function startWS(url) {
 
 
   ws.onopen = function(e) {
-    printLog("ESP8266 Connected to "+url, successcolor, 'wifi');
+    lw.log.print("ESP8266 Connected to "+url, 'success', 'wifi');
     $('#espConnectBtn').hide();
     $('#espDisconnectBtn').show();
     console.log(e);
@@ -91,7 +91,7 @@ function startWS(url) {
   };
 
   ws.onclose = function(e){
-    printLog("ESP8266 closed! ", errorcolor, 'wifi');
+    lw.log.print("ESP8266 closed! ", 'error', 'wifi');
     clearInterval(queryLoop);
     $('#espConnectBtn').show();
     $('#espDisconnectBtn').hide();
@@ -104,7 +104,7 @@ function startWS(url) {
   };
 
   ws.onerror = function(e){
-    printLog("ESP8266 Error! ", errorcolor, 'wifi');
+    lw.log.print("ESP8266 Error! ", 'error', 'wifi');
     $('#espConnectBtn').show();
     $('#espDisconnectBtn').hide();
     console.log(e);
@@ -135,12 +135,12 @@ function startWS(url) {
         // trigger line handling event here
         if(response.indexOf("ok") != -1 || response == "start\r" || response.indexOf('<') == 0){
           if (response.indexOf("ok") == 0) { // Got an OK so we are clear to send
-            printLog(response, '#cccccc', "wifi")
+            lw.log.print(response, '#cccccc', "wifi")
             uploadLine()
           } else if (response.indexOf('<') != -1) {
             updateStatus(response);
           } else {
-            printLog(response, msgcolor, "wifi")
+            lw.log.print(response, 'message', "wifi")
           }
           blocked = false;
         }
@@ -178,7 +178,7 @@ function scanWifiSubnet() {
 };
 
 function  scanWifiIP(ip) {
-  printLog('Wifi Checking: '+ip, successcolor, "wifi")
+  lw.log.print('Wifi Checking: '+ip, 'success', "wifi")
   var cmd = "version\n";
   var url = "http://" + ip + "/command";
   // Send the data using post

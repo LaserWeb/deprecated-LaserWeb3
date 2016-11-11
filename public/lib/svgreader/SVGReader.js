@@ -751,7 +751,7 @@ SVGReader = {
                 }
             } else {
                 // console.log(node)
-                printLog("SVG Parser found an empty node: " + node.id + ": IGNORED", errorcolor, "file")
+                lw.log.print("SVG Parser found an empty node: " + node.id + ": IGNORED", 'error', "file")
             }
         }
         //console.log('notice', "d: " + d.toString());

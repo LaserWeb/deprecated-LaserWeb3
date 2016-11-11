@@ -13,9 +13,9 @@ function initSocket() {
     if (data.indexOf('<') == 0) {
       updateStatus(data);
     } else if (data =='ok') {
-      printLog(data, '#cccccc', "usb");
+      lw.log.print(data, '#cccccc', "usb");
     } else {
-      printLog(data, msgcolor, "usb");
+      lw.log.print(data, 'message', "usb");
     }
   });
 
@@ -88,22 +88,22 @@ function initSocket() {
         var jobFinishTime = new Date(Date.now());
         var elapsedTimeMS = jobFinishTime.getTime() - jobStartTime.getTime();
         var elapsedTime = Math.round(elapsedTimeMS / 1000);
-        printLog("Job started at " + jobStartTime.toString(), msgcolor, "file");
-        printLog("Job finished at " + jobFinishTime.toString(), msgcolor, "file");
-        printLog("Elapsed time: " + elapsedTime + " seconds.", msgcolor, "file");
+        lw.log.print("Job started at " + jobStartTime.toString(), 'message', "file");
+        lw.log.print("Job finished at " + jobFinishTime.toString(), 'message', "file");
+        lw.log.print("Elapsed time: " + elapsedTime + " seconds.", 'message', "file");
         jobStartTime = -1;
 
         // Update accumulated job time
         var accumulatedJobTimeMS = accumulateTime(elapsedTimeMS);
 
-        printLog("Total accumulated job time: " + (accumulatedJobTimeMS / 1000).toHHMMSS());
+        lw.log.print("Total accumulated job time: " + (accumulatedJobTimeMS / 1000).toHHMMSS());
       }
     }
   });
 }
 
 function sendGcode(gcode) {
-  // printLog("<i class='fa fa-arrow-right' aria-hidden='true'></i>"+ gcode, msgcolor)
+  // lw.log.print("<i class='fa fa-arrow-right' aria-hidden='true'></i>"+ gcode, 'message')
   if(gcode) {
     // console.log('Sending', gcode)
     var connectVia = $('#connectVia').val();
@@ -116,10 +116,10 @@ function sendGcode(gcode) {
         if (ws.readyState == '1') {
           ws.send(gcode);
         } else {
-          printLog("Unable to send gcode: Not connected to Websocket: "+ gcode, errorcolor, "wifi");
+          lw.log.print("Unable to send gcode: Not connected to Websocket: "+ gcode, 'error', "wifi");
         }
       } else {
-        printLog("Unable to send gcode: Not connected: "+ gcode, errorcolor, "wifi");
+        lw.log.print("Unable to send gcode: Not connected: "+ gcode, 'error', "wifi");
       }
     }
   }
@@ -218,13 +218,13 @@ function playpauseMachine() {
     }
   // end isConnected
   } else {
-    printLog('You have to Connect to a machine First!', errorcolor, "usb");
+    lw.log.print('You have to Connect to a machine First!', 'error', "usb");
   }
 }
 
 function playGcode() {
   jobStartTime = new Date(Date.now());
-  printLog("Job started at " + jobStartTime.toString(), msgcolor, "file");
+  lw.log.print("Job started at " + jobStartTime.toString(), 'message', "file");
   var connectVia = $('#connectVia').val();
   if (connectVia == "USB") {
     if (isConnected) {
@@ -235,7 +235,7 @@ function playGcode() {
       $('#playicon').removeClass('fa-play');
       $('#playicon').addClass('fa-pause');
     } else {
-      printLog('Not Connected', errorcolor, "usb");
+      lw.log.print('Not Connected', 'error', "usb");
     }
   } else if (connectVia == "Ethernet") {
     // Upload to SD Wizard

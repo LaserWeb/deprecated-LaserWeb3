@@ -3,7 +3,7 @@
 var rastermesh;
 
 function rasterInit() {
-  // printLog('Raster module Activated', msgcolor)
+  // lw.log.print('Raster module Activated', 'message')
 
   // Raster support
   var paperscript = {};
@@ -50,7 +50,7 @@ function drawRaster(name, data) {
       var imgheight = img.naturalHeight;
       $("body").trigger("click") // close dropdown menu
 
-      printLog('Bitmap Opened', msgcolor, "raster");
+      lw.log.print('Bitmap Opened', 'message', "raster");
       //tbfleming's threejs texture code
       var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
       var texture = new THREE.Texture(canvas);
@@ -67,7 +67,7 @@ function drawRaster(name, data) {
       var imgheight = img.naturalHeight;
       $("body").trigger("click") // close dropdown menu
 
-      printLog('Bitmap Opened', msgcolor, "raster");
+      lw.log.print('Bitmap Opened', 'message', "raster");
       //tbfleming's threejs texture code
       var geometry = new THREE.PlaneBufferGeometry(imgwidth, imgheight, 1);
       var texture = new THREE.TextureLoader().load(data);
@@ -197,7 +197,7 @@ function runRaster(index) {
 
 function gcodereceived(i) {
 
-  printLog('Raster Completed for <b>' + objectsInScene[i].name + '</b>' , msgcolor, "raster")
+  lw.log.print('Raster Completed for <b>' + objectsInScene[i].name + '</b>' , 'message', "raster")
   var template = `
   <form class="form-horizontal">
     <label for="startgcodefinal" class="control-label">`+objectsInScene[i].name+`</label>

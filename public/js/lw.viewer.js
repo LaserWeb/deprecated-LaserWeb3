@@ -27,10 +27,21 @@ var lw = lw || {};
     })();
 
     if (webglRenderer) {
-        printLog('<h5><i class="fa fa-search fa-fw" aria-hidden="true"></i>WebGL Support found!</h5><b>success:</b><br> Laserweb will work optimally on this device!<hr><p>', successcolor);
+        lw.log.print('<strong>WebGL Support found!</strong> Laserweb will work optimally on this device!', 'success', 'viewer');
     }
     else if (canvasRenderer) {
-        printLog('<h5><i class="fa fa-search fa-fw" aria-hidden="true"></i>No WebGL Support found!</h5><b>CRITICAL ERROR:</b><br> Laserweb may not work optimally on this device! <br>Try another device with WebGL support</p><br><u>Try the following:</u><br><ul><li>In the Chrome address bar, type: <b>chrome://flags</b> [Enter]</li><li>Enable the <b>Override software Rendering</b></li><li>Restart Chrome and try again</li></ul>Sorry! :(<hr><p>', errorcolor);
+        var message = [
+            '<strong>No WebGL Support found!</strong> Laserweb may not work optimally on this device!<br />',
+            '<u>Try another device with WebGL supportor or try the following:</u><br />',
+            '<ul>',
+            '<li>In the Chrome address bar, type: <b>chrome://flags</b> [Enter]</li>',
+            '<li>Enable the <b>Override software Rendering</b></li>',
+            '<li>Restart Chrome and try again</li>',
+            '</ul>',
+            'Sorry! :( <hr />'
+        ];
+
+        lw.log.print(message.join('\n'), 'error', 'viewer');
     };
 
     // -------------------------------------------------------------------------
@@ -63,7 +74,7 @@ var lw = lw || {};
         this.renderer.clear();
 
         // Add the renderer DOM element to target area
-        this.$renderArea.html(this.renderer.domElement);
+        this.$render.html(this.renderer.domElement);
 
         // Update the camera
         this.camera.updateProjectionMatrix();

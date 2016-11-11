@@ -32,7 +32,7 @@ var lw = lw || {};
             message = 'No camera available. You have Video Overlay enabled in <kbd>Settings <i class="fa fa-cogs"></i></kbd>, but WebRTC could not locate a device.  Please plug in a webcam, and position the camera to look at your cutting bed';
         }
 
-        printLog(message, errorcolor, 'viewer');
+        lw.log.print(message, 'error', 'viewer');
         lw.viewer.scene.remove(movieScreen);
     }
 

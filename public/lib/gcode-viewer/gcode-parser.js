@@ -1305,9 +1305,9 @@ function drawobject() {
 
     console.log(totaltimemax +'  seconds estimated');
 
-    // printLog('Estimated Job Time: '+totaltimemax, successcolor)
+    // lw.log.print('Estimated Job Time: '+totaltimemax, 'success')
 
-    printLog('Estimated Distance: <b>' + (totalDist/1000).toFixed(1) + ' m</b>', msgcolor, "viewer");
+    lw.log.print('Estimated Distance: <b>' + (totalDist/1000).toFixed(1) + ' m</b>', 'message', "viewer");
     $("#lasertimeqty").val((totalDist.toFixed(1)) / 10)
 
     if (fileParentGroup) {

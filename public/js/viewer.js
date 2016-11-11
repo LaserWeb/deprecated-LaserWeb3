@@ -627,7 +627,7 @@ function onMouseClick(e) {
         obj = intersection.object;
 
         if (obj.name && obj.name != "bullseye" && obj.name != "rastermesh" && obj.name != "XY" && obj.name != "GridHelper") {
-            printLog('Clicked on : ' + obj.name, successcolor, "viewer")
+            lw.log.print('Clicked on : ' + obj.name, 'success', "viewer")
             console.log('Clicked on : ' + obj.parent.name + '.' + obj.name);
             // obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
             attachBB(obj)
@@ -657,7 +657,7 @@ function onMouseMove(e) {
         var intersection = intersects[i],
         obj = intersection.object;
         if (obj.name && obj.name != "bullseye" && obj.name != "rastermesh") {
-            // printLog('Clicked on : ' + obj.name, successcolor)
+            // lw.log.print('Clicked on : ' + obj.name, 'success')
             // obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
         }
 
