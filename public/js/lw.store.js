@@ -123,9 +123,24 @@ var lw = lw || {};
         localStorage.setItem(name, value);
     };
 
-    // Get setting item from local storage
-    lw.store.get = function(name) {
-        return localStorage.getItem(name);
+    // Get setting item from local storage or default value if provided
+    // By default set the default value if provided
+    lw.store.get = function(name, defaultValue, setDefaultValue) {
+        var value = localStorage.getItem(name);
+
+        if (value === null) {
+            value = defaultValue;
+
+            if (setDefaultValue === undefined) {
+                setDefaultValue = true;
+            }
+
+            if (setDefaultValue && value !== undefined) {
+                this.set(name, value);
+            }
+        }
+
+        return value;
     };
 
     // -------------------------------------------------------------------------
