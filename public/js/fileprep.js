@@ -63,7 +63,7 @@ function resetView() {
         }
         viewExtents(insceneGrp);
     } else {
-        viewExtents(helper);
+        viewExtents(lw.viewer.grid);
     }
 
 }

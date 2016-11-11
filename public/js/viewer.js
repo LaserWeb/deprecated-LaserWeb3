@@ -1,5 +1,5 @@
 // Global Vars
-var geometry, material, mesh, helper, axes, axesgrp, bullseye;
+var geometry, material, mesh, axes, axesgrp, bullseye;
 var projector, mouseVector, containerWidth, containerHeight;
 
 var container, stats;
@@ -39,10 +39,6 @@ function init3D() {
     workspace.add(lw.viewer.lights);
 
     // LaserWEB UI Grids
-    if (helper) {
-        workspace.remove(helper);
-    }
-
     laserxmax = $('#laserXMax').val();
     laserymax = $('#laserYMax').val();
 
@@ -54,18 +50,20 @@ function init3D() {
         laserymax = 200;
     };
 
-    helper = new THREE.GridHelper(laserxmax, laserymax, 10);
-    helper.setColors(0x0000ff, 0x707070);
-    helper.position.y = 0;
-    helper.position.x = 0;
-    helper.position.z = 0;
-    //helper.rotation.x = 90 * Math.PI / 180;
-    helper.material.opacity = 0.15;
-    helper.material.transparent = true;
-    helper.receiveShadow = false;
-    this.grid = helper;
-    helper.name = "GridHelper"
-    workspace.add(helper);
+    // helper = new THREE.GridHelper(laserxmax, laserymax, 10);
+    // helper.setColors(0x0000ff, 0x707070);
+    // helper.position.y = 0;
+    // helper.position.x = 0;
+    // helper.position.z = 0;
+    // //helper.rotation.x = 90 * Math.PI / 180;
+    // helper.material.opacity = 0.15;
+    // helper.material.transparent = true;
+    // helper.receiveShadow = false;
+    // this.grid = helper;
+    // helper.name = "GridHelper"
+    // workspace.add(helper);
+
+    workspace.add(lw.viewer.grid);
 
     if (bullseye) {
         lw.viewer.scene.remove(bullseye);

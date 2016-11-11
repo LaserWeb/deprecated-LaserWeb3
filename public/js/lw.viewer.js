@@ -6,14 +6,17 @@ var lw = lw || {};
 
     // Viewer scope
     lw.viewer = {
-        $render  : null,
-        size     : null,
-        scene    : null,
-        camera   : null,
-        renderer : null,
-        controls : null,
-        raycaster: null,
-        cursor   : null
+        $render     : null,
+        size        : null,
+        scene       : null,
+        camera      : null,
+        renderer    : null,
+        viewControls: null,
+        raycaster   : null,
+        mouse       : null,
+        grid        : null,
+        cursor      : null,
+        lights      : null
     };
 
     // -------------------------------------------------------------------------
@@ -82,15 +85,23 @@ var lw = lw || {};
         this.renderer.setClearColor(0xffffff, 1);
         this.renderer.clear();
 
+        // CNC mode ?
+        var cncMode = lw.store.get('cncMode', 'Disable') !== 'Disable';
+
         // Add viewer main controls
         this.viewControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.viewControls.target.set(0, 0, 0); // view direction perpendicular to XY-plane
 
-        var cncMode = $('#cncMode').val() !== 'Disable';
-
         this.viewControls.enableRotate = cncMode;
         this.viewControls.enableZoom   = true;
         this.viewControls.enableKeys   = false;
+
+        // Workspace size
+        var laserXMax = parseInt(lw.store.get('laserXMax', 200));
+        var laserYMax = parseInt(lw.store.get('laserYMax', 200));
+
+        // Grid
+        this.grid = new lw.viewer.Grid(laserXMax, laserYMax);
 
         // Cursor
         this.cursor = new lw.viewer.Cursor();
