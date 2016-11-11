@@ -12,7 +12,7 @@ var marker;
 var laserxmax;
 var laserymax;
 var lineincrement = 50
-var camvideo;
+
 var imageDetect, video, videoImage, videoImageContext, videoTexture, useVideo, movieScreen;
 var objectsInScene = []; //array that holds all objects we added to the scene.
 
@@ -21,8 +21,6 @@ workspace.name = "LaserWeb Workspace"
 
 containerWidth  = window.innerWidth;
 containerHeight = window.innerHeight;
-
-var camvideo = document.getElementById('monitor');
 
 function setBullseyePosition(x, y, z) {
     //console.log('Set Position: ', x, y, z)
@@ -39,50 +37,7 @@ function setBullseyePosition(x, y, z) {
     }
 }
 
-function initWebcam() {
 
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-    window.URL = window.URL || window.webkitURL;
-
-    camvideo = document.getElementById('monitor');
-
-    if (!navigator.getUserMedia) {
-        printLog('Sorry. WebRTC is not available.', errorcolor, "viewer");
-        scene.remove(movieScreen);
-    }
-    else {
-        navigator.getUserMedia({video: true}, gotStream, noStream);
-    }
-}
-
-function gotStream(stream) {
-    if (window.URL) {
-        camvideo     = document.getElementById('monitor');
-        camvideo.src = window.URL.createObjectURL(stream);
-    }
-    else { // Opera
-        camvideo = document.getElementById('monitor');
-        camvideo.src = stream;
-    }
-
-    camvideo.onerror = function(e) {
-        stream.stop();
-    };
-
-    stream.onended = noStream;
-}
-
-function noStream(e) {
-    var msg = 'No camera available.  You have Video Overlay enabled in <kbd>Settings <i class="fa fa-cogs"></i></kbd>, but WebRTC could not locate a device.  Please plug in a webcam, and position the camera to look at your cutting bed';
-
-    if (e.code == 1) {
-        msg = 'User denied access to use camera.  Please refresh the page, and click Allow on the permission request at the top of the browser window, to use Video Overlay.  Or Disable Video Overlay from <kbd>Settings <i class="fa fa-cogs"></i></kbd> ';
-    }
-
-    printLog(msg, errorcolor, "viewer");
-    scene.remove(movieScreen);
-}
 
 function init3D() {
 
@@ -393,7 +348,7 @@ function init3D() {
     useVideo = $('#useVideo').val()
     if (useVideo) {
         if (useVideo.indexOf('Enable') == 0) {
-            initWebcam();
+            lw.webcam.init();
             video = document.getElementById( 'monitor' );
 
             videoImage = document.getElementById( 'videoImage' );
