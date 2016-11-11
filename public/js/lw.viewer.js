@@ -29,7 +29,7 @@ var lw = lw || {};
     if (webglRenderer) {
         lw.log.print('<strong>WebGL Support found!</strong> Laserweb will work optimally on this device!', 'success', 'viewer');
     }
-    else if (canvasRenderer) {
+    else {
         var message = [
             '<strong>No WebGL Support found!</strong> Laserweb may not work optimally on this device!<br />',
             '<u>Try another device with WebGL supportor or try the following:</u><br />',
