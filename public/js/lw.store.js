@@ -124,16 +124,12 @@ var lw = lw || {};
     };
 
     // Get setting item from local storage or default value if provided
-    // By default set the default value if provided
+    // Optionally set the default value if provided and not already defined
     lw.store.get = function(name, defaultValue, setDefaultValue) {
         var value = localStorage.getItem(name);
 
         if (value === null) {
             value = defaultValue;
-
-            if (setDefaultValue === undefined) {
-                setDefaultValue = true;
-            }
 
             if (setDefaultValue && value !== undefined) {
                 this.set(name, value);
