@@ -1,3 +1,4 @@
+"use strict";
 /*
 
     AUTHOR:  Peter van der Walt openhardwarecoza.github.io/donate
@@ -29,16 +30,17 @@ var SerialPort = serialport;
 var app = require('http').createServer(handler);
 var io = require('socket.io').listen(app);
 var fs = require('fs');
-var static = require('node-static');
+var nstatic = require('node-static');
 var EventEmitter = require('events').EventEmitter;
 var url = require('url');
 var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
+var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, queryLoop, infoLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
+var firmware = 'grbl';
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -66,7 +68,7 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
 
 // Webserver
 app.listen(config.webPort);
-var fileServer = new static.Server('./public');
+var fileServer = new nstatic.Server('./public');
 function handler (req, res) {
 
   var queryData = url.parse(req.url, true).query;
@@ -94,7 +96,7 @@ function handler (req, res) {
 }
 
 function ConvChar( str ) {
-  var c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;', '#':'&#035;' };
+  var c = {'<':'<', '>':'>', '&':'&', '"':'"', "'":"'", '#':'#' };
   return str.replace( /[<&>'"#]/g, function(s) { return c[s]; } );
 }
 
@@ -118,7 +120,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   socket.on('stop', function(data) {
     socket.emit("connectStatus", 'stopped:'+port.path);
     gcodeQueue.length = 0; // dump the queye
-    if (data == 0) {
+    if (data !== 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
       console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
@@ -129,7 +131,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
   socket.on('pause', function(data) {
     console.log(chalk.red('PAUSE'));
-    if (data == 0) {
+    if (data !== 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
       console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
@@ -141,6 +143,12 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
   socket.on('unpause', function(data) {
+    console.log(chalk.red('UNPAUSE'));
+    if (data !== 0) {
+      port.write(data+"\n");
+    } else {
+      port.write("M3\n");
+	}
     socket.emit("connectStatus", 'unpaused:'+port.path);
     paused = false;
     send1Q();
@@ -205,6 +213,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     }
   });
 
+  socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
+    socket.emit("firmware", firmware);
+  });
+  
   socket.on('refreshPorts', function(data) { // Or when asked
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
@@ -232,18 +244,23 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.on('open', function() {
         socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
         socket.emit("connectStatus", 'opened:'+port.path);
-        // port.write("?\n"); // Lets check if its LasaurGrbl?
+        port.write("?"); // Lets check if its Grbl?
+        //port.write("?\n"); // Lets check if its LasaurGrbl?
         // port.write("M115\n"); // Lets check if its Marlin?
-        port.write("version\n"); // Lets check if its Smoothieware?
+        //port.write("version\n"); // Lets check if its Smoothieware?
         // port.write("$fb\n"); // Lets check if its TinyG
         console.log('Connected to ' + port.path + 'at ' + port.options.baudRate);
         isConnected = true;
         connectedTo = port.path;
         queryLoop = setInterval(function() {
           // console.log('StatusChkc')
-          port.write('?');
+          //port.write('?');
           send1Q();
-        }, 100);
+        }, 1000);
+        infoLoop = setInterval(function() {
+          port.write('?');
+          //send1Q();
+        }, 250);
         queueCounter = setInterval(function(){
           for (var i in connections) {   // iterate over the array of connections
             connections[i].emit('qCount', gcodeQueue.length);
@@ -257,6 +274,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.on('close', function(err) { // open errors will be emitted as an error event
         clearInterval(queueCounter);
         clearInterval(queryLoop);
+		clearInterval(infoLoop);
         socket.emit("connectStatus", 'closed:'+port.path);
         isConnected = false;
         connectedTo = false;

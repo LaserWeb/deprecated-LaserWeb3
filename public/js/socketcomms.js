@@ -1,7 +1,11 @@
+//"use strict";
 var socket, isConnected, connectVia;
 var jobStartTime = -1;
 var playing = false;
 var paused = false;
+var firmware;
+var ovStep = 1;
+var ovLoop;
 
 function initSocket() {
   socket = io.connect(''); // socket.io init
@@ -21,7 +25,7 @@ function initSocket() {
       $('#overrides').removeClass('hide');
     }
     if (data.indexOf('Grbl')) {
-      if (parseFloat(data) >= 1.1) {
+      if (parseFloat(data) >= 1.1) {	//is Grbl >= v1.1
         $('#overrides').removeClass('hide');
       }
     }
@@ -29,12 +33,12 @@ function initSocket() {
 
   // smoothie feed override report (from server)
   socket.on('feedOverride', function (data) {
-    $('#oF').html(data.toString() + ' %');
+    $('#oF').html(data.toString() + '%');
   });
 
   // smoothie spindle override report (from server)
   socket.on('spindleOverride', function (data) {
-    $('#oS').html(data.toString() + ' %');
+    $('#oS').html(data.toString() + '%');
   });
 
   socket.on('ports', function (data) {
@@ -119,6 +123,108 @@ function initSocket() {
       }
     }
   });
+
+	$('body').on('keydown', function(ev) {
+		if (ev.keyCode === 17) {
+			//CTRL key down > set override stepping to 10
+			ovStep = 10;
+		}
+	});
+
+	$('body').on('keyup', function(ev) {
+		if (ev.keyCode === 17) {
+			//CTRL key released-> reset override stepping to 1
+			ovStep = 1;
+		}
+	});
+
+	// increase feed override
+	$('#iF').on('mousedown', function(ev) {
+		console.log("F+ mousedown");
+		override('F', ovStep);
+		ovLoop = setInterval(function() {
+			override('F', ovStep);
+		}, 300);
+	});
+
+	$('#iF').on('mouseup', function(ev) {
+		console.log("F+ mouseup");
+		clearInterval(ovLoop);
+	});
+
+	$('#iF').on('mouseout', function(ev) {
+		console.log("F+ mouseout");
+		clearInterval(ovLoop);
+	});
+
+	// decrease feed override
+	$('#dF').on('mousedown', function(ev) {
+		console.log("F- mousedown");
+		override('F', -ovStep);
+		ovLoop = setInterval(function() {
+			override('F', -ovStep);
+		}, 300);
+	});
+
+	$('#dF').on('mouseup', function(ev) {
+		console.log("F- mouseup");
+		clearInterval(ovLoop);
+	});
+
+	$('#dF').on('mouseout', function(ev) {
+		console.log("F- mouseout");
+		clearInterval(ovLoop);
+	});
+
+	// reset feed override
+	$('#rF').on('click', function(ev) {
+		console.log("F reset");
+		override('F', 0);
+	});
+
+	// increase spindle override
+	$('#iS').on('mousedown', function(ev) {
+		console.log("S+ mousedown");
+		override('S', ovStep);
+		ovLoop = setInterval(function() {
+			override('S', ovStep);
+		}, 300);
+	});
+
+	$('#iS').on('mouseup', function(ev) {
+		console.log("S+ mouseup");
+		clearInterval(ovLoop);
+	});
+
+	$('#iS').on('mouseout', function(ev) {
+		console.log("S+ mouseout");
+		clearInterval(ovLoop);
+	});
+
+	// decrease spindle override
+	$('#dS').on('mousedown', function(ev) {
+		console.log("S- mousedown");
+		override('S', -ovStep);
+		ovLoop = setInterval(function() {
+			override('S', -ovStep);
+		}, 300);
+	});
+
+	$('#dS').on('mouseup', function(ev) {
+		console.log("S- mouseup");
+		clearInterval(ovLoop);
+	});
+
+	$('#dS').on('mouseout', function(ev) {
+		console.log("S- mouseout");
+		clearInterval(ovLoop);
+	});
+
+	// reset spindle override
+	$('#rS').on('click', function(ev) {
+		console.log("S reset");
+		override('S', 0);
+	});
 }
 
 function sendGcode(gcode) {
@@ -186,9 +292,14 @@ function playpauseMachine() {
     var connectVia = $('#connectVia').val();
     if (playing == true) {
       if (paused == true) {
+        // unpause
         // sendGcode('~');
+        var laseroncmd = document.getElementById('laseron').value;
+		if (laseroncmd.length === 0) {
+			laseroncmd = 0;
+		}
         if (connectVia === "USB") {
-          socket.emit('unpause', 1);
+          socket.emit('unpause', laseroncmd);
         } else if (connectVia === "Ethernet") {
           runCommand('resume');
         } else if (connectVia === "ESP8266") {
@@ -201,6 +312,7 @@ function playpauseMachine() {
         $('#playicon').addClass('fa-pause');
       // end ifPaused
       } else {
+        // pause
         var laseroffcmd = document.getElementById('laseroff').value;
         if (laseroffcmd) {
           if (connectVia === "USB") {
@@ -328,10 +440,11 @@ function updateStatus(data) {
   startOv = data.search(/ov:/i) + 3;
   if (startOv>3){
     var ov = data.replace('>','').substr(startOv).split(/,|\|/, 3);
+    //printLog("Overrides: " + ov[0] + ',' + ov[1] + ',' + ov[2],  msgcolor, "USB");
 	if (Array.isArray(ov)){
-	  $('#oF').html(ov[0] + ' %');
-	  //$('#oR').html(ov[1] + ' %');
-	  $('#oS').html(ov[2] + ' %');
+	  $('#oF').html(ov[0].trim() + '%');
+	  //$('#oR').html(ov[1].trim() + '%');
+	  $('#oS').html(ov[2].trim() + '%');
 	}
   }
   
@@ -346,12 +459,11 @@ function updateStatus(data) {
   }
 }
 
-function override(cmd) {
+function override(param, value) {
   if (isConnected) {
     var connectVia = $('#connectVia').val();
     if (connectVia === "USB") {
-      var value = parseInt(cmd.substr(1));
-      switch (cmd.substr(0,1)) {
+      switch (param) {
         case 'F':
 		  socket.emit('feedOverride', value);
 		  break;
@@ -362,6 +474,7 @@ function override(cmd) {
     } else if (connectVia === "Ethernet") {
       runCommand(value);
     } else if (connectVia === "ESP8266") {
+      // needs to be programmed
     }
   } else {
     printLog('You have to Connect to a machine First!', errorcolor, "usb");

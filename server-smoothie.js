@@ -1,3 +1,4 @@
+"use strict";
 /*
 
     AUTHOR:  Peter van der Walt openhardwarecoza.github.io/donate
@@ -36,9 +37,10 @@ var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-var isConnected, connectedTo, port, isBlocked, lastsent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
+var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
+var controllerVersion = 'smoothie';
 var feedOverride = 100;
 var spindleOverride = 100;
 
@@ -68,7 +70,7 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
 
 // Webserver
 app.listen(config.webPort);
-var fileServer = new static.Server('./public');
+var fileServer = new nstatic.Server('./public');
 function handler (req, res) {
 
   var queryData = url.parse(req.url, true).query;
@@ -95,7 +97,7 @@ function handler (req, res) {
       }
 }
 function ConvChar( str ) {
-  var c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;', '#':'&#035;' };
+  var c = {'<':'<', '>':'>', '&':'&', '"':'"', "'":''', '#':'#' };
   return str.replace( /[<&>'"#]/g, function(s) { return c[s]; } );
 }
 
@@ -119,7 +121,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   socket.on('stop', function(data) {
     socket.emit("connectStatus", 'stopped:'+port.path);
     gcodeQueue.length = 0; // dump the queye
-    if (data == 0) {
+    if (data !== 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
       console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
@@ -130,7 +132,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
   socket.on('pause', function(data) {
     console.log(chalk.red('PAUSE'));
-    if (data == 0) {
+    if (data !== 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
       console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
@@ -229,7 +231,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           for (var i in connections) {   // iterate over the array of connections
             connections[i].emit('qCount', gcodeQueue.length);
           }
-        },500);
+        }, 500);
         for (var i in connections) {   // iterate over the array of connections
           connections[i].emit("activePorts", port.path + ',' + port.options.baudRate);
         }
@@ -273,6 +275,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 		   }
          }
       });
+
     } else {
       socket.emit("connectStatus", 'resume:'+port.path);
       port.write("?\n"); // Lets check if its LasaurGrbl?
@@ -282,8 +285,6 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     }
   });
 
-
-}
 // End Websocket <-> Serial
 
 
