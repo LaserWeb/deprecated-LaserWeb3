@@ -15,8 +15,10 @@ var lw = lw || {};
         // Call parent constructor
         THREE.GridHelper.call(this, x, y, size || 10);
 
+        // Set object name
+        this.name = 'grid';
+
         // Set object properties
-        this.name                 = 'grid';
         this.receiveShadow        = false;
         this.material.opacity     = 0.15;
         this.material.transparent = true;

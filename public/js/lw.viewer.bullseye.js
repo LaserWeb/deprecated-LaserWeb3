@@ -36,16 +36,5 @@ var lw = lw || {};
     lw.viewer.Bullseye.prototype             = Object.create(THREE.Object3D.prototype);
     lw.viewer.Bullseye.prototype.constructor = lw.viewer.Bullseye;
 
-    // Move cursor at new position (x can be an Vector3D)
-    lw.viewer.Bullseye.prototype.moveTo = function(x, y, z) {
-        if (typeof x === 'object') {
-            z = x.z;
-            y = x.y;
-            x = x.x;
-        }
-
-        this.position.set(x, y, z);
-    };
-
 // End viewer scope
 })();

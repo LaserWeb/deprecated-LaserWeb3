@@ -15,6 +15,7 @@ var lw = lw || {};
         raycaster   : null,
         mouse       : null,
         grid        : null,
+        axes        : null,
         cursor      : null,
         lights      : null,
         bullseye    : null
@@ -104,11 +105,16 @@ var lw = lw || {};
         // Grid
         this.grid = new lw.viewer.Grid(laserXMax, laserYMax);
 
+        // Axes
+        this.axes = new lw.viewer.Axes(laserXMax, laserYMax);
+        this.moveObject('axes', 0, 0, 0);
+
         // Cursor
         this.cursor = new lw.viewer.Cursor();
 
         // Bullseye
         this.bullseye = new lw.viewer.Bullseye();
+        this.moveObject('bullseye', 0, 0, 0);
 
         // Lights
         this.lights = new lw.viewer.Lights();
@@ -149,6 +155,28 @@ var lw = lw || {};
 
     function onResize(event) {
         lw.viewer.resize();
+    };
+
+    // -------------------------------------------------------------------------
+
+    // Move an object at position from the origin
+    lw.viewer.moveObject = function(object, x, y, z) {
+        if (typeof x === 'object') {
+            z = x.z;
+            y = x.y;
+            x = x.x;
+        }
+
+        var offsets = {
+            x: -(lw.viewer.grid.userData.size.x / 2),
+            y: -(lw.viewer.grid.userData.size.y / 2)
+        };
+
+        if (typeof object === 'string') {
+            object = this[object];
+        }
+
+        object.position.set(offsets.x + x, offsets.y + y, z);
     };
 
     // -------------------------------------------------------------------------
