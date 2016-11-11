@@ -1,5 +1,5 @@
 // Global Vars
-var geometry, material, mesh, helper, axes, axesgrp, light, bullseye;
+var geometry, material, mesh, helper, axes, axesgrp, bullseye;
 var projector, mouseVector, containerWidth, containerHeight;
 
 var container, stats;
@@ -36,15 +36,7 @@ function setBullseyePosition(x, y, z) {
 
 function init3D() {
 
-    var light = new THREE.DirectionalLight(0xffffff);
-    light.position.set(-500, -500, 1).normalize();
-    light.name = "Light1;"
-    workspace.add(light);
-
-    var light2 = new THREE.DirectionalLight(0xffffff);
-    light2.name = "Light2"
-    light2.position.set(1, 0, 1).normalize();
-    workspace.add(light2);
+    workspace.add(lw.viewer.lights);
 
     // LaserWEB UI Grids
     if (helper) {
@@ -268,7 +260,7 @@ function animate() {
             }
         }
     }
-    
+
     requestAnimationFrame(animate);
 
     lw.viewer.renderer.render(lw.viewer.scene, lw.viewer.camera);

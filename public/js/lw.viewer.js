@@ -95,6 +95,9 @@ var lw = lw || {};
         // Cursor
         this.cursor = new lw.viewer.Cursor();
 
+        // Lights
+        this.lights = new lw.viewer.Lights();
+
         // Set initial size
         this.resize();
 
