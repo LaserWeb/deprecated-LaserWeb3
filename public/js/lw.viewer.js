@@ -16,7 +16,8 @@ var lw = lw || {};
         mouse       : null,
         grid        : null,
         cursor      : null,
-        lights      : null
+        lights      : null,
+        bullseye    : null
     };
 
     // -------------------------------------------------------------------------
@@ -105,6 +106,9 @@ var lw = lw || {};
 
         // Cursor
         this.cursor = new lw.viewer.Cursor();
+
+        // Bullseye
+        this.bullseye = new lw.viewer.Bullseye();
 
         // Lights
         this.lights = new lw.viewer.Lights();

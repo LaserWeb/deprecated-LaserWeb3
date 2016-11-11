@@ -22,75 +22,34 @@ containerHeight = window.innerHeight;
 function setBullseyePosition(x, y, z) {
     //console.log('Set Position: ', x, y, z)
     if (x) {
-        bullseye.position.x = (parseInt(x, 10) - (laserxmax / 2));
+        lw.viewer.bullseye.position.x = (parseInt(x, 10) - (laserxmax / 2));
     }
 
     if (y) {
-        bullseye.position.y = (parseInt(y, 10) - (laserymax / 2));
+        lw.viewer.bullseye.position.y = (parseInt(y, 10) - (laserymax / 2));
     }
 
     if (z) {
-        bullseye.position.z = (parseInt(z, 10) + 0.1);
+        lw.viewer.bullseye.position.z = (parseInt(z, 10) + 0.1);
     }
 }
 
 function init3D() {
-
+    workspace.add(lw.viewer.grid);
+    workspace.add(lw.viewer.cursor);
     workspace.add(lw.viewer.lights);
+    workspace.add(lw.viewer.bullseye);
 
     // LaserWEB UI Grids
-    laserxmax = $('#laserXMax').val();
-    laserymax = $('#laserYMax').val();
+    laserxmax = lw.viewer.grid.userData.size.x;
+    laserymax = lw.viewer.grid.userData.size.y;
 
-    if (!laserxmax) {
-        laserxmax = 200;
+    var originOffsets = {
+        x: -(laserxmax / 2),
+        y: -(laserymax / 2)
     };
 
-    if (!laserymax) {
-        laserymax = 200;
-    };
-
-    // helper = new THREE.GridHelper(laserxmax, laserymax, 10);
-    // helper.setColors(0x0000ff, 0x707070);
-    // helper.position.y = 0;
-    // helper.position.x = 0;
-    // helper.position.z = 0;
-    // //helper.rotation.x = 90 * Math.PI / 180;
-    // helper.material.opacity = 0.15;
-    // helper.material.transparent = true;
-    // helper.receiveShadow = false;
-    // this.grid = helper;
-    // helper.name = "GridHelper"
-    // workspace.add(helper);
-
-    workspace.add(lw.viewer.grid);
-
-    if (bullseye) {
-        lw.viewer.scene.remove(bullseye);
-    }
-    bullseye = new THREE.Object3D();
-
-    var cone = new THREE.Mesh(new THREE.CylinderGeometry(0, 5, 40, 15, 1, false), new THREE.MeshPhongMaterial( {
-        color: 0x0000ff,
-        specular: 0x0000ff,
-        shininess: 100
-    } ) );
-    cone.overdraw = true;
-    cone.rotation.x = -90 * Math.PI / 180;
-    cone.position.z = 20;
-    cone.material.opacity = 0.6;
-    cone.material.transparent = true;
-    cone.castShadow = false;
-
-    bullseye.add(cone);
-
-    bullseye.name = "Bullseye";
-
-    workspace.add(bullseye);
-    bullseye.position.x = -(laserxmax / 2);
-    bullseye.position.y = -(laserymax / 2);
-
-    workspace.add(lw.viewer.cursor)
+    lw.viewer.bullseye.moveTo(originOffsets.x, originOffsets.y, 0);
 
     if (axesgrp) {
         lw.viewer.scene.remove(axesgrp);
