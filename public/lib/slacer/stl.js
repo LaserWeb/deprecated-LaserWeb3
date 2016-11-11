@@ -101,7 +101,7 @@ var stlxsize, stlysize, stlzsize;
         //chilipeppr.publish("/com-chilipeppr-widget-3dviewer/sceneadd", object);
 
         //mainScope.onGotNewStlFile(geometry, mesh, stl, fileInfo);
-        scene.add(stl);
+        lw.viewer.scene.add(stl);
         showstl();
 
         console.log("STL Rendered")

@@ -1,5 +1,5 @@
 // Global Vars
-var scene, camera, renderer;
+var camera, renderer;
 var geometry, material, mesh, helper, axes, axesgrp, light, bullseye, cursor;
 var projector, mouseVector, containerWidth, containerHeight;
 var raycaster = new THREE.Raycaster();
@@ -14,7 +14,7 @@ var laserymax;
 var lineincrement = 50
 
 var imageDetect, video, videoImage, videoImageContext, videoTexture, useVideo, movieScreen;
-var objectsInScene = []; //array that holds all objects we added to the scene.
+var objectsInScene = []; //array that holds all objects we added to the lw.viewer.scene.
 
 var workspace  = new THREE.Group();
 workspace.name = "LaserWeb Workspace"
@@ -40,12 +40,11 @@ function setBullseyePosition(x, y, z) {
 
 
 function init3D() {
-
     window.addEventListener('mousedown', onMouseClick, false);
     window.addEventListener('mousemove', onMouseMove, false);
 
     // ThreeJS Render/Control/Camera
-    scene  = new THREE.Scene();
+    //scene  = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
 
     camera.position.z = 295;
@@ -162,7 +161,7 @@ function init3D() {
     workspace.add(helper);
 
     if (bullseye) {
-        scene.remove(bullseye);
+        lw.viewer.scene.remove(bullseye);
     }
     bullseye = new THREE.Object3D();
 
@@ -252,7 +251,7 @@ function init3D() {
 
 
     if (axesgrp) {
-        scene.remove(axesgrp);
+        lw.viewer.scene.remove(axesgrp);
     }
     axesgrp = new THREE.Object3D();
     axesgrp.name = "Grid System"
@@ -412,7 +411,7 @@ function init3D() {
         }
     });
 
-    scene.add(workspace)
+    lw.viewer.scene.add(workspace)
 
 }
 
@@ -435,7 +434,7 @@ function animate() {
 
     // mesh.rotation.x += 0.01;
     // mesh.rotation.y += 0.02;
-    renderer.render(scene, camera);
+    renderer.render(lw.viewer.scene, camera);
     sceneWidth = document.getElementById("renderArea").offsetWidth,
     sceneHeight = document.getElementById("renderArea").offsetHeight;
     camera.aspect = sceneWidth / sceneHeight;
@@ -455,11 +454,11 @@ viewExtents = function(objecttosee) {
         var helper = new THREE.BoundingBoxHelper(objecttosee, 0xff0000);
         helper.update();
         //if (this.bboxHelper)
-        //    this.scene.remove(this.bboxHelper);
+        //    this.lw.viewer.scene.remove(this.bboxHelper);
         bboxHelper = helper;
 
         // If you want a visible bounding box
-        //this.scene.add(this.bboxHelper);
+        //this.lw.viewer.scene.add(this.bboxHelper);
         // console.log("helper bbox:", helper);
 
         var minx = helper.box.min.x;
@@ -547,7 +546,7 @@ viewExtents = function(objecttosee) {
 };
 
 function colorobj(name) {
-    var object = scene.getObjectByName(name, true);
+    var object = lw.viewer.scene.getObjectByName(name, true);
     console.log(object)
     // for (i=0; i<dxfObject.children.length; i++) {
     //     dxfObject.children[i].material.color.setHex(0x000000);
@@ -609,7 +608,7 @@ function makeSprite(scene, rendererType, vals) {
 
     textObject.add(sprite);
 
-    //scene.add(textObject);
+    //lw.viewer.scene.add(textObject);
     return textObject;
 }
 
@@ -650,7 +649,7 @@ function onMouseClick(e) {
     // var direction = new THREE.Vector3( 0, 0, -1 ).transformDirection( camera.matrixWorld );
     // raycaster.set( vector, direction );
     raycaster.setFromCamera(mouseVector, camera);
-    var intersects = raycaster.intersectObjects(scene.children, true)
+    var intersects = raycaster.intersectObjects(lw.viewer.scene.children, true)
 
     for (var i = 0; i < intersects.length; i++) {
 
@@ -683,7 +682,7 @@ function onMouseMove(e) {
 
 
     raycaster.setFromCamera(mouseVector, camera);
-    var intersects = raycaster.intersectObjects(scene.children, true)
+    var intersects = raycaster.intersectObjects(lw.viewer.scene.children, true)
     for (var i = 0; i < intersects.length; i++) {
         var intersection = intersects[i],
         obj = intersection.object;
@@ -732,7 +731,7 @@ function attachBB(object) {
     // // dont  BB
     //  } else {
     if (typeof(boundingBox) != 'undefined') {
-        scene.remove(boundingBox);
+        lw.viewer.scene.remove(boundingBox);
     }
 
     var bbox2 = new THREE.Box3().setFromObject(object);
@@ -776,7 +775,7 @@ function attachBB(object) {
     });
     boundingBox.add(heightlabel)
     boundingBox.name = "Bounding Box"
-    scene.add( boundingBox );
+    lw.viewer.scene.add( boundingBox );
     // }
 
 }
@@ -812,5 +811,5 @@ function drawRotary(radius) {
         lastz = z1;
         lasty = y1
     }
-    scene.add(rotary);
+    lw.viewer.scene.add(rotary);
 }

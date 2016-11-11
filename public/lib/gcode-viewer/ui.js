@@ -8,7 +8,7 @@
 
 function createObject(gcode) {
   if (typeof(object) != 'undefined') {
-        scene.remove(object);
+        lw.viewer.scene.remove(object);
         object = null;
     }
 

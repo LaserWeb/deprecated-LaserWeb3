@@ -192,7 +192,7 @@ function GCodeParser(handlers) {
                 object.translateY(laserymax /2 * -1);
                 object.name = 'object';
                 console.log('adding to scene')
-                scene.add(object);
+                lw.viewer.scene.add(object);
                 // objectsInScene.push(object)
             }
         }

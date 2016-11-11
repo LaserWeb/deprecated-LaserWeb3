@@ -39,7 +39,7 @@ function filePrepInit() {
       if ($("#translateBtn").hasClass("btn-primary")) {
           $("#translateBtn").removeClass("btn-primary")
           $("#translateBtn").addClass("btn-default")
-          scene.remove(control);
+          lw.viewer.scene.remove(control);
           controls.enableZoom = true; // optional
           controls.enablePan = true;
           controls.enableRotate = true;
@@ -49,7 +49,7 @@ function filePrepInit() {
           $("#resizeBtn").addClass("btn-default")
           $("#translateBtn").addClass("btn-primary")
           control.setMode("translate");
-          scene.add(control);
+          lw.viewer.scene.add(control);
           controls.enableZoom = false; // optional
           controls.enablePan = false;
           controls.enableRotate = false;
@@ -60,7 +60,7 @@ function filePrepInit() {
       if ($("#resizeBtn").hasClass("btn-primary")) {
           $("#resizeBtn").removeClass("btn-primary")
           $("#resizeBtn").addClass("btn-default")
-          scene.remove(control);
+          lw.viewer.scene.remove(control);
           controls.enableZoom = true; // optional
           controls.enablePan = true;
           controls.enableRotate = true;
@@ -70,7 +70,7 @@ function filePrepInit() {
           $("#translateBtn").addClass("btn-default")
           $("#resizeBtn").addClass("btn-primary")
           control.setMode("scale");
-          scene.add(control);
+          lw.viewer.scene.add(control);
           controls.enableZoom = false; // optional
           controls.enablePan = false;
           controls.enableRotate = false;
@@ -191,9 +191,9 @@ function resetView() {
         var object = objectsInScene[i].clone();
         insceneGrp.add(object)
       }
-      // scene.add(insceneGrp)
+      // lw.viewer.scene.add(insceneGrp)
       viewExtents(insceneGrp);
-      // scene.remove(insceneGrp)
+      // lw.viewer.scene.remove(insceneGrp)
     } else {
       viewExtents(helper);
   }

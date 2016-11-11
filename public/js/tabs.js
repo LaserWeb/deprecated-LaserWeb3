@@ -10,7 +10,7 @@ function initTabs() {
       objectsInScene[objectseq].position.x = objectsInScene[objectseq].userData.offsetX + newval;
       // console.log('Moving ' +objectsInScene[objectseq].name+ ' to X: '+newval);
       if (typeof(object) != 'undefined') {
-        scene.remove(object);
+        lw.viewer.scene.remove(object);
       };
       attachBB(objectsInScene[objectseq]);
 
@@ -18,7 +18,7 @@ function initTabs() {
       objectsInScene[objectseq].position.y = objectsInScene[objectseq].userData.offsetY + newval;
       // console.log('Moving ' +objectsInScene[objectseq].name+ ' to Y: '+newval);
       if (typeof(object) != 'undefined') {
-        scene.remove(object);
+        lw.viewer.scene.remove(object);
       };
       attachBB(objectsInScene[objectseq]);
     } else if ( id.indexOf('rasterDPI') == 0 ) {
@@ -31,14 +31,14 @@ function initTabs() {
       objectsInScene[objectseq].scale.z = scale;
       putFileObjectAtZero(objectsInScene[objectseq]);
       if (typeof(object) != 'undefined') {
-        scene.remove(object);
+        lw.viewer.scene.remove(object);
       };
       attachBB(objectsInScene[objectseq]);
       $("#rasterxoffset"+objectseq).val('0')
       $("#rasteryoffset"+objectseq).val('0')
     } else if ( id.indexOf('svgdpi') == 0 ) {
       if (typeof(object) != 'undefined') {
-        scene.remove(object);
+        lw.viewer.scene.remove(object);
       };
       var svgscale = (25.4 / newval );
       objectsInScene[objectseq].scale.x = svgscale;
@@ -84,48 +84,48 @@ function initTabs() {
       clearScene();
       for (var j = 0; j < objectsInScene.length; j++) {
         // console.log('added object ' + j)
-        scene.add(objectsInScene[j]);
+        lw.viewer.scene.add(objectsInScene[j]);
         if (objectsInScene[j].userData) {
           if (objectsInScene[j].userData.inflated) {
-            scene.add(objectsInScene[j].userData.inflated);
+            lw.viewer.scene.add(objectsInScene[j].userData.inflated);
           }
         };
       }
       if (typeof(object) != 'undefined') {
-          scene.add(object);
+          lw.viewer.scene.add(object);
       }
       if (typeof(boundingBox) != 'undefined') {
-        scene.remove(boundingBox)
+        lw.viewer.scene.remove(boundingBox)
       }
       resetColors()
     } else if (tabName == "jobView") {
       clearScene();
       for (var j = 0; j < toolpathsInScene.length; j++) {
         // console.log('added object ' + j)
-        scene.add(toolpathsInScene[j]);
+        lw.viewer.scene.add(toolpathsInScene[j]);
         if (toolpathsInScene[j].userData) {
           if (toolpathsInScene[j].userData.inflated) {
-            scene.add(toolpathsInScene[j].userData.inflated);
+            lw.viewer.scene.add(toolpathsInScene[j].userData.inflated);
           }
         };
       }
       if (typeof(boundingBox) != 'undefined') {
-          scene.remove(boundingBox);
+          lw.viewer.scene.remove(boundingBox);
       }
     } else if (tabName == "gCodeView") {
       clearScene();
       if (objectsInScene.length > 0 || toolpathsInScene.length > 0) {
-        // console.log('L: ', scene.children.length)
+        // console.log('L: ', lw.viewer.scene.children.length)
         if (typeof(boundingBox) != 'undefined') {
-            scene.remove(boundingBox);
+            lw.viewer.scene.remove(boundingBox);
         }
           if (typeof(object) != 'undefined') {
           clearScene();
-          scene.add(object);
+          lw.viewer.scene.add(object);
           attachBB(object);
         } else {
           if (typeof(boundingBox) != 'undefined') {
-              scene.remove(boundingBox);
+              lw.viewer.scene.remove(boundingBox);
           }
         }
       }
@@ -133,11 +133,11 @@ function initTabs() {
       clearScene();
       var i = parseInt($(this).attr('layerindex'));
       if (objectsInScene.length > 0) {
-        scene.add(objectsInScene[i]);
+        lw.viewer.scene.add(objectsInScene[i]);
         attachBB(objectsInScene[i]);
         if (typeof(objectsInScene[i].userData) !== 'undefined') {
           if (objectsInScene[i].userData.inflated) {
-            scene.add(objectsInScene[i].userData.inflated);
+            lw.viewer.scene.add(objectsInScene[i].userData.inflated);
           }
         };
       };

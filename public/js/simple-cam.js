@@ -13,8 +13,8 @@ function fillEasyCam() {
 
 
   $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="jobView"><a href="#">Toolpaths</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>');
-  for (j = 6; j < scene.children.length+1; j++) {
-    scene.remove(scene.children[j])
+  for (j = 6; j < lw.viewer.scene.children.length+1; j++) {
+    lw.viewer.scene.remove(lw.viewer.scene.children[j])
   }
   var hasTools = false;
   for (i = 0; i < objectsInScene.length; i++) {
@@ -206,7 +206,7 @@ function fillEasyCam() {
     } else if (objectsInScene[i].type == 'Mesh') {
       
       if (typeof(object) != 'undefined') {
-        scene.remove(object);
+        lw.viewer.scene.remove(object);
       };
       attachBB(objectsInScene[i]);
 
@@ -288,10 +288,10 @@ function fillEasyCam() {
       // $("#layerprep").append(template);
       layerprep += template;
     };
-    scene.add(objectsInScene[i])
+    lw.viewer.scene.add(objectsInScene[i])
     if (objectsInScene[i].userData) {
       if (objectsInScene[i].userData.inflated) {
-        scene.add(objectsInScene[i].userData.inflated);
+        lw.viewer.scene.add(objectsInScene[i].userData.inflated);
       }
     };
   }

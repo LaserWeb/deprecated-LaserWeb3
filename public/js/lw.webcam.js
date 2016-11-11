@@ -33,7 +33,7 @@ var lw = lw || {};
         }
 
         printLog(message, errorcolor, 'viewer');
-        scene.remove(movieScreen);
+        lw.viewer.scene.remove(movieScreen);
     }
 
     // On got stream
@@ -52,7 +52,7 @@ var lw = lw || {};
 
         // Ask the user to use the video media
         navigator.getUserMedia({ video: true }, onStream, onError);
-    }
+    };
 
     // End webcam scope
 })();

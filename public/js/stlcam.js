@@ -6,13 +6,13 @@ var slicegroup;
 function hidestl() {
     $('#hidestl').addClass('disabled');
     $('#showstl').removeClass('disabled');
-    scene.remove(stl);
+    lw.viewer.scene.remove(stl);
 }
 
 function showstl() {
     $('#showstl').addClass('disabled');
     $('#hidestl').removeClass('disabled');
-    scene.add(stl);
+    lw.viewer.scene.add(stl);
 }
 
 
@@ -73,8 +73,8 @@ parseStlBinary = function(stl) { //this is from jsstl.  we have a failure on the
             color: 0xaa0000,
             shading: THREE.FlatShading
         }));
-    //scene.add(mesh);
-    scene.add(mesh);
+    //lw.viewer.scene.add(mesh);
+    lw.viewer.scene.add(mesh);
 
     stl = null;
 };
@@ -120,7 +120,7 @@ function slicegrid(step) {
             // var rectMesh = new THREE.Line( rectGeom, new THREE.LineBasicMaterial( { color: 0xcccccc, opacity: 0.6 } ) ) ;
             // rectMesh.position.x = ((- laserxmax / 2) + (stlxsize * row) );
             // rectMesh.position.y = ((- laserymax / 2) + (stlysize * col) ) ;
-            // scene.add( rectMesh );
+            // lw.viewer.scene.add( rectMesh );
             group = new THREE.Group();
             //for(var i = 0; i < stlzsize; i+= step) {
             (function(i) {
@@ -149,10 +149,10 @@ function slicegrid(step) {
     slicegroup.translateX(-laserxmax / 2)
     slicegroup.translateY(-laserymax / 2)
 
-    var total = scene.children.length
+    var total = lw.viewer.scene.children.length
 
     putFileObjectAtZero(slicegroup);
-    scene.add(slicegroup);
+    lw.viewer.scene.add(slicegroup);
     calcZeroOffset(slicegroup)
     fileParentGroup = slicegroup;
     slicegroup.name = "Sliced STL"+step+'mm'
@@ -177,7 +177,7 @@ function allSlice(maxheight, step) {
             NProgress.set(progress);
         })(i);
     }
-    scene.add(group);
+    lw.viewer.scene.add(group);
     NProgress.done();
     NProgress.remove();
 
@@ -227,7 +227,7 @@ function drawSlice(zheight) {
     }
 
     //group.position.z = 0;
-    //scene.add(group);
+    //lw.viewer.scene.add(group);
 }
 
 /*
@@ -255,7 +255,7 @@ function drawSlice(zheight) {
          //}
   }
   svgGroup.position.z = zheight;
-  scene.add(svgGroup);
+  lw.viewer.scene.add(svgGroup);
   //fileObject.add(stlslice);
 
 

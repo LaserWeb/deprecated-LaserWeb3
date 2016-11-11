@@ -78,7 +78,7 @@ function processDXF(data) {
     console.log(data);
 
     if (typeof(fileObject) !== 'undefined') {
-        scene.remove(fileObject);
+        lw.viewer.scene.remove(fileObject);
     };
     fileObject = new THREE.Group();
 
@@ -101,7 +101,7 @@ function processDXF(data) {
             drawEntity(entity, data, 0);
         }
 
-        scene.add(fileObject);
+        lw.viewer.scene.add(fileObject);
     }
 }
 

@@ -90,7 +90,7 @@ function drawRaster(name, data) {
     rastermesh.scale.x = scale;
     rastermesh.scale.y = scale;
 
-    scene.add(rastermesh);
+    lw.viewer.scene.add(rastermesh);
     // Apply scaling to the mesh before placing at 0.
 
     putFileObjectAtZero(rastermesh);

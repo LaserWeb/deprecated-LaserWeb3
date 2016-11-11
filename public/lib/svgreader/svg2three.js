@@ -73,7 +73,7 @@ function pullcolors(svgfile) {
 function svg2three(svgfile, fileName, settings) {
 
     if (typeof(fileObject) !== 'undefined') {
-        scene.remove(fileObject);
+        lw.viewer.scene.remove(fileObject);
     };
     fileObject = new THREE.Group();
 
@@ -220,7 +220,7 @@ function svg2three(svgfile, fileName, settings) {
     fileObject.scale.x = settings.scale;
     fileObject.scale.y = settings.scale;
     putFileObjectAtZero(fileObject)
-    scene.add(fileObject);
+    lw.viewer.scene.add(fileObject);
     calcZeroOffset(fileObject)
     fileObject.name = fileName
     objectsInScene.push(fileObject)

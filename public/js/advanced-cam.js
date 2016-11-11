@@ -710,27 +710,27 @@ function viewToolpath(i) {
     $(".layertab").removeClass('active');
     $('#jobView').addClass('active');
     clearScene()
-    scene.add(toolpathsInScene[i]);
+    lw.viewer.scene.add(toolpathsInScene[i]);
     var tpath = toolpathsInScene[i];
     makeRed(tpath);
     if (toolpathsInScene[i].userData) {
         if (toolpathsInScene[i].userData.inflated) {
-            scene.add(toolpathsInScene[i].userData.inflated);
+            lw.viewer.scene.add(toolpathsInScene[i].userData.inflated);
             toolpathsInScene[i].userData.inflated.translateX(toolpathsInScene[i].parent.position.x)
             toolpathsInScene[i].userData.inflated.translateY(toolpathsInScene[i].parent.position.y)
         }
     };
     if (typeof(boundingBox) != 'undefined') {
-        scene.remove(boundingBox);
+        lw.viewer.scene.remove(boundingBox);
     }
 }
 
 function clearScene() {
     // From http://stackoverflow.com/questions/29417374/threejs-remove-all-together-object-from-scene - do -- not ++
-    for ( var i = scene.children.length - 1; i >= 0; i--) {
-        scene.remove(scene.children[i]);
+    for ( var i = lw.viewer.scene.children.length - 1; i >= 0; i--) {
+        lw.viewer.scene.remove(lw.viewer.scene.children[i]);
     }
-    scene.add(workspace);
+    lw.viewer.scene.add(workspace);
 }
 
 function resetColors() {

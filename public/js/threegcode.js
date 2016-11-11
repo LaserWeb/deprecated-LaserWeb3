@@ -36,16 +36,16 @@ $(document).ready(function() {
         $('#gcodejobs').empty();
         lineObjects = null;
         lineObjects = new THREE.Object3D();
-        var total = scene.children.length
+        var total = lw.viewer.scene.children.length
         for (var j = 6; j < total; j++) {
-          scene.remove(scene.children[j]);
+          lw.viewer.scene.remove(lw.viewer.scene.children[j]);
         }
         for (var j = 0; j < objectsInScene.length; j++) {
           // console.log('added object ' + j)
-          scene.add(objectsInScene[j]);
+          lw.viewer.scene.add(objectsInScene[j]);
         }
 
-        scene.updateMatrixWorld();
+        lw.viewer.scene.updateMatrixWorld();
         pwr = [];
         cutSpeed = [];
 
@@ -107,7 +107,7 @@ $(document).ready(function() {
               }
             }
         }
-        scene.remove(inflateGrp);
+        lw.viewer.scene.remove(inflateGrp);
 
         $('#gcode-menu').click();
         console.groupEnd();
@@ -350,7 +350,7 @@ inflatePath = function(infobject, inflateVal, zstep, zdepth) {
     var zdepth = parseFloat(zdepth, 2);
     var inflateGrpZ = new THREE.Group();
     if (typeof(inflateGrp) != 'undefined') {
-        scene.remove(inflateGrp);
+        lw.viewer.scene.remove(inflateGrp);
         inflateGrp = null;
     }
     // if (inflateVal != 0) {
@@ -428,7 +428,7 @@ pocketPath = function(infobject, inflateVal, zstep, zdepth) {
     var zdepth = parseFloat(zdepth, 2);
     var pocketGrp = new THREE.Group();
     if (typeof(inflateGrp) != 'undefined') {
-        scene.remove(inflateGrp);
+        lw.viewer.scene.remove(inflateGrp);
         inflateGrp = null;
     }
     if (inflateVal != 0) {
@@ -512,7 +512,7 @@ dragknifePath = function(infobject, inflateVal, zstep, zdepth) {
     var zdepth = parseFloat(zdepth, 2);
     var dragknifeGrp = new THREE.Group();
     if (typeof(inflateGrp) != 'undefined') {
-        scene.remove(inflateGrp);
+        lw.viewer.scene.remove(inflateGrp);
         inflateGrp = null;
     }
 

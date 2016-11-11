@@ -13,6 +13,7 @@ var useNumPad, activeObject, fileName;
 // Intialise
 lw.menu.init();
 lw.store.init();
+lw.viewer.init();
 
 init3D();
 animate();
@@ -446,7 +447,7 @@ function loadFile(f) {
     $('#filestatus').hide();
     $('#cam-menu').click();
     if (control) {
-        scene.remove(control);
+        lw.viewer.scene.remove(control);
         controls.reset();
     }
     setTimeout(function(){ fillTree(); }, 250);

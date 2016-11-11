@@ -41,7 +41,7 @@ function drawDXF(file, fileName) {
     fileObject.translateX((laserxmax / 2) * -1);
     fileObject.translateY((laserymax / 2) * -1);
     putFileObjectAtZero(fileObject);
-    scene.add(fileObject);
+    lw.viewer.scene.add(fileObject);
     calcZeroOffset(fileObject)
     objectsInScene.push(fileObject)
     layers = [];
