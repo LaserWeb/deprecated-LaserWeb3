@@ -1,11 +1,11 @@
 // Global Vars
-var camera, renderer;
+var renderer;
 var geometry, material, mesh, helper, axes, axesgrp, light, bullseye, cursor;
 var projector, mouseVector, containerWidth, containerHeight;
 var raycaster = new THREE.Raycaster();
 
 var container, stats;
-var camera, controls, control, scene, renderer;
+var controls, control, renderer;
 var clock = new THREE.Clock();
 
 var marker;
@@ -45,9 +45,9 @@ function init3D() {
 
     // ThreeJS Render/Control/Camera
     //scene  = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+    //camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
 
-    camera.position.z = 295;
+    //lw.viewer.camera.position.z = 295;
 
     var canvas = !!window.CanvasRenderingContext2D;
     var webgl  = (function() {
@@ -92,12 +92,12 @@ function init3D() {
 
     sceneWidth    = document.getElementById("renderArea").offsetWidth,
     sceneHeight   = document.getElementById("renderArea").offsetHeight;
-    camera.aspect = sceneWidth / sceneHeight;
+    lw.viewer.camera.aspect = sceneWidth / sceneHeight;
 
     renderer.setSize(sceneWidth, sceneHeight)
-    camera.updateProjectionMatrix();
+    lw.viewer.camera.updateProjectionMatrix();
 
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls = new THREE.OrbitControls(lw.viewer.camera, renderer.domElement);
     controls.target.set(0, 0, 0); // view direction perpendicular to XY-plane
 
     cncMode = $('#cncMode').val();
@@ -113,7 +113,7 @@ function init3D() {
     controls.enableZoom = true;  // optional
     controls.enableKeys = false; // Disable Keyboard on canvas
 
-    control = new THREE.TransformControls(camera, renderer.domElement);
+    control = new THREE.TransformControls(lw.viewer.camera, renderer.domElement);
 
     workspace.add(control);
     control.setMode("translate");
@@ -155,7 +155,7 @@ function init3D() {
     helper.receiveShadow = false;
     //console.log("helper grid:", helper);
     this.grid = helper;
-    //this.sceneAdd(this.grid);
+    //lw.viewer.sceneAdd(this.grid);
     //console.log('[VIEWER] - added Helpert');
     helper.name = "GridHelper"
     workspace.add(helper);
@@ -259,7 +259,7 @@ function init3D() {
     var x = [];
     var y = [];
     for (var i = 0; i <= laserxmax; i += lineincrement) {
-        x[i] = this.makeSprite(this.scene, "webgl", {
+        x[i] = this.makeSprite(lw.viewer.scene, "webgl", {
             x: i,
             y: -14,
             z: 0,
@@ -271,7 +271,7 @@ function init3D() {
 
     for (var i = 0; i <= laserymax; i += lineincrement) {
 
-        y[i] = this.makeSprite(this.scene, "webgl", {
+        y[i] = this.makeSprite(lw.viewer.scene, "webgl", {
             x: -14,
             y: i,
             z: 0,
@@ -281,21 +281,21 @@ function init3D() {
         axesgrp.add(y[i]);
     }
     // add axes labels
-    var xlbl = this.makeSprite(this.scene, "webgl", {
+    var xlbl = this.makeSprite(lw.viewer.scene, "webgl", {
         x: laserxmax,
         y: 0,
         z: 0,
         text: "X",
         color: "#ff0000"
     });
-    var ylbl = this.makeSprite(this.scene, "webgl", {
+    var ylbl = this.makeSprite(lw.viewer.scene, "webgl", {
         x: 0,
         y: laserymax,
         z: 0,
         text: "Y",
         color: "#006600"
     });
-    var zlbl = this.makeSprite(this.scene, "webgl", {
+    var zlbl = this.makeSprite(lw.viewer.scene, "webgl", {
         x: 0,
         y: 0,
         z: 125,
@@ -434,10 +434,10 @@ function animate() {
 
     // mesh.rotation.x += 0.01;
     // mesh.rotation.y += 0.02;
-    renderer.render(lw.viewer.scene, camera);
+    renderer.render(lw.viewer.scene, lw.viewer.camera);
     sceneWidth = document.getElementById("renderArea").offsetWidth,
     sceneHeight = document.getElementById("renderArea").offsetHeight;
-    camera.aspect = sceneWidth / sceneHeight;
+    lw.viewer.camera.aspect = sceneWidth / sceneHeight;
 }
 
 
@@ -503,14 +503,14 @@ viewExtents = function(objecttosee) {
             //this.controls.object.rotateY(0.5);
 
             var L = dist;
-            var camera = controls.object;
+            //var camera = controls.object;
             var vector = controls.target.clone();
-            var l = (new THREE.Vector3()).subVectors(camera.position, vector).length();
-            var up = camera.up.clone();
+            var l = (new THREE.Vector3()).subVectors(lw.viewer.camera.position, vector).length();
+            var up = lw.viewer.camera.up.clone();
             var quaternion = new THREE.Quaternion();
 
             // Zoom correction
-            camera.translateZ(L - l);
+            lw.viewer.camera.translateZ(L - l);
             // console.log("up:", up);
             up.y = 1;
             up.x = 0;
@@ -521,16 +521,16 @@ viewExtents = function(objecttosee) {
             up.x = 1;
             up.z = 0;
             quaternion.setFromAxisAngle(up, 0);
-            camera.position.applyQuaternion(quaternion);
+            lw.viewer.camera.position.applyQuaternion(quaternion);
             up.y = 0;
             up.x = 0;
             up.z = 1;
             quaternion.setFromAxisAngle(up, 0);
-            //camera.position.applyQuaternion(quaternion);
+            //lw.viewer.camera.position.applyQuaternion(quaternion);
 
-            camera.lookAt(vector);
+            lw.viewer.camera.lookAt(vector);
 
-            //this.camera.rotateX(90);
+            //lw.viewer.camera.rotateX(90);
 
             controls.object.updateProjectionMatrix();
             containerWidth = window.innerWidth;
@@ -621,8 +621,8 @@ $(window).on('resize', function() {
     sceneHeight = document.getElementById("renderArea").offsetHeight;
     renderer.setSize(sceneWidth, sceneHeight)
     //renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = sceneWidth / sceneHeight;
-    camera.updateProjectionMatrix();
+    lw.viewer.camera.aspect = sceneWidth / sceneHeight;
+    lw.viewer.camera.updateProjectionMatrix();
     controls.reset();
     setTimeout(function(){ $('#viewReset').click(); }, 100);
     // setTimeout(function(){ $('#tabsLayers a[href="#allView"]').trigger('click'); }, 100);
@@ -648,7 +648,7 @@ function onMouseClick(e) {
     // var vector = mouseVector.clone().unproject( camera );
     // var direction = new THREE.Vector3( 0, 0, -1 ).transformDirection( camera.matrixWorld );
     // raycaster.set( vector, direction );
-    raycaster.setFromCamera(mouseVector, camera);
+    raycaster.setFromCamera(mouseVector, lw.viewer.camera);
     var intersects = raycaster.intersectObjects(lw.viewer.scene.children, true)
 
     for (var i = 0; i < intersects.length; i++) {
@@ -681,7 +681,7 @@ function onMouseMove(e) {
     mouseVector.y = - ( ( e.clientY - offset.top ) / sceneHeight ) * 2 + 1
 
 
-    raycaster.setFromCamera(mouseVector, camera);
+    raycaster.setFromCamera(mouseVector, lw.viewer.camera);
     var intersects = raycaster.intersectObjects(lw.viewer.scene.children, true)
     for (var i = 0; i < intersects.length; i++) {
         var intersection = intersects[i],
@@ -754,7 +754,7 @@ function attachBB(object) {
     var bwidth = parseFloat(bbox2.max.x - bbox2.min.x).toFixed(2);
     var bheight = parseFloat(bbox2.max.y - bbox2.min.y).toFixed(2);
 
-    widthlabel = this.makeSprite(this.scene, "webgl", {
+    widthlabel = this.makeSprite(lw.viewer.scene, "webgl", {
         x: (bbox2.max.x + 30),
         y: ((bbox2.max.y - ((bbox2.max.y - bbox2.min.y) / 2)) + 10),
         z: 0,
@@ -765,7 +765,7 @@ function attachBB(object) {
 
     boundingBox.add(widthlabel)
 
-    heightlabel = this.makeSprite(this.scene, "webgl", {
+    heightlabel = this.makeSprite(lw.viewer.scene, "webgl", {
         x: ((bbox2.max.x - ((bbox2.max.x - bbox2.min.x) / 2)) + 10),
         y: (bbox2.max.y + 10),
         z: 0,

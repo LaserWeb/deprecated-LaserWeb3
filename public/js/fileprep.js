@@ -159,8 +159,8 @@ function filePrepInit() {
     // var oldValue = controls.target.y
     // var newVal = oldValue + 20;
     // controls.target.y = newVal
-    TweenMax.to(camera,0.25,{fov:"+=5",onUpdate:function(){
-                        camera.updateProjectionMatrix();
+    TweenMax.to(lw.viewer.camera,0.25,{fov:"+=5",onUpdate:function(){
+                        lw.viewer.camera.updateProjectionMatrix();
                          }});
     controls.update();
   });
@@ -169,8 +169,8 @@ function filePrepInit() {
     // var oldValue = controls.target.y
     // var newVal = oldValue + 20;
     // controls.target.y = newVal
-    TweenMax.to(camera,0.25,{fov:"-=5",onUpdate:function(){
-                        camera.updateProjectionMatrix();
+    TweenMax.to(lw.viewer.camera,0.25,{fov:"-=5",onUpdate:function(){
+                        lw.viewer.camera.updateProjectionMatrix();
                          }});
     controls.update();
   });
