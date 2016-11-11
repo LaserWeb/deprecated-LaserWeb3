@@ -40,9 +40,9 @@ function filePrepInit() {
           $("#translateBtn").removeClass("btn-primary")
           $("#translateBtn").addClass("btn-default")
           lw.viewer.scene.remove(control);
-          controls.enableZoom = true; // optional
-          controls.enablePan = true;
-          controls.enableRotate = true;
+          lw.viewer.viewControls.enableZoom = true; // optional
+          lw.viewer.viewControls.enablePan = true;
+          lw.viewer.viewControls.enableRotate = true;
       } else {
           $("#translateBtn").removeClass("btn-default")
           $("#resizeBtn").removeClass("btn-primary")
@@ -50,9 +50,9 @@ function filePrepInit() {
           $("#translateBtn").addClass("btn-primary")
           control.setMode("translate");
           lw.viewer.scene.add(control);
-          controls.enableZoom = false; // optional
-          controls.enablePan = false;
-          controls.enableRotate = false;
+          lw.viewer.viewControls.enableZoom = false; // optional
+          lw.viewer.viewControls.enablePan = false;
+          lw.viewer.viewControls.enableRotate = false;
       };
   });
 
@@ -61,9 +61,9 @@ function filePrepInit() {
           $("#resizeBtn").removeClass("btn-primary")
           $("#resizeBtn").addClass("btn-default")
           lw.viewer.scene.remove(control);
-          controls.enableZoom = true; // optional
-          controls.enablePan = true;
-          controls.enableRotate = true;
+          lw.viewer.viewControls.enableZoom = true; // optional
+          lw.viewer.viewControls.enablePan = true;
+          lw.viewer.viewControls.enableRotate = true;
       } else {
           $("#resizeBtn").removeClass("btn-default")
           $("#translateBtn").removeClass("btn-primary")
@@ -71,9 +71,9 @@ function filePrepInit() {
           $("#resizeBtn").addClass("btn-primary")
           control.setMode("scale");
           lw.viewer.scene.add(control);
-          controls.enableZoom = false; // optional
-          controls.enablePan = false;
-          controls.enableRotate = false;
+          lw.viewer.viewControls.enableZoom = false; // optional
+          lw.viewer.viewControls.enablePan = false;
+          lw.viewer.viewControls.enableRotate = false;
       }
   });
 
@@ -112,67 +112,67 @@ function filePrepInit() {
   });
 
   $('#panleft').on('click', function() {
-    var oldValue = controls.target.x
+    var oldValue = lw.viewer.viewControls.target.x
     var newVal = oldValue + 20;
-    TweenMax.to(controls.target,0.25,{x:newVal,onUpdate:function(){
-                        controls.update();
+    TweenMax.to(lw.viewer.viewControls.target,0.25,{x:newVal,onUpdate:function(){
+                        lw.viewer.viewControls.update();
                          }});
-    // controls.target.x = newVal
-    //controls.object.position.x = newVal;
-    // controls.update();
+    // lw.viewer.viewControls.target.x = newVal
+    //lw.viewer.viewControls.object.position.x = newVal;
+    // lw.viewer.viewControls.update();
   });
 
   $('#panright').on('click', function() {
-    var oldValue = controls.target.x
+    var oldValue = lw.viewer.viewControls.target.x
     var newVal = oldValue - 20;
-    TweenMax.to(controls.target,0.25,{x:newVal,onUpdate:function(){
-                        controls.update();
+    TweenMax.to(lw.viewer.viewControls.target,0.25,{x:newVal,onUpdate:function(){
+                        lw.viewer.viewControls.update();
                          }});
-    // controls.target.x = newVal
-    // controls.object.position.x = newVal;
-    // controls.update();
+    // lw.viewer.viewControls.target.x = newVal
+    // lw.viewer.viewControls.object.position.x = newVal;
+    // lw.viewer.viewControls.update();
   });
 
   $('#panup').on('click', function() {
-    var oldValue = controls.target.y
+    var oldValue = lw.viewer.viewControls.target.y
     var newVal = oldValue - 20;
-    TweenMax.to(controls.target,0.25,{y:newVal,onUpdate:function(){
-                        controls.update();
+    TweenMax.to(lw.viewer.viewControls.target,0.25,{y:newVal,onUpdate:function(){
+                        lw.viewer.viewControls.update();
                          }});
-    // controls.target.y = newVal
-    // controls.object.position.y = newVal;
-    // controls.update();
+    // lw.viewer.viewControls.target.y = newVal
+    // lw.viewer.viewControls.object.position.y = newVal;
+    // lw.viewer.viewControls.update();
   });
 
   $('#pandown').on('click', function() {
-    var oldValue = controls.target.y
+    var oldValue = lw.viewer.viewControls.target.y
     var newVal = oldValue + 20;
-    TweenMax.to(controls.target,0.25,{y:newVal,onUpdate:function(){
-                        controls.update();
+    TweenMax.to(lw.viewer.viewControls.target,0.25,{y:newVal,onUpdate:function(){
+                        lw.viewer.viewControls.update();
                          }});
-    // controls.target.y = newVal
-    // controls.object.position.y = newVal;
-    // controls.update();
+    // lw.viewer.viewControls.target.y = newVal
+    // lw.viewer.viewControls.object.position.y = newVal;
+    // lw.viewer.viewControls.update();
   });
 
   $('#zoomout').on('click', function() {
-    // var oldValue = controls.target.y
+    // var oldValue = lw.viewer.viewControls.target.y
     // var newVal = oldValue + 20;
-    // controls.target.y = newVal
+    // lw.viewer.viewControls.target.y = newVal
     TweenMax.to(lw.viewer.camera,0.25,{fov:"+=5",onUpdate:function(){
                         lw.viewer.camera.updateProjectionMatrix();
                          }});
-    controls.update();
+    lw.viewer.viewControls.update();
   });
 
   $('#zoomin').on('click', function() {
-    // var oldValue = controls.target.y
+    // var oldValue = lw.viewer.viewControls.target.y
     // var newVal = oldValue + 20;
-    // controls.target.y = newVal
+    // lw.viewer.viewControls.target.y = newVal
     TweenMax.to(lw.viewer.camera,0.25,{fov:"-=5",onUpdate:function(){
                         lw.viewer.camera.updateProjectionMatrix();
                          }});
-    controls.update();
+    lw.viewer.viewControls.update();
   });
 
 

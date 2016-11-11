@@ -4,7 +4,7 @@ var projector, mouseVector, containerWidth, containerHeight;
 var raycaster = new THREE.Raycaster();
 
 var container, stats;
-var controls, control;
+var control;
 var clock = new THREE.Clock();
 
 var marker;
@@ -67,21 +67,21 @@ function init3D() {
     // lw.viewer.renderer.setSize(sceneWidth, sceneHeight)
     // lw.viewer.camera.updateProjectionMatrix();
 
-    controls = new THREE.OrbitControls(lw.viewer.camera, lw.viewer.renderer.domElement);
-    controls.target.set(0, 0, 0); // view direction perpendicular to XY-plane
-
-    cncMode = $('#cncMode').val();
-
-    if (cncMode == "Enable") {
-        controls.enableRotate = true;
-        $('#3dview').prop('checked', true);
-    }
-    else {
-        controls.enableRotate = false;
-    }
-
-    controls.enableZoom = true;  // optional
-    controls.enableKeys = false; // Disable Keyboard on canvas
+    // controls = new THREE.OrbitControls(lw.viewer.camera, lw.viewer.renderer.domElement);
+    // lw.viewer.viewControls.target.set(0, 0, 0); // view direction perpendicular to XY-plane
+    //
+    // cncMode = $('#cncMode').val();
+    //
+    // if (cncMode == "Enable") {
+    //     lw.viewer.viewControls.enableRotate = true;
+    //     $('#3dview').prop('checked', true);
+    // }
+    // else {
+    //     lw.viewer.viewControls.enableRotate = false;
+    // }
+    //
+    // lw.viewer.viewControls.enableZoom = true;  // optional
+    // lw.viewer.viewControls.enableKeys = false; // Disable Keyboard on canvas
 
     control = new THREE.TransformControls(lw.viewer.camera, lw.viewer.renderer.domElement);
 
@@ -371,15 +371,15 @@ function init3D() {
         }
     }
 
-    $('#3dview').change(function() {
-        if($(this).is(":checked")) {
-            controls.enableRotate = true;
-            resetView();
-        } else {
-            controls.enableRotate = false;
-            resetView();
-        }
-    });
+    // $('#3dview').change(function() {
+    //     if($(this).is(":checked")) {
+    //         lw.viewer.viewControls.enableRotate = true;
+    //         resetView();
+    //     } else {
+    //         lw.viewer.viewControls.enableRotate = false;
+    //         resetView();
+    //     }
+    // });
 
     lw.viewer.scene.add(workspace)
 
@@ -424,11 +424,11 @@ viewExtents = function(objecttosee) {
         var helper = new THREE.BoundingBoxHelper(objecttosee, 0xff0000);
         helper.update();
         //if (this.bboxHelper)
-        //    this.lw.viewer.scene.remove(this.bboxHelper);
+        //    lw.viewer.scene.remove(this.bboxHelper);
         bboxHelper = helper;
 
         // If you want a visible bounding box
-        //this.lw.viewer.scene.add(this.bboxHelper);
+        //lw.viewer.scene.add(this.bboxHelper);
         // console.log("helper bbox:", helper);
 
         var minx = helper.box.min.x;
@@ -439,7 +439,7 @@ viewExtents = function(objecttosee) {
         var maxz = helper.box.max.z;
 
 
-        controls.reset();
+        lw.viewer.viewControls.reset();
 
         var lenx = maxx - minx;
         var leny = maxy - miny;
@@ -453,28 +453,28 @@ viewExtents = function(objecttosee) {
         var maxlen = Math.max(lenx, leny, lenz);
         var dist = 2 * maxlen;
         // center camera on gcode objects center pos, but twice the maxlen
-        controls.object.position.x = centerx;
-        controls.object.position.y = centery;
-        controls.object.position.z = centerz + dist;
-        controls.target.x = centerx;
-        controls.target.y = centery;
-        controls.target.z = centerz;
+        lw.viewer.viewControls.object.position.x = centerx;
+        lw.viewer.viewControls.object.position.y = centery;
+        lw.viewer.viewControls.object.position.z = centerz + dist;
+        lw.viewer.viewControls.target.x = centerx;
+        lw.viewer.viewControls.target.y = centery;
+        lw.viewer.viewControls.target.z = centerz;
         // console.log("maxlen:", maxlen, "dist:", dist);
         var fov = 2.2 * Math.atan(maxlen / (2 * dist)) * (180 / Math.PI);
-        // console.log("new fov:", fov, " old fov:", controls.object.fov);
+        // console.log("new fov:", fov, " old fov:", lw.viewer.viewControls.object.fov);
         if (isNaN(fov)) {
             console.log("giving up on viewing extents because fov could not be calculated");
             return;
         } else {
-            controls.object.fov = fov;
-            //this.controls.object.setRotationFromEuler(THREE.Euler(0.5,0.5,0.5));
-            //this.controls.object.rotation.set(0.5,0.5,0.5,"XYZ");
-            //this.controls.object.rotateX(2);
-            //this.controls.object.rotateY(0.5);
+            lw.viewer.viewControls.object.fov = fov;
+            //lw.viewer.viewControls.object.setRotationFromEuler(THREE.Euler(0.5,0.5,0.5));
+            //lw.viewer.viewControls.object.rotation.set(0.5,0.5,0.5,"XYZ");
+            //lw.viewer.viewControls.object.rotateX(2);
+            //lw.viewer.viewControls.object.rotateY(0.5);
 
             var L = dist;
-            //var camera = controls.object;
-            var vector = controls.target.clone();
+            //var camera = lw.viewer.viewControls.object;
+            var vector = lw.viewer.viewControls.target.clone();
             var l = (new THREE.Vector3()).subVectors(lw.viewer.camera.position, vector).length();
             var up = lw.viewer.camera.up.clone();
             var quaternion = new THREE.Quaternion();
@@ -502,14 +502,14 @@ viewExtents = function(objecttosee) {
 
             //lw.viewer.camera.rotateX(90);
 
-            controls.object.updateProjectionMatrix();
+            lw.viewer.viewControls.object.updateProjectionMatrix();
             containerWidth = window.innerWidth;
             containerHeight = window.innerHeight;
-            //this.controls.enabled = true;
+            //lw.viewer.viewControls.enabled = true;
             //this.scaleInView();
-            //this.controls.rotateCamera(0.5);
-            //this.controls.noRoll = true;
-            //this.controls.noRotate = true;
+            //lw.viewer.viewControls.rotateCamera(0.5);
+            //lw.viewer.viewControls.noRoll = true;
+            //lw.viewer.viewControls.noRotate = true;
         }
 
     }
@@ -581,24 +581,6 @@ function makeSprite(scene, rendererType, vals) {
     //lw.viewer.scene.add(textObject);
     return textObject;
 }
-
-
-// Global Function to keep three fullscreen
-$(window).on('resize', function() {
-    //lw.viewer.renderer.setSize(element.width(), element.height());
-
-    sceneWidth = document.getElementById("renderArea").offsetWidth,
-    sceneHeight = document.getElementById("renderArea").offsetHeight;
-    lw.viewer.renderer.setSize(sceneWidth, sceneHeight)
-    //lw.viewer.renderer.setSize(window.innerWidth, window.innerHeight);
-    lw.viewer.camera.aspect = sceneWidth / sceneHeight;
-    lw.viewer.camera.updateProjectionMatrix();
-    controls.reset();
-    setTimeout(function(){ $('#viewReset').click(); }, 100);
-    // setTimeout(function(){ $('#tabsLayers a[href="#allView"]').trigger('click'); }, 100);
-
-
-});
 
 function onMouseClick(e) {
 

@@ -11,6 +11,7 @@ var lw = lw || {};
         scene   : null,
         camera  : null,
         renderer: null,
+        controls: null
     };
 
     // -------------------------------------------------------------------------
@@ -69,14 +70,48 @@ var lw = lw || {};
         }) : new THREE.CanvasRenderer();
 
         // Initialize the renderer
-        this.renderer.setSize(this.size.width, this.size.height);
         this.renderer.setClearColor(0xffffff, 1);
         this.renderer.clear();
+
+        // Add viewer main controls
+        this.viewControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.viewControls.target.set(0, 0, 0); // view direction perpendicular to XY-plane
+
+        var cncMode = $('#cncMode').val() !== 'Disable';
+
+        this.viewControls.enableRotate = cncMode;
+        this.viewControls.enableZoom   = true;
+        this.viewControls.enableKeys   = false;
+
+        // Set initial size
+        this.resize();
 
         // Add the renderer DOM element to target area
         this.$render.html(this.renderer.domElement);
 
-        // Update the camera
+        // Enable/Disable 3D view
+        $('#3dview').prop('checked', cncMode);
+        $('#3dview').change(function() {
+            lw.viewer.viewControls.enableRotate = $(this).is(":checked");
+            resetView();
+        });
+
+        // On window resize
+        $(window).on('resize', function() {
+            lw.viewer.resize();
+        });
+    };
+
+    // -------------------------------------------------------------------------
+
+    // Resize the viewer to match is container size
+    lw.viewer.resize = function() {
+        this.size.width  = this.$render.width();
+        this.size.height = this.$render.height() - 15;
+        this.size.ratio  = this.size.width / this.size.height;
+
+        this.renderer.setSize(this.size.width, this.size.height);
+        this.camera.aspect = this.size.ratio;
         this.camera.updateProjectionMatrix();
     };
 

@@ -448,7 +448,7 @@ function loadFile(f) {
     $('#cam-menu').click();
     if (control) {
         lw.viewer.scene.remove(control);
-        controls.reset();
+        lw.viewer.viewControls.reset();
     }
     setTimeout(function(){ fillTree(); }, 250);
     setTimeout(function(){ fillLayerTabs(); }, 300);
