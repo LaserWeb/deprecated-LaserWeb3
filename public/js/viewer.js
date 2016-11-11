@@ -1,7 +1,6 @@
 // Global Vars
-var geometry, material, mesh, helper, axes, axesgrp, light, bullseye, cursor;
+var geometry, material, mesh, helper, axes, axesgrp, light, bullseye;
 var projector, mouseVector, containerWidth, containerHeight;
-var raycaster = new THREE.Raycaster();
 
 var container, stats;
 var control;
@@ -39,8 +38,6 @@ function setBullseyePosition(x, y, z) {
 
 
 function init3D() {
-    window.addEventListener('mousedown', onMouseClick, false);
-    window.addEventListener('mousemove', onMouseMove, false);
 
     // var userAgent = navigator.userAgent || navigator.vendor || window.opera;
     //
@@ -135,10 +132,6 @@ function init3D() {
     }
     bullseye = new THREE.Object3D();
 
-    var material = new THREE.LineBasicMaterial({
-        color: 0xFF0000
-    });
-
     var cone = new THREE.Mesh(new THREE.CylinderGeometry(0, 5, 40, 15, 1, false), new THREE.MeshPhongMaterial( {
         color: 0x0000ff,
         specular: 0x0000ff,
@@ -161,11 +154,11 @@ function init3D() {
     bullseye.position.y = -(laserymax / 2);
 
 
-    if (cursor) {
-        workspace.remove(cursor);
-    }
-    cursor = new THREE.Object3D();
-    cursor.name ="cursor"
+    // if (cursor) {
+    //     workspace.remove(cursor);
+    // }
+    // cursor = new THREE.Object3D();
+    // cursor.name ="cursor"
 
     // Mouse Cursor
     // var cursorshape = new THREE.Shape();
@@ -188,36 +181,10 @@ function init3D() {
     // cursor.add(edges);
 
 
-    var cursormaterial = new THREE.MeshBasicMaterial({
-        color: 0xFF0000
-    });
-
-    var radius = 3.5;
-    var segments = 32;
-    var circleGeometry = new THREE.CircleGeometry(radius, segments);
-    var circle = new THREE.Line(circleGeometry, material);
-    cursor.add(circle);
-
-    var geometryx = new THREE.Geometry();
-    geometryx.vertices.push(
-        new THREE.Vector3(-6, 0, 0),
-        new THREE.Vector3(6, 0, 0)
-    );
-    var linex = new THREE.Line(geometryx, material);
-    linex.position = (0, 0, 0)
-    cursor.add(linex);
-
-    var geometryy = new THREE.Geometry();
-    geometryy.vertices.push(
-        new THREE.Vector3(0, -6, 0),
-        new THREE.Vector3(0, 6, 0)
-    );
-    var liney = new THREE.Line(geometryy, material);
-    liney.position = (0, 0, 0)
-    cursor.add(liney);
 
 
-    workspace.add(cursor)
+
+    workspace.add(lw.viewer.cursor)
 
 
     if (axesgrp) {
@@ -310,7 +277,7 @@ function init3D() {
 
     // Picking stuff
     projector = new THREE.Projector();
-    mouseVector = new THREE.Vector3();
+    //mouseVector = new THREE.Vector3();
 
 
     // Webcam Texture
@@ -580,75 +547,6 @@ function makeSprite(scene, rendererType, vals) {
 
     //lw.viewer.scene.add(textObject);
     return textObject;
-}
-
-function onMouseClick(e) {
-
-    //event.preventDefault();
-    sceneWidth = document.getElementById("renderArea").offsetWidth;
-    sceneHeight = document.getElementById("renderArea").offsetHeight;
-    offset = $('#renderArea').offset();
-    mouseVector.x = ( ( e.clientX - offset.left ) / sceneWidth ) * 2 - 1;
-    mouseVector.y = - ( ( e.clientY - offset.top ) / sceneHeight ) * 2 + 1
-
-    // mouseVector.x = (e.clientX / window.innerWidth) * 2 - 1;
-    // mouseVector.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-
-
-
-    // var vector = mouseVector.clone().unproject( camera );
-    // var direction = new THREE.Vector3( 0, 0, -1 ).transformDirection( camera.matrixWorld );
-    // raycaster.set( vector, direction );
-    raycaster.setFromCamera(mouseVector, lw.viewer.camera);
-    var intersects = raycaster.intersectObjects(lw.viewer.scene.children, true)
-
-    for (var i = 0; i < intersects.length; i++) {
-
-        var intersection = intersects[i],
-        obj = intersection.object;
-
-        if (obj.name && obj.name != "bullseye" && obj.name != "rastermesh" && obj.name != "XY" && obj.name != "GridHelper") {
-            lw.log.print('Clicked on : ' + obj.name, 'success', "viewer")
-            console.log('Clicked on : ' + obj.parent.name + '.' + obj.name);
-            // obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
-            attachBB(obj)
-        }
-
-        cursor.position.set(intersects[i].point.x, intersects[i].point.y, intersects[i].point.z);
-        // bullseye.children[0].material.color.setRGB(1, 0, 0);
-        // bullseye.children[1].material.color.setRGB(1, 0, 0);
-        // bullseye.children[2].material.color.setRGB(1, 0, 0);
-
-    }
-
-}
-function onMouseMove(e) {
-
-    //event.preventDefault();
-    sceneWidth = document.getElementById("renderArea").offsetWidth;
-    sceneHeight = document.getElementById("renderArea").offsetHeight;
-    offset = $('#renderArea').offset();
-    mouseVector.x = ( ( e.clientX - offset.left ) / sceneWidth ) * 2 - 1;
-    mouseVector.y = - ( ( e.clientY - offset.top ) / sceneHeight ) * 2 + 1
-
-
-    raycaster.setFromCamera(mouseVector, lw.viewer.camera);
-    var intersects = raycaster.intersectObjects(lw.viewer.scene.children, true)
-    for (var i = 0; i < intersects.length; i++) {
-        var intersection = intersects[i],
-        obj = intersection.object;
-        if (obj.name && obj.name != "bullseye" && obj.name != "rastermesh") {
-            // lw.log.print('Clicked on : ' + obj.name, 'success')
-            // obj.material.color.setRGB(Math.random(), Math.random(), Math.random());
-        }
-
-        cursor.position.set(intersects[i].point.x, intersects[i].point.y, intersects[i].point.z);
-
-
-    }
-
-
 }
 
 function attachBB(object) {
