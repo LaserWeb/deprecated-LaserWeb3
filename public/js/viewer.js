@@ -12,9 +12,6 @@ var laserymax;
 var imageDetect, video, videoImage, videoImageContext, videoTexture, useVideo, movieScreen;
 var objectsInScene = []; //array that holds all objects we added to the lw.viewer.scene.
 
-var workspace  = new THREE.Group();
-workspace.name = "LaserWeb Workspace"
-
 containerWidth  = window.innerWidth;
 containerHeight = window.innerHeight;
 
@@ -34,100 +31,10 @@ function setBullseyePosition(x, y, z) {
 }
 
 function init3D() {
-    workspace.add(lw.viewer.grid);
-    workspace.add(lw.viewer.axes);
-    workspace.add(lw.viewer.cursor);
-    workspace.add(lw.viewer.bullseye);
-    workspace.add(lw.viewer.lights);
 
     // LaserWEB UI Grids
     laserxmax = lw.viewer.grid.userData.size.x;
     laserymax = lw.viewer.grid.userData.size.y;
-
-    // axesgrp = new THREE.Object3D();
-    // axesgrp.name = "Grid System"
-    //
-    // var x = [];
-    // var y = [];
-    // for (var i = 0; i <= laserxmax; i += lineincrement) {
-    //     x[i] = this.makeSprite(lw.viewer.scene, "webgl", {
-    //         x: i,
-    //         y: -14,
-    //         z: 0,
-    //         text: i,
-    //         color: "#ff0000"
-    //     });
-    //     axesgrp.add(x[i]);
-    // }
-    //
-    // for (var i = 0; i <= laserymax; i += lineincrement) {
-    //
-    //     y[i] = this.makeSprite(lw.viewer.scene, "webgl", {
-    //         x: -14,
-    //         y: i,
-    //         z: 0,
-    //         text: i,
-    //         color: "#006600"
-    //     });
-    //     axesgrp.add(y[i]);
-    // }
-    // // add axes labels
-    // var xlbl = this.makeSprite(lw.viewer.scene, "webgl", {
-    //     x: laserxmax,
-    //     y: 0,
-    //     z: 0,
-    //     text: "X",
-    //     color: "#ff0000"
-    // });
-    // var ylbl = this.makeSprite(lw.viewer.scene, "webgl", {
-    //     x: 0,
-    //     y: laserymax,
-    //     z: 0,
-    //     text: "Y",
-    //     color: "#006600"
-    // });
-    // var zlbl = this.makeSprite(lw.viewer.scene, "webgl", {
-    //     x: 0,
-    //     y: 0,
-    //     z: 125,
-    //     text: "Z",
-    //     color: "#0000ff"
-    // });
-    //
-    //
-    // axesgrp.add(xlbl);
-    // axesgrp.add(ylbl);
-    //axesgrp.add(zlbl); Laser don't have Z - but CNCs do
-
-    // var materialX = new THREE.LineBasicMaterial({
-    //     color: 0xcc0000
-    // });
-    //
-    // var materialY = new THREE.LineBasicMaterial({
-    //     color: 0x00cc00
-    // });
-    //
-    // var geometryX = new THREE.Geometry();
-    // geometryX.vertices.push(
-    //     new THREE.Vector3(-0.1, 0, 0),
-    //     new THREE.Vector3(-0.1, (laserymax - 5), 0)
-    // );
-    //
-    // var geometryY = new THREE.Geometry();
-    // geometryY.vertices.push(
-    //     new THREE.Vector3(0, -0.1, 0),
-    //     new THREE.Vector3((laserxmax - 5), -0.1, 0)
-    // );
-    //
-    // var line1 = new THREE.Line(geometryX, materialY);
-    // var line2 = new THREE.Line(geometryY, materialX);
-    // axesgrp.add(line1);
-    // axesgrp.add(line2);
-    //
-    // axesgrp.translateX(laserxmax / 2 * -1);
-    // axesgrp.translateY(laserymax / 2 * -1);
-    // //console.log('[VIEWER] - added Axesgrp');
-    //workspace.add(axesgrp);
 
     // Picking stuff
     projector = new THREE.Projector();
@@ -157,7 +64,7 @@ function init3D() {
             movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
             movieScreen.position.set(0,0,-0.2);
             movieScreen.name ="Video Overlay WebRTC"
-            workspace.add(movieScreen);
+            lw.viewer.workspace.add(movieScreen);
             videoTexture.needsUpdate = true;
         }
 
@@ -178,7 +85,7 @@ function init3D() {
             movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
             movieScreen.position.set(0,0,-0.2);
             movieScreen.name ="Video Overlay MJPG"
-            workspace.add(movieScreen);
+            lw.viewer.workspace.add(movieScreen);
             videoTexture.needsUpdate = true;
 
             setInterval(function(){
@@ -191,8 +98,6 @@ function init3D() {
 
         }
     }
-
-    lw.viewer.scene.add(workspace)
 
 }
 

@@ -14,6 +14,7 @@ var lw = lw || {};
         viewControls: null,
         raycaster   : null,
         mouse       : null,
+        workspace   : null,
         grid        : null,
         axes        : null,
         cursor      : null,
@@ -103,21 +104,33 @@ var lw = lw || {};
         var laserYMax = parseInt(lw.store.get('laserYMax', 200));
 
         // Grid
-        this.grid = new lw.viewer.Grid(laserXMax, laserYMax);
+        this.grid = new this.Grid(laserXMax, laserYMax);
 
         // Axes
-        this.axes = new lw.viewer.Axes(laserXMax, laserYMax);
+        this.axes = new this.Axes(laserXMax, laserYMax);
         this.moveObject('axes', 0, 0, 0);
 
         // Cursor
-        this.cursor = new lw.viewer.Cursor();
+        this.cursor = new this.Cursor();
 
         // Bullseye
-        this.bullseye = new lw.viewer.Bullseye();
+        this.bullseye = new this.Bullseye();
         this.moveObject('bullseye', 0, 0, 0);
 
         // Lights
-        this.lights = new lw.viewer.Lights();
+        this.lights = new this.Lights();
+
+        // Create workspace object
+        this.workspace      = new THREE.Group();
+        this.workspace.name = 'workspace';
+
+        this.workspace.add(this.grid);
+        this.workspace.add(this.axes);
+        this.workspace.add(this.cursor);
+        this.workspace.add(this.bullseye);
+        this.workspace.add(this.lights);
+
+        this.scene.add(this.workspace);
 
         // Set initial size
         this.resize();
@@ -168,8 +181,8 @@ var lw = lw || {};
         }
 
         var offsets = {
-            x: -(lw.viewer.grid.userData.size.x / 2),
-            y: -(lw.viewer.grid.userData.size.y / 2)
+            x: -(this.grid.userData.size.x / 2),
+            y: -(this.grid.userData.size.y / 2)
         };
 
         if (typeof object === 'string') {

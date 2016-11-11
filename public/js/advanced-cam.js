@@ -730,7 +730,7 @@ function clearScene() {
     for ( var i = lw.viewer.scene.children.length - 1; i >= 0; i--) {
         lw.viewer.scene.remove(lw.viewer.scene.children[i]);
     }
-    lw.viewer.scene.add(workspace);
+    lw.viewer.scene.add(lw.viewer.workspace);
 }
 
 function resetColors() {
