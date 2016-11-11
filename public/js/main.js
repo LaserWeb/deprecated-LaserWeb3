@@ -132,7 +132,7 @@ $('#togglesettings').on('click', function() {
 
 
 // Viewer
-var viewer = document.getElementById('renderArea');
+//var viewer = document.getElementById('renderArea');
 
 
 // Progressbar

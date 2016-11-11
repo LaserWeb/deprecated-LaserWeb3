@@ -1,11 +1,10 @@
 // Global Vars
-var renderer;
 var geometry, material, mesh, helper, axes, axesgrp, light, bullseye, cursor;
 var projector, mouseVector, containerWidth, containerHeight;
 var raycaster = new THREE.Raycaster();
 
 var container, stats;
-var controls, control, renderer;
+var controls, control;
 var clock = new THREE.Clock();
 
 var marker;
@@ -43,61 +42,32 @@ function init3D() {
     window.addEventListener('mousedown', onMouseClick, false);
     window.addEventListener('mousemove', onMouseMove, false);
 
-    // ThreeJS Render/Control/Camera
-    //scene  = new THREE.Scene();
-    //camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+    // var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    //
+    // if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i)) {
+    //     console.log('Running on iOS');
+    // }
+    // else if (userAgent.match(/Android/i)) {
+    //     console.log('Running on Android');
+    // }
+    // else {
+    //     console.log('Running on unknown/Desktop');
+    // }
 
-    //lw.viewer.camera.position.z = 295;
+    //$('#viewermodule').hide();
+    //$('#renderArea').append(lw.viewer.renderer.domElement);
 
-    var canvas = !!window.CanvasRenderingContext2D;
-    var webgl  = (function() {
-        try {
-            return !!window.WebGLRenderingContext && !!document.createElement('canvas').getContext('experimental-webgl');
-        }
-        catch (e) {
-            return false;
-        }
-    })();
+    // lw.viewer.renderer.setClearColor(0xffffff, 1); // Background color of viewer = transparent
+    // lw.viewer.renderer.clear();
 
-    if (webgl) {
-        printLog('<h5><i class="fa fa-search fa-fw" aria-hidden="true"></i>WebGL Support found!</h5><b>success:</b><br> Laserweb will work optimally on this device!<hr><p>', successcolor);
-        renderer = new THREE.WebGLRenderer({
-            autoClearColor: true,
-            antialias: false
-        });
+    // sceneWidth    = document.getElementById("renderArea").offsetWidth,
+    // sceneHeight   = document.getElementById("renderArea").offsetHeight;
+    // lw.viewer.camera.aspect = sceneWidth / sceneHeight;
+    //
+    // lw.viewer.renderer.setSize(sceneWidth, sceneHeight)
+    // lw.viewer.camera.updateProjectionMatrix();
 
-    }
-    else if (canvas) {
-        printLog('<h5><i class="fa fa-search fa-fw" aria-hidden="true"></i>No WebGL Support found!</h5><b>CRITICAL ERROR:</b><br> Laserweb may not work optimally on this device! <br>Try another device with WebGL support</p><br><u>Try the following:</u><br><ul><li>In the Chrome address bar, type: <b>chrome://flags</b> [Enter]</li><li>Enable the <b>Override software Rendering</b></li><li>Restart Chrome and try again</li></ul>Sorry! :(<hr><p>', errorcolor);
-        renderer = new THREE.CanvasRenderer();
-    };
-
-    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-    if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i)) {
-        console.log('Running on iOS');
-    }
-    else if (userAgent.match(/Android/i)) {
-        console.log('Running on Android');
-    }
-    else {
-        console.log('Running on unknown/Desktop');
-    }
-
-    $('#viewermodule').hide();
-    $('#renderArea').append(renderer.domElement);
-
-    renderer.setClearColor(0xffffff, 1); // Background color of viewer = transparent
-    renderer.clear();
-
-    sceneWidth    = document.getElementById("renderArea").offsetWidth,
-    sceneHeight   = document.getElementById("renderArea").offsetHeight;
-    lw.viewer.camera.aspect = sceneWidth / sceneHeight;
-
-    renderer.setSize(sceneWidth, sceneHeight)
-    lw.viewer.camera.updateProjectionMatrix();
-
-    controls = new THREE.OrbitControls(lw.viewer.camera, renderer.domElement);
+    controls = new THREE.OrbitControls(lw.viewer.camera, lw.viewer.renderer.domElement);
     controls.target.set(0, 0, 0); // view direction perpendicular to XY-plane
 
     cncMode = $('#cncMode').val();
@@ -113,7 +83,7 @@ function init3D() {
     controls.enableZoom = true;  // optional
     controls.enableKeys = false; // Disable Keyboard on canvas
 
-    control = new THREE.TransformControls(lw.viewer.camera, renderer.domElement);
+    control = new THREE.TransformControls(lw.viewer.camera, lw.viewer.renderer.domElement);
 
     workspace.add(control);
     control.setMode("translate");
@@ -434,7 +404,7 @@ function animate() {
 
     // mesh.rotation.x += 0.01;
     // mesh.rotation.y += 0.02;
-    renderer.render(lw.viewer.scene, lw.viewer.camera);
+    lw.viewer.renderer.render(lw.viewer.scene, lw.viewer.camera);
     sceneWidth = document.getElementById("renderArea").offsetWidth,
     sceneHeight = document.getElementById("renderArea").offsetHeight;
     lw.viewer.camera.aspect = sceneWidth / sceneHeight;
@@ -615,12 +585,12 @@ function makeSprite(scene, rendererType, vals) {
 
 // Global Function to keep three fullscreen
 $(window).on('resize', function() {
-    //renderer.setSize(element.width(), element.height());
+    //lw.viewer.renderer.setSize(element.width(), element.height());
 
     sceneWidth = document.getElementById("renderArea").offsetWidth,
     sceneHeight = document.getElementById("renderArea").offsetHeight;
-    renderer.setSize(sceneWidth, sceneHeight)
-    //renderer.setSize(window.innerWidth, window.innerHeight);
+    lw.viewer.renderer.setSize(sceneWidth, sceneHeight)
+    //lw.viewer.renderer.setSize(window.innerWidth, window.innerHeight);
     lw.viewer.camera.aspect = sceneWidth / sceneHeight;
     lw.viewer.camera.updateProjectionMatrix();
     controls.reset();
