@@ -109,14 +109,12 @@ var lw = lw || {};
 
         // Axes
         this.axes = new this.Axes(laserXMax, laserYMax);
-        this.moveObject('axes', 0, 0, 0);
 
         // Cursor
         this.cursor = new this.Cursor();
 
         // Bullseye
         this.bullseye = new this.Bullseye();
-        this.moveObject('bullseye', 0, 0, 0);
 
         // Lights
         this.lights = new this.Lights();
@@ -131,12 +129,12 @@ var lw = lw || {};
         this.addObject(this.objects  , { name: 'objects'  , target: 'scene' });
         this.addObject(this.overlay  , { name: 'overlay'  , target: 'scene' });
 
-        this.addObject(this.lights, { target: 'workspace' });
-        this.addObject(this.grid  , { target: 'workspace' });
-        this.addObject(this.axes  , { target: 'workspace' });
+        this.addObject(this.lights, { name: 'lights', target: 'workspace' });
+        this.addObject(this.grid  , { name: 'grid'  , target: 'workspace' });
+        this.addObject(this.axes  , { name: 'axes'  , target: 'workspace', position: { x: 0, y: 0, z: 0 } });
 
-        this.addObject(this.bullseye, { target: 'overlay' });
-        this.addObject(this.cursor  , { target: 'overlay' });
+        this.addObject(this.bullseye, { name: 'bullseye', target: 'overlay', position: { x: 0, y: 0, z: 0 } });
+        this.addObject(this.cursor  , { name: 'cursor'  , target: 'overlay' });
 
         // Set initial size
         this.resize();
@@ -192,6 +190,11 @@ var lw = lw || {};
 
         // Set object render order (at the top by default)
         object.renderOrder = settings.order || target.children.length + 1;
+
+        // Set object position
+        if (settings.position) {
+            this.moveObject(object, settings.position);
+        }
 
         // Set object name
         object.name = settings.name || object.name;
