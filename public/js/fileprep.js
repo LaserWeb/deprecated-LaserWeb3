@@ -61,9 +61,9 @@ function resetView() {
             var object = objectsInScene[i].clone();
             insceneGrp.add(object)
         }
-        viewExtents(insceneGrp);
+        lw.viewer.extendsViewToObject(insceneGrp);
     } else {
-        viewExtents(lw.viewer.grid);
+        lw.viewer.extendsViewToObject(lw.viewer.grid);
     }
 
 }

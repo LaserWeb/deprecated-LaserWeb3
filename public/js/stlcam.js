@@ -159,7 +159,7 @@ function slicegrid(step) {
 
     objectsInScene.push(slicegroup)
     fileobject = slicegroup;
-    viewExtents(slicegroup);
+    lw.viewer.extendsViewToObject(slicegroup);
     fillLayerTabs();
     fillTree();
 

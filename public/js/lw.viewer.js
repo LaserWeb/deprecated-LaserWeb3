@@ -150,8 +150,8 @@ var lw = lw || {};
 
         // On window resize
         $(window).on('resize'   , onResize)
-                 .on('mousedown', onMouseDown)
-                 .on('mousemove', onMouseMove);
+        .on('mousedown', onMouseDown)
+        .on('mousemove', onMouseMove);
     };
 
     // -------------------------------------------------------------------------
@@ -301,5 +301,78 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
-// End viewer scope
+    lw.viewer.extendsViewToObject = function(object) {
+        if (! (object instanceof THREE.Object3D)) {
+            throw new Error(object + ' is not an instance of THREE.Object3D.');
+        }
+
+        var helper = new THREE.BoundingBoxHelper(object, 0xff0000);
+
+        helper.update();
+
+        var minx = helper.box.min.x;
+        var miny = helper.box.min.y;
+        var maxx = helper.box.max.x;
+        var maxy = helper.box.max.y;
+        var minz = helper.box.min.z;
+        var maxz = helper.box.max.z;
+
+        this.viewControls.reset();
+
+        var lenx = maxx - minx;
+        var leny = maxy - miny;
+        var lenz = maxz - minz;
+
+        var centerx = minx + (lenx / 2);
+        var centery = miny + (leny / 2);
+        var centerz = minz + (lenz / 2);
+
+        var maxlen = Math.max(lenx, leny, lenz);
+        var dist   = 2 * maxlen;
+
+        // center camera on gcode objects center pos, but twice the maxlen
+        this.viewControls.object.position.x = centerx;
+        this.viewControls.object.position.y = centery;
+        this.viewControls.object.position.z = centerz + dist;
+        
+        this.viewControls.target.x = centerx;
+        this.viewControls.target.y = centery;
+        this.viewControls.target.z = centerz;
+
+        var fov = 2.2 * Math.atan(maxlen / (2 * dist)) * (180 / Math.PI);
+
+        if (isNaN(fov)) {
+            return console.warn("giving up on viewing extents because fov could not be calculated");
+        }
+
+        this.viewControls.object.fov = fov;
+
+        var L = dist;
+        var vector = this.viewControls.target.clone();
+        var l = (new THREE.Vector3()).subVectors(this.camera.position, vector).length();
+        var up = this.camera.up.clone();
+        var quaternion = new THREE.Quaternion();
+
+        // Zoom correction
+        this.camera.translateZ(L - l);
+        up.y = 1;
+        up.x = 0;
+        up.z = 0;
+        quaternion.setFromAxisAngle(up, 0);
+        up.y = 0;
+        up.x = 1;
+        up.z = 0;
+        quaternion.setFromAxisAngle(up, 0);
+        this.camera.position.applyQuaternion(quaternion);
+        up.y = 0;
+        up.x = 0;
+        up.z = 1;
+        quaternion.setFromAxisAngle(up, 0);
+
+        this.camera.lookAt(vector);
+
+        this.viewControls.object.updateProjectionMatrix();
+    };
+
+    // End viewer scope
 })();

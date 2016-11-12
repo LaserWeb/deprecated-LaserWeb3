@@ -46,7 +46,7 @@ function drawDXF(file, fileName) {
     objectsInScene.push(fileObject)
     layers = [];
     layers = row.unique();
-    viewExtents(fileParentGroup);
+    lw.viewer.extendsViewToObject(fileParentGroup);
     svgxpos = 0;
     svgypos = 0;
     console.groupEnd();

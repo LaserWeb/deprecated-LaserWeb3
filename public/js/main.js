@@ -442,7 +442,7 @@ function loadFile(f) {
 
     setTimeout(function(){ fillTree(); }, 250);
     setTimeout(function(){ fillLayerTabs(); }, 300);
-    setTimeout(function(){ viewExtents(objectsInScene[objectsInScene.length - 1]); }, 300);
+    setTimeout(function(){ lw.viewer.extendsViewToObject(objectsInScene[objectsInScene.length - 1]); }, 300);
 
 };
 

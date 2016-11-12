@@ -106,7 +106,7 @@ var stlxsize, stlysize, stlzsize;
 
         console.log("STL Rendered")
 
-        viewExtents(stl)
+        lw.viewer.extendsViewToObject(stl)
         // $('#layers > tbody:last-child').append('<tr><td>STL</td><td>  <div class="input-group" style="margin-bottom:5px; width: 100%;"><input class="form-control" name=sp0 id=sp0 value=55><span class="input-group-addon"  style="width: 30px;">mm/s</span><input class="form-control" name=pwr0 id=pwr0 value=100><span class="input-group-addon"  style="width: 30px;">%</span></div></td></tr>');
         console.groupEnd();
 
