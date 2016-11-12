@@ -86,6 +86,7 @@ var lw = lw || {};
 
         // Initialize the renderer
         this.renderer.setClearColor(0xffffff, 1);
+        this.renderer.sortObjects = true;
         this.renderer.clear();
 
         // CNC mode ?
@@ -120,17 +121,22 @@ var lw = lw || {};
         // Lights
         this.lights = new this.Lights();
 
-        // Create workspace object
-        this.workspace      = new THREE.Group();
-        this.workspace.name = 'workspace';
+        // Create main scene groups
+        this.workspace = new THREE.Group();
+        this.objects   = new THREE.Group();
+        this.overlay   = new THREE.Group();
 
-        this.workspace.add(this.grid);
-        this.workspace.add(this.axes);
-        this.workspace.add(this.cursor);
-        this.workspace.add(this.bullseye);
-        this.workspace.add(this.lights);
+        // Add objects to target groups
+        this.addObject(this.workspace, { name: 'workspace', target: 'scene' });
+        this.addObject(this.objects  , { name: 'objects'  , target: 'scene' });
+        this.addObject(this.overlay  , { name: 'overlay'  , target: 'scene' });
 
-        this.scene.add(this.workspace);
+        this.addObject(this.lights, { target: 'workspace' });
+        this.addObject(this.grid  , { target: 'workspace' });
+        this.addObject(this.axes  , { target: 'workspace' });
+
+        this.addObject(this.bullseye, { target: 'overlay' });
+        this.addObject(this.cursor  , { target: 'overlay' });
 
         // Set initial size
         this.resize();
@@ -168,6 +174,30 @@ var lw = lw || {};
 
     function onResize(event) {
         lw.viewer.resize();
+    };
+
+    // -------------------------------------------------------------------------
+
+    // Add an object to the scene
+    lw.viewer.addObject = function(object, settings) {
+        // Defaults settings
+        settings = settings || {};
+
+        // Get the target object
+        var target = this[settings.target || 'objects'];
+
+        if (! (target instanceof THREE.Object3D)) {
+            throw new Error(target + ' is not an instance of THREE.Object3D.');
+        }
+
+        // Set object render order (at the top by default)
+        object.renderOrder = settings.order || target.children.length + 1;
+
+        // Set object name
+        object.name = settings.name || object.name;
+
+        // Add object to target group
+        target.add(object);
     };
 
     // -------------------------------------------------------------------------
