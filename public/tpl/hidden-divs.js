@@ -12,12 +12,6 @@ var lw = lw || {};
             <img src="images/draganddrop.svg" />
         </div><!-- #draganddrop -->
 
-        <video id="monitor" autoplay width="160" height="120" style="display: none; visibility: hidden; float:left;"></video>
-
-        <canvas id="videoImage" width="160" height="120" style="display: none; visibility: hidden; float:left;"></canvas>
-
-        <img id="imageDetect" crossOrigin width="160" height="120" style="display: none; visibility: hidden; float:left;" /></canvas>
-
         <div id="work-area" style="display: none; visibility: hidden; float:left;">
             <div id="svgpreview"></div>
         </div>
