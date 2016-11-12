@@ -60,27 +60,27 @@ var lw = lw || {};
                     </p>
                     <form class="form-horizontal">
                         <label for="laserXMax" class="control-label">X-Length <span style="color:red;">(Required)</span></label>
-                        <input id="laserXMax" type="text" class="form-control numpad" placeholder="600" />
+                        <input id="laserXMax" type="number" min="10" class="form-control numpad" placeholder="600" />
                         <label for="laserYMax" class="control-label">Y-Length <span style="color:red;">(Required)</span></label>
-                        <input id="laserYMax" type="text" class="form-control numpad" placeholder="400" />
+                        <input id="laserYMax" type="number" min="10" class="form-control numpad" placeholder="400" />
                         <label for="SpotSize" class="control-label">Laser Beam Diameter <span style="color:red;">(Required)</span></label>
-                        <input id="spotSize" type="text" class="form-control numpad" placeholder="0.5" />
+                        <input id="spotSize" type="number" min="0.01" step="0.1" class="form-control numpad" placeholder="0.5" />
                     </form>
                     <hr />
                     <form class="form-horizontal">
                         <h4>SVG defaults DPI</h4>
                         <label for="defaultDPI" class="control-label">Default <span style="color:red;">(Required)</span></label>
-                        <input id="defaultDPI" type="text" class="form-control numpad" placeholder="24" />
+                        <input id="defaultDPI" type="number" min="10" class="form-control numpad" placeholder="24" />
                         <label for="inkscapeDPI" class="control-label">Inkscape</label>
-                        <input id="inkscapeDPI" type="text" class="form-control numpad" placeholder="24" />
+                        <input id="inkscapeDPI" type="number" min="10" class="form-control numpad" placeholder="24" />
                         <label for="illustratorDPI" class="control-label">Illustrator</label>
-                        <input id="illustratorDPI" type="text" class="form-control numpad" placeholder="24" />
+                        <input id="illustratorDPI" type="number" min="10" class="form-control numpad" placeholder="24" />
                     </form>
                     <hr />
                     <form class="form-horizontal">
                         <h4>BMP defaults DPI</h4>
                         <label for="defaultBitmapDPI" class="control-label">Default <span style="color:red;">(Required)</span></label>
-                        <input id="defaultBitmapDPI" type="text" class="form-control numpad" placeholder="24" />
+                        <input id="defaultBitmapDPI" type="number" min="10" class="form-control numpad" placeholder="24" />
                     </form>
                 </div><!-- #menu1 -->
 
@@ -138,6 +138,8 @@ var lw = lw || {};
                             <option>Enable</option>
                             <option>Remote</option>
                         </select>
+                        <label for="videoWidth" class="control-label">Video width</label>
+                        <input id="videoWidth" type="number" min="10" class="form-control numpad" placeholder="200" />
                         <label for="webcamUrl" class="control-label">Remote Webcam URL <a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/wiki/Settings:-Remote-Webcam">(help)</a></label>
                         <input id="webcamUrl" type="text" class="form-control" placeholder="http://192.168.1.100:8080/?action=snapshot" />
                     </form>

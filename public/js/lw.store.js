@@ -32,6 +32,7 @@ var lw = lw || {};
         ['imagePosition'     , true],
         ['useNumPad'         , true],
         ['useVideo'          , true],
+        ['videoWidth'        , false],
         ['cncMode'           , true],
         ['webcamUrl'         , false],
         ['defaultDPI'        , true],
