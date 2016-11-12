@@ -25,7 +25,7 @@ var lw = lw || {};
         var i, steps = 50, temp = [];
 
         for (i = 0; i <= x; i += steps) {
-            this.add(makeSprite(lw.viewer.scene, 'webgl', {
+            this.add(new lw.viewer.Label({
                 x    : i,
                 y    : -14,
                 z    : 0,
@@ -35,7 +35,7 @@ var lw = lw || {};
         }
 
         for (i = 0; i <= y; i += steps) {
-            this.add(makeSprite(lw.viewer.scene, 'webgl', {
+            this.add(new lw.viewer.Label({
                 x    : -14,
                 y    : i,
                 z    : 0,
@@ -45,7 +45,7 @@ var lw = lw || {};
         }
 
         // Add axes labels
-        this.add(makeSprite(lw.viewer.scene, 'webgl', {
+        this.add(new lw.viewer.Label({
             x    : x,
             y    : 0,
             z    : 0,
@@ -53,7 +53,7 @@ var lw = lw || {};
             color: "#ff0000"
         }));
 
-        this.add(makeSprite(lw.viewer.scene, 'webgl', {
+        this.add(new lw.viewer.Label({
             x    : 0,
             y    : y,
             z    : 0,

@@ -651,21 +651,11 @@ createObjectFromGCode = function (gcode, indxMax) {
             bbbox.max.y = Math.max(bbbox.max.y, p2.y);
             bbbox.max.z = Math.max(bbbox.max.z, p2.z);
         }
+        
         if (p2.g0) {
-            // we're in a toolhead move, label moves
-            /*
-              if (group.segmentCount < 2) {
-              makeSprite(scene, "webgl", {
-              x: p2.x,
-              y: p2.y,
-              z: p2.z + 0,
-              text: group.segmentCount,
-              color: "#ff00ff",
-              size: 3,
-              });
-              }
-            */
+            // we're in a toolhead move...
         }
+
         // global bounding box calc
         bbbox2.min.x = Math.min(bbbox2.min.x, p2.x);
         bbbox2.min.y = Math.min(bbbox2.min.y, p2.y);

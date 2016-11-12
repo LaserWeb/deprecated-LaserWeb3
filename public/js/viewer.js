@@ -178,61 +178,6 @@ function viewExtents(objecttosee) {
     }
 };
 
-function makeSprite(scene, rendererType, vals) {
-    var canvas = document.createElement('canvas'),
-    context = canvas.getContext('2d'),
-    metrics = null,
-    textHeight = 100,
-    textWidth = 0,
-    actualFontSize = 10;
-    var txt = vals.text;
-    if (vals.size) actualFontSize = vals.size;
-
-    context.font = "normal " + textHeight + "px Arial";
-    metrics = context.measureText(txt);
-    var textWidth = metrics.width;
-
-    canvas.width = textWidth;
-    canvas.height = textHeight;
-    context.font = "normal " + textHeight + "px Arial";
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    //context.fillStyle = "#ff0000";
-    context.fillStyle = vals.color;
-
-    context.fillText(txt, textWidth / 2, textHeight / 2);
-
-    var texture = new THREE.Texture(canvas);
-    texture.needsUpdate = true;
-    texture.minFilter = THREE.LinearFilter;
-
-    var material = new THREE.SpriteMaterial({
-        map: texture,
-        // useScreenCoordinates: false,
-        transparent: true,
-        opacity: 0.6
-    });
-    material.transparent = true;
-    //var textObject = new THREE.Sprite(material);
-    var textObject = new THREE.Object3D();
-    textObject.position.x = vals.x;
-    textObject.position.y = vals.y;
-    textObject.position.z = vals.z;
-    var sprite = new THREE.Sprite(material);
-    textObject.textHeight = actualFontSize;
-    textObject.textWidth = (textWidth / textHeight) * textObject.textHeight;
-    if (rendererType == "2d") {
-        sprite.scale.set(textObject.textWidth / textWidth, textObject.textHeight / textHeight, 1);
-    } else {
-        sprite.scale.set(textWidth / textHeight * actualFontSize, actualFontSize, 1);
-    }
-
-    textObject.add(sprite);
-
-    //lw.viewer.scene.add(textObject);
-    return textObject;
-}
-
 function attachBB(object) {
     if (object.userData) {
         var $link = $('#'+object.userData.link);
@@ -288,7 +233,7 @@ function attachBB(object) {
     var bwidth = parseFloat(bbox2.max.x - bbox2.min.x).toFixed(2);
     var bheight = parseFloat(bbox2.max.y - bbox2.min.y).toFixed(2);
 
-    widthlabel = this.makeSprite(lw.viewer.scene, "webgl", {
+    widthlabel = new lw.viewer.Label({
         x: (bbox2.max.x + 30),
         y: ((bbox2.max.y - ((bbox2.max.y - bbox2.min.y) / 2)) + 10),
         z: 0,
@@ -299,7 +244,7 @@ function attachBB(object) {
 
     boundingBox.add(widthlabel)
 
-    heightlabel = this.makeSprite(lw.viewer.scene, "webgl", {
+    heightlabel = new lw.viewer.Label({
         x: ((bbox2.max.x - ((bbox2.max.x - bbox2.min.x) / 2)) + 10),
         y: (bbox2.max.y + 10),
         z: 0,
