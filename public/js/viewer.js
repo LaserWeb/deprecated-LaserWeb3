@@ -1,6 +1,6 @@
 // Global Vars
 var geometry, material, mesh;
-var projector, mouseVector, containerWidth, containerHeight;
+var mouseVector, containerWidth, containerHeight;
 
 var container, stats;
 var clock = new THREE.Clock();
@@ -20,11 +20,6 @@ function init3D() {
     // LaserWEB UI Grids
     laserxmax = lw.viewer.grid.userData.size.x;
     laserymax = lw.viewer.grid.userData.size.y;
-
-    // Picking stuff
-    projector = new THREE.Projector();
-    //mouseVector = new THREE.Vector3();
-
 
     // Webcam Texture
     useVideo = $('#useVideo').val()
