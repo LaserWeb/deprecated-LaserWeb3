@@ -96,8 +96,9 @@ function handler (req, res) {
       	});
       }
 }
+
 function ConvChar( str ) {
-  var c = {'<':'<', '>':'>', '&':'&', '"':'"', "'":"'", '#':'#' };
+  var c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;', '#':'&#035;' };
   return str.replace( /[<&>'"#]/g, function(s) { return c[s]; } );
 }
 
