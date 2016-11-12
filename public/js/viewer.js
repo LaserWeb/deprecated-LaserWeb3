@@ -1,18 +1,9 @@
 // Global Vars
-var geometry, material, mesh;
-var mouseVector, containerWidth, containerHeight;
-
-var container, stats;
-
-var marker;
 var laserxmax;
 var laserymax;
 
 var imageDetect, video, videoImage, videoImageContext, videoTexture, useVideo, movieScreen;
 var objectsInScene = []; //array that holds all objects we added to the lw.viewer.scene.
-
-containerWidth  = window.innerWidth;
-containerHeight = window.innerHeight;
 
 function init3D() {
 
@@ -166,13 +157,6 @@ function viewExtents(objecttosee) {
             //lw.viewer.camera.rotateX(90);
 
             lw.viewer.viewControls.object.updateProjectionMatrix();
-            containerWidth = window.innerWidth;
-            containerHeight = window.innerHeight;
-            //lw.viewer.viewControls.enabled = true;
-            //this.scaleInView();
-            //lw.viewer.viewControls.rotateCamera(0.5);
-            //lw.viewer.viewControls.noRoll = true;
-            //lw.viewer.viewControls.noRotate = true;
         }
 
     }
