@@ -80,7 +80,7 @@ function init3D() {
 
 }
 
-viewExtents = function(objecttosee) {
+function viewExtents(objecttosee) {
     // lets override the bounding box with a newly generated one
     // get its bounding box
     if (objecttosee) {
@@ -177,18 +177,6 @@ viewExtents = function(objecttosee) {
 
     }
 };
-
-function colorobj(name) {
-    var object = lw.viewer.scene.getObjectByName(name, true);
-    console.log(object)
-    // for (i=0; i<dxfObject.children.length; i++) {
-    //     dxfObject.children[i].material.color.setHex(0x000000);
-    //     dxfObject.children[i].material.opacity = 0.3;
-    // }
-    object.material.color.setHex(0xFF0000);
-    object.material.needsUpdate = true;
-}
-
 
 function makeSprite(scene, rendererType, vals) {
     var canvas = document.createElement('canvas'),
