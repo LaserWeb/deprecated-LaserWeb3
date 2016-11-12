@@ -3,7 +3,6 @@ var geometry, material, mesh;
 var mouseVector, containerWidth, containerHeight;
 
 var container, stats;
-var clock = new THREE.Clock();
 
 var marker;
 var laserxmax;
