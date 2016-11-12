@@ -80,25 +80,25 @@ function init3D() {
 
 }
 
-function animate() {
-    if (useVideo) {
-        if (useVideo.indexOf('Enable') == 0) {
-            if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
-                videoImageContext.drawImage( video, 0, 0, videoImage.width, videoImage.height );
-                if ( videoTexture ) {
-                    videoTexture.needsUpdate = true;
-                }
-            }
-        }
-    }
-
-    requestAnimationFrame(animate);
-
-    lw.viewer.renderer.render(lw.viewer.scene, lw.viewer.camera);
-    sceneWidth = document.getElementById("renderArea").offsetWidth,
-    sceneHeight = document.getElementById("renderArea").offsetHeight;
-    lw.viewer.camera.aspect = sceneWidth / sceneHeight;
-}
+// function animate() {
+//     if (useVideo) {
+//         if (useVideo.indexOf('Enable') == 0) {
+//             if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
+//                 videoImageContext.drawImage( video, 0, 0, videoImage.width, videoImage.height );
+//                 if ( videoTexture ) {
+//                     videoTexture.needsUpdate = true;
+//                 }
+//             }
+//         }
+//     }
+//
+//     requestAnimationFrame(animate);
+//
+//     lw.viewer.renderer.render(lw.viewer.scene, lw.viewer.camera);
+//     sceneWidth = document.getElementById("renderArea").offsetWidth,
+//     sceneHeight = document.getElementById("renderArea").offsetHeight;
+//     lw.viewer.camera.aspect = sceneWidth / sceneHeight;
+// }
 
 viewExtents = function(objecttosee) {
     // lets override the bounding box with a newly generated one

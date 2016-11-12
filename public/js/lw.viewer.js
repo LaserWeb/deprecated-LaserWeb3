@@ -136,6 +136,9 @@ var lw = lw || {};
         // Add the renderer DOM element to target area
         this.$render.html(this.renderer.domElement);
 
+        // Start animate
+        this.animate();
+
         // Events handlers -----------------------------------------------------
 
         // Enable/Disable 3D view
@@ -272,6 +275,28 @@ var lw = lw || {};
 
     function onMouseMove(event) {
         lw.viewer.onMouseEvent(event);
+    }
+
+    // -------------------------------------------------------------------------
+
+    lw.viewer.animate = function() {
+        // If video mode enabled
+        if (useVideo && useVideo.indexOf('Enable') == 0) {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                videoImageContext.drawImage(video, 0, 0, videoImage.width, videoImage.height);
+                if (videoTexture) {
+                    videoTexture.needsUpdate = true;
+                }
+            }
+        }
+
+        // (Re)render the scene
+        this.renderer.render(this.scene, this.camera);
+
+        // Request next animation
+        requestAnimationFrame(function() {
+            lw.viewer.animate();
+        });
     }
 
 // End viewer scope

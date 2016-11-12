@@ -10,7 +10,6 @@ lw.store.init();
 lw.viewer.init();
 
 init3D();
-animate();
 filePrepInit();
 initTabs();
 initJog();
@@ -440,7 +439,7 @@ function loadFile(f) {
     }
     $('#filestatus').hide();
     $('#cam-menu').click();
-    
+
     setTimeout(function(){ fillTree(); }, 250);
     setTimeout(function(){ fillLayerTabs(); }, 300);
     setTimeout(function(){ viewExtents(objectsInScene[objectsInScene.length - 1]); }, 300);
