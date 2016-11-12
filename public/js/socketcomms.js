@@ -304,7 +304,7 @@ function updateStatus(data) {
     $('#mY').html(pos[1]);
     $('#mZ').html(pos[2]);
     if (lw.viewer.bullseye) {
-      setBullseyePosition(pos[0], pos[1], pos[2]); // Also updates #mX #mY #mZ
+        lw.viewer.moveObject('bullseye', pos[0], pos[1], pos[2]);
     }
   }
 }

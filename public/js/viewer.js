@@ -15,21 +15,6 @@ var objectsInScene = []; //array that holds all objects we added to the lw.viewe
 containerWidth  = window.innerWidth;
 containerHeight = window.innerHeight;
 
-function setBullseyePosition(x, y, z) {
-    //console.log('Set Position: ', x, y, z)
-    if (x) {
-        lw.viewer.bullseye.position.x = (parseInt(x, 10) - (laserxmax / 2));
-    }
-
-    if (y) {
-        lw.viewer.bullseye.position.y = (parseInt(y, 10) - (laserymax / 2));
-    }
-
-    if (z) {
-        lw.viewer.bullseye.position.z = (parseInt(z, 10) + 0.1);
-    }
-}
-
 function init3D() {
 
     // LaserWEB UI Grids
