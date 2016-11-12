@@ -162,7 +162,9 @@ function viewExtents(objecttosee) {
     }
 };
 
+// Attach an bounding box to object
 function attachBB(object) {
+
     if (object.userData) {
         var $link = $('#'+object.userData.link);
         var $parent = $link.parent();
@@ -187,58 +189,12 @@ function attachBB(object) {
 
         object.userData.selected = true;
     }
-    // console.log(object);
-    // console.log(object.type);
 
-    //  if (object.type == "Mesh" ) {
-    // // dont  BB
-    //  } else {
     if (typeof(boundingBox) != 'undefined') {
         lw.viewer.scene.remove(boundingBox);
     }
 
-    var bbox2 = new THREE.Box3().setFromObject(object);
-    // console.log('bbox for Clicked Obj: '+ object +' Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
+    boundingBox = new lw.viewer.BoundingBox(object);
 
-    BBmaterial =  new THREE.LineDashedMaterial( { color: 0xaaaaaa, dashSize: 5, gapSize: 4, linewidth: 2 } );
-    BBgeometry = new THREE.Geometry();
-    BBgeometry.vertices.push(
-        new THREE.Vector3(  (bbox2.min.x - 1), (bbox2.min.y - 1), 0 ),
-        new THREE.Vector3(  (bbox2.min.x - 1), (bbox2.max.y + 1) , 0 ),
-        new THREE.Vector3( (bbox2.max.x + 1), (bbox2.max.y + 1), 0 ),
-        new THREE.Vector3( (bbox2.max.x + 1), (bbox2.min.y - 1), 0 ),
-        new THREE.Vector3(  (bbox2.min.x - 1), (bbox2.min.y - 1), 0 )
-    );
-    BBgeometry.computeLineDistances();  //  NB If not computed, dashed lines show as solid
-    boundingBoxLines= new THREE.Line( BBgeometry, BBmaterial );
-    boundingBox = new THREE.Group();
-    boundingBox.add(boundingBoxLines)
-
-    var bwidth = parseFloat(bbox2.max.x - bbox2.min.x).toFixed(2);
-    var bheight = parseFloat(bbox2.max.y - bbox2.min.y).toFixed(2);
-
-    widthlabel = new lw.viewer.Label({
-        x: (bbox2.max.x + 30),
-        y: ((bbox2.max.y - ((bbox2.max.y - bbox2.min.y) / 2)) + 10),
-        z: 0,
-        text: "W: " + bwidth + "mm",
-        color: "#aaaaaa",
-        size: 6
-    });
-
-    boundingBox.add(widthlabel)
-
-    heightlabel = new lw.viewer.Label({
-        x: ((bbox2.max.x - ((bbox2.max.x - bbox2.min.x) / 2)) + 10),
-        y: (bbox2.max.y + 10),
-        z: 0,
-        text: "H: " + bheight + "mm",
-        color: "#aaaaaa",
-        size: 6
-    });
-    boundingBox.add(heightlabel)
-    boundingBox.name = "Bounding Box"
-    lw.viewer.scene.add( boundingBox );
-    // }
-
+    lw.viewer.scene.add(boundingBox);
 }
