@@ -242,37 +242,3 @@ function attachBB(object) {
     // }
 
 }
-
-function drawRotary(radius) {
-    var rotary = new THREE.Group();
-    var lastz = 0; var lasty = 0;
-    var rmat = new THREE.LineBasicMaterial({
-        color: 0x888888,
-        opacity: 0.5
-    });
-    var rgeo = new THREE.Geometry();
-    rgeo.vertices.push(new THREE.Vector3(-(laserxmax / 2), 0, 0));
-    rgeo.vertices.push(new THREE.Vector3((laserxmax / 2), 0, 0));
-    for (r = 0; r < 360; r += 10) {
-        var rline = new THREE.Line(rgeo, rmat);
-        // x1 = x + radius * Math.Cos(angle * (Math.PI / 180));
-        // y1 = y + radius * Math.Sin(angle * (Math.PI / 180));
-        var y1 = 0 + radius * Math.cos(r * (Math.PI / 180));
-        var z1 = 0 + radius * Math.sin(r * (Math.PI / 180));
-        rline.position.y = y1
-        rline.position.z = z1
-        rotary.add (rline)
-        for (i = -(laserxmax / 2); i < (laserxmax / 2); i+=10 ) {
-            var rgeov = new THREE.Geometry();
-            rgeov.vertices.push(new THREE.Vector3(i, lasty, lastz));
-            rgeov.vertices.push(new THREE.Vector3(i, y1, z1));
-            var rlinev = new THREE.Line(rgeov, rmat);
-            // rlinev.position.y = x1
-            // rlinev.position.z = z1
-            rotary.add(rlinev)
-        }
-        lastz = z1;
-        lasty = y1
-    }
-    lw.viewer.scene.add(rotary);
-}
