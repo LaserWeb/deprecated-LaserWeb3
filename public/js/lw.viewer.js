@@ -136,6 +136,9 @@ var lw = lw || {};
         // Add the renderer DOM element to target area
         this.$render.html(this.renderer.domElement);
 
+        // Init video overlay
+        this.video.init();
+
         // Start animate
         this.animate();
 
@@ -173,6 +176,38 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    // Set cartesian origin
+    lw.viewer.setObjectCartesianOrigin = function(object) {
+        // If no geometry
+        if (! object.geometry) {
+            return;
+        }
+
+        // Center geometry
+        object.geometry.center();
+
+        // Get object bounding box size
+        var bbox = new THREE.Box3().setFromObject(object);
+
+        // Translate geometry to cartesian origin
+        object.geometry.translate(bbox.max.x, bbox.max.y, bbox.max.z);
+    };
+
+    // Apply object transformations
+    lw.viewer.applyObjectTransformations = function(object) {
+        // If no geometry
+        if (! object.geometry) {
+            return;
+        }
+
+        object.updateMatrix();
+        object.geometry.applyMatrix(object.matrix);
+        object.position.set(0, 0, 0);
+        object.rotation.set(0, 0, 0);
+        object.scale.set(1, 1, 1);
+        object.updateMatrix();
+    };
+
     // Add an object to the scene
     lw.viewer.addObject = function(object, settings) {
         // Defaults settings
@@ -187,6 +222,14 @@ var lw = lw || {};
 
         // Set object render order (at the top by default)
         object.renderOrder = settings.order || target.children.length + 1;
+
+        // Apply all transformations
+        this.applyObjectTransformations(object);
+
+        // Set cartesian coordinates ?
+        if (settings.cartesian) {
+            this.setObjectCartesianOrigin(object);
+        }
 
         // Set object position
         if (settings.position) {
@@ -280,15 +323,8 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.viewer.animate = function() {
-        // If video mode enabled
-        if (useVideo && useVideo.indexOf('Enable') == 0) {
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                videoImageContext.drawImage(video, 0, 0, videoImage.width, videoImage.height);
-                if (videoTexture) {
-                    videoTexture.needsUpdate = true;
-                }
-            }
-        }
+        // Refresh the video (if enabled)
+        this.video.refresh();
 
         // (Re)render the scene
         this.renderer.render(this.scene, this.camera);
@@ -334,7 +370,7 @@ var lw = lw || {};
         this.viewControls.object.position.x = centerx;
         this.viewControls.object.position.y = centery;
         this.viewControls.object.position.z = centerz + dist;
-        
+
         this.viewControls.target.x = centerx;
         this.viewControls.target.y = centery;
         this.viewControls.target.z = centerz;
@@ -373,6 +409,8 @@ var lw = lw || {};
 
         this.viewControls.object.updateProjectionMatrix();
     };
+
+    // -------------------------------------------------------------------------
 
     // End viewer scope
 })();
