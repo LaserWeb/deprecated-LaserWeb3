@@ -1,5 +1,5 @@
 // Global Vars
-var geometry, material, mesh, axes;
+var geometry, material, mesh;
 var projector, mouseVector, containerWidth, containerHeight;
 
 var container, stats;

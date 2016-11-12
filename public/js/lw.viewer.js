@@ -15,6 +15,8 @@ var lw = lw || {};
         raycaster   : null,
         mouse       : null,
         workspace   : null,
+        objects     : null,
+        overlay     : null,
         grid        : null,
         axes        : null,
         cursor      : null,
@@ -104,20 +106,12 @@ var lw = lw || {};
         var laserXMax = parseInt(lw.store.get('laserXMax', 200));
         var laserYMax = parseInt(lw.store.get('laserYMax', 200));
 
-        // Grid
-        this.grid = new this.Grid(laserXMax, laserYMax);
-
-        // Axes
-        this.axes = new this.Axes(laserXMax, laserYMax);
-
-        // Cursor
-        this.cursor = new this.Cursor();
-
-        // Bullseye
+        // Create main scene objects
+        this.lights   = new this.Lights();
+        this.grid     = new this.Grid(laserXMax, laserYMax);
+        this.axes     = new this.Axes(laserXMax, laserYMax);
         this.bullseye = new this.Bullseye();
-
-        // Lights
-        this.lights = new this.Lights();
+        this.cursor   = new this.Cursor();
 
         // Create main scene groups
         this.workspace = new THREE.Group();
