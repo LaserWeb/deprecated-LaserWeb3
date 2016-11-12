@@ -29,10 +29,10 @@ var lw = lw || {};
     // Init the video
     lw.viewer.video.init = function() {
         // Get video usage
-        var useVideo = lw.store.get('useVideo', 'Disabled');
+        var useVideo = lw.store.get('useVideo', 'Disable');
 
         // Disabled video ?
-        this.enabled = useVideo !== 'Disabled';
+        this.enabled = useVideo !== 'Disable';
 
         if (! this.enabled) {
             return false;
