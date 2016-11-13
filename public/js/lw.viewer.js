@@ -119,9 +119,9 @@ var lw = lw || {};
         this.overlay   = new THREE.Group();
 
         // Add objects to target groups
-        this.addObject(this.workspace, { name: 'workspace', target: 'scene' });
-        this.addObject(this.objects  , { name: 'objects'  , target: 'scene' });
-        this.addObject(this.overlay  , { name: 'overlay'  , target: 'scene' });
+        this.addObject(this.workspace, { name: 'workspace', target: 'scene', order: 100 });
+        this.addObject(this.objects  , { name: 'objects'  , target: 'scene', order: 200 });
+        this.addObject(this.overlay  , { name: 'overlay'  , target: 'scene', order: 300 });
 
         this.addObject(this.lights, { name: 'lights', target: 'workspace' });
         this.addObject(this.grid  , { name: 'grid'  , target: 'workspace' });
@@ -208,26 +208,49 @@ var lw = lw || {};
         object.updateMatrix();
     };
 
+    // function test(object, order) {
+    //     order = order || object.renderOrder;
+    //
+    //     if (object.material) {
+    //         object.material.depthTest = false;
+    //     }
+    //
+    //     for (var i = 0; i < object.children.length; i++) {
+    //         test(object.children[i], order);
+    //     }
+    // }
+
     // Add an object to the scene
     lw.viewer.addObject = function(object, settings) {
         // Defaults settings
         settings = settings || {};
 
+        // Default target name
+        var targetName = settings.target || 'objects';
+
         // Force cartesian coords on 'objects' target
-        if (settings.target === 'objects') {
+        if (targetName === 'objects') {
             settings.position  = settings.position || { x: 0, y: 0, z: 0 };
             settings.cartesian = settings.cartesian === undefined ? true : false;
         }
 
         // Get the target object
-        var target = this[settings.target || 'objects'];
+        var target = this[targetName];
 
         if (! (target instanceof THREE.Object3D)) {
             throw new Error(target + ' is not an instance of THREE.Object3D.');
         }
 
         // Set object render order (at the top by default)
-        object.renderOrder = settings.order || target.children.length + 1;
+        if (targetName === 'scene') {
+            object.renderOrder = settings.order || 1000;
+        }
+        else {
+            var order  = target.renderOrder;
+                order += (settings.order || (target.children.length + 1));
+            object.renderOrder = order;
+            //test(object);
+        }
 
         // Apply all transformations
         this.applyObjectTransformations(object);
@@ -244,6 +267,8 @@ var lw = lw || {};
 
         // Set object name
         object.name = settings.name || object.name;
+
+        //console.log(object.name, object.renderOrder);
 
         // Add object to target group
         target.add(object);
