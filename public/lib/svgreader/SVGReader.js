@@ -48,8 +48,13 @@ SVGReader = {
     tolerance : 0.05,
     // max tollerance when tesselating curvy shapes
 
+    // File editor (if detected)
+    editor: null,
 
     preview : function(svgstring, config) {
+        // Defaults config
+        config = config || {};
+
         this.tolerance_squared = Math.pow(this.tolerance, 2);
 
         // parse xml
@@ -153,6 +158,13 @@ SVGReader = {
     },
 
     parse : function(svgstring, config) {
+        // Defaults config
+        config = config || {};
+
+        // Reset editor
+        this.editor = null;
+
+        // ...
         this.tolerance_squared = Math.pow(this.tolerance, 2);
 
         // parse xml
@@ -181,31 +193,26 @@ SVGReader = {
         // Parse editor vendor/version/etc...
         // Editor tag stay on line 2
         var fingerprint = svgstring.split('\n')[1];
+
         if (fingerprint) {
-          var inkscape = fingerprint.match(/^<!-- Created with Inkscape/i);
+          var inkscape    = fingerprint.match(/^<!-- Created with Inkscape/i);
           var illustrator = fingerprint.match(/^<!-- Generator: Adobe Illustrator ([^,]+),/i);
 
           if (inkscape) {
-              config.editor = {
-                  name: 'inkscape',
-                  version: null,
+              this.editor = {
+                  name       : 'inkscape',
+                  version    : null,
                   fingerprint: fingerprint.substring(18, fingerprint.length-4).trim()
               };
           }
           else if (illustrator) {
-              config.editor = {
-                  name: 'illustrator',
-                  version: illustrator[1],
+              this.editor = {
+                  name       : 'illustrator',
+                  version    : illustrator[1],
                   fingerprint: fingerprint.substring(16, fingerprint.length-4).trim()
               };
           }
-          else {
-              config.editor = null;
-          }
-        } else {
-              config.editor = null;
         }
-
 
         // return...
         return this.boundarys;
