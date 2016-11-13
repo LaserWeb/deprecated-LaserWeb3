@@ -333,100 +333,97 @@ function initDragDrop() {
 
 // load file
 function loadFile(f) {
-    // Filereader
-    if (f) {
-        var r = new FileReader();
-        if (f.name.match(/\.dxf$/i)) {
-            // console.log(f.name + " is a DXF file");
-            // console.log('Reader: ', r)
-            r.readAsText(f);
-            r.onload = function(e) {
-                dxf = r.result
-                drawDXF(dxf, f.name);
-                lw.log.print('DXF Opened', 'message', "file");
-                // putFileObjectAtZero();
-                resetView()
-            };
-
-        } else if (f.name.match(/\.svg$/i)) {
-            // console.log(f.name + " is a SVG file");
-            r.readAsText(f);
-            r.onload = function(event) {
-                svg = r.result
-                var svgpreview = document.getElementById('svgpreview');
-                svgpreview.innerHTML = r.result;
-                var svgfile = $('#svgpreview').html();
-                svg2three(svgfile, f.name);
-                lw.log.print('SVG Opened', 'message', "file");
-                resetView()
-
-                // Lets also try Rastering for SVG
-                // var name = f.name;
-                // var data = event.target.result;
-                // drawRaster(name, data);
-            };
-
-
-        } else if (f.name.match(/\.(gcode|gc|nc)$/i)) {
-            r.readAsText(f);
-            r.onload = function(event) {
-                // cleanupThree();
-                $("#gcodefile").show();
-                document.getElementById('gcodepreview').value = this.result;
-                lw.log.print('GCODE Opened', 'message', "file");
-                resetView()
-                setTimeout(function(){   openGCodeFromText(); }, 500);
-            };
-        } else if (f.name.match(/\.stl$/i)) {
-            //r.readAsText(f);
-            // Remove the UI elements from last run
-            console.group("STL File");
-            var stlloader = new MeshesJS.STLLoader;
-            r.onload = function(event) {
-                // cleanupThree();
-                // Parse ASCII STL
-                if (typeof r.result === 'string') {
-                    stlloader.loadString(r.result);
-                    return;
-                }
-                // buffer reader
-                var view = new DataView(this.result);
-                // get faces number
-                try {
-                    var faces = view.getUint32(80, true);
-                } catch (error) {
-                    self.onError(error);
-                    return;
-                }
-                // is binary ?
-                var binary = view.byteLength == (80 + 4 + 50 * faces);
-                if (!binary) {
-                    // get the file contents as string
-                    // (faster than convert array buffer)
-                    r.readAsText(f);
-                    return;
-                }
-                // parse binary STL
-                stlloader.loadBinaryData(view, faces, 100, window, f);
-            };
-            // start reading file as array buffer
-            r.readAsArrayBuffer(f);
-            lw.log.print('STL Opened', 'message', "file");
-            console.log("Opened STL, and asking user for Slice settings")
-            console.groupEnd();
-            $('#stlslice').modal('show')
-        } else {
-            console.log(f.name + " is probably a Raster");
-            $('#origImage').empty();
-            r.readAsDataURL(f);
-            r.onload = function(event) {
-                var name = f.name;
-                var data = event.target.result;
-                drawRaster(name, data);
-            };
-
-        }
+    // No file...
+    if (! (f && f instanceof File)) {
+        throw new Error(f + ' is not an instance of File.');
     }
+
+    var r = new FileReader();
+
+    if (f.name.match(/\.dxf$/i)) {
+        r.readAsText(f);
+        r.onload = function(e) {
+            dxf = r.result
+            drawDXF(dxf, f.name);
+            lw.log.print('DXF Opened', 'message', "file");
+            // putFileObjectAtZero();
+            resetView()
+        };
+    }
+    else if (f.name.match(/\.svg$/i)) {
+        // console.log(f.name + " is a SVG file");
+        r.readAsText(f);
+        r.onload = function(event) {
+            svg = r.result
+            var svgpreview = document.getElementById('svgpreview');
+            svgpreview.innerHTML = r.result;
+            var svgfile = $('#svgpreview').html();
+            svg2three(svgfile, f.name);
+            lw.log.print('SVG Opened', 'message', "file");
+            resetView()
+        };
+    }
+    else if (f.name.match(/\.(gcode|gc|nc)$/i)) {
+        r.readAsText(f);
+        r.onload = function(event) {
+            // cleanupThree();
+            $("#gcodefile").show();
+            document.getElementById('gcodepreview').value = this.result;
+            lw.log.print('GCODE Opened', 'message', "file");
+            resetView()
+            setTimeout(function(){   openGCodeFromText(); }, 500);
+        };
+    }
+    else if (f.name.match(/\.stl$/i)) {
+        //r.readAsText(f);
+        // Remove the UI elements from last run
+        console.group("STL File");
+        var stlloader = new MeshesJS.STLLoader;
+        r.onload = function(event) {
+            // cleanupThree();
+            // Parse ASCII STL
+            if (typeof r.result === 'string') {
+                stlloader.loadString(r.result);
+                return;
+            }
+            // buffer reader
+            var view = new DataView(this.result);
+            // get faces number
+            try {
+                var faces = view.getUint32(80, true);
+            } catch (error) {
+                self.onError(error);
+                return;
+            }
+            // is binary ?
+            var binary = view.byteLength == (80 + 4 + 50 * faces);
+            if (!binary) {
+                // get the file contents as string
+                // (faster than convert array buffer)
+                r.readAsText(f);
+                return;
+            }
+            // parse binary STL
+            stlloader.loadBinaryData(view, faces, 100, window, f);
+        };
+        // start reading file as array buffer
+        r.readAsArrayBuffer(f);
+        lw.log.print('STL Opened', 'message', "file");
+        console.log("Opened STL, and asking user for Slice settings")
+        console.groupEnd();
+        $('#stlslice').modal('show')
+    }
+    else {
+        console.log(f.name + " is probably a Raster");
+        $('#origImage').empty();
+        r.readAsDataURL(f);
+        r.onload = function(event) {
+            var name = f.name;
+            var data = event.target.result;
+            drawRaster(name, data);
+        };
+    }
+
     $('#filestatus').hide();
     $('#cam-menu').click();
 
