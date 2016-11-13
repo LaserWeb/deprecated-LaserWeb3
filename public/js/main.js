@@ -347,13 +347,26 @@ function loadFile(f) {
         // On file loaded
         r.onload = function(event) {
             // Parse and create DXF 3D object
-            lw.dxf.drawDXF(r.result, f.name, function(object) {
+            lw.dxf.draw(r.result, f.name, function(object) {
                 // Add object to viewer
                 lw.viewer.addObject(object, {
                     name  : f.name,
                     target: 'objects'
                 });
             });
+        };
+
+        // Read the file as text
+        r.readAsText(f);
+
+        // File handled
+        return;
+    }
+
+    if (f.name.match(/\.svg$/i)) {
+        // On file loaded
+        r.onload = function(event) {
+            svg2three(r.result, f.name);
         };
 
         // Read the file as text

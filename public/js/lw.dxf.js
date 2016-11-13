@@ -180,7 +180,7 @@ var lw = lw || {};
 
     // -----------------------------------------------------------------------------
 
-    lw.dxf.drawDXF = function(file, name, onObject) {
+    lw.dxf.draw = function(file, name, onObject) {
         // Parse the DXF file
         var parser    = new DxfParser();
         var dxf       = parser.parseSync(file);
