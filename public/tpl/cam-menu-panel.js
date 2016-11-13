@@ -13,7 +13,7 @@ var lw = lw || {};
                 <h3><i class="fa fa-fw fa-exclamation"></i> No File to work with</h3>
                 <p>
                     Please <a href="#" onclick="$('#file').click()">open a file from the "Open" button</a>:<br />
-                    SVG (Paths only, single group), DXF (R14 Lines/Polylines/Circles), BMP/PNG/JPEG (Raster Engraving) and GCODE (External CAM) are all supported.
+                    SVG (Paths only, single group), DXF (R14 Lines/Polylines/Circles/Text), BMP/PNG/JPEG (Raster Engraving) and GCODE (External CAM) are all supported.
                 </p>
             </div>
             <div class="btn-group btn-group-justified" role="group" aria-label="gengcode">
