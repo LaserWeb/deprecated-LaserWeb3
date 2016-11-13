@@ -8,6 +8,7 @@ var useNumPad, activeObject, fileName;
 lw.menu.init();
 lw.store.init();
 lw.viewer.init();
+lw.dxf.loadFonts();
 
 init3D();
 filePrepInit();
@@ -338,18 +339,31 @@ function loadFile(f) {
         throw new Error(f + ' is not an instance of File.');
     }
 
+    // File reader object
     var r = new FileReader();
 
+    // DXF file
     if (f.name.match(/\.dxf$/i)) {
-        r.readAsText(f);
-        r.onload = function(e) {
-            dxf = r.result
-            drawDXF(dxf, f.name);
-            lw.log.print('DXF Opened', 'message', "file");
-            // putFileObjectAtZero();
-            resetView()
+        // On file loaded
+        r.onload = function(event) {
+            // Parse and create DXF 3D object
+            lw.dxf.drawDXF(r.result, f.name, function(object) {
+                // Add object to viewer
+                lw.viewer.addObject(object, {
+                    name  : f.name,
+                    target: 'objects'
+                });
+            });
         };
+
+        // Read the file as text
+        r.readAsText(f);
+
+        // File handled
+        return;
     }
+
+    /*
     else if (f.name.match(/\.svg$/i)) {
         // console.log(f.name + " is a SVG file");
         r.readAsText(f);
@@ -430,7 +444,7 @@ function loadFile(f) {
     setTimeout(function(){ fillTree(); }, 250);
     setTimeout(function(){ fillLayerTabs(); }, 300);
     setTimeout(function(){ lw.viewer.extendsViewToObject(objectsInScene[objectsInScene.length - 1]); }, 300);
-
+    */
 };
 
 function saveFile() {
