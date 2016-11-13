@@ -213,6 +213,12 @@ var lw = lw || {};
         // Defaults settings
         settings = settings || {};
 
+        // Force cartesian coords on 'objects' target
+        if (settings.target === 'objects') {
+            settings.position  = settings.position || { x: 0, y: 0, z: 0 };
+            settings.cartesian = settings.cartesian === undefined ? true : false;
+        }
+
         // Get the target object
         var target = this[settings.target || 'objects'];
 
