@@ -195,23 +195,23 @@ SVGReader = {
         var fingerprint = svgstring.split('\n')[1];
 
         if (fingerprint) {
-          var inkscape    = fingerprint.match(/^<!-- Created with Inkscape/i);
-          var illustrator = fingerprint.match(/^<!-- Generator: Adobe Illustrator ([^,]+),/i);
+            var inkscape    = fingerprint.match(/^<!-- Created with Inkscape/i);
+            var illustrator = fingerprint.match(/^<!-- Generator: Adobe Illustrator ([^,]+),/i);
 
-          if (inkscape) {
-              this.editor = {
-                  name       : 'inkscape',
-                  version    : null,
-                  fingerprint: fingerprint.substring(18, fingerprint.length-4).trim()
-              };
-          }
-          else if (illustrator) {
-              this.editor = {
-                  name       : 'illustrator',
-                  version    : illustrator[1],
-                  fingerprint: fingerprint.substring(16, fingerprint.length-4).trim()
-              };
-          }
+            if (inkscape) {
+                this.editor = {
+                    name       : 'inkscape',
+                    version    : null,
+                    fingerprint: fingerprint.substring(18, fingerprint.length-4).trim()
+                };
+            }
+            else if (illustrator) {
+                this.editor = {
+                    name       : 'illustrator',
+                    version    : illustrator[1],
+                    fingerprint: fingerprint.substring(16, fingerprint.length-4).trim()
+                };
+            }
         }
 
         // return...
