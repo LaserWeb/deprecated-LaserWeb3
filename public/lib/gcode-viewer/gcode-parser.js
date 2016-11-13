@@ -651,7 +651,7 @@ createObjectFromGCode = function (gcode, indxMax) {
             bbbox.max.y = Math.max(bbbox.max.y, p2.y);
             bbbox.max.z = Math.max(bbbox.max.z, p2.z);
         }
-        
+
         if (p2.g0) {
             // we're in a toolhead move...
         }
@@ -1300,7 +1300,7 @@ function drawobject() {
     lw.log.print('Estimated Distance: <b>' + (totalDist/1000).toFixed(1) + ' m</b>', 'message', "viewer");
     $("#lasertimeqty").val((totalDist.toFixed(1)) / 10)
 
-    if (fileParentGroup) {
+    /*if (fileParentGroup) {
        var bbox2 = new THREE.Box3().setFromObject(fileParentGroup);
       //  console.log('bbox width: ', (bbox2.max.x - bbox2.min.x), 'height Y: ', (bbox2.max.y - bbox2.min.y) );
        width = (bbox2.max.x - bbox2.min.x);
@@ -1314,7 +1314,7 @@ function drawobject() {
        height = (bbox2.max.y - bbox2.min.y);
        $('#quoteresult').html('Job moves length: ' + totalDist.toFixed(1) + ' mm<br> Width: ' + width.toFixed(1) + ' mm<br>Height: ' + height.toFixed(1) + ' mm<br>Material: ' + ((width*height) / 1000).toFixed(3) + 'cm<sup>2</sup>' );
        $("#materialqty").val(((width*height) / 1000).toFixed(3));
-    }
+    }*/
 
     console.groupEnd();
     return newObject;

@@ -70,11 +70,6 @@ function resetView() {
 
 function putFileObjectAtZero(object) {
 
-    if (object) {
-    } else {
-        object = fileParentGroup
-    }
-
     var bbox2 = new THREE.Box3().setFromObject(object);
     Xtofix = -(bbox2.min.x + (laserxmax / 2));
     imagePosition = $('#imagePosition').val()

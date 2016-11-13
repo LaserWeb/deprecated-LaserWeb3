@@ -2,7 +2,7 @@
     AUTHOR: Peter van der Walt
     Based on code from:  John Lauer, Todd Fleming, Nicholas Raynaud and others
 */
-var inflateGrp, fileParentGroup, svgPath, y, shape, lines, line;
+var inflateGrp, svgPath, y, shape, lines, line;
 var options = {};
 
 $(document).ready(function() {

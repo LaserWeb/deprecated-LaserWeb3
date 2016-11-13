@@ -1,13 +1,9 @@
-var inflateGrp;
-var fileParentGroup;
-
 function drawDXF(file, fileName) {
+    // Log...
+    console.groupCollapsed("DXF File:" + fileName);
 
-    console.group("DXF File:")
-    yflip = false;
     Array.prototype.unique = function() {
-        var n = {},
-            r = [];
+        var n = {}, r = [];
         for (var i = 0; i < this.length; i++) {
             if (!n[this[i]]) {
                 n[this[i]] = true;
@@ -15,7 +11,7 @@ function drawDXF(file, fileName) {
             }
         }
         return r;
-    }
+    };
 
     fileObject = new THREE.Group();
 
@@ -35,6 +31,9 @@ function drawDXF(file, fileName) {
         // console.log( dxf2.entities[i].type + i)
     };
 
+    // End log...
+    console.groupEnd();
+
 
     fileObject.name = fileName;
     fileObject.userData.layers = $.unique(fileLayers);
@@ -46,8 +45,6 @@ function drawDXF(file, fileName) {
     objectsInScene.push(fileObject)
     layers = [];
     layers = row.unique();
-    lw.viewer.extendsViewToObject(fileParentGroup);
     svgxpos = 0;
     svgypos = 0;
-    console.groupEnd();
 };

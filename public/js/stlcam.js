@@ -154,7 +154,6 @@ function slicegrid(step) {
     putFileObjectAtZero(slicegroup);
     lw.viewer.scene.add(slicegroup);
     calcZeroOffset(slicegroup)
-    fileParentGroup = slicegroup;
     slicegroup.name = "Sliced STL"+step+'mm'
 
     objectsInScene.push(slicegroup)
