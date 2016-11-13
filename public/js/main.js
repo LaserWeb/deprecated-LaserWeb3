@@ -336,7 +336,7 @@ function loadFile(f) {
     // Filereader
     if (f) {
         var r = new FileReader();
-        if (f.name.match(/.dxf$/i)) {
+        if (f.name.match(/\.dxf$/i)) {
             // console.log(f.name + " is a DXF file");
             // console.log('Reader: ', r)
             r.readAsText(f);
@@ -348,7 +348,7 @@ function loadFile(f) {
                 resetView()
             };
 
-        } else if (f.name.match(/.svg$/i)) {
+        } else if (f.name.match(/\.svg$/i)) {
             // console.log(f.name + " is a SVG file");
             r.readAsText(f);
             r.onload = function(event) {
@@ -367,7 +367,7 @@ function loadFile(f) {
             };
 
 
-        } else if (f.name.match(/.gcode$/i)) {
+        } else if (f.name.match(/\.(gcode|gc|nc)$/i)) {
             r.readAsText(f);
             r.onload = function(event) {
                 // cleanupThree();
@@ -377,17 +377,7 @@ function loadFile(f) {
                 resetView()
                 setTimeout(function(){   openGCodeFromText(); }, 500);
             };
-        } else if (f.name.match(/.nc$/i)) {
-            r.readAsText(f);
-            r.onload = function(event) {
-                // cleanupThree();
-                $("#gcodefile").show();
-                document.getElementById('gcodepreview').value = this.result;
-                lw.log.print('GCODE Opened', 'message', "file");
-                resetView()
-                setTimeout(function(){   openGCodeFromText(); }, 500);
-            };
-        } else if (f.name.match(/.stl$/i)) {
+        } else if (f.name.match(/\.stl$/i)) {
             //r.readAsText(f);
             // Remove the UI elements from last run
             console.group("STL File");
