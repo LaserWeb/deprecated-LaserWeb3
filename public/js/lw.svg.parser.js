@@ -496,7 +496,35 @@ var lw = lw || {};
         return true;
     };
 
-    lw.svg.Parser.prototype._ellipse = function(tag) {};
+    lw.svg.Parser.prototype._ellipse = function(tag) {
+        // Ellipse radius
+        var rx = tag.getAttr('rx');
+        var ry = tag.getAttr('ry');
+
+        // Negative value
+        if (! rx || ! ry || rx <= 0 || ry <= 0) {
+            // Skip tag
+            return false;
+        }
+
+        // Coordinate of the center of the circle
+        var cx = tag.getAttr('cx', 0);
+        var cy = tag.getAttr('cy', 0);
+
+        // Compute circle vertices
+        var limit = 2 * Math.PI;
+        var step  = limit / this.settings.arcSegments;
+
+        for (var theta = 0; theta < limit; theta += step) {
+            tag.addVertex(
+                cx + rx * Math.cos(theta),
+                cy - ry * Math.sin(theta)
+            );
+        }
+
+        // Supported tag
+        return true;
+    };
 
     lw.svg.Parser.prototype._line = function(tag) {
         // Add vertices

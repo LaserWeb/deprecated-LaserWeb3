@@ -64,7 +64,7 @@ var lw = lw || {};
             geometry.vertices.push(new THREE.Vector3(v1.x, v1.y, 0));
         }
 
-        if (['polygon', 'rect', 'circle'].indexOf(tag.name) !== -1) {
+        if (['polygon', 'rect', 'circle', 'ellipse'].indexOf(tag.name) !== -1) {
             geometry.vertices.push(geometry.vertices[0]);
         }
 
@@ -78,7 +78,7 @@ var lw = lw || {};
         var object = new THREE.Object3D();
 
         // Draw path
-        if (['line', 'polyline', 'polygon', 'rect', 'circle'].indexOf(tag.name) !== -1) {
+        if (['line', 'polyline', 'polygon', 'rect', 'circle', 'ellipse'].indexOf(tag.name) !== -1) {
             return this.drawLine(tag);
         }
 
