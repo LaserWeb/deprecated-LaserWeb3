@@ -347,12 +347,15 @@ function loadFile(f) {
         // On file loaded
         r.onload = function(event) {
             // Parse and create DXF 3D object
-            lw.dxf.draw(r.result, f.name, function(object) {
-                // Add object to viewer
-                lw.viewer.addObject(object, {
-                    name  : f.name,
-                    target: 'objects'
-                });
+            lw.dxf.draw(r.result, f.name, {
+                // On 3D object created
+                onObject: function(object) {
+                    // Add object to viewer
+                    lw.viewer.addObject(object, {
+                        name  : f.name,
+                        target: 'objects'
+                    });
+                }
             });
         };
 
@@ -366,7 +369,17 @@ function loadFile(f) {
     if (f.name.match(/\.svg$/i)) {
         // On file loaded
         r.onload = function(event) {
-            svg2three(r.result, f.name);
+            // Parse and create SVG 3D object
+            lw.svg.draw(r.result, f.name, {
+                // On 3D object created
+                onObject: function(object) {
+                    // Add object to viewer
+                    lw.viewer.addObject(object, {
+                        name  : f.name,
+                        target: 'objects'
+                    });
+                }
+            });
         };
 
         // Read the file as text

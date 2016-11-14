@@ -180,7 +180,11 @@ var lw = lw || {};
 
     // -----------------------------------------------------------------------------
 
-    lw.dxf.draw = function(file, name, onObject) {
+    lw.dxf.draw = function(file, name, settings) {
+        // Default settings
+        settings          = settings || {};
+        settings.onObject = settings.onObject || null;
+
         // Parse the DXF file
         var parser    = new DxfParser();
         var dxf       = parser.parseSync(file);
@@ -203,7 +207,12 @@ var lw = lw || {};
         console.groupEnd();
 
         // Call user callback
-        onObject(DXFObject);
+        if (settings.onObject) {
+            settings.onObject(DXFObject);
+        }
+
+        // Return object
+        return DXFObject
     };
 
     // End dxf scope
