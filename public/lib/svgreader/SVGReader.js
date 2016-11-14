@@ -226,6 +226,33 @@ var lw = lw || {};
         return attrName;
     };
 
+    TagParser.prototype.normalizeUnit = function(value) {
+        var stringValue = (value + "").toLowerCase();
+        var floatValue  = parseFloat(stringValue);
+
+        if (stringValue.indexOf('mm') !== -1) {
+            return floatValue * 3.5433070869;
+        }
+
+        if (stringValue.indexOf('cm') !== -1) {
+            return floatValue * 35.433070869;
+        }
+
+        if (stringValue.indexOf('in') !== -1) {
+            return floatValue * 90.0;
+        }
+
+        if (stringValue.indexOf('pt') !== -1) {
+            return floatValue * 1.25;
+        }
+
+        if (stringValue.indexOf('pc') !== -1) {
+            return floatValue * 15.0;
+        }
+
+        return floatValue;
+    };
+
     TagParser.prototype.normalizeAttrValue = function(attrName, attrValue) {
         // Remove trailing spaces
         attrValue = attrValue.trim();
@@ -239,11 +266,31 @@ var lw = lw || {};
             attrValue = Math.min(1, Math.max(0, parseFloat(attrValue)));
             break;
 
-            // Parse color to -> ...
+            // Normalize color to RGBA int array -> [r, g, b, a]
+            // Or leave input -> 'inherit', 'none', etc...
             case 'fill'  :
             case 'stroke':
             case 'color' :
             attrValue = this.normalizeColor(attrValue);
+            break;
+
+            // Normalize size unit -> to px
+            case 'x'  :
+            case 'y'  :
+            case 'x1'  :
+            case 'y1'  :
+            case 'x2'  :
+            case 'y2'  :
+            case 'r'  :
+            case 'rx'  :
+            case 'ry'  :
+            case 'cx'  :
+            case 'cy'  :
+            case 'width' :
+            case 'height' :
+            case 'fontSize' :
+            case 'strokeWidth' :
+            attrValue = this.normalizeUnit(attrValue);
             break;
 
             default:
@@ -404,8 +451,15 @@ var lw = lw || {};
             this.paths = [];
 
             // Parse
-            parser();
+            parser.call(this);
         }
+    };
+
+    // -------------------------------------------------------------------------
+
+    TagParser.prototype.getAttr = function(name, defaultValue) {
+        return this.attrs[name] !== undefined ? this.attrs[name]
+            : (defaultValue !== undefined ? defaultValue : null);
     };
 
     // Tags parsers ------------------------------------------------------------
@@ -424,7 +478,16 @@ var lw = lw || {};
 
     TagParser.prototype._g = function() {};
 
-    TagParser.prototype._line = function() {};
+    TagParser.prototype._line = function() {
+        // http://www.w3.org/TR/SVG11/shapes.html#LineElement
+        // has transform and style attributes
+        var x1 = this.getAttr('x1');
+        var x2 = this.getAttr('x2');
+        var y1 = this.getAttr('y1');
+        var y2 = this.getAttr('y2');
+
+        console.log([x1, x2, y1, y2]);
+    };
 
     TagParser.prototype._polyline = function() {};
 
