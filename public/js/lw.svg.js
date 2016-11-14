@@ -34,7 +34,7 @@ var lw = lw || {};
     // -----------------------------------------------------------------------------
 
     lw.svg.createLineMaterial = function(tag) {
-        var color = tag.getAttr('stroke', tag.getAttr('color'));
+        var color = tag.getAttr('stroke', tag.getAttr('color', tag.getAttr('fill')));
 
         if (typeof color === 'string') {
             color = [0, 0, 0];
@@ -64,7 +64,7 @@ var lw = lw || {};
             geometry.vertices.push(new THREE.Vector3(v1.x, v1.y, 0));
         }
 
-        if (tag.name === 'polygon') {
+        if (['polygon', 'rect'].indexOf(tag.name) !== -1) {
             geometry.vertices.push(geometry.vertices[0]);
         }
 
@@ -78,7 +78,7 @@ var lw = lw || {};
         var object = new THREE.Object3D();
 
         // Draw path
-        if (tag.name === 'line' || tag.name === 'polyline' || tag.name === 'polygon') {
+        if (['line', 'polyline', 'polygon', 'rect'].indexOf(tag.name) !== -1) {
             return this.drawLine(tag);
         }
 
