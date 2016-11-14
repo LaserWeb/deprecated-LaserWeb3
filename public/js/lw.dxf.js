@@ -186,8 +186,8 @@ var lw = lw || {};
         settings.onObject = settings.onObject || null;
 
         // Parse the DXF file
-        var parser    = new DxfParser();
-        var dxf       = parser.parseSync(file);
+        var parser    = new DXFParser();
+        var dxf       = parser.parse(file);
         var DXFObject = new THREE.Object3D();
 
         console.groupCollapsed("DXF File:" + name);
@@ -212,7 +212,7 @@ var lw = lw || {};
         }
 
         // Return object
-        return DXFObject
+        return DXFObject;
     };
 
     // End dxf scope
