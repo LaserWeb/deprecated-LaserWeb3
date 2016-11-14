@@ -12,10 +12,6 @@ var lw = lw || {};
             <img src="images/draganddrop.svg" />
         </div><!-- #draganddrop -->
 
-        <div id="work-area" style="display: none; visibility: hidden; float:left;">
-            <div id="svgpreview"></div>
-        </div>
-
         <div class="canvas" id="rasterOutput" style="display: none;">
             <canvas id="canvas-1"></canvas>
         </div>
