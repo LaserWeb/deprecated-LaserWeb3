@@ -18,7 +18,7 @@ errorHandlerJS();
 var paperscript = {};
 rasterInit();
 macrosInit();
-svgInit();
+//svgInit();
 initSocket();
 initTour();
 initSmoothie();
@@ -291,9 +291,7 @@ function errorHandlerJS() {
 
 // Function to execute when opening file (triggered by fileOpen.addEventListener('change', readFile, false); )
 function readFile(evt) {
-    console.group("New FileOpen Event:")
-    console.log(evt);
-    console.groupEnd();
+    console.log('readFile:', evt);
     // Close the menu
     $("#drop1").dropdown("toggle");
 
