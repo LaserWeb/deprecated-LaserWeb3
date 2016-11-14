@@ -45,27 +45,18 @@ var lw = lw || {};
     // SVG Reader class
     lw.svg.Parser = function(svg, settings) {
         // Defaults settings
-        settings           = settings           || {};
-        settings.tolerance = settings.tolerance || 0.05;
+        var settings         = settings             || {};
+        settings.arcSegments = settings.arcSegments || 48;
 
         // Init properties
+        this.settings  = settings;
         this.svg       = null;
         this.editor    = null;
         this.tolerance = null;
         this.entities  = null;
 
-        // Set the tolerance
-        this.setTolerance(settings.tolerance);
-
         // Load SVG contents
         svg && this.load(svg);
-    };
-
-    // -------------------------------------------------------------------------
-
-    // Set the max tollerance when tesselating curvy shapes
-    lw.svg.Parser.prototype.setTolerance = function(tolerance) {
-        this.tolerance = Math.pow(tolerance, 2);
     };
 
     // -------------------------------------------------------------------------
@@ -476,7 +467,34 @@ var lw = lw || {};
         // TODO...
     };
 
-    lw.svg.Parser.prototype._circle = function(tag) {};
+    lw.svg.Parser.prototype._circle = function(tag) {
+        // Circle radius
+        var r = tag.getAttr('r');
+
+        // Negative value
+        if (! r || r <= 0) {
+            // Skip tag
+            return false;
+        }
+
+        // Coordinate of the center of the circle
+        var cx = tag.getAttr('cx', 0);
+        var cy = tag.getAttr('cy', 0);
+
+        // Compute circle vertices
+        var limit = 2 * Math.PI;
+        var step  = limit / this.settings.arcSegments;
+
+        for (var theta = 0; theta < limit; theta += step) {
+            tag.addVertex(
+                cx + r * Math.cos(theta),
+                cy - r * Math.sin(theta)
+            );
+        }
+
+        // Supported tag
+        return true;
+    };
 
     lw.svg.Parser.prototype._ellipse = function(tag) {};
 
