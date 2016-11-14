@@ -257,9 +257,12 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     // Try to normalize the color and return an array of int -> [r, g, b, a]
-    // Else return the color as text (inherit, none, red, yellow, etc...)
+    // Else return the color as text (inherit, none, etc...)
     TagParser.prototype.normalizeColor = function(color) {
-        // Try to get the named color (HEX)
+        // Lowecased color
+        color = color.toLowerCase();
+
+        // Try to get named color as HEX
         if (lw.colors.named[color]) {
             color = lw.colors.named[color];
         }
@@ -289,7 +292,7 @@ var lw = lw || {};
         }
 
         // RGB(A) color : rgb(127, 0, 0) - rgb(50%, 0, 0) - rgba(255, 0, 0, 0.8)
-        var matches = color.match(/^rgb[a]?\(([^\)]+)\)/i);
+        var matches = color.match(/^rgb[a]?\(([^\)]+)\)/);
 
         if (matches && matches[1]) {
             // Split match on comma
@@ -325,7 +328,7 @@ var lw = lw || {};
         }
 
         // Return input color
-        // (inherit, none, red, yellow, etc...)
+        // (inherit, none, etc...)
         return color;
     };
 
