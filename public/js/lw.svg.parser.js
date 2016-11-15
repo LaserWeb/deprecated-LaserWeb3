@@ -4,6 +4,10 @@ var lw = lw || {};
 (function () {
     'use strict';
 
+    var _PI2_ = 2 * Math.PI;
+
+    // -------------------------------------------------------------------------
+
     lw.svg.Vertex = function(x, y) {
         this.x = x;
         this.y = y;
@@ -45,8 +49,15 @@ var lw = lw || {};
     // SVG Reader class
     lw.svg.Parser = function(svg, settings) {
         // Defaults settings
-        var settings         = settings             || {};
-        settings.arcSegments = settings.arcSegments || 48;
+        var settings = settings || {};
+
+        // Minimum segment length (+/- not accurate) (arc only for now)
+        // Used to calculated the number of segments for arc's
+        settings.minSegmentLength = settings.minSegmentLength || 0.1;  // mm
+
+        // Fixed number of segments for arc's
+        // If not defined, null, or <= 0, calculated from (arc perimeter / minSegmentLength)
+        settings.arcSegments = settings.arcSegments || null;
 
         // Init properties
         this.settings  = settings;
@@ -413,6 +424,23 @@ var lw = lw || {};
         return tag;
     };
 
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype.getArcSegments = function(radius) {
+        // Fixed number of segments provided by user
+        var segments  = this.settings.arcSegments || 0;
+
+        // Calculate number of segments from perimeter and minSegmentLength
+        if (! segments || segments <= 0) {
+            var perimeter = _PI2_ * radius;
+            var minLength = this.settings.minSegmentLength;
+                segments  = perimeter / minLength;
+        }
+
+        // Return the number of segments
+        return segments;
+    };
+
     // Tags parsers ------------------------------------------------------------
     // This part come mainly from the SVG parser for the Lasersaur.
     // SVG specs at https://www.w3.org/TR/SVG11/
@@ -482,10 +510,10 @@ var lw = lw || {};
         var cy = tag.getAttr('cy', 0);
 
         // Compute circle vertices
-        var limit = 2 * Math.PI;
-        var step  = limit / this.settings.arcSegments;
+        var segments = this.getArcSegments(r);
+        var step     = _PI2_ / segments;
 
-        for (var theta = 0; theta < limit; theta += step) {
+        for (var theta = 0; theta < _PI2_; theta += step) {
             tag.addVertex(
                 cx + r * Math.cos(theta),
                 cy - r * Math.sin(theta)
@@ -512,10 +540,10 @@ var lw = lw || {};
         var cy = tag.getAttr('cy', 0);
 
         // Compute circle vertices
-        var limit = 2 * Math.PI;
-        var step  = limit / this.settings.arcSegments;
+        var segments = this.getArcSegments(Math.min(rx, ry));
+        var step     = _PI2_ / segments;
 
-        for (var theta = 0; theta < limit; theta += step) {
+        for (var theta = 0; theta < _PI2_; theta += step) {
             tag.addVertex(
                 cx + rx * Math.cos(theta),
                 cy - ry * Math.sin(theta)
