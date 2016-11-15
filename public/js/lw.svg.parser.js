@@ -4,7 +4,8 @@ var lw = lw || {};
 (function () {
     'use strict';
 
-    var _PI2_ = 2 * Math.PI;
+    var _PI2_        = 2 * Math.PI;
+    var _DEG_TO_RAD_ = Math.PI / 180;
 
     // -------------------------------------------------------------------------
 
@@ -23,12 +24,25 @@ var lw = lw || {};
         this.attrs    = {};
         this.vertices = [];
 
-        // Clone parent attributes
+        // Transformation matrix
+        this.matrix        = [1, 0, 0, 1, 0, 0];
+        this.matrixApplied = false;
+
         if (this.parent) {
+            // Inherit matrix from parent
+            this.matrix = this.parent.matrix;
+
+            // Clone parent attributes
             var parentAttrs = this.parent.attrs;
 
             for (var attrName in parentAttrs) {
                 if (parentAttrs.hasOwnProperty(attrName)) {
+                    // Do not copy some properties
+                    if (['id', 'transform'].indexOf(attrName) !== -1) {
+                        continue;
+                    }
+
+                    // Set attribute value
                     this.setAttr(attrName, parentAttrs[attrName]);
                 }
             }
@@ -37,7 +51,7 @@ var lw = lw || {};
 
     lw.svg.Tag.prototype.getAttr = function(name, defaultValue) {
         return this.attrs[name] !== undefined ? this.attrs[name]
-            : (defaultValue !== undefined ? defaultValue : null);
+        : (defaultValue !== undefined ? defaultValue : null);
     };
 
     lw.svg.Tag.prototype.setAttr = function(name, value) {
@@ -46,6 +60,33 @@ var lw = lw || {};
 
     lw.svg.Tag.prototype.addVertex = function(x, y) {
         this.vertices.push(new lw.svg.Vertex(x, y));
+    };
+
+    lw.svg.Tag.prototype.addMatrix = function(matrix) {
+        this.matrixApplied = false;
+        this.matrix        = [
+            this.matrix[0] * matrix[0] + this.matrix[2] * matrix[1],
+            this.matrix[1] * matrix[0] + this.matrix[3] * matrix[1],
+            this.matrix[0] * matrix[2] + this.matrix[2] * matrix[3],
+            this.matrix[1] * matrix[2] + this.matrix[3] * matrix[3],
+            this.matrix[0] * matrix[4] + this.matrix[2] * matrix[5] + this.matrix[4],
+            this.matrix[1] * matrix[4] + this.matrix[3] * matrix[5] + this.matrix[5]
+        ];
+    };
+
+    lw.svg.Tag.prototype.applyMatrix = function() {
+        if (this.matrixApplied) {
+            return null;
+        }
+
+        this.vertices = this.vertices.map(function(vertex) {
+            return new lw.svg.Vertex(
+                this.matrix[0] * vertex.x + this.matrix[2] * vertex.y + this.matrix[4],
+                this.matrix[1] * vertex.x + this.matrix[3] * vertex.y + this.matrix[5]
+            );
+        }, this);
+
+        this.matrixApplied = true;
     };
 
     // -------------------------------------------------------------------------
@@ -383,6 +424,132 @@ var lw = lw || {};
                 tag.setAttr(attrName, attrValue);
             }
         }
+
+        // Parse transformation attribute
+        this.parseTransformAttr(tag);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype.addTransformMatrix = function(tag, type, params) {
+        // translate
+        if (type == 'translate') {
+            if (params.length == 1) {
+                return tag.addMatrix([1, 0, 0, 1, params[0], params[0]]);
+            }
+            else if (params.length == 2) {
+                return tag.addMatrix([1, 0, 0, 1, params[0], params[1]]);
+            }
+        }
+
+        // rotate
+        else if (type == 'rotate') {
+            if (params.length == 3) {
+                var angle = params[0] * _DEG_TO_RAD_;
+                return tag.addMatrix([1, 0, 0, 1, params[1], params[2]]);
+                return tag.addMatrix([Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0]);
+                return tag.addMatrix([1, 0, 0, 1, -params[1], -params[2]]);
+            }
+            else if (params.length == 1) {
+                var angle = params[0] * _DEG_TO_RAD_;
+                return tag.addMatrix([Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0]);
+            }
+        }
+
+        // scale
+        else if (type == 'scale') {
+            if (params.length == 1) {
+                return tag.addMatrix([params[0], 0, 0, params[0], 0, 0]);
+            }
+            else if (params.length == 2) {
+                return tag.addMatrix([params[0], 0, 0, params[1], 0, 0]);
+            }
+        }
+
+        // matrix
+        else if (type == 'matrix') {
+            if (params.length == 6) {
+                return tag.addMatrix(params);
+            }
+        }
+
+        // skewY
+        else if (type == 'skewX') {
+            if (params.length == 1) {
+                var angle = params[0] * _DEG_TO_RAD_;
+                return tag.addMatrix([1, 0, Math.tan(angle), 1, 0, 0]);
+            }
+        }
+
+        // skewY
+        else if (type == 'skewY') {
+            if (params.length == 1) {
+                var angle = params[0] * _DEG_TO_RAD_;
+                return tag.addMatrix([1, Math.tan(angle), 0, 1, 0, 0]);
+            }
+        }
+
+        // Not supported
+        else {
+            //console.log('warning', type, 'skipped; unsupported type');
+            return null;
+        }
+
+        //console.log('warning', type, 'skipped; invalid num of params');
+        return null;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype.parseTransformAttr = function(tag) {
+        // Get transform attribute
+        var transformAttr = tag.getAttr('transform', '').trim();
+
+        // No transformation...
+        if (! transformAttr || ! transformAttr.length) {
+            return null;
+        }
+
+        // Parse attribute (split group on closing parenthesis)
+        var transformations = transformAttr.split(')');
+
+        // Remove last entry due to last ")" found
+        transformations.pop();
+
+        // For each transformation
+        var i, il, transform, transformType, transformParams, transformMatrix;
+
+        //console.log('transformAttr:', transformAttr);
+
+        for (i = 0, il = transformations.length; i < il; i++) {
+            // Split name and value on opening parenthesis
+            transform = transformations[i].split('(');
+
+            // Invalid parts number
+            if (transform.length !== 2) {
+                continue;
+            }
+
+            transformType   = transform[0].trim();
+            transformParams = transform[1].trim();
+
+            // Skip empty value
+            if (! transformParams.length) {
+                continue;
+            }
+
+            // Split value on spaces and commas and filter as float value
+            transformParams = transformParams.split(/[\s,]+/).map(parseFloat);
+
+            // Check params values validity
+            if (transformParams.filter(isNaN).length) {
+                continue;
+            }
+
+            this.addTransformMatrix(tag, transformType, transformParams);
+
+            //console.log('transform:', transformType, transformParams, tag.matrix);
+        }
     };
 
     // -------------------------------------------------------------------------
@@ -413,6 +580,11 @@ var lw = lw || {};
         // Unsupported tag ?
         if (! this.parseTag(tag)) {
             return null;
+        }
+
+        // Apply matrix
+        if (tag.vertices.length) {
+            tag.applyMatrix();
         }
 
         // Parse tag children
