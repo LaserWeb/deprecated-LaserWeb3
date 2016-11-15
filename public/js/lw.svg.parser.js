@@ -29,7 +29,7 @@ var lw = lw || {};
 
             for (var attrName in parentAttrs) {
                 if (parentAttrs.hasOwnProperty(attrName)) {
-                    this.attrs[attrName] = parentAttrs[attrName];
+                    this.setAttr(attrName, parentAttrs[attrName]);
                 }
             }
         }
@@ -38,6 +38,10 @@ var lw = lw || {};
     lw.svg.Tag.prototype.getAttr = function(name, defaultValue) {
         return this.attrs[name] !== undefined ? this.attrs[name]
             : (defaultValue !== undefined ? defaultValue : null);
+    };
+
+    lw.svg.Tag.prototype.setAttr = function(name, value) {
+        this.attrs[name] = value;
     };
 
     lw.svg.Tag.prototype.addVertex = function(x, y) {
@@ -332,7 +336,7 @@ var lw = lw || {};
 
     lw.svg.Parser.prototype.parseTagAttrs = function(tag) {
         // For each attribute
-        var i, il, attr, attrName, attrValue, attrStyle;
+        var i, il, attr, attrName, attrValue, styleAttrValue;
         var attrs = tag.node.attributes;
 
         // Tag without attributes
@@ -352,18 +356,18 @@ var lw = lw || {};
 
             // Special case
             if (attrName === 'style') {
-                attrStyle = attrValue;
+                styleAttrValue = attrValue;
             }
             else {
                 // Set new attribute name/value
-                tag.attrs[attrName] = attrValue;
+                tag.setAttr(attrName, attrValue);
             }
         }
 
         // If style attribute (override tag attributes)
         // TODO get/parse global style and override this one...
-        if (attrStyle) {
-            var style, styles = attrStyle.split(';');
+        if (styleAttrValue) {
+            var style, styles = styleAttrValue.split(';');
 
             for (i = 0, il = styles.length; i < il; i++) {
                 // Current style
@@ -376,7 +380,7 @@ var lw = lw || {};
                 attrValue = this.normalizeTagAttrValue(attrName, attr[1]);
 
                 // Set new attribute name/value
-                tag.attrs[attrName] = attrValue;
+                tag.setAttr(attrName, attrValue);
             }
         }
     };
