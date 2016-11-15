@@ -16,7 +16,7 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
-    lw.svg.Tag = function(node, parent) {
+    lw.svg.Tag = function(node, parent, matrix) {
         this.node     = node;
         this.name     = node.nodeName.toLowerCase();
         this.parent   = parent || null;
@@ -25,7 +25,7 @@ var lw = lw || {};
         this.vertices = [];
 
         // Transformation matrix
-        this.matrix        = [1, 0, 0, 1, 0, 0];
+        this.matrix        = matrix || [1, 0, 0, 1, 0, 0];
         this.matrixApplied = false;
 
         if (this.parent) {
@@ -59,7 +59,7 @@ var lw = lw || {};
     };
 
     lw.svg.Tag.prototype.addVertex = function(x, y) {
-        this.vertices.push(new lw.svg.Vertex(x, y));
+        this.vertices.unshift(new lw.svg.Vertex(x, y));
     };
 
     lw.svg.Tag.prototype.addMatrix = function(matrix) {
@@ -195,8 +195,17 @@ var lw = lw || {};
             rootNode = xmlDoc.documentElement;
         }
 
+        // Flip Y coords and move UP by document height
+        // (to set origin at bottom/left corners)
+        var matrix = null;
+
+        if (rootNode.attributes.height) {
+            matrix = [1, 0, 0, -1, 0, parseFloat(rootNode.attributes.height.value)];
+            console.log(matrix);
+        }
+
         // Let the fun begin
-        this.entities = this.parseNode(rootNode);
+        this.entities = this.parseNode(rootNode, null, matrix);
 
         // return entities collection
         return this.entities;
@@ -570,9 +579,9 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     // Parse SVG node
-    lw.svg.Parser.prototype.parseNode = function(node, parent) {
+    lw.svg.Parser.prototype.parseNode = function(node, parent, matrix) {
         // Create base tag
-        var tag = new lw.svg.Tag(node, parent);
+        var tag = new lw.svg.Tag(node, parent, matrix);
 
         // Parse tag attributes
         this.parseTagAttrs(tag);

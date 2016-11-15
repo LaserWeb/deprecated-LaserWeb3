@@ -56,7 +56,7 @@ var lw = lw || {};
             tag.getAttr('fill', tag.getAttr('color', tag.getAttr('stroke')))
         );
 
-        return new THREE.MeshBasicMaterial({ color: color, transparent: true });
+        return new THREE.MeshBasicMaterial({ color: color });
     };
 
     // -----------------------------------------------------------------------------
