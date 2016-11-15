@@ -293,7 +293,7 @@ var lw = lw || {};
             case 'opacity'      :
             case 'fillOpacity'  :
             case 'strokeOpacity':
-            attrValue = Math.min(1, Math.max(0, parseFloat(attrValue)));
+                attrValue = Math.min(1, Math.max(0, parseFloat(attrValue)));
             break;
 
             // Normalize color to RGBA int array -> [r, g, b, a]
@@ -301,7 +301,7 @@ var lw = lw || {};
             case 'fill'  :
             case 'stroke':
             case 'color' :
-            attrValue = this.normalizeColor(attrValue);
+                attrValue = this.normalizeColor(attrValue);
             break;
 
             // Normalize size unit -> to px
@@ -320,10 +320,7 @@ var lw = lw || {};
             case 'height' :
             case 'fontSize' :
             case 'strokeWidth' :
-            attrValue = this.normalizeUnit(attrValue);
-            break;
-
-            default:
+                attrValue = this.normalizeUnit(attrValue);
             break;
         }
 
