@@ -33,25 +33,35 @@ var lw = lw || {};
 
     // -----------------------------------------------------------------------------
 
+    lw.svg.createColor = function(color) {
+        if (typeof color === 'string' || color.length < 3) {
+            color = [0, 0, 0];
+        }
+
+        // TODO darken too light colors...
+
+        return new THREE.Color(color[0], color[1], color[2]);
+    };
+
     lw.svg.createLineMaterial = function(tag) {
-        var color = tag.getAttr('stroke', tag.getAttr('color', tag.getAttr('fill')));
-
-        if (typeof color === 'string') {
-            color = [0, 0, 0];
-        }
-
-        color = new THREE.Color(color[0], color[1], color[2]);
-
-        if (color.r > 250 && color.g > 250 && color.b > 250) {
-            color = [0, 0, 0];
-        }
+        var color = this.createColor(
+            tag.getAttr('stroke', tag.getAttr('color', tag.getAttr('fill')))
+        );
 
         return new THREE.LineBasicMaterial({ color: color, transparent: true });
     };
 
+    lw.svg.createSolidMaterial = function(tag) {
+        var color = this.createColor(
+            tag.getAttr('fill', tag.getAttr('color', tag.getAttr('stroke')))
+        );
+
+        return new THREE.MeshBasicMaterial({ color: color, transparent: true });
+    };
+
     // -----------------------------------------------------------------------------
 
-    lw.svg.drawLine = function(tag) {
+    lw.svg.drawLine = function(tag, closePath) {
         var geometry = new THREE.Geometry();
         var material = this.createLineMaterial(tag);
 
@@ -64,11 +74,35 @@ var lw = lw || {};
             geometry.vertices.push(new THREE.Vector3(v1.x, v1.y, 0));
         }
 
-        if (['polygon', 'rect', 'circle', 'ellipse'].indexOf(tag.name) !== -1) {
+        if (closePath) {
             geometry.vertices.push(geometry.vertices[0]);
         }
 
         return new THREE.Line(geometry, material);
+    };
+
+    lw.svg.drawSolid = function(tag) {
+        var geometry = new THREE.Geometry();
+        var material = this.createSolidMaterial(tag);
+
+        // create geometry
+        var i, il, v1, v2;
+        var vertices = tag.vertices;
+
+        for(i = 0, il = vertices.length; i < il; i++) {
+            v1 = vertices[i];
+            geometry.vertices.push(new THREE.Vector3(v1.x, v1.y, 0));
+        }
+
+        // Close path
+        geometry.vertices.push(geometry.vertices[0]);
+
+        // Add faces
+        for (var face = 0, length = vertices.length - 2; face < length; face++) {
+            geometry.faces.push(new THREE.Face3(0, face + 1, face + 2));
+        }
+
+        return new THREE.Mesh(geometry, material);
     };
 
     // -----------------------------------------------------------------------------
@@ -77,9 +111,14 @@ var lw = lw || {};
         console.log('draw:', tag);
         var object = new THREE.Object3D();
 
-        // Draw path
-        if (['line', 'polyline', 'polygon', 'rect', 'circle', 'ellipse'].indexOf(tag.name) !== -1) {
-            return this.drawLine(tag);
+        // Draw object
+        var isSolid = ['polygon', 'rect', 'circle', 'ellipse'].indexOf(tag.name) !== -1;
+        var hasLine = isSolid || ['line', 'polyline'].indexOf(tag.name) !== -1;
+
+        if (hasLine) {
+            isSolid && object.add(this.drawSolid(tag));
+            object.add(this.drawLine(tag, isSolid));
+            return object;
         }
 
         // Draw children
