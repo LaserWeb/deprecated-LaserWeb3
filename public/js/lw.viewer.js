@@ -208,17 +208,17 @@ var lw = lw || {};
         object.updateMatrix();
     };
 
-    // function test(object, order) {
-    //     order = order || object.renderOrder;
-    //
-    //     if (object.material) {
-    //         object.material.depthTest = false;
-    //     }
-    //
-    //     for (var i = 0; i < object.children.length; i++) {
-    //         test(object.children[i], order);
-    //     }
-    // }
+    lw.viewer.setObjectOrder = function(object, order) {
+        object.renderOrder = order;
+
+        if (object.material) {
+            object.material.depthTest = false;
+        }
+
+        for (var i = 0; i < object.children.length; i++) {
+            this.setObjectOrder(object.children[i], order);
+        }
+    }
 
     // Add an object to the scene
     lw.viewer.addObject = function(object, settings) {
@@ -241,17 +241,6 @@ var lw = lw || {};
             throw new Error(target + ' is not an instance of THREE.Object3D.');
         }
 
-        // Set object render order (at the top by default)
-        if (targetName === 'scene') {
-            object.renderOrder = settings.order || 1000;
-        }
-        else {
-            var order  = target.renderOrder;
-                order += (settings.order || (target.children.length + 1));
-            object.renderOrder = order;
-            //test(object);
-        }
-
         // Apply all transformations
         this.applyObjectTransformations(object);
 
@@ -268,7 +257,14 @@ var lw = lw || {};
         // Set object name
         object.name = settings.name || object.name;
 
-        //console.log(object.name, object.renderOrder);
+        // Set object render order (at the top by default)
+        var order = settings.order || (target.children.length + 1);
+
+        if (targetName !== 'scene') {
+            order += target.renderOrder;
+        }
+
+        this.setObjectOrder(object, order);
 
         // Add object to target group
         target.add(object);

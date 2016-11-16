@@ -16,7 +16,7 @@ var lw = lw || {};
         radius   = radius   || 3.5;
         segments = segments || 32;
 
-        var material = new THREE.LineBasicMaterial({ color: 0xFF0000 });
+        var material = new THREE.LineBasicMaterial({ color: 0xcc0000 });
         var geometry = new THREE.CircleGeometry(radius, segments);
 
         this.add(new THREE.Line(geometry, material));

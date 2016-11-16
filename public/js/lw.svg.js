@@ -44,19 +44,15 @@ var lw = lw || {};
     };
 
     lw.svg.createLineMaterial = function(tag) {
-        var color = this.createColor(
+        return new THREE.LineBasicMaterial({ color: this.createColor(
             tag.getAttr('stroke', tag.getAttr('color', tag.getAttr('fill')))
-        );
-
-        return new THREE.LineBasicMaterial({ color: color, transparent: true });
+        ) });
     };
 
     lw.svg.createSolidMaterial = function(tag) {
-        var color = this.createColor(
+        return new THREE.MeshBasicMaterial({ color: this.createColor(
             tag.getAttr('fill', tag.getAttr('color', tag.getAttr('stroke')))
-        );
-
-        return new THREE.MeshBasicMaterial({ color: color });
+        ) });
     };
 
     // -----------------------------------------------------------------------------
