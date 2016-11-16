@@ -77,17 +77,17 @@ SerialTerminal term;
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght) {
     switch(type) {
         case WStype_DISCONNECTED:
-            Serial1.printf("[%u] Disconnected!\n", num);
+//            Serial1.printf("[%u] Disconnected!\n", num);
             break;
         case WStype_CONNECTED: {
             IPAddress ip = webSocket.remoteIP(num);
-            Serial1.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
+//            Serial1.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
             // send message to client
             webSocket.sendTXT(num, "Connected");
         }
             break;
         case WStype_TEXT:
-            Serial1.printf("[%u] get Text: %s\n", num, payload);
+//            Serial1.printf("[%u] get Text: %s\n", num, payload);
             if(lenght > 0) {
                 Serial.write((const char *) (payload), (lenght));
             }
@@ -98,19 +98,19 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
 void setup()
 {
     // use Serial 1 for debug out
-    Serial1.begin(921600);
-    Serial1.setDebugOutput(true);
+//    Serial1.begin(921600);
+//    Serial1.setDebugOutput(true);
 
-    Serial1.println();
-    Serial1.println();
-    Serial1.println();
+//    Serial1.println();
+//    Serial1.println();
+//    Serial1.println();
 
     for(uint8_t t = 4; t > 0; t--) {
-        Serial1.printf("[SETUP] BOOT WAIT %d...\n", t);
+//        Serial1.printf("[SETUP] BOOT WAIT %d...\n", t);
         delay(1000);
     }
 
-    Serial1.printf("[SETUP] HEAP: %d\n", ESP.getFreeHeap());
+//    Serial1.printf("[SETUP] HEAP: %d\n", ESP.getFreeHeap());
 
     WiFiManager wifiManager;
     //wifiManager.resetSettings();    
