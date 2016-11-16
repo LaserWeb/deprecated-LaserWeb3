@@ -98,9 +98,17 @@ var lw = lw || {};
     };
 
     lw.svg.createSolidMaterial = function(tag) {
-        return new THREE.MeshBasicMaterial({ color: this.createColor(
+        var opacity  = tag.getAttr('fillOpacity', 1);
+        var material = new THREE.MeshBasicMaterial({ color: this.createColor(
             tag.getAttr('fill', tag.getAttr('color', tag.getAttr('stroke')))
         ) });
+
+        if (opacity < 1) {
+            material.transparent = true;
+            material.opacity     = opacity;
+        }
+
+        return material;
     };
 
     // -----------------------------------------------------------------------------
