@@ -433,6 +433,13 @@ var lw = lw || {};
             }
         }
 
+        // Set inherited color
+        ['fill', 'stroke', 'color'].map(function(attrName) {
+            if (tag.getAttr(attrName) === 'inherit') {
+                tag.setAttr(attrName, tag.parent.getAttr(attrName));
+            }
+        })
+
         // Parse transformation attribute
         this.parseTransformAttr(tag);
     };
