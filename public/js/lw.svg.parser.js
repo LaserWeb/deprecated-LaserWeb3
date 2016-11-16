@@ -201,7 +201,6 @@ var lw = lw || {};
 
         if (rootNode.attributes.height) {
             matrix = [1, 0, 0, -1, 0, parseFloat(rootNode.attributes.height.value)];
-            console.log(matrix);
         }
 
         // Let the fun begin
@@ -695,7 +694,7 @@ var lw = lw || {};
         var segments = this.getArcSegments(r);
         var step     = _PI2_ / segments;
 
-        for (var theta = 0; theta < _PI2_; theta += step) {
+        for (var theta = _PI2_; theta > 0; theta -= step) {
             tag.addVertex(
                 cx + r * Math.cos(theta),
                 cy - r * Math.sin(theta)
@@ -725,7 +724,7 @@ var lw = lw || {};
         var segments = this.getArcSegments(Math.min(rx, ry));
         var step     = _PI2_ / segments;
 
-        for (var theta = 0; theta < _PI2_; theta += step) {
+        for (var theta = _PI2_; theta > 0; theta -= step) {
             tag.addVertex(
                 cx + rx * Math.cos(theta),
                 cy - ry * Math.sin(theta)
