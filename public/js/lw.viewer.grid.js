@@ -18,13 +18,11 @@ var lw = lw || {};
         // Set object name
         this.name = 'grid';
 
-        // Set object properties
-        this.receiveShadow        = false;
-        this.material.opacity     = 0.15;
-        this.material.transparent = true;
-        this.userData.size        = { x: x, y: y };
+        // Set grid color (centerLine, grid)
+        this.setColors(0xcccccc, 0xeeeeee);
 
-        this.setColors(0x707070);
+        // Save grid size in user data
+        this.userData.size = { x: x, y: y };
     };
 
     // Extends THREE.GridHelper

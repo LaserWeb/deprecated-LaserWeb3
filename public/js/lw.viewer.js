@@ -208,6 +208,7 @@ var lw = lw || {};
         object.updateMatrix();
     };
 
+    // Set the object render order (recursive)
     lw.viewer.setObjectOrder = function(object, order) {
         object.renderOrder = order;
 
@@ -216,7 +217,7 @@ var lw = lw || {};
         }
 
         for (var i = 0; i < object.children.length; i++) {
-            this.setObjectOrder(object.children[i], order);
+            this.setObjectOrder(object.children[i], order + i);
         }
     }
 
