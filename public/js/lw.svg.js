@@ -33,14 +33,62 @@ var lw = lw || {};
 
     // -----------------------------------------------------------------------------
 
-    lw.svg.createColor = function(color) {
-        if (typeof color === 'string' || color.length < 3) {
-            color = [0, 0, 0];
+    // Finding the nearest colour from the palette
+    // http://www.dfstudios.co.uk/articles/programming/image-programming-algorithms/image-processing-algorithms-part-1-finding-nearest-colour/
+    lw.svg.getNearestColour = function(color) {
+        var minimumDistance = (255 * 255) + (255 * 255) + (255 * 255) + 1;
+        var paletteColour   = [
+            [255, 0, 0],
+            [0, 255, 0],
+            [0, 0, 255],
+            [255, 255, 255]
+        ];
+
+        var paletteColor, rDiff, gDiff, bDiff, distance, nearestColour;
+
+        for (var i = 0, il = paletteColour.length; i < il; i++) {
+            paletteColor = paletteColour[i];
+            rDiff        = color[0] - paletteColor[0];
+            gDiff        = color[1] - paletteColor[1];
+            bDiff        = color[2] - paletteColor[2];
+            distance     = rDiff * rDiff + gDiff * gDiff + bDiff * bDiff;
+
+            if (distance < minimumDistance) {
+                minimumDistance = distance;
+                nearestColour   = paletteColor;
+            }
         }
 
-        // TODO darken too light colors...
+        return nearestColour || color;
+    };
 
-        return new THREE.Color(color[0], color[1], color[2]);
+    lw.svg.createColor = function(color) {
+        // Possible: none, inherit ?
+        if (typeof color === 'string') {
+            color = [204, 204, 204]; // #ccc
+        }
+
+        // Darken too light colors...
+        var luma, lumaLimit = 200;
+
+        while (true) {
+            luma = (color[0] * 0.3) + (color[1] * 0.59) + (color[2] * 0.11);
+
+            if (luma <= lumaLimit) {
+                break;
+            }
+
+            color[0] > 0 && (color[0] -= 1);
+            color[1] > 0 && (color[1] -= 1);
+            color[2] > 0 && (color[2] -= 1);
+        }
+
+        // Create color object ([0-255] to [0-1] range)
+        color = new THREE.Color(color[0] / 255, color[1] / 255, color[2] / 255);
+
+
+        // Return the color object
+        return color;
     };
 
     lw.svg.createLineMaterial = function(tag) {
@@ -112,8 +160,12 @@ var lw = lw || {};
         var hasLine = isSolid || ['line', 'polyline'].indexOf(tag.name) !== -1;
 
         if (hasLine) {
-            isSolid && object.add(this.drawSolid(tag));
+            if (isSolid && tag.getAttr('fill', 'none') !== 'none') {
+                object.add(this.drawSolid(tag));
+            }
+
             object.add(this.drawLine(tag, isSolid));
+
             return object;
         }
 
