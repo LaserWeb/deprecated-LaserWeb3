@@ -454,8 +454,8 @@ var lw = lw || {};
         else if (type == 'rotate') {
             if (params.length == 3) {
                 var angle = params[0] * _DEG_TO_RAD_;
-                return tag.addMatrix([1, 0, 0, 1, params[1], params[2]]);
-                return tag.addMatrix([Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0]);
+                tag.addMatrix([1, 0, 0, 1, params[1], params[2]]);
+                tag.addMatrix([Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0]);
                 return tag.addMatrix([1, 0, 0, 1, -params[1], -params[2]]);
             }
             else if (params.length == 1) {
@@ -657,6 +657,9 @@ var lw = lw || {};
             return true;
         }
 
+        // TODO rounded corners
+        return false;
+
         // A negative value is an error
         if (rx < 0 || ry < 0) {
             // Skip tag
@@ -673,7 +676,6 @@ var lw = lw || {};
         if (rx > w / 2) rx = w / 2;
         if (ry > h / 2) ry = h / 2;
 
-        // TODO...
     };
 
     lw.svg.Parser.prototype._circle = function(tag) {
