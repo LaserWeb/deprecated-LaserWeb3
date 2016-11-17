@@ -450,7 +450,7 @@ var lw = lw || {};
         // translate
         if (type == 'translate') {
             if (params.length == 1) {
-                return tag.addMatrix([1, 0, 0, 1, params[0], params[0]]);
+                return tag.addMatrix([1, 0, 0, 1, params[0], 0]);
             }
             else if (params.length == 2) {
                 return tag.addMatrix([1, 0, 0, 1, params[0], params[1]]);
