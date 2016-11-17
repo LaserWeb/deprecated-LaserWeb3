@@ -74,6 +74,30 @@ var lw = lw || {};
         ];
     };
 
+    lw.svg.Tag.prototype.translate = function(x, y) {
+        this.addMatrix([1, 0, 0, 1, x || 0, y || 0]);
+    };
+
+    lw.svg.Tag.prototype.rotate = function(angle, x, y) {
+        angle = (angle || 0) * _DEG_TO_RAD_;
+
+        (x && y) && this.addMatrix([1, 0, 0, 1, x, y]);
+        this.addMatrix([Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0]);
+        (x && y) && this.addMatrix([1, 0, 0, 1, -x, -y]);
+    };
+
+    lw.svg.Tag.prototype.scale = function(x, y) {
+        this.addMatrix([(x || 0), 0, 0, (y || x || 0), 0, 0]);
+    };
+
+    lw.svg.Tag.prototype.skewX = function(angle) {
+        this.addMatrix([1, 0, Math.tan((angle || 0) * _DEG_TO_RAD_), 1, 0, 0]);
+    };
+
+    lw.svg.Tag.prototype.skewY = function(angle) {
+        this.addMatrix([1, Math.tan((angle || 0) * _DEG_TO_RAD_), 0, 1, 0, 0]);
+    };
+
     lw.svg.Tag.prototype.applyMatrix = function() {
         if (this.matrixApplied) {
             return null;
@@ -447,71 +471,12 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype.addTransformMatrix = function(tag, type, params) {
-        // translate
-        if (type == 'translate') {
-            if (params.length == 1) {
-                return tag.addMatrix([1, 0, 0, 1, params[0], 0]);
-            }
-            else if (params.length == 2) {
-                return tag.addMatrix([1, 0, 0, 1, params[0], params[1]]);
-            }
-        }
-
-        // rotate
-        else if (type == 'rotate') {
-            if (params.length == 3) {
-                var angle = params[0] * _DEG_TO_RAD_;
-                tag.addMatrix([1, 0, 0, 1, params[1], params[2]]);
-                tag.addMatrix([Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0]);
-                return tag.addMatrix([1, 0, 0, 1, -params[1], -params[2]]);
-            }
-            else if (params.length == 1) {
-                var angle = params[0] * _DEG_TO_RAD_;
-                return tag.addMatrix([Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0]);
-            }
-        }
-
-        // scale
-        else if (type == 'scale') {
-            if (params.length == 1) {
-                return tag.addMatrix([params[0], 0, 0, params[0], 0, 0]);
-            }
-            else if (params.length == 2) {
-                return tag.addMatrix([params[0], 0, 0, params[1], 0, 0]);
-            }
-        }
-
-        // matrix
-        else if (type == 'matrix') {
-            if (params.length == 6) {
-                return tag.addMatrix(params);
-            }
-        }
-
-        // skewY
-        else if (type == 'skewX') {
-            if (params.length == 1) {
-                var angle = params[0] * _DEG_TO_RAD_;
-                return tag.addMatrix([1, 0, Math.tan(angle), 1, 0, 0]);
-            }
-        }
-
-        // skewY
-        else if (type == 'skewY') {
-            if (params.length == 1) {
-                var angle = params[0] * _DEG_TO_RAD_;
-                return tag.addMatrix([1, Math.tan(angle), 0, 1, 0, 0]);
-            }
-        }
-
-        // Not supported
-        else {
-            //console.log('warning', type, 'skipped; unsupported type');
+        if (typeof tag[type] !== 'function') {
+            console.log('Undefined transformation:', type);
             return null;
         }
 
-        //console.log('warning', type, 'skipped; invalid num of params');
-        return null;
+        tag[type].apply(tag, params);
     };
 
     // -------------------------------------------------------------------------
