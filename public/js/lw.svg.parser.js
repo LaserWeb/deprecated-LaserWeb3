@@ -14,6 +14,10 @@ var lw = lw || {};
         this.y = y;
     };
 
+    lw.svg.Vertex.prototype.isEqual = function(vertex) {
+        return this.x === vertex.x && this.y === vertex.y;
+    };
+
     // -------------------------------------------------------------------------
 
     lw.svg.Tag = function(node, parent, matrix) {
@@ -177,8 +181,8 @@ var lw = lw || {};
         // Reset SVG property
         this.svg = null;
 
-        // Clean off any preceding whitespace
-        svg = svg.replace(/^[\n\r \t]+/gm, '');
+        // Normalize whitespaces and trim whitespace on each line
+        svg = svg.replace(/\s+/gm, ' ').replace(/^\s+|\s+$/gm, '');
 
         // If no SVG contents
         if (! svg || ! svg.length) {
@@ -745,6 +749,245 @@ var lw = lw || {};
         return this._polyline(tag);
     };
 
+    // -------------------------------------------------------------------------
+
+    lw.svg.Path = function(x, y) {
+        this.origin   = new lw.svg.Vertex(x, y);
+        this.vertices = [this.origin];
+        this.length   = 0;
+    };
+
+    lw.svg.Path.prototype.addVertex = function(x, y) {
+        this.vertices.unshift(new lw.svg.Vertex(x, y));
+        this.length = this.vertices.length;
+    };
+
+    lw.svg.Path.prototype.getVertex = function(i) {
+        i = i < 0 ? this.vertices.length + i : i;
+        return this.vertices[i] || null;
+    };
+
+    lw.svg.Path.prototype.isClosed = function() {
+        var lastVertex = this.getVertex(-1);
+        return lastVertex && lastVertex.isEqual(this.getVertex(0));
+    };
+
+    lw.svg.Path.prototype.close = function() {
+        if (! this.isClosed()) {
+            var lastVertex = this.getVertex(-1);
+            this.addVertex(lastVertex.x, lastVertex.y);
+        }
+    };
+
+    lw.svg.Path.prototype.addPoints = function(points, absolute) {
+        // Bad points number count
+        if (points.length % 2) {
+            return null;
+        }
+
+        // Relative offset ?
+        var offset = absolute ? new lw.svg.Vertex(0, 0) : this.origin;
+
+        // For each couple of points
+        for (var i = 0, il = points.length; i < il; i += 2) {
+            this.addVertex(points[i] + offset.x, points[i + 1] + offset.y);
+        }
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._path = function(tag) {
+        // Get the paths attribute value
+        var dAttr = tag.getAttr('d').trim();
+
+        // Split commands
+        var origin  = new lw.svg.Vertex(0, 0);
+        var matches = dAttr.split(/([a-z]+[^a-z]+)/gi);
+        var vertex, params, command, absolute, path, paths = [];
+
+        matches.map(function(match) {
+            match  = match.trim();
+            params = match.match(/([a-z]+|[0-9\.]+)/gi);
+
+            // Empty params; skip...
+            if (! params) {
+                return null;
+            }
+
+            // Extract command char
+            command  = params.shift();
+            absolute = command === command.toUpperCase();
+            command  = command.toUpperCase();
+
+            // Normalize params
+            params = params.map(parseFloat);
+
+            console.log(absolute, command, params);
+
+            // Line
+            if (command === 'L') {
+                // Add points and return
+                return path.addPoints(params, absolute);
+            }
+
+            // Start a new sub-path
+            if (command === 'M') {
+                // The "moveto" commands (M or m) establish a new current point
+                origin.x = params.shift();
+                origin.y = params.shift();
+
+                // Create new path
+                path = new lw.svg.Path(origin.x, origin.y);
+
+                // If a moveto is followed by multiple pairs of coordinates,
+                // the subsequent pairs are treated as implicit lineto commands.
+                if (params.length) {
+                    path.addPoints(params, absolute);
+                }
+
+                // Add path and return
+                return paths.push(path);
+            }
+
+            // Close path
+            if (command === 'Z') {
+                return path.close();
+            }
+        });
+
+        console.log(paths);
+    };
+
+
+    lw.svg.Parser.prototype.__path = function(tag) {
+        // Get the paths attribute value
+        var dAttr = tag.getAttr('d').trim();
+
+        var matches = dAttr.split(/([a-z]+[^a-z]+)/gi);
+        var command, params, absolute, path;
+        var point = { x: 0, y: 0 };
+        var paths = [];
+
+        matches.map(function(match) {
+            match  = match.trim();
+            params = match.match(/([a-z]+|[0-9\.]+)/gi);
+
+            // Empty params; skip...
+            if (! params) {
+                return null;
+            }
+
+            // Extract command char
+            command  = params.shift();
+            absolute = command === command.toUpperCase();
+            command  = command.toUpperCase();
+
+            // Normalize params
+            params = params.map(parseFloat);
+
+            console.log(absolute, command, params);
+
+            // Start a new sub-path
+            if (command === 'M') {
+                // New current point
+                point.x = params.shift();
+                point.y = params.shift();
+
+                // Create new path
+                path = new lw.svg.Path();
+
+                // Add path
+                paths.push(path);
+
+                // If a moveto is followed by multiple pairs of coordinates,
+                // the subsequent pairs are treated as implicit lineto commands.
+                if (params.length > 2) {
+                    command = 'L';
+                }
+
+                // Done...
+                else {
+                    return null;
+                }
+            }
+
+            // Close path
+            if (command === 'Z') {
+                // Clone first point as last point if not the same
+                var las
+                if (path.getVertex(0) !== path.getVertex(-1)) {
+                    path.addVertex(path.getVertex(-1));
+                }
+
+                // Done...
+                return null;
+            }
+
+            // Line
+            if (command === 'L') {
+                // Start of the line
+                if (! path.length) {
+                    path.addVertex(point.x, point.y);
+                }
+
+                // Add points
+                path.addPoints(params);
+
+                // Done...
+                return null;
+            }
+        });
+
+        console.info('paths:', paths);
+    };
+
+    /*
+    lw.svg.Path = function(command, absolute) {
+        this.command  = command;
+        this.absolute = absolute;
+        this.closed   = false;
+        this.params   = [];
+    };
+
+    lw.svg.Path.prototype.addParam = function(param) {
+        this.params.push(parseFloat(param));
+    };
+
+    lw.svg.Parser.prototype._path = function(tag) {
+        // Get the paths attribute value
+        var dAttr = tag.getAttr('d').trim();
+
+        // Split paths
+        var paths    = [];
+        var path     = null;
+        var absolute = null;
+        var origin   = { x: 0, y: 0 };
+
+        dAttr.replace(/([a-z]+)|([0-9\.]+)/gi, function(value, command, param) {
+            if (param) {
+                // Add param to current path
+                return path.addParam(param);
+            }
+
+            // Get command
+            command  = command.toLowerCase();
+            absolute = command !== value;
+
+            if (command === 'm') {
+                path = new lw.svg.Path(command, absolute);
+            }
+        });
+
+        // Add last path
+        if (path && path.params.length) {
+            paths.push(path);
+        }
+
+        //console.log(pathData);
+        console.log(paths);
+    };
+    */
+
     /*
     lw.svg.Parser.prototype._title = function(tag) {};
 
@@ -755,8 +998,6 @@ var lw = lw || {};
     lw.svg.Parser.prototype._defs = function(tag) {};
 
     lw.svg.Parser.prototype._style = function(tag) {};
-
-    lw.svg.Parser.prototype._path = function(tag) {};
 
     lw.svg.Parser.prototype._text = function(tag) {};
 
