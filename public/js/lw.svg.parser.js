@@ -325,6 +325,11 @@ var lw = lw || {};
             height: tag.getAttr('height', height)
         };
 
+        // Check inkscape version
+        if (this.editor.name === 'inkscape') {
+            this.editor.version = tag.getAttr('inkscape:version', null);
+        }
+
         // Handled tag
         return true;
     };
