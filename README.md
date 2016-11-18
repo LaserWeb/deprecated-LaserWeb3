@@ -1,6 +1,6 @@
 # LaserWeb
 
-As this project pushes forward (with the brilliant direction of Peter Van der Waalt at the helm, and some very talented contributors), please remember that Rome wasn't built in a day. This is a totally non profit open source project, all contributors and testers are volunteers who share a love of all things making, lasers included. That being said, if history has anything to say about it, this project should advance very quickly. (A fourth version is already in the beggining stages)Check the LaserWeb/CNCWeb Google+ community (https://plus.google.com/u/0/communities/115879488566665599508) for updates on the progress of the newest iteration of LaserWeb.
+Check the LaserWeb/CNCWeb Google+ community (https://plus.google.com/u/0/communities/115879488566665599508) for updates on the progress of the newest iteration of LaserWeb.
 
 Donations to the developers to further things along are always welcome, but even if you can not contribute financially, if you use LaserWeb and like it, spread the word around. More users translates into more contributors which then allows for faster, feature rich development.
 
@@ -29,13 +29,6 @@ By using this software, the user accepts complete responsibility for each and ev
 5. You relieve the author and contributors from any liability arising from the use or distribution of the LaserWeb software.
 6. You are entirely operating at your own risk. Lasers can be lethally dangerous. 
 
-## What's new / planned for LaserWeb 
-
-* A ground up rewrite of the serial comms layer (In progress:  Smoothieware support is done, Marlin support is available for testing and further development, and Grbl support needs to be written next) 
-* A new tabbed multilayer CAM system that allows you to load dxfs, svgs, stls and rasters into the SAME job! (Implemented, needs testing)
-* A new costing estimate module - for those of you who make money out of your lasers - should help you qoute just a little more accurate (Already implemented)
-* Smoothieware Ethernet support (nearly done)
-* Rotary Axis Support (planned)
 
 ![Screenshot](https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/screenshot.png)
 
@@ -57,4 +50,13 @@ Smoothieware is also a massively faster (up to 120Mhz vs the 16Mhz of the Arduin
 
 `**`Marlin and Grbl Firmwares support grayscale, but don't modulate power according to acceleration: Thus start/end of raster moves burn a little darker.  On some machines / some graphics, this can really look bad, so i'd rather not say "yes" since the experience is not what it could be.  Again, Smoothieware is sooo much better at this!
 
+## Wishlist
 
+If you want to contribute, the below are long standing community-requested enhancements, that a) we don't have time to code or b) don't know how to
+
+* GCODE Optimiser - to cut down on G0 moves (something like http://parano.github.io/GeneticAlgorithm-TSP/)
+* Realtime commands:  Our present implementation adds commands to the back of the queue, we need some code enhancement to do `if playing == true, then prepend the following commands to the front of the queue` for things like feedrate / power / spindle override
+* More Controllers! Help us code up the Marlin and TinyG interfaces
+* Smoothieware Ethernet - is about halfway done - if you'd like to help, please continue on from https://github.com/openhardwarecoza/LaserWeb3/issues/16
+* Rotary Support - initial groundwork is done - but needs a lot of work to be fully usable https://github.com/openhardwarecoza/LaserWeb3/issues/51
+* Vendor specific enhancements (PAID WORK OPPORTUNITY) - there are a few vendor specific enhancements, that companies are willing to pay to get done... See the labels on the Issues page, for example Emblaser/DarklyLabs: https://github.com/openhardwarecoza/LaserWeb3/issues?q=is%3Aissue+is%3Aopen+label%3A%22EMBLASER+%2F+DARKLYLABS%22
