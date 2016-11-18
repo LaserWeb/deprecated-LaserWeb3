@@ -119,6 +119,14 @@ var lw = lw || {};
             rootNode = xmlDoc.documentElement;
         }
 
+        // Parsing error ?
+        if (rootNode.nodeName === 'parsererror') { // FF
+            throw new Error(rootNode.textContent);
+        }
+        else if (rootNode.nodeName === 'html') { // Chrome
+            throw new Error(rootNode.getElementsByTagName('parsererror')[0].textContent);
+        }
+
         // Parse SVG node (recursive)
         this.tags = this.parseNode(rootNode);
 
