@@ -5,7 +5,13 @@ var lw = lw || {};
     'use strict';
 
     // SVG scope
-    lw.svg = {};
+    lw.svg = {
+        name   : 'svg',
+        logging: true
+    };
+
+    // Bind logging methods
+    lw.log.bind(lw.svg);
 
     // -------------------------------------------------------------------------
 
@@ -20,11 +26,15 @@ var lw = lw || {};
 
         try {
             // Parse the SVG file (raw XML)
+            this.logStart('Parsing SVG: ' + name);
             var parser = new lw.svg.Parser();
             var svg    = parser.parse(file);
-            var object = new THREE.Object3D();
+            this.logEnd();
 
-            console.log('parser:', parser);
+            this.debug('parser:', parser);
+
+            this.logStart('Drawing SVG: ' + name);
+            var object = new THREE.Object3D();
         }
         catch (error) {
             // Call user callback
@@ -37,6 +47,9 @@ var lw = lw || {};
 
             // Else throw error
             throw error;
+        }
+        finally {
+            this.logEnd();
         }
 
         // Call user callback

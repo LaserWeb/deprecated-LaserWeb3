@@ -6,7 +6,8 @@ var lw = lw || {};
 
     // Store scope
     lw.store = {
-        debug: true
+        name   : 'store',
+        logging: true
     };
 
     // Store settings
@@ -48,36 +49,11 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
-    // Store console log
-    lw.store.log = function() {
-        if (this.debug) {
-            // Get arguments list as array
-            var args = Array.prototype.slice.call(arguments);
-
-            // Prefix with module name
-            args.unshift('lw.store:');
-
-            // Call the console log method
-            console.log.apply(console, args);
-        }
-    };
-
-    lw.store.logStart = function(title) {
-        if (this.debug) {
-            console.groupCollapsed(title);
-        }
-    };
-
-    lw.store.logEnd = function() {
-        if (this.debug) {
-            console.groupEnd();
-        }
-    };
-
-    // -------------------------------------------------------------------------
-
     // Store initialization
     lw.store.init = function() {
+        // Bind logging methods
+        lw.log.bind(this);
+
         // Load all settings from local storage
         this.refreshForm();
 
@@ -156,11 +132,11 @@ var lw = lw || {};
             value = this.get(name);
 
             if (value) {
-                this.log('Loading: ' + name + ' : ' + value);
                 $('#' + name).val(value);
+                this.info(name + ':', value);
             }
             else {
-                this.log('Undefined: ' +  name);
+                this.warning(name + ':', 'undefined');
             }
         }, this);
 

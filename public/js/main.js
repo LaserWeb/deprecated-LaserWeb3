@@ -5,6 +5,7 @@ console.log("%c%s","color: #000; background: green; font-size: 12px;", "STARTING
 var useNumPad, activeObject, fileName;
 
 // Intialise
+lw.log.init();
 lw.menu.init();
 lw.store.init();
 lw.viewer.init();

@@ -6,6 +6,7 @@ var lw = lw || {};
 
     // Viewer scope
     lw.viewer = {
+        rendererMode: null,
         $render     : null,
         size        : null,
         scene       : null,
@@ -26,39 +27,47 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
-    // Rendering mode detection
-    var canvasRenderer = !!window.CanvasRenderingContext2D;
-    var webglRenderer  = (function() {
-        try {
-            return !!window.WebGLRenderingContext && !!document.createElement('canvas').getContext('experimental-webgl');
-        }
-        catch (e) {
-            return false;
-        }
-    })();
+    // Init the viewer
+    lw.viewer.rendererCheck = function() {
+        // Rendering mode detection
+        var canvasRenderer = !!window.CanvasRenderingContext2D;
+        var webglRenderer  = (function() {
+            try {
+                return !!window.WebGLRenderingContext && !!document.createElement('canvas').getContext('experimental-webgl');
+            }
+            catch (e) {
+                return false;
+            }
+        })();
 
-    if (webglRenderer) {
-        lw.log.print('<strong>WebGL Support found!</strong> Laserweb will work optimally on this device!', 'success', 'viewer');
-    }
-    else {
-        var message = [
-            '<strong>No WebGL Support found!</strong> Laserweb may not work optimally on this device!<br />',
-            '<u>Try another device with WebGL supportor or try the following:</u><br />',
-            '<ul>',
-            '<li>In the Chrome address bar, type: <b>chrome://flags</b> [Enter]</li>',
-            '<li>Enable the <b>Override software Rendering</b></li>',
-            '<li>Restart Chrome and try again</li>',
-            '</ul>',
-            'Sorry! :( <hr />'
-        ];
+        if (webglRenderer) {
+            this.rendererMode = 'webgl';
+            lw.log.print('<strong>WebGL Support found!</strong> Laserweb will work optimally on this device!', 'success', 'viewer');
+        }
+        else {
+            var message = [
+                '<strong>No WebGL Support found!</strong> Laserweb may not work optimally on this device!<br />',
+                '<u>Try another device with WebGL supportor or try the following:</u><br />',
+                '<ul>',
+                '<li>In the Chrome address bar, type: <b>chrome://flags</b> [Enter]</li>',
+                '<li>Enable the <b>Override software Rendering</b></li>',
+                '<li>Restart Chrome and try again</li>',
+                '</ul>',
+                'Sorry! :( <hr />'
+            ];
 
-        lw.log.print(message.join('\n'), 'error', 'viewer');
+            this.rendererMode = canvasRenderer ? 'canvas' : 'none';
+            lw.log.print(message.join('\n'), 'error', 'viewer');
+        };
     };
 
     // -------------------------------------------------------------------------
 
     // Init the viewer
     lw.viewer.init = function() {
+        // Check renderer mode
+        this.rendererCheck();
+
         // Get render area element
         this.$render = $('#renderArea');
 
@@ -81,7 +90,7 @@ var lw = lw || {};
         this.camera.position.z = 295;
 
         // Create renderer object
-        this.renderer = webglRenderer ? new THREE.WebGLRenderer({
+        this.renderer = this.rendererMode === 'webgl' ? new THREE.WebGLRenderer({
             autoClearColor: true,
             antialias     : false
         }) : new THREE.CanvasRenderer();

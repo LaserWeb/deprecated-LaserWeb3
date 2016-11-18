@@ -37,10 +37,15 @@ var lw = lw || {};
 
         // Init properties
         this.settings = settings;
+        this.name     = 'svg.Parser';
+        this.logging  = true;
         this.svg      = null; // Raw XML string
         this.editor   = null; // Editor info { name, version, fingerprint }
         this.document = null; // SVG document info { width, height, viewBox }
         this.tags     = null; // lw.svg.Tag objects hierarchy
+
+        // Bind logging methods
+        lw.log.bind(this);
 
         // Load SVG contents
         svg && this.load(svg);
@@ -236,7 +241,7 @@ var lw = lw || {};
 
         // Unsupported tag ?
         if (! this.parseTag(tag)) {
-            console.warn('Unsupported SVG tag:', tag.name, tag);
+            this.warning('Unsupported tag:', tag.name, tag);
             return null;
         }
 

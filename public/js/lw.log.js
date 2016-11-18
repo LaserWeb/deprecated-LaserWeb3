@@ -4,8 +4,14 @@ var lw = lw || {};
 (function () {
     'use strict';
 
+    // -------------------------------------------------------------------------
+
     // log scope
-    lw.log = {};
+    lw.log = {
+        name    : 'log',
+        $console: null,
+        $items  : null
+    };
 
     // Log colors
     lw.log.colors = {
@@ -30,9 +36,16 @@ var lw = lw || {};
         git       : 'github',
     };
 
-    // Get the console elements
-    var $console      = $('#console');
-    var $consoleItems = $console.children('p');
+    // -------------------------------------------------------------------------
+
+    // Logging initialization
+    lw.log.init = function() {
+        // Get the console elements
+        this.$console = $('#console');
+        this.$items   = this.$console.children('p');
+    };
+
+    // -------------------------------------------------------------------------
 
     // Print log...
     lw.log.print = function(text, type, logclass) {
@@ -40,9 +53,9 @@ var lw = lw || {};
         text = text.trim().replace(/\n/g, "<br />");
 
         // If log lines limit reached...
-        if ($consoleItems.length > 300) {
+        if (this.$items.length > 300) {
             // remove oldest if already at 300 lines
-            $consoleItems.first().remove();
+            this.$items.first().remove();
         }
 
         // Start line template
@@ -58,10 +71,69 @@ var lw = lw || {};
         template += text + '</p>';
 
         // Add new log line
-        $console.append(template);
+        this.$console.append(template);
 
         // Scroll to line
-        $console.scrollTop($console[0].scrollHeight - $console.height());
+        this.$console.scrollTop(this.$console[0].scrollHeight - this.$console.height());
+    };
+
+    // -------------------------------------------------------------------------
+
+    // Add logging methods to target object
+    lw.log.bind = function(object) {
+        // Set logging Prefix
+        object.loggingPrefix = object.loggingPrefix || object.name || 'log';
+
+        // Console log
+        object.console = function(type, args) {
+            if (this.logging) {
+                // Prepend logging message prefix
+                args.unshift('lw.' + this.loggingPrefix + ':');
+
+                // Call the console method
+                console[type].apply(console, args);
+            }
+        };
+
+        // Console methods
+        object.log = function() {
+            this.console('log', Array.prototype.slice.call(arguments));
+        };
+
+        object.debug = function() {
+            this.console('debug', Array.prototype.slice.call(arguments));
+        };
+
+        object.info = function() {
+            this.console('info', Array.prototype.slice.call(arguments));
+        };
+
+        object.warning = function() {
+            this.console('warn', Array.prototype.slice.call(arguments));
+        };
+
+        object.error = function() {
+            this.console('error', Array.prototype.slice.call(arguments));
+        };
+
+        // Group start
+        object.logStart = function(title) {
+            if (this.logging) {
+                if (console.groupCollapsed) {
+                    console.groupCollapsed(title);
+                }
+                else {
+                    console.group(title);
+                }
+            }
+        };
+
+        // Group end
+        object.logEnd = function() {
+            if (this.logging) {
+                console.groupEnd();
+            }
+        };
     };
 
 // End menu scope
