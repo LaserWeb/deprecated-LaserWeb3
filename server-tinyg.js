@@ -1,7 +1,7 @@
 "use strict";
 /*
 
-    AUTHOR:  Peter van der Walt openhardwarecoza.github.io/donate
+    AUTHOR:  Claudio Prezzi github.com/laserweb
 
     THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
     WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
@@ -25,8 +25,14 @@
 
 */
 var config = require('./config');
-var serialport = require("serialport");
-var SerialPort = serialport;
+//var serialport = require("serialport");
+//var SerialPort = serialport;
+
+// Create a TinyG library object
+var TinyG = require('tinyg');
+// Then create a TinyG object called 'g'
+var g = new TinyG();
+
 var app = require('http').createServer(handler);
 var io = require('socket.io').listen(app);
 var fs = require('fs');
@@ -37,10 +43,10 @@ var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, statusLoop, queueCounter, connections = [];
+var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, queryLoop, infoLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
-var firmware = 'grbl';
+var firmware = 'tinyg';
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -69,11 +75,11 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
 // Webserver
 app.listen(config.webPort);
 var fileServer = new nstatic.Server('./public');
-function handler (req, res) {
 
+function handler (req, res) {
   var queryData = url.parse(req.url, true).query;
   if (queryData.url) {
-	if (queryData.url !== "") {
+	if (queryData.url != "") {
 	  request({
         url: queryData.url,  // proxy for remote webcams
         callback: (err, res, body) => {
@@ -95,68 +101,63 @@ function handler (req, res) {
   }
 }
 
-/*
 function ConvChar( str ) {
-  var c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;', '#':'&#035;' };
+  var c = {'<':'<', '>':'>', '&':'&', '"':'"', "'":"'", '#':'#' };
   return str.replace( /[<&>'"#]/g, function(s) { return c[s]; } );
 }
-*/
+
 
 // Websocket <-> Serial
 io.sockets.on('connection', handleConnection);
-
 
 function handleConnection (socket) { // When we open a WS connection, send the list of ports
 
   connections.push(socket);
 
-  serialport.list(function (err, ports) {
-    socket.emit("ports", ports);
+  g.list().then(function(results) {
+    console.log(util.inspect(results));
+    socket.emit("ports", results);
+  }).catch(function(err) { 
+    //couldnt_list(err); 
   });
-
+	
   socket.on('firstLoad', function(data) {
     socket.emit('config', config);
   });
 
   socket.on('stop', function(data) {
-    paused = true;
-    gcodeQueue.length = 0;	// dump the queye
-    blocked = false;
-    paused = false;
-    console.log(chalk.red('STOP'));
+    socket.emit("connectStatus", 'stopped:'+port.path);
+    gcodeQueue.length = 0; // dump the queye
     if (data !== 0) {
-      port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before pausing... Probably safer (;
-      console.log('STOPPING:  Sending Laser Off Command as ' + data);
-    } else {
-      port.write("M5\n");  //  Hopefully M5!
-      console.log('STOPPING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
-    }
-    io.sockets.emit("connectStatus", 'stopped:'+port.path);
-  });
-
-  socket.on('pause', function(data) {
-    //port.write('!');	// Send feed hold to grbl => works when grbl stopps laser on feed hold (not jet)!!
-    paused = true;
-    console.log(chalk.red('PAUSE'));
-    if (data !== 0) {
-      port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before pausing... Probably safer (;
+      port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
       console.log('PAUSING:  Sending Laser Off Command as ' + data);
     } else {
       port.write("M5\n");  //  Hopefully M5!
       console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
     }
-    io.sockets.emit("connectStatus", 'paused:'+port.path);
+  });
+
+  socket.on('pause', function(data) {
+    console.log(chalk.red('PAUSE'));
+    if (data !== 0) {
+      port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
+      console.log('PAUSING:  Sending Laser Off Command as ' + data);
+    } else {
+      port.write("M5\n");  //  Hopefully M5!
+      console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
+    }
+    socket.emit("connectStatus", 'paused:'+port.path);
+    paused = true;
   });
 
   socket.on('unpause', function(data) {
-    //port.write('~');	// Send feed hold to grbl
     console.log(chalk.red('UNPAUSE'));
     if (data !== 0) {
       port.write(data+"\n");
     } else {
-      port.write("M3S0\n");	// Realy? This activates the Laser with the last S value, even if the Laser was off before pause! ->S0 for security
+      port.write("M3\n");
 	}
-    io.sockets.emit("connectStatus", 'unpaused:'+port.path);
+    socket.emit("connectStatus", 'unpaused:'+port.path);
     paused = false;
     send1Q();
   });
@@ -167,8 +168,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       var line = data[i].split(';'); // Remove everything after ; = comment
 	  var tosend = line[0];
       if (tosend.length > 0) {
-        addQ(tosend);
-		send1Q();
+        g.write(tosend);
       }
     }
   });
@@ -178,27 +178,22 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     switch (data) {
       case 0:
         code = 144;	// set to 100%
-        data = '100';
         break;
       case 10:
         code = 145;	// +10%
-        data = '+' + data;
         break;
       case -10:
         code = 146;	// -10%	
         break;
       case 1:
         code = 147;	// +1%
-        data = '+' + data;
         break;
       case -1:
         code = 148;	// -1%
         break;
     }
     if (code) {
-      //jumpQ(String.fromCharCode(parseInt(code)));
-      port.write(String.fromCharCode(parseInt(code)));
-      console.log(chalk.red('Override feed: ' + data + '%'));
+      jumpQ(String.fromCharCode(parseInt(code)));
     }
   });
 
@@ -207,52 +202,47 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     switch (data) {
       case 0:
         code = 153;	// set to 100%
-        data = '100';
         break;
       case 10:
         code = 154;	// +10%
-        data = '+' + data;
         break;
       case -10:
         code = 155;	// -10%
         break;
       case 1:
         code = 156;	// +1%
-        data = '+' + data;
         break;
       case -1:
         code = 157;	// -1%
         break;
     }
     if (code) {
-      //jumpQ(String.fromCharCode(parseInt(code)));
-      port.write(String.fromCharCode(parseInt(code)));
-      console.log(chalk.red('Override spindle: ' + data + '%'));
+      jumpQ(String.fromCharCode(parseInt(code)));
     }
   });
 
-  socket.on('getFirmware', function(data) {		// Report server version (firmware) to web-client
+  socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
     socket.emit("firmware", firmware);
   });
   
-  socket.on('refreshPorts', function(data) {	// Refresh serial port list
+  socket.on('refreshPorts', function(data) { // Or when asked
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
-    serialport.list(function (err, ports) {
-      socket.emit("ports", ports);
-    });
+    g.list().then(function(results) {
+      console.log(util.inspect(results));
+      socket.emit("ports", results);
+    }).catch(function(err) { 
+      //couldnt_list(err); 
+	});
   });
 
-  socket.on('closePort', function(data) {		// Close serial port and dump queue
+  socket.on('closePort', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
     console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
-    io.sockets.emit("connectStatus", 'closed:'+port.path);
-    gcodeQueue.length = 0;	// dump the queye
-	port.close();
-	paused = false;
-	blocked = false;
+    socket.emit("connectStatus", 'closed:'+port.path);
+    g.close();
   });
 
-  socket.on('areWeLive', function(data) { 		// Report active serial port to web-client
-    socket.emit("activePorts", port.path + ',' + port.options.baudRate);
+  socket.on('areWeLive', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
+    socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
   });
 
   socket.on('connectTo', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
@@ -260,57 +250,131 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     console.log(chalk.yellow('WARN:'), chalk.blue('Connecting to Port ' + data));
     if (!isConnected) {
       port = new SerialPort(data[0], {  parser: serialport.parsers.readline("\n"), baudrate: parseInt(data[1]) });
-      io.sockets.emit("connectStatus", 'opening:'+port.path);
+      socket.emit("connectStatus", 'opening:'+port.path);
 
       port.on('open', function() {
-        io.sockets.emit("activePorts", port.path + ',' + port.options.baudRate);
-        io.sockets.emit("connectStatus", 'opened:'+port.path);
+        socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
+        socket.emit("connectStatus", 'opened:'+port.path);
         port.write("?"); // Lets check if its Grbl?
+        //port.write("?\n"); // Lets check if its LasaurGrbl?
+        // port.write("M115\n"); // Lets check if its Marlin?
+        //port.write("version\n"); // Lets check if its Smoothieware?
+        // port.write("$fb\n"); // Lets check if its TinyG
         console.log('Connected to ' + port.path + 'at ' + port.options.baudRate);
         isConnected = true;
         connectedTo = port.path;
-
-		// Start intervall for status queries to grbl
-		statusLoop = setInterval(function() {
+        queryLoop = setInterval(function() {
+          // console.log('StatusChkc')
+          //port.write('?');
+          send1Q();
+        }, 1000);
+        infoLoop = setInterval(function() {
           port.write('?');
+          //send1Q();
         }, 250);
-        
-		// Start interval for qCount messages to socket clients
-		queueCounter = setInterval(function(){
-          io.sockets.emit('qCount', gcodeQueue.length);
+        queueCounter = setInterval(function(){
+          for (var i in connections) {   // iterate over the array of connections
+            connections[i].emit('qCount', gcodeQueue.length);
+          }
         },500);
-        io.sockets.emit("activePorts", port.path + ',' + port.options.baudRate);
+        for (var i in connections) {   // iterate over the array of connections
+          connections[i].emit("activePorts", port.path + ',' + port.options.baudRate);
+        }
       });
 
-      port.on('close', function() { // open errors will be emitted as an error event
+      port.on('close', function(err) { // open errors will be emitted as an error event
         clearInterval(queueCounter);
-		clearInterval(statusLoop);
-        io.sockets.emit("connectStatus", 'closed:'+port.path);
+        clearInterval(queryLoop);
+		clearInterval(infoLoop);
+        socket.emit("connectStatus", 'closed:'+port.path);
         isConnected = false;
         connectedTo = false;
       });
 
       port.on('error', function(err) { // open errors will be emitted as an error event
         console.log('Error: ', err.message);
-        io.sockets.emit("data", data);
+        socket.broadcast.emit("data", data);
       });
 
       port.on("data", function (data) {
+		var i;
         console.log('Recv: ' + data);
-        if (data.indexOf("ok") === 0) { // Got an OK so we are clear to send
-		  blocked = false;
-          send1Q();
+        if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0 || data.indexOf("$") == 0){
+          if (data.indexOf("ok") == 0) { // Got an OK so we are clear to send
+            blocked = false;
+          }
+          for (i in connections) {   // iterate over the array of connections
+            connections[i].emit("data", data);
+          }
+          // setTimeout(function(){
+          if(paused !== true){
+            send1Q();
+          } else {
+            for (i in connections) {   // iterate over the array of connections
+              connections[i].emit("data", 'paused...');
+            }
+          }
+          //  },1);
+        } else {
+          for (i in connections) {   // iterate over the array of connections
+            connections[i].emit("data", data);
+		  }
         }
-        io.sockets.emit("data", data);
       });
     } else {
-      io.sockets.emit("connectStatus", 'resume:'+port.path);
-      port.write("?"); // Lets check if its Grbl?
+      socket.emit("connectStatus", 'resume:'+port.path);
+      port.write("?\n"); // Lets check if its LasaurGrbl?
+      port.write("M115\n"); // Lets check if its Marlin?
+      port.write("version\n"); // Lets check if its Smoothieware?
+      port.write("$fb\n"); // Lets check if its TinyG
     }
   });
 }
 // End Websocket <-> Serial
 
+
+// Setup an error handler for TinyG
+g.on('error', function(error) {
+  // ...
+});
+
+// Open the first connected device found
+g.openFirst();
+// OR: Open a specific device with one serial ports:
+//    g.open(portPath);
+// OR: Open a specific G2 Core device with two virtual serial ports:
+//    g.open(portPath,
+//            {dataPortPath : dataPortPath});
+
+// Make a status handler
+var statusHandler = function(st) {
+  process.stdout.write(
+    util.inspect(status) + "\n"
+  );
+};
+
+// Make a close handler
+var closeHandler = function() {
+  // Stop listening to events when closed
+  // This is only necessary for programs that don't exit.
+  g.removeListener('statusChanged', statusHandler);
+  g.removeListener('close', closeHandler);
+}
+
+
+// Setup an open handler, that will then setup all of the other handlers
+g.on('open', function() {
+  // Handle status reports ({"sr":{...}})
+  g.on('statusChanged', statusHandler);
+  // handle 'close' events
+  g.on('close', closeHandler);
+
+  // We now have an active connection to a tinyg.
+  // We can use g.set(...) to set parameters on the tinyg,
+  // and g.get() to read parameters (returns a promise, BTW).
+
+  // We can also use g.sendFile() to handle sending a file.
+});
 
 // Queue
 function addQ(gcode) {
@@ -324,9 +388,9 @@ function jumpQ(gcode) {
 function send1Q() {
   if (gcodeQueue.length > 0 && !blocked && !paused) {
     var gcode = gcodeQueue.shift();
-    console.log('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
+    console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
     lastSent = gcode;
     port.write(gcode + '\n');
-	blocked = true;
+    blocked = true;
   }
 }
