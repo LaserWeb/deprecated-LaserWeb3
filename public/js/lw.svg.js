@@ -31,7 +31,7 @@ var lw = lw || {};
             var svg    = parser.parse(file);
             this.logEnd();
 
-            this.debug('parser:', parser);
+            //this.debug('parser:', parser);
 
             this.logStart('Drawing SVG: ' + name);
             var object = new THREE.Object3D();

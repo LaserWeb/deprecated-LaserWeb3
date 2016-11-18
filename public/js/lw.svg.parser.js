@@ -6,6 +6,89 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Point = function(x, y) {
+        // Init properties
+        this.x = x;
+        this.y = y;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Point.prototype.isEqual = function(point) {
+        return this.x === point.x && this.y === point.y;
+    };
+
+    // =========================================================================
+
+    lw.svg.Path = function(x, y) {
+        // Init properties
+        this.points = [];
+        this.length = 0;
+
+        // Add point(s)
+        if (arguments.length === 1) {
+            this.addPoints(x);
+        }
+        else if (arguments.length === 2) {
+            this.addPoint(x, y);
+        }
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Path.prototype.getPoint = function(i) {
+        i = i < 0 ? this.points.length + i : i;
+        return this.points[i] || null;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Path.prototype.addPoint = function(x, y) {
+        this.points.push(new lw.svg.Point(x, y));
+        this.length = this.points.length;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Path.prototype.addPoints = function(points) {
+        // Bad points number count
+        if (! points || ! points.length || points.length % 2) {
+            throw new Error('The number of points must be even');
+        }
+
+        // Normalize points to float value
+        points = points.map(parseFloat);
+
+        if (points.some(isNaN)) {
+            throw new Error('Only numeric values are allowed');
+        }
+
+        // For each couple of points
+        for (var i = 0, il = points.length; i < il; i += 2) {
+            this.addPoint(points[i], points[i + 1]);
+        }
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Path.prototype.isClosed = function() {
+        var lastPoint = this.getPoint(-1);
+        return lastPoint && lastPoint.isEqual(this.getPoint(0));
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Path.prototype.close = function() {
+        if (! this.isClosed()) {
+            var lastPoint = this.getPoint(-1);
+            this.addPoint(lastPoint.x, lastPoint.y);
+            return true;
+        }
+        return false;
+    };
+
+    // =========================================================================
+
     lw.svg.Tag = function(node, parent) {
         // Init properties
         this.node     = node;
@@ -13,6 +96,9 @@ var lw = lw || {};
         this.parent   = parent || null;
         this.attrs    = {};
         this.children = [];
+
+        this.paths       = [];
+        this.currentPath = new lw.svg.Path();
     };
 
     // -------------------------------------------------------------------------
@@ -26,6 +112,53 @@ var lw = lw || {};
     lw.svg.Tag.prototype.getAttr = function(name, defaultValue) {
         return this.attrs[name] !== undefined ? this.attrs[name]
         : (defaultValue !== undefined ? defaultValue : null);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.addChild = function(childTag) {
+        this.children.push(childTag);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.addPoint = function(x, y) {
+        this.currentPath.addPoint(x, y);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.traceLine = function(points) {
+        this.currentPath.addPoints(points);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.closePath = function() {
+        this.currentPath.close();
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.endPath = function() {
+        if (this.currentPath.length) {
+            this.paths.push(this.currentPath);
+            this.currentPath = new lw.svg.Path();
+            return true;
+        }
+        return false;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.openPath = function(points) {
+        // End openned path (if any)
+        this.endPath();
+
+        // Add points
+        if (arguments.length === 1) {
+            this.traceLine(points);
+        }
     };
 
     // =========================================================================
@@ -221,7 +354,7 @@ var lw = lw || {};
         this.parseTagAttrs(tag);
 
         // Get internal parser from node name (_svg, _g, etc...)
-        var parser = this['_' + tag.name];
+        var parser = this['_' + tag.name.replace(/^#/, '_')];
 
         // Not parser...
         if (! parser) {
@@ -244,6 +377,8 @@ var lw = lw || {};
             this.warning('Unsupported tag:', tag.name, tag);
             return null;
         }
+
+        this.info('Parse tag:', tag.name, tag);
 
         // Parse children nodes
         var childTag;
@@ -330,8 +465,110 @@ var lw = lw || {};
             this.editor.version = tag.getAttr('inkscape:version', null);
         }
 
+        // Debug
+        this.info('editor:', this.editor);
+        this.info('document:', this.document);
+
         // Handled tag
         return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype.__text = function(tag) {
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype.__comment = function(tag) {
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._g = function(tag) {
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._path_M = function(tag, points) {
+        this.info('Open path:', points);
+        tag.openPath(points);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._path_L = function(tag, points) {
+        this.info('Trace line:', points);
+        tag.traceLine(points);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._path_Z = function(tag) {
+        this.info('Close path!');
+        tag.closePath();
+        tag.endPath();
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._path = function(tag) {
+        // Get the paths data attribute value
+        var dAttr = tag.getAttr('d').trim();
+
+        // Split on each commands
+        var commands = dAttr.match(/([M|Z|L|H|V|C|S|Q|T|A]+([^M|Z|L|H|V|C|S|Q|T|A]+)?)/gi);
+
+        if (! commands) {
+            this.warning('Empty path data:', tag.name, tag);
+            return null;
+        }
+
+        // Debug...
+        this.debug('dAttr:', dAttr);
+        this.debug('commands:', commands);
+
+        // For each command...
+        var commandParser = null;
+        var commandChar   = null;
+        var commandParams = null;
+
+        commands.some(function(command) {
+            // Remove trailing whitespaces
+            command = command.trim();
+
+            // Extract command chars
+            commandChar = command[0];
+            command     = command.substr(1).trim();
+
+            // Get internal parser from node name (_svg, _g, etc...)
+            commandParser = this['_path_' + commandChar];
+
+            // Not parser...
+            if (! commandParser) {
+                this.warning('Unsupported command:', commandChar, tag);
+                return false;
+            }
+
+            // Split command string on whitespaces or commas
+            commandParams = command.split(/[\s,]/);
+
+            // Call command parser
+            //this.debug(commandChar, commandParams);
+            commandParser.call(this, tag, commandParams);
+
+        }, this);
+
+        // Close last path
+        tag.endPath();
+
+        this.debug(tag);
     };
 
     // -------------------------------------------------------------------------
