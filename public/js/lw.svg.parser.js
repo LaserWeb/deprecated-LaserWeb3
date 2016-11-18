@@ -6,6 +6,30 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Tag = function(node, parent) {
+        // Init properties
+        this.node     = node;
+        this.name     = node.nodeName.toLowerCase();
+        this.parent   = parent || null;
+        this.attrs    = {};
+        this.children = [];
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.setAttr = function(name, value) {
+        this.attrs[name] = value;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.getAttr = function(name, defaultValue) {
+        return this.attrs[name] !== undefined ? this.attrs[name]
+        : (defaultValue !== undefined ? defaultValue : null);
+    };
+
+    // =========================================================================
+
     // SVG Parser class
     lw.svg.Parser = function(svg, settings) {
         // Defaults settings
@@ -13,9 +37,10 @@ var lw = lw || {};
 
         // Init properties
         this.settings = settings;
-        this.svg      = null;
-        this.editor   = null;
-        this.tags     = null;
+        this.svg      = null; // Raw XML string
+        this.editor   = null; // Editor info { name, version, fingerprint }
+        this.document = null; // SVG document info { width, height, viewBox }
+        this.tags     = null; // lw.svg.Tag objects hierarchy
 
         // Load SVG contents
         svg && this.load(svg);
@@ -87,9 +112,143 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Parser.prototype.normalizeUnit = function(value) {
+        var stringValue = (value + "").toLowerCase();
+        var floatValue  = parseFloat(stringValue);
+
+        if (stringValue.indexOf('mm') !== -1) {
+            return floatValue * 3.5433070869;
+        }
+
+        if (stringValue.indexOf('cm') !== -1) {
+            return floatValue * 35.433070869;
+        }
+
+        if (stringValue.indexOf('in') !== -1) {
+            return floatValue * 90.0;
+        }
+
+        if (stringValue.indexOf('pt') !== -1) {
+            return floatValue * 1.25;
+        }
+
+        if (stringValue.indexOf('pc') !== -1) {
+            return floatValue * 15.0;
+        }
+
+        return floatValue;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype.normalizeTagAttr = function(attr) {
+        // Remove trailing spaces
+        var attrValue = attr.nodeValue.trim();
+
+        // Filters
+        switch (attr.nodeName) {
+            // Range limit to [0 - 1]
+            case 'opacity'      :
+            case 'fillOpacity'  :
+            case 'strokeOpacity':
+                attrValue = Math.min(1, Math.max(0, parseFloat(attrValue)));
+            break;
+
+            // Normalize color to RGBA int array -> [r, g, b, a]
+            // Or leave input -> 'inherit', 'none', etc...
+            case 'fill'  :
+            case 'stroke':
+            case 'color' :
+                //attrValue = this.normalizeColor(attrValue);
+            break;
+
+            // Normalize size unit -> to px
+            case 'x'  :
+            case 'y'  :
+            case 'x1'  :
+            case 'y1'  :
+            case 'x2'  :
+            case 'y2'  :
+            case 'r'  :
+            case 'rx'  :
+            case 'ry'  :
+            case 'cx'  :
+            case 'cy'  :
+            case 'width' :
+            case 'height' :
+            case 'fontSize' :
+            case 'strokeWidth' :
+                attrValue = this.normalizeUnit(attrValue);
+            break;
+        }
+
+        // Return normalized value
+        return attrValue;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype.parseTagAttrs = function(tag) {
+        // Get tag attributes
+        var attrs = tag.node.attributes;
+
+        if (! attrs) {
+            return null;
+        }
+
+        // For each attribute
+        for (var attr, value, i = 0, il = attrs.length; i < il; i++) {
+            // Current attribute
+            attr = attrs[i];
+
+            // Normalize attribute value
+            value = this.normalizeTagAttr(attr);
+
+            // Set new attribute name/value
+            tag.setAttr(attr.nodeName, value);
+        }
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype.parseTag = function(tag) {
+        // Parse tag attributes
+        this.parseTagAttrs(tag);
+
+        // Get internal parser from node name (_svg, _g, etc...)
+        var parser = this['_' + tag.name];
+
+        // Not parser...
+        if (! parser) {
+            return null;
+        }
+
+        // Parse tag and return true if done
+        return !! parser.call(this, tag);
+    };
+
+    // -------------------------------------------------------------------------
+
     // Parse SVG node (recursive)
     lw.svg.Parser.prototype.parseNode = function(node, parent) {
-        console.log('parseNode:', node, parent);
+        // Create base tag
+        var tag = new lw.svg.Tag(node, parent);
+
+        // Unsupported tag ?
+        if (! this.parseTag(tag)) {
+            console.warn('Unsupported SVG tag:', tag.name, tag);
+            return null;
+        }
+
+        // Parse children nodes
+        var childTag;
+        node.childNodes.forEach(function(childNode) {
+            childTag = this.parseNode(childNode, tag);
+            childTag && tag.addChild(childTag);
+        }, this);
+
+        // Return tag object
+        return tag;
     };
 
     // -------------------------------------------------------------------------
@@ -132,6 +291,37 @@ var lw = lw || {};
 
         // return tags collection
         return this.tags;
+    };
+
+    // Tags parsers ------------------------------------------------------------
+    // SVG specs at https://www.w3.org/TR/SVG11/
+
+    lw.svg.Parser.prototype._svg = function(tag) {
+        // Get the document size
+        var width  = tag.getAttr('width');
+        var height = tag.getAttr('height');
+
+        // Invalid size
+        if (! width || ! height) {
+            throw new Error('Invalid document size: ' + width + ' / ' + height);
+        }
+
+        // Set document size
+        this.document = {
+            width : width,
+            height: height
+        };
+
+        // Get and set document viewBox
+        this.document.viewBox = {
+            x     : tag.getAttr('x', 0),
+            y     : tag.getAttr('y', 0),
+            width : tag.getAttr('width', width),
+            height: tag.getAttr('height', height)
+        };
+
+        // Handled tag
+        return true;
     };
 
     // -------------------------------------------------------------------------
