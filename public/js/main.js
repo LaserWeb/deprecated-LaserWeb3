@@ -14,7 +14,7 @@ init3D();
 filePrepInit();
 initTabs();
 initJog();
-errorHandlerJS();
+//errorHandlerJS();
 var paperscript = {};
 rasterInit();
 macrosInit();
@@ -368,7 +368,7 @@ function loadFile(f) {
         // On file loaded
         r.onload = function(event) {
             // Parse and create SVG 3D object
-            lw.svg.draw(r.result, f.name, {
+            lw.svg.drawFile(r.result, f.name, {
                 // On 3D object created
                 onObject: function(object) {
                     // Add object to viewer
@@ -376,6 +376,10 @@ function loadFile(f) {
                         name  : f.name,
                         target: 'objects'
                     });
+                },
+                // On error
+                onError: function(error) {
+                    console.error(error);
                 }
             });
         };
