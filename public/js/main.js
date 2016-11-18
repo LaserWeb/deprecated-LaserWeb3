@@ -166,7 +166,7 @@ $(document).ready(function() {
     
     cncMode = $('#cncMode').val()
     if (cncMode == "Enable") {
-        document.title = "&#128295; CNCWeb";
+        document.title = "CNCWeb";
         $("#statusmodal").modal('show');
         $("#statusTitle").html("<h4>CNC Mode Activated</h4>");
         $("#statusBody").html("Note: You have activated <b>CNC mode</b> from <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>");
@@ -415,10 +415,20 @@ function loadFile(f) {
                 // cleanupThree();
                 $("#gcodefile").show();
                 document.getElementById('gcodepreview').value = this.result;
-                openGCodeFromText();
                 printLog('GCode Opened', msgcolor, "file");
                 resetView()
+                setTimeout(function(){   openGCodeFromText(); }, 500);
             };
+        } else if (f.name.match(/.nc$/i)) {
+              r.readAsText(f);
+              r.onload = function(event) {
+                  // cleanupThree();
+                  $("#gcodefile").show();
+                  document.getElementById('gcodepreview').value = this.result;
+                  printLog('GCODE Opened', msgcolor, "file");
+                  resetView()
+                  setTimeout(function(){   openGCodeFromText(); }, 500);
+              };
         } else if (f.name.match(/.stl$/i)) {
             //r.readAsText(f);
             // Remove the UI elements from last run

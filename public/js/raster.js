@@ -81,7 +81,7 @@ function drawRaster(name, data) {
 
     rastermesh.position.x = -(laserxmax / 2) + (imgwidth / 2);
     rastermesh.position.y = -(laserymax / 2) + (imgheight / 2);
-    rastermesh.position.z = -0.9;
+    rastermesh.position.z = -0.01;
     rastermesh.name = name;
     rastermesh.userData.imgdata = data;  // store B64 image data in the userData for later use
 
@@ -114,7 +114,7 @@ function drawRaster(name, data) {
 };
 
 function runRaster(index) {
-  // console.group("Preparing Raster..")
+  console.log("Preparing Raster..")
   var threejsobject = objectsInScene[index];
   var spotSizeMul = parseFloat($('#spotSize').val());
   var laserRapid = parseFloat($('#rapidspeed').val()) * 60;
@@ -140,16 +140,37 @@ function runRaster(index) {
   // The clamp assumes material can go up to 50mm high -- this assumption might be bad.
   var zHeight = zHeightRaw.clamp(0,50) +
                 parseFloat($('zFocusHeight').val() || 0);
+  var optimisegcode = $('#optimisegcode').val()
+
+
 
   var img = new Image();
-  // This is deferred until the image is loaded, then the actual raster is run. 
+  // This is deferred until the image is loaded, then the actual raster is run.
   img.onload = function() {
+    console.log("IMG onloaded");
     var height = img.naturalHeight;
     var width = img.naturalWidth;
 
     var physheight = (height / rasterDPI) * 25.4;
-    var physwidth = (width / rasterDPI) * 25.4; 
+    var physwidth = (width / rasterDPI) * 25.4;
     var spotSize = (physwidth / width);
+
+    //
+      console.log("IMG onloaded");
+      var canvas = document.createElement("canvas");
+      // canvas.setAttribute("id", "rastercanv");
+      // document.body.appendChild(img);
+      // document.body.appendChild(canvas);
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      // self.raster = new Raster(canvas);
+      // console.log(self)
+      // self.raster.visible = false;
+      // self.raster.on('load', self.onRasterLoaded.bind(self));
+      // self.raster.on('load', console.log("Event Fires!"));
+    //
 
     paper.RasterNow({
         object: threejsobject,
@@ -169,13 +190,18 @@ function runRaster(index) {
         zHeight: [zHeight],
         imagePos: [imagePosition],
         physicalHeight: [physheight],
-        physicalWidth: [physwidth]
-
+        physicalWidth: [physwidth],
+        optimiseGcode: [optimisegcode]
     });
   };
 
+
   // Loading the image, which will cause the onload callback
-  img.src = threejsobject.userData.imgdata;
+  if (threejsobject.name.match(/.svg$/i)) {
+    img.src = 'data:image/svg+xml;utf8,' + threejsobject.userData.imgdata;
+  } else {
+    img.src = threejsobject.userData.imgdata;
+  }
 };
 
 

@@ -16,6 +16,9 @@ var camvideo;
 var imageDetect, video, videoImage, videoImageContext, videoTexture, useVideo, movieScreen;
 var objectsInScene = []; //array that holds all objects we added to the scene.
 
+var workspace = new THREE.Group();
+workspace.name = "LaserWeb Workspace"
+
 containerWidth = window.innerWidth;
 containerHeight = window.innerHeight;
 
@@ -213,22 +216,22 @@ function gotStream(stream)
 
             control = new THREE.TransformControls(camera, renderer.domElement);
 
-            scene.add(control);
+            workspace.add(control);
             control.setMode("translate");
 
             var light = new THREE.DirectionalLight(0xffffff);
             light.position.set(-500, -500, 1).normalize();
-            light.name = "Light1";
-            scene.add(light);
+            light.name = "Light1;"
+            workspace.add(light);
 
             var light2 = new THREE.DirectionalLight(0xffffff);
             light2.name = "Light2";
             light2.position.set(1, 0, 1).normalize();
-            scene.add(light2);
+            workspace.add(light2);
 
             // LaserWEB UI Grids
             if (helper) {
-                scene.remove(helper);
+                workspace.remove(helper);
             }
 
             laserxmax = $('#laserXMax').val();
@@ -256,7 +259,7 @@ function gotStream(stream)
             //this.sceneAdd(this.grid);
             //console.log('[VIEWER] - added Helpert');
             helper.name = "GridHelper"
-            scene.add(helper);
+            workspace.add(helper);
 
             if (bullseye) {
                 scene.remove(bullseye);
@@ -284,13 +287,13 @@ function gotStream(stream)
 
             bullseye.name = "Bullseye";
 
-            scene.add(bullseye);
+            workspace.add(bullseye);
             bullseye.position.x = -(laserxmax / 2);
             bullseye.position.y = -(laserymax / 2);
 
 
             if (cursor) {
-                scene.remove(cursor);
+                workspace.remove(cursor);
             }
             cursor = new THREE.Object3D();
             cursor.name ="cursor"
@@ -345,7 +348,7 @@ function gotStream(stream)
             cursor.add(liney);
 
 
-            scene.add(cursor)
+            workspace.add(cursor)
 
 
             if (axesgrp) {
@@ -434,7 +437,7 @@ function gotStream(stream)
             axesgrp.translateX(laserxmax / 2 * -1);
             axesgrp.translateY(laserymax / 2 * -1);
             //console.log('[VIEWER] - added Axesgrp');
-            scene.add(axesgrp);
+            workspace.add(axesgrp);
 
             // Picking stuff
             projector = new THREE.Projector();
@@ -463,8 +466,8 @@ function gotStream(stream)
                     var movieGeometry = new THREE.PlaneGeometry( laserxmax, laserymax, 1, 1 );
                     movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
                     movieScreen.position.set(0,0,-0.2);
-                    movieScreen.name ="Video Overlay WebRTC";
-                    scene.add(movieScreen);
+                    movieScreen.name ="Video Overlay WebRTC"
+                    workspace.add(movieScreen);
                     videoTexture.needsUpdate = true;
                 }
 
@@ -485,7 +488,7 @@ function gotStream(stream)
                     movieScreen = new THREE.Mesh( movieGeometry, movieMaterial );
                     movieScreen.position.set(0,0,-0.2);
                     movieScreen.name ="Video Overlay MJPG"
-                    scene.add(movieScreen);
+                    workspace.add(movieScreen);
                     videoTexture.needsUpdate = true;
 
                     setInterval(function(){
@@ -508,6 +511,8 @@ function gotStream(stream)
                     resetView();
                 }
             });
+
+            scene.add(workspace)
 
         }
 
