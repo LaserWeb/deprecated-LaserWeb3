@@ -119,7 +119,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
   socket.on('stop', function(data) {
+	paused = true;
     gcodeQueue.length = 0;	// dump the queye
+	blocked = false;
+	paused = false;
     console.log(chalk.red('STOP'));
     if (data !== 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before pausing... Probably safer (;
@@ -151,7 +154,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     if (data !== 0) {
       port.write(data+"\n");
     } else {
-      port.write("M3\n");	// Realy? This activates the Laser with the last S value, even if the Laser was off before pause!
+      port.write("M3S0\n");	// Realy? This activates the Laser with the last S value, even if the Laser was off before pause! ->S0 for security
 	}
     io.sockets.emit("connectStatus", 'unpaused:'+port.path);
     paused = false;
@@ -195,7 +198,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     if (code) {
       //jumpQ(String.fromCharCode(parseInt(code)));
       port.write(String.fromCharCode(parseInt(code)));
-      console.log('Override feed: ' + data + '%');
+      console.log(chalk.red('Override feed: ' + data + '%'));
     }
   });
 
@@ -224,7 +227,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     if (code) {
       //jumpQ(String.fromCharCode(parseInt(code)));
       port.write(String.fromCharCode(parseInt(code)));
-      console.log('Override spindle: ' + data + '%');
+      console.log(chalk.red('Override spindle: ' + data + '%'));
     }
   });
 
@@ -244,7 +247,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     io.sockets.emit("connectStatus", 'closed:'+port.path);
     gcodeQueue.length = 0;	// dump the queye
 	port.close();
-	pause = false;
+	paused = false;
 	blocked = false;
   });
 
@@ -321,7 +324,7 @@ function jumpQ(gcode) {
 function send1Q() {
   if (gcodeQueue.length > 0 && !blocked && !paused) {
     var gcode = gcodeQueue.shift();
-    console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
+    console.log('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
     lastSent = gcode;
     port.write(gcode + '\n');
 	blocked = true;
