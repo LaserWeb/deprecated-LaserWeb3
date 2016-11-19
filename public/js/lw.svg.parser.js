@@ -251,6 +251,22 @@ var lw = lw || {};
         this.currentPath.addPoints(points);
     };
 
+    lw.svg.Tag.prototype.traceHorizontalLine = function(points) {
+        var lastPoint = this.currentPath.getPoint(-1);
+
+        points.forEach(function(point) {
+            this.traceLine([lastPoint.x, point]);
+        }, this);
+    };
+
+    lw.svg.Tag.prototype.traceVerticalLine = function(points) {
+        var lastPoint = this.currentPath.getPoint(-1);
+
+        points.forEach(function(point) {
+            this.traceLine([point, lastPoint.y]);
+        }, this);
+    };
+
     // -------------------------------------------------------------------------
 
     lw.svg.Tag.prototype.closePath = function() {
@@ -726,7 +742,7 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._path_M = function(tag, points) {
-        this.info('Open path:', points);
+        //this.info('Open path:', points);
         tag.openPath(points);
 
         // Handled tag
@@ -736,7 +752,7 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._path_L = function(tag, points) {
-        this.info('Trace line:', points);
+        //this.info('Trace line:', points);
         tag.traceLine(points);
 
         // Handled tag
@@ -745,8 +761,28 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Parser.prototype._path_H = function(tag, points) {
+        //this.info('Trace horizontal line:', points);
+        tag.traceHorizontalLine(points);
+
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._path_V = function(tag, points) {
+        //this.info('Trace vertical line:', points);
+        tag.traceVerticalLine(points);
+
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
     lw.svg.Parser.prototype._path_Z = function(tag) {
-        this.info('Close path!');
+        //this.info('Close path!');
         tag.closePath();
         tag.endPath();
 
