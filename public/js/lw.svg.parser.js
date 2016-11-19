@@ -22,8 +22,9 @@ var lw = lw || {};
 
     lw.svg.Path = function(x, y) {
         // Init properties
-        this.points = [];
-        this.length = 0;
+        this.points   = [];
+        this.length   = 0;
+        this.relative = false;
 
         // Add point(s)
         if (arguments.length === 1) {
@@ -36,6 +37,12 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Path.prototype.setRelative = function(relative) {
+        this.relative = !! relative;
+    };
+
+    // -------------------------------------------------------------------------
+
     lw.svg.Path.prototype.getPoint = function(i) {
         i = i < 0 ? this.points.length + i : i;
         return this.points[i] || null;
@@ -44,6 +51,14 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Path.prototype.addPoint = function(x, y) {
+        // Add relative offsets
+        if (this.relative && this.length) {
+            var lastPoint = this.getPoint(-1);
+            x += lastPoint.x;
+            y += lastPoint.y;
+        }
+
+        // Add new point and compute new path length
         this.points.push(new lw.svg.Point(x, y));
         this.length = this.points.length;
     };
@@ -72,18 +87,21 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Path.prototype.isClosed = function() {
-        var lastPoint = this.getPoint(-1);
-        return lastPoint && lastPoint.isEqual(this.getPoint(0));
+        var firstPoint = this.getPoint(0);
+        return firstPoint && firstPoint.isEqual(this.getPoint(-1));
     };
 
     // -------------------------------------------------------------------------
 
     lw.svg.Path.prototype.close = function() {
+        this.setRelative(false);
+
         if (! this.isClosed()) {
-            var lastPoint = this.getPoint(-1);
-            this.addPoint(lastPoint.x, lastPoint.y);
+            var firstPoint = this.getPoint(0);
+            this.addPoint(firstPoint.x, firstPoint.y);
             return true;
         }
+        
         return false;
     };
 
@@ -118,6 +136,12 @@ var lw = lw || {};
 
     lw.svg.Tag.prototype.addChild = function(childTag) {
         this.children.push(childTag);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.setRelative = function(relative) {
+        this.currentPath.setRelative(relative);
     };
 
     // -------------------------------------------------------------------------
@@ -356,7 +380,7 @@ var lw = lw || {};
         // Get internal parser from node name (_svg, _g, etc...)
         var parser = this['_' + tag.name.replace(/^#/, '_')];
 
-        // Not parser...
+        // No parser...
         if (! parser) {
             return null;
         }
@@ -499,6 +523,9 @@ var lw = lw || {};
     lw.svg.Parser.prototype._path_M = function(tag, points) {
         this.info('Open path:', points);
         tag.openPath(points);
+
+        // Handled tag
+        return true;
     };
 
     // -------------------------------------------------------------------------
@@ -506,6 +533,9 @@ var lw = lw || {};
     lw.svg.Parser.prototype._path_L = function(tag, points) {
         this.info('Trace line:', points);
         tag.traceLine(points);
+
+        // Handled tag
+        return true;
     };
 
     // -------------------------------------------------------------------------
@@ -514,13 +544,16 @@ var lw = lw || {};
         this.info('Close path!');
         tag.closePath();
         tag.endPath();
+
+        // Handled tag
+        return true;
     };
 
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._path = function(tag) {
         // Get the paths data attribute value
-        var dAttr = tag.getAttr('d').trim();
+        var dAttr = tag.getAttr('d');
 
         // Split on each commands
         var commands = dAttr.match(/([M|Z|L|H|V|C|S|Q|T|A]+([^M|Z|L|H|V|C|S|Q|T|A]+)?)/gi);
@@ -531,33 +564,37 @@ var lw = lw || {};
         }
 
         // Debug...
-        this.debug('dAttr:', dAttr);
-        this.debug('commands:', commands);
+        // this.debug('dAttr:', dAttr);
+        // this.debug('commands:', commands);
 
         // For each command...
         var commandParser = null;
         var commandChar   = null;
         var commandParams = null;
+        var isRelative    = null;
 
         commands.some(function(command) {
             // Remove trailing whitespaces
             command = command.trim();
 
-            // Extract command chars
-            commandChar = command[0];
-            command     = command.substr(1).trim();
+            // Extract command char and params
+            commandChar   = command[0].toUpperCase();
+            commandParams = command.substr(1).trim();
 
-            // Get internal parser from node name (_svg, _g, etc...)
+            // Get internal parser from command char (_path_M, _path_Z, etc...)
             commandParser = this['_path_' + commandChar];
 
-            // Not parser...
+            // No parser...
             if (! commandParser) {
                 this.warning('Unsupported command:', commandChar, tag);
                 return false;
             }
 
+            // Set tag move mode
+            tag.setRelative(commandChar !== command[0]);
+
             // Split command string on whitespaces or commas
-            commandParams = command.split(/[\s,]/);
+            commandParams = commandParams.split(/[\s,]+/);
 
             // Call command parser
             //this.debug(commandChar, commandParams);
@@ -568,7 +605,101 @@ var lw = lw || {};
         // Close last path
         tag.endPath();
 
-        this.debug(tag);
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._line = function(tag) {
+        // Trace path
+        tag.openPath();
+        tag.traceLine([
+            tag.getAttr('x1'), tag.getAttr('y1'),
+            tag.getAttr('x2'), tag.getAttr('y2')
+        ]);
+        tag.endPath();
+
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._polyline = function(tag, closePath) {
+        // Get the points attribute value
+        var pointsAttr = tag.getAttr('points');
+
+        // Split points string on whitespaces or commas
+        var points = pointsAttr.split(/[\s,]+/);
+
+        // Trace path
+        tag.openPath();
+        tag.traceLine(points);
+        closePath && tag.closePath();
+        tag.endPath();
+
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._polygon = function(tag) {
+        // Handled like polyline
+        this._polyline(tag, true);
+
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._rect = function(tag) {
+        // Get rectangle attributes
+        var w  = tag.getAttr('width');
+        var h  = tag.getAttr('height');
+        var x  = tag.getAttr('x');
+        var y  = tag.getAttr('y');
+        var rx = tag.getAttr('rx');
+        var ry = tag.getAttr('ry');
+
+        // Simple rect
+        if (!rx && !ry) {
+            // Trace path
+            tag.openPath();
+            tag.traceLine([
+                x    , y,
+                x + w, y,
+                x + w, y + h,
+                x    , y + h
+            ]);
+            tag.closePath();
+            tag.endPath();
+
+            // Handled tag
+            return true;
+        }
+
+        // TODO rounded corners
+        return false;
+
+        // A negative value is an error
+        if (rx < 0 || ry < 0) {
+            // Skip tag
+            return false;
+        }
+
+        // If a properly specified value is provided for ‘rx’, but not for ‘ry’,
+        // then set both rx and ry to the value of ‘rx’ and vis-vera...
+        if (rx === null) rx = ry;
+        if (ry === null) ry = rx;
+
+        // If rx is greater than half of ‘width’, then set rx to half of ‘width’.
+        // If ry is greater than half of ‘height’, then set ry to half of ‘height’.
+        if (rx > w / 2) rx = w / 2;
+        if (ry > h / 2) ry = h / 2;
+
     };
 
     // -------------------------------------------------------------------------
