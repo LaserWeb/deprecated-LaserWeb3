@@ -252,18 +252,18 @@ var lw = lw || {};
     };
 
     lw.svg.Tag.prototype.traceHorizontalLine = function(points) {
-        var lastPoint = this.currentPath.getPoint(-1);
+        var x = this.currentPath.relative ? 0 : this.currentPath.getPoint(-1).x;
 
         points.forEach(function(point) {
-            this.traceLine([lastPoint.x, point]);
+            this.traceLine([x, point]);
         }, this);
     };
 
     lw.svg.Tag.prototype.traceVerticalLine = function(points) {
-        var lastPoint = this.currentPath.getPoint(-1);
+        var y = this.currentPath.relative ? 0 : this.currentPath.getPoint(-1).y;
 
         points.forEach(function(point) {
-            this.traceLine([point, lastPoint.y]);
+            this.traceLine([point, y]);
         }, this);
     };
 
