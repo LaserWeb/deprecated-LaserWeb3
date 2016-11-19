@@ -4,6 +4,9 @@ var lw = lw || {};
 (function () {
     'use strict';
 
+    var _PI2_        = 2 * Math.PI;
+    var _DEG_TO_RAD_ = Math.PI / 180;
+
     // -------------------------------------------------------------------------
 
     lw.svg.Point = function(x, y) {
@@ -200,7 +203,7 @@ var lw = lw || {};
 
         this.paths.map(function(path) {
             path.points = path.points.map(function(point) {
-                return new lw.svg.Vertex(
+                return new lw.svg.Point(
                     this.matrix[0] * point.x + this.matrix[2] * point.y + this.matrix[4],
                     this.matrix[1] * point.x + this.matrix[3] * point.y + this.matrix[5]
                 );
@@ -442,6 +445,79 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Parser.prototype.parseTransformAttr = function(tag) {
+        // Get transform attribute
+        var transformAttr = tag.getAttr('transform');
+
+        // No transformation...
+        if (! transformAttr) {
+            return false;
+        }
+
+        // Empty transform attribute
+        if (! transformAttr.length) {
+            this.warning('Empty transform attribute:', tag.name, tag);
+            return false;
+        }
+
+        // Parse attribute (split group on closing parenthesis)
+        var transformations = transformAttr.split(')');
+
+        // Remove last entry due to last ")" found
+        transformations.pop();
+
+        // For each transformation
+        var transform, type, params, matrix;
+
+        transformations.some(function(raw) {
+            // Split name and value on opening parenthesis
+            transform = raw.split('(');
+
+            // Invalid parts number
+            if (transform.length !== 2) {
+                this.warning('Malformed transform attribute:', raw, tag);
+                return false;
+            }
+
+            // Parse attribute (split group on closing parenthesis)
+            var transformations = transformAttr.split(')');
+
+            // Remove last entry due to last ")" found
+            transformations.pop();
+
+            type   = transform[0].trim();
+            params = transform[1].trim();
+
+            // Skip empty value
+            if (! params.length) {
+                this.warning('Malformed transform attribute value:', raw, tag);
+                return false;
+            }
+
+            // Split value on spaces and commas and filter as float value
+            params = params.split(/[\s,]+/).map(parseFloat);
+
+            // Check params values validity
+            if (params.filter(isNaN).length) {
+                this.warning('Only numeric values are allowed:', raw, tag);
+                return false;
+            }
+
+            //this.addTransformMatrix(tag, type, params);
+            var tagTransform = tag[type];
+
+            if (typeof tagTransform !== 'function') {
+                this.warning('Undefined transformation:', type, raw, tag);
+                return false;
+            }
+
+            tagTransform.apply(tag, params);
+
+        }, this);
+    };
+
+    // -------------------------------------------------------------------------
+
     lw.svg.Parser.prototype.parseTagAttrs = function(tag) {
         // Get tag attributes
         var attrs = tag.node.attributes;
@@ -451,16 +527,50 @@ var lw = lw || {};
         }
 
         // For each attribute
-        for (var attr, value, i = 0, il = attrs.length; i < il; i++) {
+        for (var attr, value, style, i = 0, il = attrs.length; i < il; i++) {
             // Current attribute
             attr = attrs[i];
 
             // Normalize attribute value
             value = this.normalizeTagAttr(attr);
 
-            // Set new attribute name/value
-            tag.setAttr(attr.nodeName, value);
+            // Special case
+            if (attr.nodeName === 'style') {
+                style = value;
+            }
+            else {
+                // Set new attribute name/value
+                tag.setAttr(attr.nodeName, value);
+            }
         }
+
+        // If style attribute (override tag attributes)
+        // TODO get/parse global style and override this one...
+        if (style) {
+            style = style.split(';');
+
+            for (i = 0, il = style.length; i < il; i++) {
+                // Current style
+                attr = style[i].split(':');
+                attr = { nodeName: attr[0], nodeValue: attr[1] };
+
+                // Normalize attribute value
+                value = this.normalizeTagAttr(attr);
+
+                // Set new attribute name/value
+                tag.setAttr(attr.nodeName, value);
+            }
+        }
+
+        // Set inherited color
+        ['fill', 'stroke', 'color'].forEach(function(attrName) {
+            if (tag.getAttr(attrName) === 'inherit') {
+                tag.setAttr(attrName, tag.parent.getAttr(attrName, 'none'));
+            }
+        })
+
+        // Parse transform attribute
+        this.parseTransformAttr(tag);
     };
 
     // -------------------------------------------------------------------------
@@ -502,6 +612,9 @@ var lw = lw || {};
             childTag = this.parseNode(childNode, tag);
             childTag && tag.addChild(childTag);
         }, this);
+
+        // Apply matrix
+        tag.applyMatrix();
 
         // Return tag object
         return tag;
@@ -755,8 +868,6 @@ var lw = lw || {};
         var y  = tag.getAttr('y', 0);
         var rx = tag.getAttr('rx', 0);
         var ry = tag.getAttr('ry', 0);
-
-        this.debug(w, h, x, y, rx, ry);
 
         // Simple rect
         if (!rx && !ry) {
