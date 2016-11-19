@@ -7,7 +7,8 @@ var lw = lw || {};
     // SVG scope
     lw.svg = {
         name   : 'svg',
-        logging: true
+        logging: true,
+        parser : null
     };
 
     // Bind logging methods
@@ -103,6 +104,11 @@ var lw = lw || {};
         if (tag.paths.length) {
             this.info('draw:', tag);
 
+            // Flip Y coords and move UP by document height
+            // (to set origin at bottom/left corners)
+            tag.addMatrix([1, 0, 0, -1, 0, this.parser.document.height]);
+            tag.applyMatrix();
+
             tag.paths.map(function(path) {
                 if (tag.getAttr('fill', 'none') !== 'none') {
                     object.add(this.drawShape(tag, path));
@@ -134,8 +140,8 @@ var lw = lw || {};
         try {
             // Parse the SVG file (raw XML)
             this.logStart('Parsing SVG: ' + name);
-            var parser = new lw.svg.Parser();
-            var svg    = parser.parse(file);
+            this.parser = new lw.svg.Parser();
+            var svg     = this.parser.parse(file);
             this.logEnd();
 
             this.logStart('Drawing SVG: ' + name);
