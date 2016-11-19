@@ -101,7 +101,7 @@ var lw = lw || {};
             this.addPoint(firstPoint.x, firstPoint.y);
             return true;
         }
-        
+
         return false;
     };
 
@@ -117,6 +117,18 @@ var lw = lw || {};
 
         this.paths       = [];
         this.currentPath = new lw.svg.Path();
+
+        // Clone group parent attributes
+        if (this.parent && this.parent.name === 'g') {
+            var protectedAttrs = ['id', 'transform'];
+
+            Object.keys(this.parent.attrs).forEach(function(attrName) {
+                // Do not copy protected properties
+                if (protectedAttrs.indexOf(attrName) === -1) {
+                    this.setAttr(attrName, this.parent.attrs[attrName]);
+                }
+            }, this);
+        }
     };
 
     // -------------------------------------------------------------------------
@@ -659,10 +671,12 @@ var lw = lw || {};
         // Get rectangle attributes
         var w  = tag.getAttr('width');
         var h  = tag.getAttr('height');
-        var x  = tag.getAttr('x');
-        var y  = tag.getAttr('y');
-        var rx = tag.getAttr('rx');
-        var ry = tag.getAttr('ry');
+        var x  = tag.getAttr('x', 0);
+        var y  = tag.getAttr('y', 0);
+        var rx = tag.getAttr('rx', 0);
+        var ry = tag.getAttr('ry', 0);
+
+        this.debug(w, h, x, y, rx, ry);
 
         // Simple rect
         if (!rx && !ry) {
