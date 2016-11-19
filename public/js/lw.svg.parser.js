@@ -118,6 +118,12 @@ var lw = lw || {};
         this.paths       = [];
         this.currentPath = new lw.svg.Path();
 
+        this.matrix        = null;
+        this.matrixApplied = false;
+
+        // Reset transform matrix
+        this.setMatrix(this.parent && this.parent.matrix);
+
         // Clone group parent attributes
         if (this.parent && this.parent.name === 'g') {
             var protectedAttrs = ['id', 'transform'];
@@ -129,6 +135,80 @@ var lw = lw || {};
                 }
             }, this);
         }
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.setMatrix = function(matrix) {
+        this.matrix = matrix || [1, 0, 0, 1, 0, 0];
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.addMatrix = function(matrix) {
+        this.matrixApplied = false;
+        this.matrix        = [
+            this.matrix[0] * matrix[0] + this.matrix[2] * matrix[1],
+            this.matrix[1] * matrix[0] + this.matrix[3] * matrix[1],
+            this.matrix[0] * matrix[2] + this.matrix[2] * matrix[3],
+            this.matrix[1] * matrix[2] + this.matrix[3] * matrix[3],
+            this.matrix[0] * matrix[4] + this.matrix[2] * matrix[5] + this.matrix[4],
+            this.matrix[1] * matrix[4] + this.matrix[3] * matrix[5] + this.matrix[5]
+        ];
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.translate = function(x, y) {
+        this.addMatrix([1, 0, 0, 1, x || 0, y || 0]);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.rotate = function(angle, x, y) {
+        angle = (angle || 0) * _DEG_TO_RAD_;
+
+        (x && y) && this.addMatrix([1, 0, 0, 1, x, y]);
+        this.addMatrix([Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0]);
+        (x && y) && this.addMatrix([1, 0, 0, 1, -x, -y]);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.scale = function(x, y) {
+        this.addMatrix([(x || 0), 0, 0, (y || x || 0), 0, 0]);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.skewX = function(angle) {
+        this.addMatrix([1, 0, Math.tan((angle || 0) * _DEG_TO_RAD_), 1, 0, 0]);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.skewY = function(angle) {
+        this.addMatrix([1, Math.tan((angle || 0) * _DEG_TO_RAD_), 0, 1, 0, 0]);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.applyMatrix = function() {
+        if (this.matrixApplied) {
+            return null;
+        }
+
+        this.paths.map(function(path) {
+            path.points = path.points.map(function(point) {
+                return new lw.svg.Vertex(
+                    this.matrix[0] * point.x + this.matrix[2] * point.y + this.matrix[4],
+                    this.matrix[1] * point.x + this.matrix[3] * point.y + this.matrix[5]
+                );
+            }, this);
+        }, this);
+
+        this.matrixApplied = true;
+        this.setMatrix(null);
     };
 
     // -------------------------------------------------------------------------
