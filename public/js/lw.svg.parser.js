@@ -247,12 +247,32 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Tag.prototype.getPoint = function(i) {
+        return this.currentPath.getPoint(i);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Tag.prototype.getCurrentPoint = function() {
+        var currentPoint = this.currentPath.getPoint(-1);
+
+        if (! currentPoint) {
+            currentPoint = new lw.svg.Point(
+                this.getAttr('x', 0), this.getAttr('y', 0)
+            );
+        }
+
+        return currentPoint;
+    };
+
+    // -------------------------------------------------------------------------
+
     lw.svg.Tag.prototype.traceLine = function(points) {
         this.currentPath.addPoints(points);
     };
 
     lw.svg.Tag.prototype.traceHorizontalLine = function(points) {
-        var x = this.currentPath.relative ? 0 : this.currentPath.getPoint(-1).x;
+        var x = this.currentPath.relative ? 0 : this.getCurrentPoint().x;
 
         points.forEach(function(point) {
             this.traceLine([x, point]);
@@ -260,7 +280,7 @@ var lw = lw || {};
     };
 
     lw.svg.Tag.prototype.traceVerticalLine = function(points) {
-        var y = this.currentPath.relative ? 0 : this.currentPath.getPoint(-1).y;
+        var y = this.currentPath.relative ? 0 : this.getCurrentPoint().y;
 
         points.forEach(function(point) {
             this.traceLine([point, y]);
@@ -311,6 +331,9 @@ var lw = lw || {};
         this.editor   = null; // Editor info { name, version, fingerprint }
         this.document = null; // SVG document info { width, height, viewBox }
         this.tags     = null; // lw.svg.Tag objects hierarchy
+
+        this.lastCommandChar   = null;
+        this.lastCommandParams = null;
 
         // Bind logging methods
         lw.log.bind(this);
@@ -678,6 +701,13 @@ var lw = lw || {};
         return this.tags;
     };
 
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype.matchNumbers = function(str) {
+        // http://stackoverflow.com/questions/638565/parsing-scientific-notation-sensibly
+        return str.match(/[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?/g);
+    };
+
     // Tags parsers ------------------------------------------------------------
     // SVG specs at https://www.w3.org/TR/SVG11/
 
@@ -792,6 +822,94 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Parser.prototype._path_C = function(tag, points) {
+        //this.info('Trace cubic Bézier curve (C):', points);
+        var rl = tag.currentPath.relative;
+        var p1 = tag.getCurrentPoint();
+
+        tag.setRelative(false);
+
+        var x1 = points[0] + (rl ? p1.x : 0);
+        var y1 = points[1] + (rl ? p1.y : 0);
+        var x2 = points[2] + (rl ? p1.x : 0);
+        var y2 = points[3] + (rl ? p1.y : 0);
+        var x  = points[4] + (rl ? p1.x : 0);
+        var y  = points[5] + (rl ? p1.y : 0);
+
+        var p2 = new lw.svg.Point(x1, y1);
+        var p3 = new lw.svg.Point(x2, y2);
+        var p4 = new lw.svg.Point(x, y);
+
+        // p1  : starting point
+        // p2  : control point
+        // p3  : control point
+        // p4  : end point
+        var bezier = new lw.svg.trace.CubicBezier({ p1: p1, p2: p2, p3: p3, p4: p4 });
+        var points = bezier.trace();
+
+        points.shift();
+        points.shift();
+
+        // Trace the line
+        tag.traceLine(points);
+        tag.endPath();
+        tag.openPath([p4.x, p4.y]);
+
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._path_S = function(tag, points) {
+        //this.info('Trace cubic Bézier curve (S):', points);
+        var rl = tag.currentPath.relative;
+        var p1 = tag.getCurrentPoint();
+
+        tag.setRelative(false);
+
+        var x1 = p1.x;
+        var y1 = p1.y;
+
+        if (this.lastCommandChar === 'S') {
+            x1 -= this.lastCommandParams[0] - x1;
+            y1 -= this.lastCommandParams[1] - y1;
+        }
+        else if (this.lastCommandChar === 'C') {
+            x1 -= this.lastCommandParams[2] - x1;
+            y1 -= this.lastCommandParams[3] - y1;
+        }
+
+        var x2 = points[0] + (rl ? p1.x : 0);
+        var y2 = points[1] + (rl ? p1.y : 0);
+        var x  = points[2] + (rl ? p1.x : 0);
+        var y  = points[3] + (rl ? p1.y : 0);
+
+        var p2 = new lw.svg.Point(x1, y1);
+        var p3 = new lw.svg.Point(x2, y2);
+        var p4 = new lw.svg.Point(x, y);
+
+        // p1  : starting point
+        // p2  : control point
+        // p3  : control point
+        // p4  : end point
+        var bezier = new lw.svg.trace.CubicBezier({ p1: p1, p2: p2, p3: p3, p4: p4 });
+        var points = bezier.trace();
+
+        points.shift();
+        points.shift();
+
+        // Trace the line
+        tag.traceLine(points);
+        tag.endPath();
+        tag.openPath([p4.x, p4.y]);
+
+        // Handled tag
+        return true;
+    };
+
+    // -------------------------------------------------------------------------
+
     lw.svg.Parser.prototype._path = function(tag) {
         // Get the paths data attribute value
         var dAttr = tag.getAttr('d');
@@ -804,15 +922,14 @@ var lw = lw || {};
             return null;
         }
 
-        // Debug...
-        // this.debug('dAttr:', dAttr);
-        // this.debug('commands:', commands);
-
         // For each command...
         var commandParser = null;
         var commandChar   = null;
         var commandParams = null;
         var isRelative    = null;
+
+        this.lastCommandChar   = null;
+        this.lastCommandParams = null;
 
         commands.some(function(command) {
             // Remove trailing whitespaces
@@ -822,28 +939,31 @@ var lw = lw || {};
             commandChar   = command[0].toUpperCase();
             commandParams = command.substr(1).trim();
 
+            // Extract all numbers from arguments string
+            commandParams = this.matchNumbers(commandParams) || [];
+            commandParams = commandParams.map(parseFloat);
+
             // Get internal parser from command char (_path_M, _path_Z, etc...)
             commandParser = this['_path_' + commandChar];
-
-            // No parser...
-            if (! commandParser) {
-                this.warning('Unsupported command:', commandChar, tag);
-                return false;
-            }
 
             // Set tag move mode
             tag.setRelative(commandChar !== command[0]);
 
-            // Split command string on whitespaces or commas
-            commandParams = commandParams.split(/[\s,]+/);
+            // Trace path
+            if (commandParser) {
+                //tag.openPath();
+                commandParser.call(this, tag, commandParams);
+                //tag.endPath();
+            }
+            else {
+                this.warning('Unsupported command:', commandChar, tag);
+            }
 
-            // Call command parser
-            //this.debug(commandChar, commandParams);
-            commandParser.call(this, tag, commandParams);
-
+            // Update last command and params
+            this.lastCommandChar   = commandChar;
+            this.lastCommandParams = commandParams;
         }, this);
 
-        // Close last path
         tag.endPath();
 
         // Handled tag
@@ -871,8 +991,8 @@ var lw = lw || {};
         // Get the points attribute value
         var pointsAttr = tag.getAttr('points');
 
-        // Split points string on whitespaces or commas
-        var points = pointsAttr.split(/[\s,]+/);
+        // Extract all numbers from arguments string
+        var points = this.matchNumbers(pointsAttr);
 
         // Trace path
         tag.openPath();
@@ -888,10 +1008,7 @@ var lw = lw || {};
 
     lw.svg.Parser.prototype._polygon = function(tag) {
         // Handled like polyline
-        this._polyline(tag, true);
-
-        // Handled tag
-        return true;
+        return this._polyline(tag, true);
     };
 
     // -------------------------------------------------------------------------

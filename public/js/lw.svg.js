@@ -109,12 +109,17 @@ var lw = lw || {};
             tag.addMatrix([1, 0, 0, -1, 0, this.parser.document.height]);
             tag.applyMatrix();
 
-            tag.paths.map(function(path) {
-                if (tag.getAttr('fill', 'none') !== 'none') {
-                    object.add(this.drawShape(tag, path));
-                }
+            var traceLine  = false;
+            var traceShape = false;
 
-                object.add(this.drawLine(tag, path));
+            tag.paths.map(function(path) {
+                traceLine  = path.points.length > 1;
+                traceShape = path.points.length > 2;
+                traceShape &= tag.getAttr('fill', 'none') !== 'none';
+
+                traceShape && path.close();
+                traceShape && object.add(this.drawShape(tag, path));
+                traceLine  && object.add(this.drawLine(tag, path));
             }, this);
         }
 
