@@ -288,11 +288,11 @@ Rasterizer.prototype.rasterRow = function(y) {
                 isLaserOn = true;
               }
               if (lastFeed != speed || IsG1FSet != true) {
-                console.log("DIFF " + lastFeed + " " + speed)
+                // console.log("DIFF " + lastFeed + " " + speed)
                 this.result += 'G1 X{0} S{2} F{3}\n'.format(posx, gcodey, lastIntensity, speed);
                 IsG1FSet = true;
               } else {
-                console.log("SAME " + lastFeed + " " + speed)
+                // console.log("SAME " + lastFeed + " " + speed)
                 this.result += 'G1 X{0} S{2}\n'.format(posx, gcodey, lastIntensity);
               }
               // if (laseroff) {
