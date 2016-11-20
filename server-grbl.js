@@ -240,16 +240,19 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     if (power > 0) {
       if (!laserTestOn) {
         jumpQ('M3S' + power);
+        send1Q();
         laserTestOn = true;
         if (duration > 0) {
           stopLaserTest = setInterval( function() {
             jumpQ('M5S0');
+            send1Q();
             clearInterval(stopLaserTest);
             laserTestOn = false;
           }, duration);
         }
       } else {
         jumpQ('M5S0');
+        send1Q();
         laserTestOn = false;
       }
     }
