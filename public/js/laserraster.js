@@ -37,6 +37,8 @@ var lasermultiply;
 var homingseq;
 var endgcode;
 var isLaserOn = false;
+var speed;
+var IsG1FSet = false;
 
 // add MAP function to the Numbers function
 Number.prototype.map = function(in_min, in_max, out_min, out_max) {
@@ -251,14 +253,12 @@ Rasterizer.prototype.rasterRow = function(y) {
         this.megaPixel++;
 
         // The Luma grayscale of the pixel
-	var alpha = pixels[x*4+3]/255.0;                                                   // 0-1.0
-    var lumaGray = (pixels[x*4]*0.3 + pixels[x*4+1]*0.59 + pixels[x*4+2]*0.11)/255.0;  // 0-1.0
-	lumaGray = alpha * lumaGray + (1-alpha)*1.0;
-	this.grayLevel = lumaGray.toFixed(3);
-	this.graLevel = lumaGray.toFixed(1);
+      	var alpha = pixels[x*4+3]/255.0;                                                   // 0-1.0
+        var lumaGray = (pixels[x*4]*0.3 + pixels[x*4+1]*0.59 + pixels[x*4+2]*0.11)/255.0;  // 0-1.0
+       	lumaGray = alpha * lumaGray + (1-alpha)*1.0;
+      	this.grayLevel = lumaGray.toFixed(3);
+      	this.graLevel = lumaGray.toFixed(1);
 
-
-	var speed = lastFeed;
         if (lastGrey != this.grayLevel) {
             intensity = this.figureIntensity();
             speed = this.figureSpeed(lastGrey);
@@ -287,12 +287,13 @@ Rasterizer.prototype.rasterRow = function(y) {
                 }
                 isLaserOn = true;
               }
-              if (lastFeed == speed) {
-                // console.log("SAME " + lastFeed + " " + speed)
-                this.result += 'G1 X{0} S{2}\n'.format(posx, gcodey, lastIntensity);
-              } else {
-                // console.log("DIFF " + lastFeed + " " + speed)
+              if (lastFeed != speed || IsG1FSet != true) {
+                console.log("DIFF " + lastFeed + " " + speed)
                 this.result += 'G1 X{0} S{2} F{3}\n'.format(posx, gcodey, lastIntensity, speed);
+                IsG1FSet = true;
+              } else {
+                console.log("SAME " + lastFeed + " " + speed)
+                this.result += 'G1 X{0} S{2}\n'.format(posx, gcodey, lastIntensity);
               }
               // if (laseroff) {
               //     this.result += laseroff
@@ -356,6 +357,7 @@ Rasterizer.prototype.rasterInterval = function() {
 
 Rasterizer.prototype.onRasterLoaded = function() {
         console.log("Inside onRasterLoaded")
+        console.log(this)
         // Iterate through the Pixels asynchronously
 
         // spotSize1 = size in mm that each physical pixel needs to fill
@@ -396,6 +398,7 @@ Rasterizer.prototype.onFinish = function() {
         this.config.completed(this.config.objectid);
     }
     console.groupEnd()
+    IsG1FSet = false;
 };
 
 // This is evaluated inside the paperscript scope, so this
