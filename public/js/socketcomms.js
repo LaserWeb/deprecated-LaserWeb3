@@ -480,3 +480,18 @@ function override(param, value) {
     printLog('You have to Connect to a machine First!', errorcolor, "usb");
   }
 }
+
+function laserTest(power, duration) {
+  if (isConnected) {
+    var connectVia = $('#connectVia').val();
+    if (connectVia === "USB") {
+      socket.emit('laserTest', power + ',' + duration);
+    } else if (connectVia === "Ethernet") {
+      // needs to be programmed
+    } else if (connectVia === "ESP8266") {
+      // needs to be programmed
+    }
+  } else {
+    printLog('You have to Connect to a machine First!', errorcolor, "usb");
+  }
+}

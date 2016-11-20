@@ -40,9 +40,10 @@ var chalk = require('chalk');
 var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, queryLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
-var controllerVersion = 'smoothie';
+var firmware = 'smoothie';
 var feedOverride = 100;
 var spindleOverride = 100;
+var laserTestOn = false;
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -187,6 +188,34 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       connections[i].emit('spindleOverride', spindleOverride);
     }
     console.log('Spindle (Laser) Override ' + spindleOverride.toString() + '%');
+  });
+
+  socket.on('laserTest', function(data) { // Laser Test Fire
+    data = data.split(',');
+    var power = parseInt(data[0]);
+    var duration = parseInt(data[1]);
+    console.log('laserTest: ', 'Power ' + power + ', Duration ' + duration);
+    if (power > 0) {
+      if (!laserTestOn) {
+        port.write('fire ' + power);
+        console.log('Fire ' + power);
+        laserTestOn = true;
+        if (duration > 0) {
+          port.write('G4 P' + duration);
+          port.write('fire Off');
+          console.log('Fire Off');
+          laserTestOn = false;
+        }
+      } else {
+        port.write('fire Off');
+        console.log('Fire Off');
+        laserTestOn = false;
+      }
+    }
+  });
+  
+  socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
+    socket.emit("firmware", firmware);
   });
 
   socket.on('refreshPorts', function(data) { // Or when asked

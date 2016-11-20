@@ -13,7 +13,16 @@ function initJog() {
     G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F2000\n
     G90\n`
     sendGcode(moves)
-});
+  });
+
+  $('#lT').on('click', function() {
+    if (isConnected) {
+      var power = $('#lasertestpower').val();
+      var duration = $('#lasertestduration').val();
+      console.log('Laser Test', power + ', ' + duration);
+      laserTest(power, duration);
+    }
+  });
 
     $('#xP').on('click', function() {
        if (isConnected) {

@@ -37,11 +37,13 @@ var qs = require('querystring');
 var util = require('util');
 var http = require('http');
 var chalk = require('chalk');
-var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, queryLoop, infoLoop, queueCounter, connections = [];
+var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, connections = [];
+var queryLoop, infoLoop, queueCounter;
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
 var firmware = 'grbl';
-
+var laserTestOn = false, stopLaserTest;
+    
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log(chalk.green(' '));
@@ -96,7 +98,7 @@ function handler (req, res) {
 }
 
 function ConvChar( str ) {
-  var c = {'<':'<', '>':'>', '&':'&', '"':'"', "'":"'", '#':'#' };
+  var c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;', '#':'&#035;' };
   return str.replace( /[<&>'"#]/g, function(s) { return c[s]; } );
 }
 
@@ -213,6 +215,29 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     }
   });
 
+  socket.on('laserTest', function(data) { // Laser Test Fire
+    data = data.split(',');
+    var power = parseInt(data[0]);
+    var duration = parseInt(data[1]);
+    console.log('laserTest: ', 'Power ' + power + ', Duration ' + duration);
+    if (power > 0) {
+      if (!laserTestOn) {
+        jumpQ('M3S' + power);
+        laserTestOn = true;
+        if (duration > 0) {
+          stopLaserTest = setInterval( function() {
+            jumpQ('M5S0');
+            clearInterval(stopLaserTest);
+            laserTestOn = false;
+          }, duration);
+        }
+      } else {
+        jumpQ('M5S0');
+        laserTestOn = false;
+      }
+    }
+  });
+  
   socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
     socket.emit("firmware", firmware);
   });
@@ -313,9 +338,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     } else {
       socket.emit("connectStatus", 'resume:'+port.path);
       port.write("?\n"); // Lets check if its LasaurGrbl?
-      port.write("M115\n"); // Lets check if its Marlin?
-      port.write("version\n"); // Lets check if its Smoothieware?
-      port.write("$fb\n"); // Lets check if its TinyG
+      //port.write("M115\n"); // Lets check if its Marlin?
+      //port.write("version\n"); // Lets check if its Smoothieware?
+      //port.write("$fb\n"); // Lets check if its TinyG
     }
   });
 }
