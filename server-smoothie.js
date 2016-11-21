@@ -333,7 +333,7 @@ function jumpQ(gcode) {
 function send1Q() {
   if (gcodeQueue.length > 0 && !blocked && !paused) {
     var gcode = gcodeQueue.shift();
-    // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth
+    // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
     gcode = gcode.replace(/\s+/g, '');
     console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
     lastSent = gcode;
