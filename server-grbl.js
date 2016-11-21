@@ -41,7 +41,7 @@ var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, bl
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
 var firmware = 'grbl';
-var laserTestOn = false, stopLaserTest;
+var laserTestOn = false;
     
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -132,7 +132,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.write("M5\n");  //  Hopefully M5!
       console.log('STOPPING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
     }
-    io.sockets.emit("connectStatus", 'stopped:'+port.path);
+    laserTestOn = false;
+	io.sockets.emit("connectStatus", 'stopped:'+port.path);
   });
 
   socket.on('pause', function(data) {
@@ -155,7 +156,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     if (data !== 0) {
       port.write(data+"\n");
     } else {
-      port.write("M3S0\n");	// Realy? This activates the Laser with the last S value, even if the Laser was off before pause! ->S0 for security
+      port.write("M3S0\n");	// ->S0 for security reason
 	}
     io.sockets.emit("connectStatus", 'unpaused:'+port.path);
     paused = false;
@@ -239,16 +240,15 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     console.log('laserTest: ', 'Power ' + power + ', Duration ' + duration);
     if (power > 0) {
       if (!laserTestOn) {
-        jumpQ('M3S' + power);
-        send1Q();
-        laserTestOn = true;
-        if (duration > 0) {
-          stopLaserTest = setInterval( function() {
-            jumpQ('M5S0');
-            send1Q();
-            clearInterval(stopLaserTest);
+        if (duration >= 0) {
+          addQ('M3S' + power);
+          laserTestOn = true;
+          if (duration > 0) {
+            addQ('G4 P' + duration / 1000);
+            addQ('M5S0');
             laserTestOn = false;
-          }, duration);
+          }
+          send1Q();
         }
       } else {
         jumpQ('M5S0');
@@ -273,9 +273,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
     io.sockets.emit("connectStatus", 'closed:'+port.path);
     gcodeQueue.length = 0;	// dump the queye
-	port.close();
-	paused = false;
-	blocked = false;
+    port.close();
+    paused = false;
+    blocked = false;
   });
 
   socket.on('areWeLive', function(data) { 		// Report active serial port to web-client
