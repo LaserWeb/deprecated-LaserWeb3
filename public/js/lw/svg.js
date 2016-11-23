@@ -113,11 +113,10 @@ var lw = lw || {};
             var traceShape = false;
 
             tag.paths.map(function(path) {
-                traceLine  = path.points.length > 1;
-                traceShape = path.points.length > 2;
+                traceLine  = path.length > 1;
+                traceShape = path.length > 2;
+                traceShape &= path.isClosed();
                 traceShape &= tag.getAttr('fill', 'none') !== 'none';
-
-                traceShape && path.close();
                 traceShape && object.add(this.drawShape(tag, path));
                 traceLine  && object.add(this.drawLine(tag, path));
             }, this);
@@ -139,23 +138,32 @@ var lw = lw || {};
         settings.onObject = settings.onObject || null;
         settings.onError  = settings.onError  || null;
 
-        // Register settings
-        this.settings = settings;
-
         try {
             // Parse the SVG file (raw XML)
             this.logStart('Parsing SVG: ' + name);
-            this.parser = new lw.svg.Parser();
-            var svg     = this.parser.parse(file);
+
+            // Create parser object and register callbacks
+            this.parser = new lw.svg.Parser(file, {
+                onParse: function(tag) {
+                    lw.svg.info('parse tag:', tag);
+                },
+                onError: function(error, tag) {
+                    lw.svg.warning('parse error:', error.message, tag);
+                }
+            });
+
+            // Run the parser
+            var rootTag = this.parser.parse();
+
             this.logEnd();
 
             this.logStart('Drawing SVG: ' + name);
-            var object = lw.svg.drawTag(svg);
+            var object = lw.svg.drawTag(rootTag);
         }
         catch (error) {
             // Call user callback
-            if (this.settings.onError) {
-                this.settings.onError(error);
+            if (settings.onError) {
+                settings.onError(error);
 
                 // Return error object
                 return error;
@@ -169,8 +177,8 @@ var lw = lw || {};
         }
 
         // Call user callback
-        if (this.settings.onObject) {
-            this.settings.onObject(object);
+        if (settings.onObject) {
+            settings.onObject(object);
         }
 
         // Return object
