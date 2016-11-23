@@ -17,7 +17,7 @@ var lw = lw || {};
         this.settings          = settings          || {};
         this.settings.onParse  = settings.onParse  || null;
         this.settings.onError  = settings.onError  || null;
-        this.settings.excludes = settings.excludes || ['#text', '#comment', 'title', 'desc', 'defs'];
+        this.settings.excludes = settings.excludes || ['#text', '#comment', 'title', 'desc', 'defs', 'text', 'use'];
 
         // Load SVG contents
         svg && this.load(svg);
@@ -874,6 +874,98 @@ var lw = lw || {};
 
         // Trace the line
         return this.addPoints(bezier.trace(), false);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._path_Q = function(points) {
+        var p1 = this.tag.point;
+        var rl = this.currentCommand.relative;
+
+        var x1 = points[0] + (rl ? p1.x : 0);
+        var y1 = points[1] + (rl ? p1.y : 0);
+        var x  = points[2] + (rl ? p1.x : 0);
+        var y  = points[3] + (rl ? p1.y : 0);
+
+        this.pathData.x1 = x1;
+        this.pathData.y1 = y1;
+
+        var p2 = new lw.svg.Point(x1, y1);
+        var p3 = new lw.svg.Point(x, y);
+
+        //console.log('C', p1, p2, p3, p4);
+
+        // p1  : starting point
+        // p2  : control point
+        // p3  : end point
+        var bezier = new lw.svg.trace.QuadricBezier({
+            p1: p1, p2: p2, p3: p3
+        });
+
+        // Trace the line
+        return this.addPoints(bezier.trace(), false);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._path_T = function(points) {
+        var p1 = this.tag.point;
+        var rl = this.currentCommand.relative;
+
+        var x1 = p1.x;
+        var y1 = p1.y;
+
+        if (this.lastCommand.type === 'Q' || this.lastCommand.type === 'T') {
+            x1 -= this.pathData.x1 - x1;
+            y1 -= this.pathData.y1 - y1;
+        }
+
+        var x = points[0] + (rl ? p1.x : 0);
+        var y = points[1] + (rl ? p1.y : 0);
+
+        this.pathData.x1 = x1;
+        this.pathData.y1 = y1;
+
+        var p2 = new lw.svg.Point(x1, y1);
+        var p3 = new lw.svg.Point(x, y);
+
+        //console.log('C', p1, p2, p3, p4);
+
+        // p1  : starting point
+        // p2  : control point
+        // p3  : end point
+        var bezier = new lw.svg.trace.QuadricBezier({
+            p1: p1, p2: p2, p3: p3
+        });
+
+        // Trace the line
+        return this.addPoints(bezier.trace(), false);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._path_A = function(points) {
+        // var p1    = this.tag.point;
+        // var rx    = points[0];
+        // var ry    = points[1];
+        // var angle = points[2];
+        // var large = !!points[3];
+        // var sweep = !!points[4];
+        // var p2    = new lw.svg.Point(points[5], points[6]);
+        var rl  = this.currentCommand.relative;
+        var p1  = this.tag.point;
+        var arc = new lw.svg.trace.Arc({
+            p1   : p1,
+            rx   : points[0],
+            ry   : points[1],
+            angle: points[2],
+            large: !!points[3],
+            sweep: !!points[4],
+            p2   : new lw.svg.Point(points[5] + (rl ? p1.x : 0), points[6] + (rl ? p1.y : 0))
+        });
+
+        // Trace the line
+        return this.addPoints(arc.trace(), false);
     };
 
     // -------------------------------------------------------------------------

@@ -4,8 +4,8 @@ var lw = lw || {};
 (function () {
     'use strict';
 
-    var _PI2_        = 2 * Math.PI;
-    var _DEG_TO_RAD_ = Math.PI / 180;
+    var MATH_PI_2  = 2 * Math.PI;
+    var DEG_TO_RAD = Math.PI / 180;
 
     // =========================================================================
 
@@ -209,7 +209,7 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Tag.prototype.rotate = function(angle, x, y) {
-        angle = angle * _DEG_TO_RAD_;
+        angle = angle * DEG_TO_RAD;
         (arguments.length == 2) && this.addMatrix([1, 0, 0, 1, x, y]);
         this.addMatrix([Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0]);
         (arguments.length == 2) && this.addMatrix([1, 0, 0, 1, -x, -y]);
@@ -224,13 +224,13 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Tag.prototype.skewX = function(angle) {
-        this.addMatrix([1, 0, Math.tan(angle * _DEG_TO_RAD_), 1, 0, 0]);
+        this.addMatrix([1, 0, Math.tan(angle * DEG_TO_RAD), 1, 0, 0]);
     };
 
     // -------------------------------------------------------------------------
 
     lw.svg.Tag.prototype.skewY = function(angle) {
-        this.addMatrix([1, Math.tan(angle * _DEG_TO_RAD_), 0, 1, 0, 0]);
+        this.addMatrix([1, Math.tan(angle * DEG_TO_RAD), 0, 1, 0, 0]);
     };
 
     // -------------------------------------------------------------------------
