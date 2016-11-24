@@ -881,7 +881,30 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Parser.prototype._paths = function(type, num, points) {
+        if (points.length > num) {
+            var result = true;
+
+            while(result && points.length) {
+                result = this['_path_' + type](points.splice(0, num));
+            }
+
+            return result;
+        }
+
+        return null;
+    };
+
+    // -------------------------------------------------------------------------
+
     lw.svg.Parser.prototype._path_C = function(points) {
+        // Multiple paths
+        var result = this._paths('C', 6, points);
+        if (result !== null) {
+            return result;
+        }
+
+        // Single path
         var p1 = this.tag.point;
         var rl = this.currentCommand.relative;
 
@@ -916,6 +939,13 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._path_S = function(points) {
+        // Multiple paths
+        var result = this._paths('S', 4, points);
+        if (result !== null) {
+            return result;
+        }
+
+        // Single path
         var p1 = this.tag.point;
         var rl = this.currentCommand.relative;
 
@@ -956,6 +986,13 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._path_Q = function(points) {
+        // Multiple paths
+        var result = this._paths('Q', 4, points);
+        if (result !== null) {
+            return result;
+        }
+
+        // Single path
         var p1 = this.tag.point;
         var rl = this.currentCommand.relative;
 
@@ -986,6 +1023,13 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._path_T = function(points) {
+        // Multiple paths
+        var result = this._paths('T', 2, points);
+        if (result !== null) {
+            return result;
+        }
+
+        // Single path
         var p1 = this.tag.point;
         var rl = this.currentCommand.relative;
 
@@ -1022,6 +1066,13 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._path_A = function(points) {
+        // Multiple paths
+        var result = this._paths('A', 7, points);
+        if (result !== null) {
+            return result;
+        }
+
+        // Single path
         // var p1    = this.tag.point;
         // var rx    = points[0];
         // var ry    = points[1];
