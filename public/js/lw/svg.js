@@ -19,6 +19,9 @@ var lw = lw || {};
     lw.svg.createColor = function(color) {
         // TODO ...
         //return new THREE.Color('red');
+        if (color === 'none') {
+            color = 'black';
+        }
         color = new THREE.Color(color);
         var r = color.r * 255;
         var g = color.g * 255;
