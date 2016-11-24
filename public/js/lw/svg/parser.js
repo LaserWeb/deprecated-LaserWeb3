@@ -660,22 +660,66 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._circle = function() {
-        // Skipped tag
-        return false;
+        var r = this.tag.getAttr('r', 0);
+
+        if (r <= 0) {
+            // Skipped tag
+            return false;
+        }
+
+        var cx = this.tag.getAttr('cx', 0);
+        var cy = this.tag.getAttr('cy', 0);
+
+        this._path([
+            'M', cx-r, cy,
+            'A', r, r, 0, 0, 0, cx, cy+r,
+            'A', r, r, 0, 0, 0, cx+r, cy,
+            'A', r, r, 0, 0, 0, cx, cy-r,
+            'A', r, r, 0, 0, 0, cx-r, cy,
+            'Z'
+        ]);
+
+        // Handled tag
+        return true;
     };
 
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._ellipse = function() {
-        // Skipped tag
-        return false;
+        var rx = this.tag.getAttr('rx', 0);
+        var ry = this.tag.getAttr('ry', 0);
+
+        if (rx <= 0 || ry <= 0) {
+            // Skipped tag
+            return false;
+        }
+        
+        var cx = this.tag.getAttr('cx', 0);
+        var cy = this.tag.getAttr('cy', 0);
+
+        this._path([
+            'M', cx-rx, cy,
+            'A', rx, ry, 0, 0, 0, cx, cy+ry,
+            'A', rx, ry, 0, 0, 0, cx+rx, cy,
+            'A', rx, ry, 0, 0, 0, cx, cy-ry,
+            'A', rx, ry, 0, 0, 0, cx-rx, cy,
+            'Z'
+        ]);
+
+        // Handled tag
+        return true;
     };
 
     // -------------------------------------------------------------------------
 
-    lw.svg.Parser.prototype._path = function() {
+    lw.svg.Parser.prototype._path = function(path) {
+        // Provided path
+        if (path && typeof path !== 'string') {
+            path = path.join(' ');
+        }
+
         // Get the paths data attribute value
-        var dAttr = this.tag.getAttr('d', null);
+        var dAttr = path || this.tag.getAttr('d', null);
 
         if (! dAttr) {
             // Skipped tag
