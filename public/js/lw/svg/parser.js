@@ -12,12 +12,13 @@ var lw = lw || {};
         this.document = null; // SVG document info { width, height, viewBox }
         this.tags     = null; // lw.svg.Tag objects hierarchy
         this.tag      = null; // Current lw.svg.Tag object
+        this.defs     = null; // Defined (DOM) nodes list by id
 
         // Defaults settings
         this.settings          = settings          || {};
         this.settings.onParse  = settings.onParse  || null;
         this.settings.onError  = settings.onError  || null;
-        this.settings.excludes = settings.excludes || ['#text', '#comment', 'title', 'desc', 'defs', 'text', 'use'];
+        this.settings.excludes = settings.excludes || ['#text', '#comment', 'title', 'desc', 'text'];
 
         // Load SVG contents
         svg && this.load(svg);
@@ -92,6 +93,7 @@ var lw = lw || {};
     lw.svg.Parser.prototype.parse = function(svg) {
         // Reset tags collection
         this.tags = null;
+        this.defs = {};
 
         // No SVG contents
         if (! svg && ! this.svg) {
@@ -566,6 +568,42 @@ var lw = lw || {};
 
         // Handled tag
         return true;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._defs = function() {
+        this.tag.node.childNodes.forEach(function(childNode) {
+            if (childNode.id) {
+                this.defs[childNode.id] = childNode;
+            }
+        }, this);
+
+        // Skipped tag
+        return false;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Parser.prototype._use = function() {
+        var target = this.tag.getAttr('xlink:href').replace(/^#/, '');
+        var node   = this.defs[target];
+
+        if (! node) {
+            return this.error('Undefined reference:' + target);
+        }
+
+        var parent = this.tag.parent;
+        var tag    = this.parseNode(node, parent);
+
+        if (! tag) {
+            return this.error('Empty reference:' + target);
+        }
+
+        parent.addChild(tag);
+
+        // Skipped tag
+        return false;
     };
 
     // -------------------------------------------------------------------------
