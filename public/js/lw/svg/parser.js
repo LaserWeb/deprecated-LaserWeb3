@@ -613,8 +613,8 @@ var lw = lw || {};
         var h  = this.tag.getAttr('height');
         var x  = this.tag.getAttr('x', 0);
         var y  = this.tag.getAttr('y', 0);
-        var rx = this.tag.getAttr('rx', 0);
-        var ry = this.tag.getAttr('ry', 0);
+        var rx = this.tag.getAttr('rx', null);
+        var ry = this.tag.getAttr('ry', null);
 
         // Simple rect
         if (!rx && !ry) {
@@ -622,26 +622,38 @@ var lw = lw || {};
             return this._path(['M', x, y, 'h', w, 'v', h, 'h', -w, 'z']);
         }
 
-        // TODO rounded corners
-        return false;
-
-        // A negative value is an error
-        if (rx < 0 || ry < 0) {
-            // Skip tag
-            return false;
-        }
-
         // If a properly specified value is provided for ‘rx’, but not for ‘ry’,
         // then set both rx and ry to the value of ‘rx’ and vis-vera...
         if (rx === null) rx = ry;
         if (ry === null) ry = rx;
+
+        // A negative value is an error
+        if (rx === null || rx === null || rx < 0 || ry < 0) {
+            // Skip tag
+            return this.error('Negative value for "rx/ry" not allowed');
+        }
 
         // If rx is greater than half of ‘width’, then set rx to half of ‘width’.
         // If ry is greater than half of ‘height’, then set ry to half of ‘height’.
         if (rx > w / 2) rx = w / 2;
         if (ry > h / 2) ry = h / 2;
 
-        // ...
+        var dx = rx * 2;
+        var dy = ry * 2;
+
+        // Handled tag
+        return this._path([
+            'M', x + rx, y,
+            'h', w - dx,
+            'c', rx, 0, rx, ry, rx, ry,
+            'v', h - dy,
+            'c', 0, ry, -rx, ry, -rx, ry,
+            'h', -w + dx,
+            'c', -rx, 0, -rx, -ry, -rx, -ry,
+            'v', -h + dy,
+            'c', 0, 0, 0, -ry, rx, -ry,
+            'z'
+        ]);
     };
 
     // -------------------------------------------------------------------------
