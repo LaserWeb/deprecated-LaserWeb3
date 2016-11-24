@@ -578,27 +578,24 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._line = function() {
-        // Trace path
-        this.newPath();
-        this.addPoints([
-            this.tag.getAttr('x1'), this.tag.getAttr('y1'),
-            this.tag.getAttr('x2'), this.tag.getAttr('y2')
-        ], false);
-
         // Handled tag
-        return true;
+        return this._path([
+            'M', this.tag.getAttr('x1'), this.tag.getAttr('y1'),
+            'L', this.tag.getAttr('x2'), this.tag.getAttr('y2')
+        ]);
     };
 
     // -------------------------------------------------------------------------
 
     lw.svg.Parser.prototype._polyline = function(close) {
-        // Trace path
-        this.newPath();
-        this.addPoints(this.tag.getAttr('points'), false);
-        close && this.closePath();
+        var points = this.tag.getAttr('points');
+        var path   = ['M', points.shift(), points.shift(), 'L'];
+
+        path = path.concat(points);
+        close && path.push('Z');
 
         // Handled tag
-        return true;
+        return this._path(path);
     };
 
     // -------------------------------------------------------------------------
@@ -621,18 +618,8 @@ var lw = lw || {};
 
         // Simple rect
         if (!rx && !ry) {
-            // Trace path
-            this.newPath();
-            this.addPoints([
-                x    , y,
-                x + w, y,
-                x + w, y + h,
-                x    , y + h
-            ], false);
-            this.closePath();
-
             // Handled tag
-            return true;
+            return this._path(['M', x, y, 'h', w, 'v', h, 'h', -w, 'z']);
         }
 
         // TODO rounded corners
@@ -670,7 +657,8 @@ var lw = lw || {};
         var cx = this.tag.getAttr('cx', 0);
         var cy = this.tag.getAttr('cy', 0);
 
-        this._path([
+        // Handled tag
+        return this._path([
             'M', cx-r, cy,
             'A', r, r, 0, 0, 0, cx, cy+r,
             'A', r, r, 0, 0, 0, cx+r, cy,
@@ -678,9 +666,6 @@ var lw = lw || {};
             'A', r, r, 0, 0, 0, cx-r, cy,
             'Z'
         ]);
-
-        // Handled tag
-        return true;
     };
 
     // -------------------------------------------------------------------------
@@ -693,11 +678,12 @@ var lw = lw || {};
             // Skipped tag
             return false;
         }
-        
+
         var cx = this.tag.getAttr('cx', 0);
         var cy = this.tag.getAttr('cy', 0);
 
-        this._path([
+        // Handled tag
+        return this._path([
             'M', cx-rx, cy,
             'A', rx, ry, 0, 0, 0, cx, cy+ry,
             'A', rx, ry, 0, 0, 0, cx+rx, cy,
@@ -705,9 +691,6 @@ var lw = lw || {};
             'A', rx, ry, 0, 0, 0, cx-rx, cy,
             'Z'
         ]);
-
-        // Handled tag
-        return true;
     };
 
     // -------------------------------------------------------------------------
