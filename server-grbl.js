@@ -43,6 +43,9 @@ var request = require('request'); // proxy for remote webcams
 var firmware = 'grbl';
 var laserTestOn = false;
     
+const GRBL_RX_BUFFER_SIZE = 128;
+var grblBufferSize = [];
+
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log(chalk.green(' '));
@@ -96,12 +99,6 @@ function handler (req, res) {
   }
 }
 
-/*
-function ConvChar( str ) {
-  var c = {'<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;', "'":'&#039;', '#':'&#035;' };
-  return str.replace( /[<&>'"#]/g, function(s) { return c[s]; } );
-}
-*/
 
 // Websocket <-> Serial
 io.sockets.on('connection', handleConnection);
@@ -121,17 +118,21 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
   socket.on('stop', function(data) {
     paused = true;
+    port.write(0x18);
     gcodeQueue.length = 0;	// dump the queye
+    grblBufferSize.length = 0;	// dump bufferSizes
     blocked = false;
     paused = false;
     console.log(chalk.red('STOP'));
+    /*
     if (data !== 0) {
-      port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before pausing... Probably safer (;
+      jumpQ(data); // Ui sends the Laser Off command to us if configured, so lets turn laser off before pausing... Probably safer (;
       console.log('STOPPING:  Sending Laser Off Command as ' + data);
     } else {
-      port.write("M5\n");  //  Hopefully M5!
+      jumpQ("M5");  //  Hopefully M5!
       console.log('STOPPING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
     }
+    */
     laserTestOn = false;
 	io.sockets.emit("connectStatus", 'stopped:'+port.path);
   });
@@ -140,6 +141,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     //port.write('!');	// Send feed hold to grbl => works when grbl stopps laser on feed hold (not jet)!!
     paused = true;
     console.log(chalk.red('PAUSE'));
+    port.write('!');    // Send hold command
+    /*
     if (data !== 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before pausing... Probably safer (;
       console.log('PAUSING:  Sending Laser Off Command as ' + data);
@@ -147,17 +150,21 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.write("M5\n");  //  Hopefully M5!
       console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
     }
+    */
     io.sockets.emit("connectStatus", 'paused:'+port.path);
   });
 
   socket.on('unpause', function(data) {
     //port.write('~');	// Send feed hold to grbl
     console.log(chalk.red('UNPAUSE'));
+    port.write('~');    // Send resume command
+    /*
     if (data !== 0) {
       port.write(data+"\n");
     } else {
       port.write("M3S0\n");	// ->S0 for security reason
 	}
+    */
     io.sockets.emit("connectStatus", 'unpaused:'+port.path);
     paused = false;
     send1Q();
@@ -251,7 +258,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           send1Q();
         }
       } else {
-        jumpQ('M5S0');
+        addQ('M5S0');
         send1Q();
         laserTestOn = false;
       }
@@ -326,7 +333,11 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         console.log('Recv: ' + data);
         if (data.indexOf("ok") === 0) { // Got an OK so we are clear to send
 		  blocked = false;
+          grblBufferSize.shift();
           send1Q();
+        }
+        if (data.indexOf("error") === 0) {
+          grblBufferSize.shift();
         }
         io.sockets.emit("data", data);
       });
@@ -348,12 +359,28 @@ function jumpQ(gcode) {
   gcodeQueue.unshift(gcode);
 }
 
+function grblBufferSpace() {
+  var total = 0;
+  for(var i=0,n=grblBufferSize.length; i<n; ++i) {
+    total += grblBufferSize[i];
+  }
+  return GRBL_RX_BUFFER_SIZE - total;
+}
+
 function send1Q() {
-  if (gcodeQueue.length > 0 && !blocked && !paused) {
+  while (gcodeQueue.length > 0 && !blocked && !paused) {
     var gcode = gcodeQueue.shift();
-    console.log('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
     lastSent = gcode;
-    port.write(gcode + '\n');
-	blocked = true;
+    var spaceLeft = grblBufferSpace();
+    var gcodeLen = gcode.length;
+    //console.log('BufferSpace: ' + spaceLeft + ' gcodeLen: ' + gcodeLen);
+    if (gcodeLen <= spaceLeft) {
+      console.log('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
+      grblBufferSize.push(gcodeLen);
+      port.write(gcode + '\n');
+    } else {
+      gcodeQueue.unshift(gcode);
+      blocked = true;
+    }
   }
 }
