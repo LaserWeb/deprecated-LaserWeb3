@@ -824,6 +824,14 @@ var lw = lw || {};
             return false;
         }
 
+        // Mark path holes
+        this.tag.holes = [];
+        this.tag.paths.forEach(function(path) {
+            var dir = path.getDirection(true);
+            path.isHole = (dir === -1) && path.isClosed();
+            path.isHole && this.tag.holes.push(path);
+        }, this);
+
         // Handled tag
         return true;
     };
