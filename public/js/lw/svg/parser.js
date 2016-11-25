@@ -479,8 +479,14 @@ var lw = lw || {};
 
             type = transform[0].trim();
 
+            // Quik hack 1/2
+            var func = type;
+            if (func === 'matrix') {
+                func = 'addMatrix';
+            }
+
             // Get tag transform method
-            var tagTransform = this.tag[type];
+            var tagTransform = this.tag[func];
 
             if (typeof tagTransform !== 'function') {
                 return this.error('Unsupported transform type "' + type  + '" in [' + transformAttr + ']');
@@ -492,6 +498,11 @@ var lw = lw || {};
             // Skip empty value
             if (! params.length) {
                 return this.error('Malformed  "' + type  + '" transform attribute value in [' + transformAttr + ']');
+            }
+
+            // Quik hack 2/2
+            if (func = 'addMatrix') {
+                params = [params];
             }
 
             // Call tag transform method like "tag.translate(param1, ..., paramN)"
