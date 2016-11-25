@@ -501,7 +501,7 @@ var lw = lw || {};
             }
 
             // Quik hack 2/2
-            if (func = 'addMatrix') {
+            if (func == 'addMatrix') {
                 params = [params];
             }
 
