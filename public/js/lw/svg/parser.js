@@ -292,6 +292,7 @@ var lw = lw || {};
         }, this)
 
         // Parse transform attribute
+        this.parseViewBoxAttr();
         this.parseTransformAttr();
     };
 
@@ -308,33 +309,34 @@ var lw = lw || {};
         // Filters
         switch (attr.nodeName) {
             // Range limit to [0 - 1]
-            case 'opacity'      :
-            case 'fillOpacity'  :
+            case 'opacity':
+            case 'fillOpacity':
             case 'strokeOpacity':
                 attrValue = this.normalizeTagAttrRange(attr, 0, 1);
             break;
 
             // Normalize points attribute
-            case 'points' :
+            case 'points':
+            case 'viewBox':
                 attrValue = this.normalizeTagAttrPoints(attr);
             break;
 
             // Normalize size unit -> to px
-            case 'x'  :
-            case 'y'  :
-            case 'x1'  :
-            case 'y1'  :
-            case 'x2'  :
-            case 'y2'  :
-            case 'r'  :
-            case 'rx'  :
-            case 'ry'  :
-            case 'cx'  :
-            case 'cy'  :
-            case 'width' :
-            case 'height' :
-            case 'fontSize' :
-            case 'strokeWidth' :
+            case 'x':
+            case 'y':
+            case 'x1':
+            case 'y1':
+            case 'x2':
+            case 'y2':
+            case 'r':
+            case 'rx':
+            case 'ry':
+            case 'cx':
+            case 'cy':
+            case 'width':
+            case 'height':
+            case 'fontSize':
+            case 'strokeWidth':
                 attrValue = this.normalizeTagAttrUnit(attr);
             break;
         }
@@ -500,6 +502,29 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Parser.prototype.parseViewBoxAttr = function() {
+        // Get viewBox attribute
+        var viewBoxAttr = this.tag.getAttr('viewBox', null);
+
+        // No viewBox...
+        if (viewBoxAttr === null) {
+            return null;
+        }
+
+        var width  = this.tag.getAttr('width', viewBoxAttr[2]);
+        var height = this.tag.getAttr('height', viewBoxAttr[3]);
+        var scaleX = width  / viewBoxAttr[2];
+        var scaleY = height / viewBoxAttr[3];
+
+        this.tag.scale(scaleX, scaleY);
+        this.tag.translate(-viewBoxAttr[0], -viewBoxAttr[1]);
+
+        this.tag.setAttr('width' , width);
+        this.tag.setAttr('height', height);
+    }
+
+    // -------------------------------------------------------------------------
+
     lw.svg.Parser.prototype.newPath = function() {
         this.tag.newPath();
     };
@@ -553,12 +578,14 @@ var lw = lw || {};
             height: height
         };
 
-        // Get and set document viewBox
+        // Get document viewBox or set default to document size
+        var viewBox = this.tag.getAttr('viewBox', [0, 0, width, height]);
+
         this.document.viewBox = {
-            x     : this.tag.getAttr('x', 0),
-            y     : this.tag.getAttr('y', 0),
-            width : this.tag.getAttr('width', width),
-            height: this.tag.getAttr('height', height)
+            x     : viewBox[0],
+            y     : viewBox[1],
+            width : viewBox[2],
+            height: viewBox[3]
         };
 
         // Check inkscape version

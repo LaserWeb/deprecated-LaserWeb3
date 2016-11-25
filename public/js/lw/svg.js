@@ -161,11 +161,11 @@ var lw = lw || {};
             // Run the parser
             var rootTag = this.parser.parse();
 
-            this.logEnd();
-
             // Flip Y coords and move UP by document height
             // (to set origin at bottom/left corners)
             rootTag.applyMatrix([1, 0, 0, -1, 0, this.parser.document.height]);
+
+            this.logEnd();
 
             this.logStart('Drawing SVG: ' + name);
             var object = lw.svg.drawTag(rootTag);
