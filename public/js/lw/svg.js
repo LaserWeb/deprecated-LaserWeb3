@@ -89,8 +89,13 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
-    lw.svg.drawShape = function(tag, path) {
-        var shape    = new THREE.Shape(path.points);
+    lw.svg.drawShape = function(tag, path, holes) {
+        var shape = new THREE.Shape(path.points);
+
+        holes && holes.forEach(function(hole) {
+            shape.holes.push(new THREE.Path(hole.points));
+        });
+
         var geometry = new THREE.ShapeGeometry(shape);
         var material = this.createSolidMaterial(tag);
 
@@ -107,20 +112,18 @@ var lw = lw || {};
         if (tag.paths.length) {
             this.info('draw:', tag);
 
-            // Flip Y coords and move UP by document height
-            // (to set origin at bottom/left corners)
-            tag.addMatrix([1, 0, 0, -1, 0, this.parser.document.height]);
-            tag.applyMatrix();
-
             var traceLine  = false;
             var traceShape = false;
 
-            tag.paths.map(function(path) {
+            var holes = tag.paths.filter(function(path) {
+                return path.isHole();
+            });
+
+            tag.paths.forEach(function(path) {
                 traceLine  = path.length > 1;
-                traceShape = path.length > 2;
-                traceShape &= path.isClosed();
+                traceShape = path.length > 2 && ! path.isHole();
                 traceShape &= tag.getAttr('fill', 'none') !== 'none';
-                traceShape && object.add(this.drawShape(tag, path));
+                traceShape && object.add(this.drawShape(tag, path, holes));
                 traceLine  && object.add(this.drawLine(tag, path));
             }, this);
         }
@@ -159,6 +162,10 @@ var lw = lw || {};
             var rootTag = this.parser.parse();
 
             this.logEnd();
+
+            // Flip Y coords and move UP by document height
+            // (to set origin at bottom/left corners)
+            rootTag.applyMatrix([1, 0, 0, -1, 0, this.parser.document.height]);
 
             this.logStart('Drawing SVG: ' + name);
             var object = lw.svg.drawTag(rootTag);

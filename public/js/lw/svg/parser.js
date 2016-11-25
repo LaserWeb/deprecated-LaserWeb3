@@ -594,12 +594,14 @@ var lw = lw || {};
         }
 
         var parent = this.tag.parent;
+        var matrix = this.tag.matrix;
         var tag    = this.parseNode(node, parent);
 
         if (! tag) {
             return this.error('Empty reference:' + target);
         }
 
+        tag.addMatrix(matrix);
         parent.addChild(tag);
 
         // Skipped tag
@@ -823,14 +825,6 @@ var lw = lw || {};
             this.clearPath();
             return false;
         }
-
-        // Mark path holes
-        this.tag.holes = [];
-        this.tag.paths.forEach(function(path) {
-            var dir = path.getDirection(true);
-            path.isHole = (dir === -1) && path.isClosed();
-            path.isHole && this.tag.holes.push(path);
-        }, this);
 
         // Handled tag
         return true;

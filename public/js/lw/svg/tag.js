@@ -27,7 +27,6 @@ var lw = lw || {};
         this.points    = [];
         this.length    = 0;
         this.direction = 0; // -1 = ccw, 0 = none, 1 = cw
-        this.isHole    = false;
     };
 
     // -------------------------------------------------------------------------
@@ -97,6 +96,12 @@ var lw = lw || {};
         }
 
         return this.direction;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Path.prototype.isHole = function(refresh) {
+        return this.getDirection(refresh) === -1 && this.isClosed();
     };
 
     // -------------------------------------------------------------------------
@@ -213,7 +218,8 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Tag.prototype.setMatrix = function(matrix) {
-        this.matrix = matrix || [1, 0, 0, 1, 0, 0];
+        this.matrix        = matrix || [1, 0, 0, 1, 0, 0];
+        this.matrixApplied = false;
     };
 
     // -------------------------------------------------------------------------
@@ -265,12 +271,14 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
-    lw.svg.Tag.prototype.applyMatrix = function() {
+    lw.svg.Tag.prototype.applyMatrix = function(matrix) {
         if (this.matrixApplied) {
             return null;
         }
 
-        this.paths.every(function(path) {
+        matrix && this.addMatrix(matrix);
+
+        this.paths.forEach(function(path) {
             path.transform(this.matrix);
         }, this);
 
@@ -278,7 +286,7 @@ var lw = lw || {};
         this.setMatrix(null);
 
         this.children.forEach(function(tag) {
-            tag.applyMatrix();
+            tag.applyMatrix(matrix);
         });
     };
 
