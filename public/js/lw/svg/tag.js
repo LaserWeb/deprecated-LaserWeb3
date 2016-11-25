@@ -24,8 +24,10 @@ var lw = lw || {};
     // =========================================================================
 
     lw.svg.Path = function() {
-        this.points = [];
-        this.length = 0;
+        this.points    = [];
+        this.length    = 0;
+        this.direction = 0; // -1 = ccw, 0 = none, 1 = cw
+        this.isHole    = false;
     };
 
     // -------------------------------------------------------------------------
@@ -67,6 +69,34 @@ var lw = lw || {};
         }
 
         return false;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.svg.Path.prototype.getDirection = function(refresh) {
+        // http://stackoverflow.com/a/1165943
+        // Sum over the edges, (x2 − x1)(y2 + y1).
+        // If the result is positive the curve is clockwise,
+        // if it's negative the curve is counter-clockwise.
+        if (! refresh && this.direction) {
+            return this.direction;
+        }
+
+        this.direction = 0;
+
+        var i, il, sum = 0, p2, p1 = this.getPoint(0);
+
+        for (var i = 1, il = this.points.length; i < il; i++) {
+            p2   = this.getPoint(i);
+            sum += (p2.x - p1.x) * (p2.y + p1.y);
+            p1   = p2;
+        }
+
+        if (sum) {
+            this.direction = sum < 0 ? -1 : 1;
+        }
+
+        return this.direction;
     };
 
     // -------------------------------------------------------------------------
