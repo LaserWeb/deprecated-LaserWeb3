@@ -139,7 +139,10 @@ var lw = lw || {};
 
         // Clone parent attributes
         if (this.parent) {
-            var protectedAttrs = ['id', 'transform', 'width', 'height', 'version', 'xmlns'];
+            var protectedAttrs = [
+                'id', 'transform', 'width', 'height', 'viewBox', 'version',
+                'xmlns', 'xmlns:xlink'
+            ];
 
             Object.keys(this.parent.attrs).forEach(function(attrName) {
                 // Do not copy protected properties
@@ -239,6 +242,7 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Tag.prototype.translate = function(x, y) {
+        y = y === undefined ? x : y;
         this.addMatrix([1, 0, 0, 1, x, y]);
     };
 
@@ -254,7 +258,8 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Tag.prototype.scale = function(x, y) {
-        this.addMatrix([x, 0, 0, (y || x), 0, 0]);
+        y = y === undefined ? x : y;
+        this.addMatrix([x, 0, 0, y, 0, 0]);
     };
 
     // -------------------------------------------------------------------------
