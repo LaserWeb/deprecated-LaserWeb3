@@ -138,6 +138,25 @@ function initSocket() {
 		}
 	});
 
+    
+	// reset feed override
+	$('#rX').on('click', function(ev) {
+		console.log("X zero");
+		sendGcode('G92 X0');
+	});
+
+	// reset feed override
+	$('#rY').on('click', function(ev) {
+		console.log("Y zero");
+		sendGcode('G92 Y0');
+	});
+
+	// reset feed override
+	$('#rZ').on('click', function(ev) {
+		console.log("Z zero");
+		sendGcode('G92 Z0');
+	});
+
 	// increase feed override
 	$('#iF').on('mousedown', function(ev) {
 		console.log("F+ mousedown");

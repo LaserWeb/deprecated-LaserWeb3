@@ -167,7 +167,7 @@ margin-top: 0px;
 
 .drolabel {
     display:inline-block;
-    background-color: #ffffff;
+    background-color: #dddddd;
     text-align: left;
     padding-left: 15px;
     margin-bottom: 3px;
@@ -177,6 +177,7 @@ margin-top: 0px;
     font-weight: bold;
     margin-left: 0px;
     margin-right: 3px;
+    cursor: pointer;
 }
 
 /*@font-face {
@@ -205,7 +206,7 @@ font-family: '8bit'; /*a name to be used later*/
     padding-left: 18px;
     margin-bottom: 3px;
     font-size: 20px;
-    width: calc(99% - 177px);
+    width: calc(99% - 147px);
     border: 1px solid #aaa;
     font-weight: bold;
     margin-left: 0px;
@@ -228,11 +229,10 @@ font-family: '8bit'; /*a name to be used later*/
     /*font-family: '8bit';*/
 }
 .hide {
-<<<<<<< HEAD
-	display:none;
-=======
 	display: none;
->>>>>>> 2673ac1b722203fff9d526269033311e2e6d80a0
+}
+.btn-override {
+    
 }
 #console {
     height: 110px;
@@ -246,7 +246,7 @@ font-family: '8bit'; /*a name to be used later*/
     padding-left: 20px;
     /*word-break: break-all;*/
     white-space:normal;
-    border-left: dashed 1px #aaa;*/
+    border-left: dashed 1px #aaa;
     /*border-top: dashed 1px #aaa;*/
     /*border-bottom: dashed 1px #aaa;*/
     margin-top: 5px;
