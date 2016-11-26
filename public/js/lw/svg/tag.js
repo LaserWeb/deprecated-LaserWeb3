@@ -100,12 +100,6 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
-    lw.svg.Path.prototype.isHole = function(refresh) {
-        return this.getDirection(refresh) === -1 && this.isClosed();
-    };
-
-    // -------------------------------------------------------------------------
-
     lw.svg.Path.prototype.transform = function(matrix) {
         this.points = this.points.map(function(point) {
             return new lw.svg.Point(
