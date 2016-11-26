@@ -7,6 +7,30 @@ var lw = lw || {};
     var MATH_PI_2  = 2 * Math.PI;
     var DEG_TO_RAD = Math.PI / 180;
 
+    // -------------------------------------------------------------------------
+
+    // https://github.com/lautr3k/SLAcer.js/blob/be2a5ff56916cedf6370a676d13ec991f7a6d163/js/slacer/slicer.js#L82
+    function pointInPolygon(point, points) {
+        // ray-casting algorithm based on
+        // https://github.com/substack/point-in-polygon/blob/master/index.js
+        // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+        var inside = false;
+
+        var il, j, pi, pj, intersect;
+
+        for (i = 0, il = points.length, j = il - 1; i < il; j = i++) {
+            pi = points[i];
+            pj = points[j];
+
+            (((pi.y > point.y) != (pj.y > point.y))
+            && (point.x < (pj.x - pi.x) * (point.y - pi.y) / (pj.y - pi.y) + pi.x))
+            && (inside = !inside);
+        }
+
+        return inside;
+    };
+
     // =========================================================================
 
     lw.svg.Point = function(x, y) {
@@ -27,6 +51,7 @@ var lw = lw || {};
         this.points    = [];
         this.length    = 0;
         this.direction = 0; // -1 = ccw, 0 = none, 1 = cw
+        this.hole      = false;
     };
 
     // -------------------------------------------------------------------------
@@ -100,6 +125,18 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Path.prototype.setDirection = function(direction) {
+        direction = direction < 0 ? -1 : 1;
+
+        if (this.getDirection(true) !== direction) {
+            this.points = this.points.reverse();
+        }
+
+        this.direction = direction;
+    };
+
+    // -------------------------------------------------------------------------
+
     lw.svg.Path.prototype.transform = function(matrix) {
         this.points = this.points.map(function(point) {
             return new lw.svg.Point(
@@ -120,6 +157,7 @@ var lw = lw || {};
         this.children = [];
 
         this.paths = [];                     // Paths collection
+        this.holes = [];                     // Holes collection
         this.path  = new lw.svg.Path();      // Current path
         this.point = new lw.svg.Point(0, 0); // Current point
 
@@ -236,7 +274,7 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.svg.Tag.prototype.translate = function(x, y) {
-        y = y === undefined ? x : y;
+        y = y === undefined ? 0 : y;
         this.addMatrix([1, 0, 0, 1, x, y]);
     };
 
@@ -287,6 +325,49 @@ var lw = lw || {};
         this.children.forEach(function(tag) {
             tag.applyMatrix(matrix);
         });
+    };
+
+    // -------------------------------------------------------------------------
+
+    // https://github.com/lautr3k/SLAcer.js/blob/be2a5ff56916cedf6370a676d13ec991f7a6d163/js/slacer/slicer.js#L103
+    lw.svg.Tag.prototype.markHoles = function() {
+        var point, parents = [];
+
+        // Mark holes in paths collection
+        this.paths.forEach(function(path0, i) {
+            // Get the first point
+            point = path0.getPoint(0);
+
+            // for each path
+            this.paths.some(function(path1, j) {
+                // Do not check self intersection
+                if (i === j) return false;
+
+                // Init defaults values
+                parents[i] || (parents[i] = []);
+                parents[j] || (parents[j] = []);
+
+                // Check if point in poylgon
+                if (pointInPolygon(point, path1.points)) {
+                    // Push parent id
+                    parents[i].push(j);
+
+                    // Odd parents number ==> hole
+                    path0.hole = !! (parents[i].length % 2);
+                    path1.hole = !! (parents[j].length % 2);
+                }
+            }, this);
+        }, this);
+
+        // Split holes from paths collection
+        this.paths = this.paths.filter(function(path) {
+            if (path.hole) {
+                path.setDirection(-1);
+                this.holes.push(path);
+                //return false;
+            }
+            return true;
+        }, this);
     };
 
     // -------------------------------------------------------------------------

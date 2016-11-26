@@ -89,10 +89,10 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
-    lw.svg.drawShape = function(tag, path, holes) {
+    lw.svg.drawShape = function(tag, path) {
         var shape = new THREE.Shape(path.points);
 
-        holes && holes.forEach(function(hole) {
+        tag.holes && tag.holes.forEach(function(hole) {
             shape.holes.push(new THREE.Path(hole.points));
         });
 
@@ -112,18 +112,24 @@ var lw = lw || {};
         if (tag.paths.length) {
             this.info('draw:', tag);
 
+            // Force path direction to CW
+            tag.paths.forEach(function(path) {
+                path.setDirection(1);
+            });
+
+            if (tag.name === 'path') {
+                tag.markHoles();
+            }
+
+            // Process paths
             var traceLine  = false;
             var traceShape = false;
 
-            var holes = tag.paths.filter(function(path) {
-                return path.isHole();
-            });
-
             tag.paths.forEach(function(path) {
                 traceLine  = path.length > 1;
-                traceShape = path.length > 2 && ! path.isHole();
+                traceShape = path.length > 2 && path.isClosed() && ! path.hole;
                 traceShape &= tag.getAttr('fill', 'none') !== 'none';
-                traceShape && object.add(this.drawShape(tag, path, holes));
+                traceShape && object.add(this.drawShape(tag, path));
                 traceLine  && object.add(this.drawLine(tag, path));
             }, this);
         }
