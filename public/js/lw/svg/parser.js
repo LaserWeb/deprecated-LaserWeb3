@@ -639,7 +639,7 @@ var lw = lw || {};
             return this.error('Empty reference:' + target);
         }
 
-        tag.addMatrix(matrix);
+        tag.setMatrix(matrix);
         parent.addChild(tag);
 
         // Skipped tag
