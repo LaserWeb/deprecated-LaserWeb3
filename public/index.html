@@ -168,27 +168,31 @@
         <div class="page-container sidebar-collapsed">
             <div class="container-fluid" style="height: 100%; width: 100%;">
                 <div id="container1">
-                    <div id="col1" style="z-index: 2">
+                    <div id="col1">
+
 
                         <div id="jog-menu-panel" class="mobtab">
                             <span class="badge badge-default badge-warn" title="Items in Queue" id="syncstatus" style="margin-right: 5px;">Socket Closed</span>
                             <span class="badge badge-default badge-notify" title="Items in Queue" id="machineStatus" style="margin-right: 5px;">Not Connected</span>
                             <span class="badge badge-default badge-notify" title="Items in Queue" id="queueCnt" style="margin-right: 5px;">Queued: 0</span>
                             <div id="mPosition" style="padding: 5px;">
-                                <div id="rX" class="drolabel">X:</div><div id="mX" class="droPos" style="margin-right:0;">0.00<span class="drounitlabel"> mm</span></div>
-                                <div class="btn-group">
+                                <div id="rX" class="drolabel">X:</div>
+                                <div class="btn-group dropdown" style="margin-left: -3px;">
                                   <button id="" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="fa-stack fa-1x">
                                       <i class="fa fa-caret-down fa-stack-1x"></i>
                                     </span>
                                   </button>
                                   <ul class="dropdown-menu">
-                                    <li><a href="#">Action</a></li>
-                                    <li><a href="#">Another action</a></li>
-                                    <li><a href="#">Something else here</a></li>
+                                    <li><a href="#">Probe X Min</a></li>
+                                    <li><a href="#">Probe X Max</a></li>
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
+                                    <li><a href="#">Zero X Axis</a></li>
+                                    <li><a href="#">G0 to X0</a></li>
                                   </ul>
+                                </div>
+                                <div id="mX" class="droPos" style="margin-right:0;">0.00<span class="drounitlabel"> mm</span></div>
+                                <div class="btn-group">
                                   <button  id="zeroX" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Zero X Axis">
                                     <span class="fa-stack fa-1x">
                                         <i class="fa fw-fw fa-crosshairs fa-stack-1x"></i>
@@ -197,20 +201,23 @@
                                 </div>
                                 <br />
 
-                                <div id="rY" class="drolabel">Y:</div><div id="mY" class="droPos" style="margin-right:0;">0.00<span class="drounitlabel"> mm</span></div>
-                                <div class="btn-group">
+                                <div id="rY" class="drolabel">Y:</div>
+                                <div class="btn-group dropdown" style="margin-left: -3px;">
                                   <button id="" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="fa-stack fa-1x">
                                       <i class="fa fa-caret-down fa-stack-1x"></i>
                                     </span>
                                   </button>
                                   <ul class="dropdown-menu">
-                                    <li><a href="#">Action</a></li>
-                                    <li><a href="#">Another action</a></li>
-                                    <li><a href="#">Something else here</a></li>
+                                    <li><a href="#">Probe Y Min</a></li>
+                                    <li><a href="#">Probe Y Max</a></li>
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
+                                    <li><a href="#">Zero Y Axis</a></li>
+                                    <li><a href="#">G0 to Y0</a></li>
                                   </ul>
+                                </div>
+                                <div id="mY" class="droPos" style="margin-right:0;">0.00<span class="drounitlabel"> mm</span></div>
+                                <div class="btn-group">
                                   <button id="zeroY" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Zero Y Axis">
                                     <span class="fa-stack fa-1x">
                                         <i class="fa fa-crosshairs fa-stack-1x"></i>
@@ -220,20 +227,22 @@
                                 <br />
 
 
-                                <div id="rZ" class="drolabel">Z:</div><div id="mZ" class="droPos" style="margin-right:0;">0.00<span class="drounitlabel"> mm</span></div>
-                                <div class="btn-group">
+                                <div id="rZ" class="drolabel">Z:</div>
+                                <div class="btn-group dropdown" style="margin-left: -3px;">
                                   <button id="" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="fa-stack fa-1x">
                                       <i class="fa fa-caret-down fa-stack-1x"></i>
                                     </span>
                                   </button>
                                   <ul class="dropdown-menu">
-                                    <li><a href="#">Action</a></li>
-                                    <li><a href="#">Another action</a></li>
-                                    <li><a href="#">Something else here</a></li>
+                                    <li><a href="#">Probe Z Min</a></li>
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
+                                    <li><a href="#">Zero Z Axis</a></li>
+                                    <li><a href="#">G0 to Z0</a></li>
                                   </ul>
+                                </div>
+                                <div id="mZ" class="droPos" style="margin-right:0;">0.00<span class="drounitlabel"> mm</span></div>
+                                <div class="btn-group">
                                   <button id="zeroZ" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Zero Z Axis">
                                     <span class="fa-stack fa-1x">
                                         <i class="fa fa-crosshairs fa-stack-1x"></i>
