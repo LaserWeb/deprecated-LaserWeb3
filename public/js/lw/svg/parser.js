@@ -574,6 +574,12 @@ var lw = lw || {};
     // SVG specs at https://www.w3.org/TR/SVG11/
 
     lw.svg.Parser.prototype._svg = function() {
+        // Only parse the root SVG tag as main document
+        if (this.document) {
+            // Handled tag
+            return true;
+        }
+
         // Get the document size
         var width  = this.tag.getAttr('width');
         var height = this.tag.getAttr('height');
