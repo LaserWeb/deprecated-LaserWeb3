@@ -321,6 +321,10 @@ var lw = lw || {};
                 attrValue = this.normalizeTagAttrPoints(attr);
             break;
 
+            case 'preserveAspectRatio':
+                attrValue = this.normalizeTagAttrPreserveAspectRatio(attr);
+            break;
+
             // Normalize size unit -> to px
             case 'x':
             case 'y':
@@ -370,6 +374,31 @@ var lw = lw || {};
 
     // -------------------------------------------------------------------------
 
+    lw.svg.Parser.prototype.normalizeTagAttrPreserveAspectRatio = function(attr) {
+        var params = {
+            defer: false,
+            align: 'none',
+            meet : true,
+            slice: false
+        };
+
+        var rawParams = attr.nodeValue;
+
+        if (rawParams.indexOf('defer') === 0) {
+            rawParams    = rawParams.substr(6);
+            params.defer = true;
+        }
+
+        rawParams    = rawParams.split(' ');
+        params.align = rawParams[0];
+        params.meet  = rawParams[1] || 'meet';
+        params.meet  = params.meet === 'meet';
+        params.slice = ! params.meet;
+
+        return params;
+    };
+
+    // -------------------------------------------------------------------------
     lw.svg.Parser.prototype.normalizeTagAttrPoints = function(attr) {
         var points = this.parseNumbers(attr.nodeValue);
 
@@ -522,13 +551,44 @@ var lw = lw || {};
             return null;
         }
 
-        var width  = this.tag.getAttr('width', viewBoxAttr[2]);
-        var height = this.tag.getAttr('height', viewBoxAttr[3]);
-        var scaleX = width  / viewBoxAttr[2];
-        var scaleY = height / viewBoxAttr[3];
+        var width      = this.tag.getAttr('width', viewBoxAttr[2]);
+        var height     = this.tag.getAttr('height', viewBoxAttr[3]);
+        var scaleX     = width  / viewBoxAttr[2];
+        var scaleY     = height / viewBoxAttr[3];
+        var translateX = viewBoxAttr[0];
+        var translateY = viewBoxAttr[1];
+
+        var preserveAspectRatio = this.tag.getAttr('preserveAspectRatio');
+
+        if (preserveAspectRatio) {
+            if (preserveAspectRatio.meet) {
+                if (scaleX > scaleY) {
+                    scaleX       = scaleY;
+                    var newWidth = viewBoxAttr[2] * scaleX;
+
+                    if (preserveAspectRatio.align === 'xMidYMid') {
+                        this.tag.translate((width - newWidth) / 2, 0);
+                    }
+                    else if (preserveAspectRatio.align === 'xMaxYMax') {
+                        this.tag.translate(width - newWidth, 0);
+                    }
+                }
+                else if (scaleX < scaleY) {
+                    scaleY       = scaleX;
+                    var newHeight = viewBoxAttr[3] * scaleY;
+
+                    if (preserveAspectRatio.align === 'xMidYMid') {
+                        this.tag.translate(0, (height - newHeight) / 2);
+                    }
+                    else if (preserveAspectRatio.align === 'xMaxYMax') {
+                        this.tag.translate(0, height - newHeight);
+                    }
+                }
+            }
+        }
 
         this.tag.scale(scaleX, scaleY);
-        this.tag.translate(-viewBoxAttr[0], -viewBoxAttr[1]);
+        this.tag.translate(-translateX, -translateY);
 
         this.tag.setAttr('width' , width);
         this.tag.setAttr('height', height);
