@@ -173,7 +173,7 @@ var lw = lw || {};
         if (this.parent) {
             var protectedAttrs = [
                 'id', 'transform', 'width', 'height', 'viewBox', 'version',
-                'xmlns', 'xmlns:xlink'
+                'xmlns', 'xmlns:xlink', 'x', 'y'
             ];
 
             Object.keys(this.parent.attrs).forEach(function(attrName) {
