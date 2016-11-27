@@ -216,6 +216,24 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     }
   });
 
+  // 1 = clear alarm state and resume queueCnt
+  // 2 = clear quue, clear alarm state, and wait for new queue
+  socket.on('clearAlarm', function(data) { // Laser Test Fire
+    console.log('Clearing Queue: Method ' + data);
+    if (data == "1") {
+        console.log('Clearing Lockout');
+        port.write("M999\n")
+        console.log('Resuming Queue Lockout');
+        send1Q();
+    } else if (data == "2") {
+        console.log('Emptying Queue');
+        gcodeQueue.length = 0;
+        console.log('Clearing Lockout');
+        port.write('M999\n');
+    }
+
+  });
+
   socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
     socket.emit("firmware", firmware);
   });

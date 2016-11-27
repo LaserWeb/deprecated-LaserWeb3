@@ -13,7 +13,7 @@ function initSocket() {
 
   socket.on('data', function (data) {
     $('#syncstatus').html('Socket OK');
-    isConnected = true;
+    // isConnected = true;
     if (data.indexOf('<') === 0) {
       updateStatus(data);
     } else if (data ==='ok') {
@@ -427,26 +427,43 @@ function updateStatus(data) {
     $("#machineStatus").addClass('badge-notify');
     $("#machineStatus").removeClass('badge-warn');
     $("#machineStatus").removeClass('badge-busy');
+    if ($('#alarmmodal').is(':visible')) {
+      // Nothing, its already open
+    } else {
+      $('#alarmmodal').modal('show');
+    }
   } else if (state === 'Home') {
     $("#machineStatus").removeClass('badge-ok');
     $("#machineStatus").removeClass('badge-notify');
     $("#machineStatus").removeClass('badge-warn');
     $("#machineStatus").addClass('badge-busy');
+    if ($('#alarmmodal').is(':visible')) {
+      $('#alarmmodal').modal('hide');
+    }
   } else if (state === 'Hold') {
     $("#machineStatus").removeClass('badge-ok');
     $("#machineStatus").removeClass('badge-notify');
     $("#machineStatus").addClass('badge-warn');
     $("#machineStatus").removeClass('badge-busy');
+    if ($('#alarmmodal').is(':visible')) {
+      $('#alarmmodal').modal('hide');
+    }
   } else if (state === 'Idle') {
     $("#machineStatus").addClass('badge-ok');
     $("#machineStatus").removeClass('badge-notify');
     $("#machineStatus").removeClass('badge-warn');
     $("#machineStatus").removeClass('badge-busy');
+    if ($('#alarmmodal').is(':visible')) {
+      $('#alarmmodal').modal('hide');
+    }
   } else if (state === 'Run') {
     $("#machineStatus").removeClass('badge-ok');
     $("#machineStatus").removeClass('badge-notify');
     $("#machineStatus").removeClass('badge-warn');
     $("#machineStatus").addClass('badge-busy');
+    if ($('#alarmmodal').is(':visible')) {
+      $('#alarmmodal').modal('hide');
+    }
   }
   $('#machineStatus').html(state);
 
@@ -536,4 +553,10 @@ function laserTest(power, duration) {
   } else {
     printLog('You have to Connect to a machine First!', errorcolor, "usb");
   }
+}
+
+// 1 = clear alarm state and resume queueCnt
+// 2 = clear quue, clear alarm state, and wait for new queue
+function clearQueueAlarm(value) {
+  socket.emit('clearAlarm', value);
 }
