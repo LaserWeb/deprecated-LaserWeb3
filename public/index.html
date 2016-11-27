@@ -175,12 +175,60 @@
                             <span class="badge badge-default badge-notify" title="Items in Queue" id="machineStatus" style="margin-right: 5px;">Not Connected</span>
                             <span class="badge badge-default badge-notify" title="Items in Queue" id="queueCnt" style="margin-right: 5px;">Queued: 0</span>
                             <div id="mPosition" style="padding: 5px;">
-                                <div id="rX" class="drolabel" data-toggle="tooltip" data-placement="bottom" title="Click to Zero X axis">X:</div><div id="mX" class="dro">0.000</div><br />
-                                <div id="rY" class="drolabel" data-toggle="tooltip" data-placement="bottom" title="Click to Zero Y axis">Y:</div><div id="mY" class="dro">0.000</div><br />
-                                <div id="rZ" class="drolabel" data-toggle="tooltip" data-placement="bottom" title="Click to Zero Z axis">Z:</div><div id="mZ" class="dro">0.000</div><br />
+                                <div id="rX" class="drolabel">X:</div><div id="mX" class="droPos" style="margin-right:0;">0.00<span class='drounitlabel'> mm</span></div>
+                                <div class="btn-group">
+                                    <button  id="zeroX" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Zero X Axis">
+                                      <span class="fa-stack fa-1x">
+                                          <i class="fa fw-fw fa-crosshairs fa-stack-1x"></i>
+                                      </span>
+                                    </button>
+                                    <button id="" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Probe X Min" disabled>
+                                      <span class="fa-stack fa-1x">
+                                          <i class="fa fa-map-pin fa-stack-1x"></i>
+                                      </span>
+                                    </button>
+                                </div>
+                                <br />
+
+                                <div id="rY" class="drolabel">Y:</div><div id="mY" class="droPos" style="margin-right:0;">0.00<span class='drounitlabel'> mm</span></div>
+                                <div class="btn-group">
+                                    <button id="zeroY" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Zero Y Axis">
+                                      <span class="fa-stack fa-1x">
+                                          <i class="fa fa-crosshairs fa-stack-1x"></i>
+                                      </span>
+                                    </button>
+                                    <button id="" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Probe Y Min" disabled>
+                                      <span class="fa-stack fa-1x">
+                                          <i class="fa fa-map-pin fa-stack-1x"></i>
+                                      </span>
+                                    </button>
+                                </div>
+                                <br />
+
+
+                                <div id="rZ" class="drolabel">Z:</div><div id="mZ" class="droPos" style="margin-right:0;">0.00<span class='drounitlabel'> mm</span></div>
+                                <div class="btn-group">
+                                    <button id="zeroZ" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Zero Z Axis">
+                                      <span class="fa-stack fa-1x">
+                                          <i class="fa fa-crosshairs fa-stack-1x"></i>
+                                      </span>
+                                    </button>
+                                    <button id="" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Probe Z Min" disabled>
+                                      <span class="fa-stack fa-1x">
+                                          <i class="fa fa-map-pin fa-stack-1x"></i>
+                                      </span>
+                                    </button>
+                                </div>
+                                <br />
+
                                 <div id="overrides" class="hide">
-                                    <div id="rF" class="drolabel" data-toggle="tooltip" data-placement="bottom" title="Click to reset F-override to 100%">F:</div><div id="oF" class="droL" style="margin-right:0;">100%</div>
+                                    <div class="drolabel">F:</div><div id="oF" class="droOR" style="margin-right:0;">100<span class="drounitlabel"> %</span></div>
                                     <div class="btn-group btn-override">
+                                        <button id="rF" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Click to Reset F-Override to 100%">
+                                            <span class="fa-stack fa-1x">
+                                                <i class="fa fa-retweet fa-stack-1x"></i>
+                                            </span>
+                                        </button>
                                         <button id="iF" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Click to Increase by 1% or Ctrl+Click to increase by 10%">
                                             <span class="fa-stack fa-1x">
                                                 <i class="fa fa-arrow-up fa-stack-1x"></i>
@@ -192,8 +240,13 @@
                                             </span>
                                         </button>
                                     </div><br />
-                                    <div id="rS" class="drolabel" data-toggle="tooltip" data-placement="bottom" title="Click to reset S-override to 100%">S:</div><div id="oS" class="droL" style="margin-right:0;">100%</div>
+                                    <div class="drolabel">S:</div><div id="oS" class="droOR" style="margin-right:0;">100<span class="drounitlabel"> %</span></div>
                                     <div class="btn-group btn-override">
+                                        <button id="rS" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Click to Reset S-Override to 100%">
+                                            <span class="fa-stack fa-1x">
+                                                <i class="fa fa-retweet fa-stack-1x"></i>
+                                            </span>
+                                        </button>
                                         <button id="iS" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="tooltip" data-placement="bottom" title="Click to Increase by 1% or Ctrl+Click to increase by 10%">
                                             <span class="fa-stack fa-1x">
                                                 <i class="fa fa-arrow-up fa-stack-1x"></i>
@@ -299,7 +352,7 @@
                                     <td>
                                         <button id="lT" type="button" data-title="Laser Test" class="btn btn-ctl btn-default">
                                             <span class="fa-stack fa-1x">
-                                                <i class="fa fa-bullseye fa-stack-1x"></i>
+                                                <i class="fa fa-fire fa-stack-1x"></i>
                                                 <strong class="fa-stack-1x icon-top-text">Laser</strong>
                                                 <strong class="fa-stack-1x icon-bot-text">Test</strong>
                                             </span>
@@ -315,7 +368,15 @@
                                             </span>
                                         </button>
                                     </td>
-                                    <td></td>
+                                    <td>
+                                      <button id="motorsOff" type="button" data-title="Motors Off" class="btn btn-ctl btn-default" style="display: none;">
+                                          <span class="fa-stack fa-1x">
+                                              <i class="fa fa-power-off fa-stack-1x"></i>
+                                              <strong class="fa-stack-1x icon-top-text">Motors</strong>
+                                              <strong class="fa-stack-1x icon-bot-text">Off</strong>
+                                          </span>
+                                      </button>
+                                    </td>
                                     <td></td>
                                     <td>
                                         <button id="zP" type="button" data-title="Jog X+" class="btn btn-ctl btn-default">

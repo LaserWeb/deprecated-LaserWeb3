@@ -16,14 +16,21 @@ function initJog() {
     sendGcode(moves);
   });
 
-  $('#lT').on('click', function() {
-    if (isConnected) {
-      var power = $('#lasertestpower').val();
-      var duration = $('#lasertestduration').val();
-      console.log('Laser Test', power + ', ' + duration);
-      laserTest(power, duration);
-    }
-  });
+    $('#lT').on('click', function() {
+      if (isConnected) {
+        var power = $('#lasertestpower').val();
+        var duration = $('#lasertestduration').val();
+        console.log('Laser Test', power + ', ' + duration);
+        laserTest(power, duration);
+      }
+    });
+
+    $('#motorsOff').on('click', function() {
+      if (isConnected) {
+        console.log('Turning Off Motor Power');
+        sendGcode('M84\n');
+      }
+    });
 
     $('#xP').on('click', function() {
        if (isConnected) {

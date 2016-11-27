@@ -23,22 +23,24 @@ function initSocket() {
     }
     if (data.indexOf('LPC176')) {	//LPC1768 or LPC1769 should be Smoothie
       $('#overrides').removeClass('hide');
+      $('#motorsOff').show();
     }
     if (data.indexOf('Grbl')) {
       if (parseFloat(data) >= 1.1) {	//is Grbl >= v1.1
         $('#overrides').removeClass('hide');
+        $('#motorsOff').hide();
       }
     }
   });
 
   // smoothie feed override report (from server)
   socket.on('feedOverride', function (data) {
-    $('#oF').html(data.toString() + '%');
+    $('#oF').html(data.toString() + '<span class="drounitlabel"> %</span>');
   });
 
   // smoothie spindle override report (from server)
   socket.on('spindleOverride', function (data) {
-    $('#oS').html(data.toString() + '%');
+    $('#oS').html(data.toString() + '<span class="drounitlabel"> %</span>');
   });
 
   socket.on('ports', function (data) {
@@ -139,20 +141,33 @@ function initSocket() {
 	});
 
 
-	// reset feed override
-	$('#rX').on('click', function(ev) {
+// Zero Axis
+	// $('#rX').on('click', function(ev) {
+	// 	console.log("X zero");
+	// 	sendGcode('G92 X0');
+	// });
+	// $('#rY').on('click', function(ev) {
+	// 	console.log("Y zero");
+	// 	sendGcode('G92 Y0');
+	// });
+	// $('#rZ').on('click', function(ev) {
+	// 	console.log("Z zero");
+	// 	sendGcode('G92 Z0');
+	// });
+
+  $('#zeroX').on('click', function(ev) {
 		console.log("X zero");
 		sendGcode('G92 X0');
 	});
 
 	// reset feed override
-	$('#rY').on('click', function(ev) {
+	$('#zeroY').on('click', function(ev) {
 		console.log("Y zero");
 		sendGcode('G92 Y0');
 	});
 
 	// reset feed override
-	$('#rZ').on('click', function(ev) {
+	$('#zeroZ').on('click', function(ev) {
 		console.log("Z zero");
 		sendGcode('G92 Z0');
 	});
@@ -447,9 +462,13 @@ function updateStatus(data) {
 	  }
   }
   if (Array.isArray(pos)){
-    $('#mX').html(pos[0]);
-    $('#mY').html(pos[1]);
-    $('#mZ').html(pos[2]);
+    var xpos = parseFloat(pos[0]).toFixed(2);
+    var ypos = parseFloat(pos[1]).toFixed(2);
+    var zpos = parseFloat(pos[2]).toFixed(2);
+
+    $('#mX').html(xpos + "<span class='drounitlabel'> mm</span>");
+    $('#mY').html(ypos + "<span class='drounitlabel'> mm</span>");
+    $('#mZ').html(zpos + "<span class='drounitlabel'> mm</span>");
     if (bullseye) {
       setBullseyePosition(pos[0], pos[1], pos[2]); // Also updates #mX #mY #mZ
     }
@@ -461,9 +480,9 @@ function updateStatus(data) {
     var ov = data.replace('>','').substr(startOv).split(/,|\|/, 3);
     //printLog("Overrides: " + ov[0] + ',' + ov[1] + ',' + ov[2],  msgcolor, "USB");
 	if (Array.isArray(ov)){
-	  $('#oF').html(ov[0].trim() + '%');
+	  $('#oF').html(ov[0].trim() + '<span class="drounitlabel"> %</span>');
 	  //$('#oR').html(ov[1].trim() + '%');
-	  $('#oS').html(ov[2].trim() + '%');
+	  $('#oS').html(ov[2].trim() + '<span class="drounitlabel"> %</span>');
 	}
   }
 
