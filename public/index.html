@@ -13,7 +13,7 @@
         <meta name="keywords" content="laserweb,gcode,laser,k40,smoothieware,cnc,web based,online,serial port json server,inkscape,illustrator,autocad,dxf,svg,png,bmp,gif,reprap,marlin,grbl,smoothie,smoothieboard,40w laser, chinese,lasercutter,engraver,emblaser,emblaser2,fabcreator" />
         <meta name="google-site-verification" content="Q5N27jmbSMfsf_oC4UmRlNDVXKta7BP4DaDq1h0Ox5Y" />
         <meta name="author" content="github.com/openhardwarecoza/LaserWeb2/" />
-        <meta name="version" content="30469" />
+        <meta name="version" content="30476" />
 
         <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap.min.css" />
         <link type="text/css" rel="stylesheet" media="all" href="lib/bootstrap/css/bootstrap-callouts.css" />
@@ -763,8 +763,8 @@
 
                                 <hr />
 
-                                <button id="savesettings" type="button" class="btn btn-lg btn-success" data-dismiss="modal">Save</button>
-                                <button type="button" class="btn btn-lg btn-default" data-dismiss="modal">Cancel</button>
+                                <button id="savesettings" type="button" class="btn btn-lg btn-success">Save</button>
+                                <button type="button" class="btn btn-lg btn-default">Cancel</button>
 
                             </div><!-- .tab-content -->
 
@@ -1070,6 +1070,35 @@
         <!-- End Hidden Divs -->
 
         <!-- Modals Divs -->
+
+        <div id="alarmmodal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><i class="fa fa-fw fa-bell-o" aria-hidden="true"></i>ALARM!</h4>
+                    </div>
+                    <div class="modal-body">
+                      Your controller has entered an ALARM state!  This locks the controller to ensure your safety.
+                      <div class="btn-group btn-group-justified" role="group">
+                        <a class="btn btn-success btn-block" onclick="socket.emit('clearAlarm', '2')">[Option 1] <i class="fa fa-fw fa-times" aria-hidden="true"></i>Purge Queue and <i class="fa fa-unlock" aria-hidden="true"></i> Clear Lockout</a>
+                      </div>
+                      <p>
+                      <div class="btn-group btn-group-justified" role="group">
+                        <a class="btn btn-danger btn-block" onclick="socket.emit('clearAlarm', '1')" >[Option 2] <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i>Ignore the error, <i class="fa fa-fw fa-unlock" aria-hidden="true"></i> Clear Lockout and <i class="fa fa-fw fa-step-forward" aria-hidden="true"></i> Continue with Queue</a>
+                      </div>
+                      <br>
+                      Note:
+                      The safer option is <kbd>Option 1</kbd>.  This is the safest method because it first clears the Queue, before unlocking the machine, avoiding any runaway moves etc.  This aborts the job, but recovers the machine for the next task<br>
+                      You can opt to use <kbd>Option 2</kbd>, but NB note that depending on what caused the error, your machine have very likely lost its position (Failed probe, endstop hit, Gcode move not recognised etc) and continuing may be detrimental! Use this entirely at your own risk
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div><!-- #stlslice -->
+
+
         <div id="stlslice" class="modal fade" role="dialog">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">

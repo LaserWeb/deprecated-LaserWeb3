@@ -42,7 +42,7 @@ var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
 var firmware = 'grbl', fVersion = 0;
 var laserTestOn = false;
-    
+
 const GRBL_RX_BUFFER_SIZE = 128;
 var grblBufferSize = [];
 
@@ -210,7 +210,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           data = '+' + data;
           break;
         case -10:
-          code = 146;	// -10%	
+          code = 146;	// -10%
           break;
         case 1:
           code = 147;	// +1%
@@ -291,11 +291,28 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       io.sockets.emit("connectStatus", 'closed');
     }
   });
-  
+
+  socket.on('clearAlarm', function(data) { // Laser Test Fire
+    console.log('Clearing Queue: Method ' + data);
+    if (data == "1") {
+        console.log('Clearing Lockout');
+        port.write("$X\n")
+        console.log('Resuming Queue Lockout');
+        send1Q();
+    } else if (data == "2") {
+        console.log('Emptying Queue');
+        gcodeQueue.length = 0;
+        console.log('Clearing Lockout');
+        port.write('$X\n');
+    }
+
+  });
+
+
   socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
     socket.emit("firmware", firmware);
   });
-  
+
   socket.on('refreshPorts', function(data) {	// Refresh serial port list
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
@@ -338,7 +355,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 		statusLoop = setInterval(function() {
           port.write('?');
         }, 250);
-        
+
 		// Start interval for qCount messages to socket clients
 		queueCounter = setInterval(function(){
           io.sockets.emit('qCount', gcodeQueue.length);
