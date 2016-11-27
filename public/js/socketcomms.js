@@ -25,10 +25,21 @@ function initSocket() {
       $('#overrides').removeClass('hide');
       $('#motorsOff').show();
     }
-    if (data.indexOf('Grbl')) {
-      if (parseFloat(data) >= 1.1) {	//is Grbl >= v1.1
+    if (data.indexOf('Grbl') === 0) {
+      if (parseFloat(data.substr(5)) >= 1.1) {	//is Grbl >= v1.1
         $('#overrides').removeClass('hide');
         $('#motorsOff').hide();
+      } else {
+        socket.emit('closePort', 1);
+        isConnected = false;
+        $('#closePort').addClass('disabled');
+        $('#machineStatus').html('Not Connected');
+        $("#machineStatus").removeClass('badge-ok');
+        $("#machineStatus").addClass('badge-notify');
+        $("#machineStatus").removeClass('badge-warn');
+        $("#machineStatus").removeClass('badge-busy');
+        $('#overrides').addClass('hide');
+        printLog("<b><u>You need to update GRBL firmware to the latest version 1.1d!</u></b> (see <a href=\"https://github.com/LaserWeb/LaserWeb3/wiki/Firmware:-GRBL-1.1d\">Wiki</a> for details)", errorcolor, "usb");
       }
     }
   });
@@ -140,33 +151,19 @@ function initSocket() {
 		}
 	});
 
-
-// Zero Axis
-	// $('#rX').on('click', function(ev) {
-	// 	console.log("X zero");
-	// 	sendGcode('G92 X0');
-	// });
-	// $('#rY').on('click', function(ev) {
-	// 	console.log("Y zero");
-	// 	sendGcode('G92 Y0');
-	// });
-	// $('#rZ').on('click', function(ev) {
-	// 	console.log("Z zero");
-	// 	sendGcode('G92 Z0');
-	// });
-
-  $('#zeroX').on('click', function(ev) {
+	// zero x axes
+    $('#zeroX').on('click', function(ev) {
 		console.log("X zero");
 		sendGcode('G92 X0');
 	});
 
-	// reset feed override
+	// zero y axes
 	$('#zeroY').on('click', function(ev) {
 		console.log("Y zero");
 		sendGcode('G92 Y0');
 	});
 
-	// reset feed override
+	// zero z axes
 	$('#zeroZ').on('click', function(ev) {
 		console.log("Z zero");
 		sendGcode('G92 Z0');
@@ -324,8 +321,8 @@ function stopMachine () {
 function playpauseMachine() {
   if (isConnected) {
     var connectVia = $('#connectVia').val();
-    if (playing == true) {
-      if (paused == true) {
+    if (playing === true) {
+      if (paused === true) {
         // unpause
         // sendGcode('~');
         var laseroncmd = document.getElementById('laseron').value;
@@ -348,25 +345,23 @@ function playpauseMachine() {
       } else {
         // pause
         var laseroffcmd = document.getElementById('laseroff').value;
-        if (laseroffcmd) {
-          if (connectVia === "USB") {
-            socket.emit('pause', laseroffcmd);
-            paused = true;
-          } else if (connectVia === "Ethernet") {
+		if (laseroffcmd.length === 0) {
+			laseroffcmd = 0;
+		}
+        if (connectVia === "USB") {
+          socket.emit('pause', laseroffcmd);
+        } else if (connectVia === "Ethernet") {
+          if (laseroffcmd !== 0) {
             runCommand('suspend');
             runCommand(laseroffcmd);
-            paused = true;
-          } else if (connectVia === "ESP8266") {
+          } else {
+            runCommand('pause');              
+          }
+        } else if (connectVia === "ESP8266") {
+          if (laseroffcmd !== 0) {
             sendGcode("suspend");
             sendGcode(laseroffcmd);
-            paused = true;
-          }
-        } else {
-          if (connectVia === "USB") {
-            socket.emit('pause', 0);
-          } else if (connectVia === "Ethernet") {
-            runCommand('pause');
-          } else if (connectVia === "ESP8266") {
+          } else {
             // Do nothing.  The paused var stops the uploadLine function
           }
         }

@@ -40,7 +40,7 @@ var chalk = require('chalk');
 var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, statusLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
-var firmware = 'grbl';
+var firmware = 'grbl', fVersion = 0;
 var laserTestOn = false;
     
 const GRBL_RX_BUFFER_SIZE = 128;
@@ -137,7 +137,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       laserTestOn = false;
       io.sockets.emit("connectStatus", 'stopped:'+port.path);
     } else {
-      io.sockets.emit("connectStatus", 'closed:'+port.path);
+      io.sockets.emit("connectStatus", 'closed');
     }
   });
 
@@ -157,7 +157,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       */
       io.sockets.emit("connectStatus", 'paused:'+port.path);
     } else {
-      io.sockets.emit("connectStatus", 'closed:'+port.path);
+      io.sockets.emit("connectStatus", 'closed');
     }
   });
 
@@ -177,7 +177,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       paused = false;
       send1Q();
     } else {
-      io.sockets.emit("connectStatus", 'closed:'+port.path);
+      io.sockets.emit("connectStatus", 'closed');
     }
   });
 
@@ -193,7 +193,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         }
       }
     } else {
-      io.sockets.emit("connectStatus", 'closed:'+port.path);
+      io.sockets.emit("connectStatus", 'closed');
     }
   });
 
@@ -226,7 +226,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         console.log(chalk.red('Override feed: ' + data + '%'));
       }
     } else {
-      io.sockets.emit("connectStatus", 'closed:'+port.path);
+      io.sockets.emit("connectStatus", 'closed');
     }
   });
 
@@ -259,7 +259,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         console.log(chalk.red('Override spindle: ' + data + '%'));
       }
     } else {
-      io.sockets.emit("connectStatus", 'closed:'+port.path);
+      io.sockets.emit("connectStatus", 'closed');
     }
   });
 
@@ -288,7 +288,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         }
       }
     } else {
-      io.sockets.emit("connectStatus", 'closed:'+port.path);
+      io.sockets.emit("connectStatus", 'closed');
     }
   });
   
@@ -361,6 +361,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
       port.on("data", function (data) {
         console.log('Recv: ' + data);
+        if (data.indexOf('Grbl')) {
+          fVersion = parseFloat(data);	//get Grbl version
+        }
         if (data.indexOf("ok") === 0) { // Got an OK so we are clear to send
 		  blocked = false;
           grblBufferSize.shift();
