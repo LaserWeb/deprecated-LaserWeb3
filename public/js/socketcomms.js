@@ -138,7 +138,7 @@ function initSocket() {
 		}
 	});
 
-    
+
 	// reset feed override
 	$('#rX').on('click', function(ev) {
 		console.log("X zero");
@@ -401,7 +401,7 @@ function homeMachine() {
 }
 
 function updateStatus(data) {
-  // Smoothieware: <Idle,MPos:49.5756,279.7644,-15.0000,WPos:0.0000,0.0000,0.0000>  
+  // Smoothieware: <Idle,MPos:49.5756,279.7644,-15.0000,WPos:0.0000,0.0000,0.0000>
   // till GRBL v0.9: <Idle,MPos:0.000,0.000,0.000,WPos:0.000,0.000,0.000>
   // since GRBL v1.1: <Idle|WPos:0.000,0.000,0.000|Bf:15,128|FS:0,0|Pn:S|WCO:0.000,0.000,0.000> (when $10=2)
 
@@ -466,7 +466,7 @@ function updateStatus(data) {
 	  $('#oS').html(ov[2].trim() + '%');
 	}
   }
-  
+
   // Extract realtime Feedrate (for Grbl > v1.1 only!)
   var startFS = data.search(/FS:/i) + 3;
   if (startFS>3){
@@ -486,7 +486,7 @@ function override(param, value) {
         case 'F':
 		  socket.emit('feedOverride', value);
 		  break;
-		case 'S':  
+		case 'S':
 		  socket.emit('spindleOverride', value);
 		  break;
       }

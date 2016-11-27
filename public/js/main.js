@@ -35,13 +35,8 @@ $(document).ready(function() {
     initDragDrop();
 
     // Tooltips
-    $(document).tooltip();
-    $(document).click(function() {
-        $(this).tooltip("option", "hide", {
-            effect: "clip",
-            duration: 500
-        }).off("focusin focusout");
-    });
+    // $(document).tooltip();
+    $('[data-toggle="tooltip"]').tooltip()
 
     $('#g-open').on('click', function() {
         $('#googledrive').modal('show');
@@ -195,7 +190,7 @@ $(document).ready(function() {
         complete : function(value, e, errorElement){
             saveSetting(armpin, value);
             $("#setpinmsg").html("<h3>Pin set to "+value+"</h3>");
-            setTimeout(function() { 
+            setTimeout(function() {
 				$('#pinresetmodal').modal('hide');
 			}, 500);
             // $('#pinresetmodal').modal('hide');
