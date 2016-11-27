@@ -561,28 +561,43 @@ var lw = lw || {};
         var preserveAspectRatio = this.tag.getAttr('preserveAspectRatio');
 
         if (preserveAspectRatio) {
+            var newWidth, newHeight;
+
             if (preserveAspectRatio.meet) {
                 if (scaleX > scaleY) {
-                    scaleX       = scaleY;
-                    var newWidth = viewBoxAttr[2] * scaleX;
-
-                    if (preserveAspectRatio.align === 'xMidYMid') {
-                        this.tag.translate((width - newWidth) / 2, 0);
-                    }
-                    else if (preserveAspectRatio.align === 'xMaxYMax') {
-                        this.tag.translate(width - newWidth, 0);
-                    }
+                    scaleX   = scaleY;
+                    newWidth = viewBoxAttr[2] * scaleX;
                 }
                 else if (scaleX < scaleY) {
-                    scaleY       = scaleX;
-                    var newHeight = viewBoxAttr[3] * scaleY;
+                    scaleY    = scaleX;
+                    newHeight = viewBoxAttr[3] * scaleY;
+                }
+            }
+            else if (preserveAspectRatio.slice) {
+                if (scaleX < scaleY) {
+                    scaleX   = scaleY;
+                    newWidth = viewBoxAttr[2] * scaleX;
+                }
+                else if (scaleX > scaleY) {
+                    scaleY    = scaleX;
+                    newHeight = viewBoxAttr[3] * scaleY;
+                }
+            }
 
-                    if (preserveAspectRatio.align === 'xMidYMid') {
-                        this.tag.translate(0, (height - newHeight) / 2);
-                    }
-                    else if (preserveAspectRatio.align === 'xMaxYMax') {
-                        this.tag.translate(0, height - newHeight);
-                    }
+            if (newWidth !== undefined) {
+                if (preserveAspectRatio.align === 'xMidYMid') {
+                    this.tag.translate((width - newWidth) / 2, 0);
+                }
+                else if (preserveAspectRatio.align === 'xMaxYMax') {
+                    this.tag.translate(width - newWidth, 0);
+                }
+            }
+            else if (newHeight !== undefined) {
+                if (preserveAspectRatio.align === 'xMidYMid') {
+                    this.tag.translate(0, (height - newHeight) / 2);
+                }
+                else if (preserveAspectRatio.align === 'xMaxYMax') {
+                    this.tag.translate(0, height - newHeight);
                 }
             }
         }
