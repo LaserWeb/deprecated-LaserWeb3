@@ -30,7 +30,7 @@ var SerialPort = serialport;
 var app = require('http').createServer(handler);
 var io = require('socket.io').listen(app);
 var fs = require('fs');
-var static = require('node-static');
+var nstatic = require('node-static');
 var EventEmitter = require('events').EventEmitter;
 var url = require('url');
 var qs = require('querystring');
@@ -163,31 +163,31 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   socket.on('feedOverride', function(data) {
     if (data === 0) {
       feedOverride = 100;
-	} else {
-	  if ((feedOverride + data <= 200) && (feedOverride + data >= 10)) {
-	    // valid range is 10..200, else ignore!
-        feedOverride += data;
-	  }
-	}
-	jumpQ('M220S' + feedOverride);
-    for (var i in connections) {   // iterate over the array of connections
-      connections[i].emit('feedOverride', feedOverride);
-    }
+  	} else {
+  	  if ((feedOverride + data <= 200) && (feedOverride + data >= 10)) {
+  	    // valid range is 10..200, else ignore!
+          feedOverride += data;
+  	  }
+  	}
+  	jumpQ('M220S' + feedOverride);
+      for (var i in connections) {   // iterate over the array of connections
+        connections[i].emit('feedOverride', feedOverride);
+      }
     console.log('Feed Override ' + feedOverride.toString() + '%');
   });
 
   socket.on('spindleOverride', function(data) {
     if (data === 0) {
       spindleOverride = 100;
-	} else {
-	  if ((spindleOverride + data <= 200) && (spindleOverride + data >= 0)) {
-	    // valid range is 0..200, else ignore!
-        spindleOverride += data;
-	  }
-	}
-	jumpQ('M221S' + spindleOverride);	
-    for (var i in connections) {   // iterate over the array of connections
-      connections[i].emit('spindleOverride', spindleOverride);
+  	} else {
+  	  if ((spindleOverride + data <= 200) && (spindleOverride + data >= 0)) {
+  	    // valid range is 0..200, else ignore!
+          spindleOverride += data;
+  	  }
+  	}
+  	jumpQ('M221S' + spindleOverride);
+      for (var i in connections) {   // iterate over the array of connections
+        connections[i].emit('spindleOverride', spindleOverride);
     }
     console.log('Spindle (Laser) Override ' + spindleOverride.toString() + '%');
   });
@@ -215,7 +215,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       }
     }
   });
-  
+
   socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
     socket.emit("firmware", firmware);
   });
@@ -281,7 +281,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         console.log('Error: ', err.message);
         socket.broadcast.emit("data", data);
       });
-	  
+
       port.on("data", function (data) {
         console.log('Recv: ' + data);
         if(data.indexOf("ok") != -1 || data == "start\r" || data.indexOf('<') == 0){
@@ -316,6 +316,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.write("$fb\n"); // Lets check if its TinyG
     }
   });
+
+};
 
 // End Websocket <-> Serial
 
