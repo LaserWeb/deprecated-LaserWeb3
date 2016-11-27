@@ -19,9 +19,10 @@
     "chalk": "*",
     "dotenv": "*",
     "node-static": "*",
+    "request": "*",
     "serialport": "*",
     "socket.io": "*",
-    "request": "*"
+    "tinyg": "^0.4.5"
   },
   "license": "AGPL-3.0",
   "bugs": {
