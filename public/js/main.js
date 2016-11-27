@@ -2,12 +2,13 @@
 console.log("%c%s","color: #000; background: green; font-size: 12px;", "STARTING LASERWEB");
 
 // ????
-var useNumPad, activeObject, fileName;
+var activeObject, fileName;
 
 // Intialise
 lw.log.init();
-lw.menu.init();
 lw.store.init();
+lw.menu.init();
+lw.numpad.init();
 lw.viewer.init();
 lw.dxf.loadFonts();
 
@@ -125,18 +126,11 @@ $('#togglesettings').on('click', function() {
     }
 });
 
-
-// Viewer
-//var viewer = document.getElementById('renderArea');
-
-
 // Progressbar
 // NProgress.configure({ parent: '#gcode-menu-panel' });
 NProgress.configure({
     showSpinner: false
 });
-
-checkNumPad();
 
 // Check if all required settings are loaded
 lw.store.checkParams();
@@ -152,7 +146,6 @@ $('.quoteVar').keyup(function(){
     $("#quoteprice").empty();
     $("#quoteprice").html('<div class="table-responsive"><table class="table table-condensed"><thead><tr><td class="text-center"><strong>Qty</strong></td><td class="text-center"><strong>Description</strong></td><td class="text-right"><strong>Unit</strong></td><td class="text-right"><strong>Total</strong></td></tr></thead><tbody><tr><td>1</td><td>Setup Cost</td><td class="text-right">'+setupfee+'</td><td class="text-right">'+setupfee+'</td></tr><tr><td>'+unitqty+'</td><td>Material</td><td class="text-right">'+materialcost+'</td><td class="text-right">'+(materialcost*unitqty).toFixed(2)+'</td></tr><tr><td>'+unitqty+'</td><td>Laser Time</td><td class="text-right">'+timecost+'</td><td class="text-right">'+(timecost*unitqty).toFixed(2)+'</td></tr><tr><td class="thick-line"></td><td class="thick"></td><td class="thick-line text-center"><strong>Total</strong></td><td class="thick-line text-right">'+ grandtotal +'</td></tr></tbody></table></div>' );
 });
-
 
 $('#controlmachine').hide();
 $('#armmachine').show();
@@ -242,41 +235,6 @@ $.get( "https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/vers
 $('.uppercase').keyup(function() {
     // this.value = this.value.toLocaleUpperCase();
 });
-
-
-
-
-
-function checkNumPad() {
-    useNumPad = $('#useNumPad').val()
-    if (useNumPad.indexOf('Enable') == 0) {
-        $.fn.numpad.defaults.gridTpl = '<table class="table modal-content"></table>';
-        $.fn.numpad.defaults.backgroundTpl = '<div class="modal-backdrop in"></div>';
-        $.fn.numpad.defaults.displayTpl = '<input type="text" class="form-control" />';
-        $.fn.numpad.defaults.dblCellTpl = '<td colspan="2"></td>',
-        $.fn.numpad.defaults.buttonNumberTpl =  '<button type="button" class="btn btn-numpad btn-default" style="width: 100%;"></button>';
-        $.fn.numpad.defaults.buttonFunctionTpl = '<button type="button" class="btn  btn-numpad" style="width: 100%;"></button>';
-        //$.fn.numpad.defaults.onKeypadCreate = function(){$(this).find('.done').addClass('btn-primary');};
-        $('.numpad').numpad({
-            decimalSeparator: '.',
-            gcode: false,
-            textDone: 'OK',
-            textDelete: 'Del',
-            textClear: 'Clear',
-            textCancel: 'Cancel',
-            headerText: 'Enter Number',
-        });
-        $('.numpadgcode').numpad({
-            decimalSeparator: '.',
-            gcode: true,
-            textDone: 'OK',
-            textDelete: 'Del',
-            textClear: 'Clear',
-            textCancel: 'Cancel',
-            headerText: 'Enter GCODE',
-        });
-    }
-}
 
 // Error handling
 function errorHandlerJS() {
