@@ -87,11 +87,11 @@
                                         <h4>Scan network</h4>
                                         <p>Specify the subnet in <code>0.0.0.*</code> format</p>
                                         <div class="input-group" style="width: 95%;">
-                                            <input id="subnet1" style="border-right: none;" type="text" class="form-control" maxlength="16" placeholder="192" style="width: 60px;" />
+                                            <input id="subnet1" style="border-right: none; width: 60px;" type="text" class="form-control" maxlength="16" placeholder="192" />
                                             <span id="basic-addon2" style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon">.</span>
-                                            <input id="subnet2" style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" placeholder="168" style="width: 60px;" />
+                                            <input id="subnet2" style="border-left: none; border-right: none; width: 60px;" type="text" class="form-control" maxlength="16" placeholder="168" />
                                             <span id="basic-addon2" style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon">.</span>
-                                            <input id="subnet3" style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" placeholder="137" style="width: 60px;" />
+                                            <input id="subnet3" style="border-left: none; border-right: none; width: 60px;" type="text" class="form-control" maxlength="16" placeholder="137" />
                                             <span id="basic-addon2" style="border-left: none;  background: #fff; cursur: arrow;" class="input-group-addon">. &nbsp; <b>*</b></span>
                                         </div>
                                         <button id="scansubnet" class="btn btn-default">Scan</button>
@@ -119,11 +119,11 @@
                                         <h4>Scan Wifi</h4>
                                         <p>Specify the subnet in <code>0.0.0.*</code> format</p>
                                         <div class="input-group" style="width: 95%;">
-                                            <input id="wifisubnet1" style="border-right: none;" type="text" class="form-control" maxlength="16" placeholder="192" style="width: 60px;" />
+                                            <input id="wifisubnet1" style="border-right: none; width: 60px;" type="text" class="form-control" maxlength="16" placeholder="192" />
                                             <span id="basic-addon2" style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon">.</span>
-                                            <input id="wifisubnet2" style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" placeholder="168" style="width: 60px;" />
+                                            <input id="wifisubnet2" style="border-left: none; border-right: none; width: 60px;" type="text" class="form-control" maxlength="16" placeholder="168" />
                                             <span id="basic-addon2" style="border-left: none; border-right: none; background: #fff; cursur: arrow;" class="input-group-addon">.</span>
-                                            <input id="wifisubnet3" style="border-left: none; border-right: none;" type="text" class="form-control" maxlength="16" placeholder="137" style="width: 60px;" />
+                                            <input id="wifisubnet3" style="border-left: none; border-right: none; width: 60px;" type="text" class="form-control" maxlength="16" placeholder="137" />
                                             <span id="basic-addon2" style="border-left: none;  background: #fff; cursur: arrow;" class="input-group-addon">. &nbsp; <b>*</b></span>
                                         </div>
                                         <button id="scanwifi" class="btn btn-default">Scan</button>
@@ -175,7 +175,7 @@
                             <span class="badge badge-default badge-notify" title="Items in Queue" id="machineStatus" style="margin-right: 5px;">Not Connected</span>
                             <span class="badge badge-default badge-notify" title="Items in Queue" id="queueCnt" style="margin-right: 5px;">Queued: 0</span>
                             <div id="mPosition" style="padding: 5px;">
-                                <div id="rX" class="drolabel">X:</div><div id="mX" class="droPos" style="margin-right:0;">0.00<span class='drounitlabel'> mm</span></div>
+                                <div id="rX" class="drolabel">X:</div><div id="mX" class="droPos" style="margin-right:0;">0.00<span class="drounitlabel"> mm</span></div>
                                 <div class="btn-group">
                                   <button id="" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="fa-stack fa-1x">
@@ -197,7 +197,7 @@
                                 </div>
                                 <br />
 
-                                <div id="rY" class="drolabel">Y:</div><div id="mY" class="droPos" style="margin-right:0;">0.00<span class='drounitlabel'> mm</span></div>
+                                <div id="rY" class="drolabel">Y:</div><div id="mY" class="droPos" style="margin-right:0;">0.00<span class="drounitlabel"> mm</span></div>
                                 <div class="btn-group">
                                   <button id="" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="fa-stack fa-1x">
@@ -220,7 +220,7 @@
                                 <br />
 
 
-                                <div id="rZ" class="drolabel">Z:</div><div id="mZ" class="droPos" style="margin-right:0;">0.00<span class='drounitlabel'> mm</span></div>
+                                <div id="rZ" class="drolabel">Z:</div><div id="mZ" class="droPos" style="margin-right:0;">0.00<span class="drounitlabel"> mm</span></div>
                                 <div class="btn-group">
                                   <button id="" type="button" class="btn btn-sm btn-default" style="padding:2px;top:-3px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="fa-stack fa-1x">
@@ -730,12 +730,12 @@
                                 <div id="menu3" class="tab-pane fade">
                                     <p>Configure how the application works, turn on/off features:</p>
                                     <form class="form-horizontal">
-                                        <label for="safetyLockDisabled" class="control-label">Disable Safety Lock</label>
+                                        <label for="safetyLockDisabled" class="control-label">Safety Lock</label>
                                         <select id="safetyLockDisabled" class="form-control">
                                             <option>Disable</option>
                                             <option>Enable</option>
                                         </select>
-                                        <label for="cncMode" class="control-label">Enable CNC Cam <span style="color:#FFA500;">(CNCWeb Mode)</span></label>
+                                        <label for="cncMode" class="control-label">CNC Cam <span style="color:#FFA500;">(CNCWeb Mode)</span></label>
                                         <select id="cncMode" class="form-control">
                                             <option>Disable</option>
                                             <option>Enable</option>
@@ -938,7 +938,7 @@
                                                 </button>
                                                 <button id="linkAspectBtn" type="button" data-title="Link Aspect" class="btn btn-lg btn-default">
                                                     <span class="fa-stack fa-1x">
-                                                        <i id='linkAspect' class="fa fa-link fa-stack-1x"></i>
+                                                        <i id="linkAspect" class="fa fa-link fa-stack-1x"></i>
                                                         <strong class="fa-stack-1x icon-top-text">Aspect</strong>
                                                         <strong id="linkval" class="fa-stack-1x icon-bot-text">Linked</strong>
                                                     </span>
@@ -1079,7 +1079,7 @@
 
         <canvas id="videoImage" width="160" height="120" style="display: none; visibility: hidden; float:left;"></canvas>
 
-        <img id="imageDetect" crossOrigin width="160" height="120" style="display: none; visibility: hidden; float:left;" /></canvas>
+        <img id="imageDetect" crossOrigin width="160" height="120" style="display: none; visibility: hidden; float:left;" />
 
         <div id="work-area" style="display: none; visibility: hidden; float:left;">
             <div id="svgpreview"></div>
