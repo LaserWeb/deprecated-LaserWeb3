@@ -175,9 +175,37 @@
                             <span class="badge badge-default badge-notify" title="Items in Queue" id="machineStatus" style="margin-right: 5px;">Not Connected</span>
                             <span class="badge badge-default badge-notify" title="Items in Queue" id="queueCnt" style="margin-right: 5px;">Queued: 0</span>
                             <div id="mPosition" style="padding: 5px;">
-                                <div class="drolabel">X:</div><div id="mX" class="dro">0.000</div><br />
-                                <div class="drolabel">Y:</div><div id="mY" class="dro">0.000</div><br />
-                                <div class="drolabel">Z:</div><div id="mZ" class="dro">0.000</div><br />
+                                <div id="rX" class="drolabel">X:</div><div id="mX" class="dro">0.000</div><br />
+                                <div id="rY" class="drolabel">Y:</div><div id="mY" class="dro">0.000</div><br />
+                                <div id="rZ" class="drolabel">Z:</div><div id="mZ" class="dro">0.000</div><br />
+                                <div id="overrides" class="hide">
+                                    <div id="rF" class="drolabel">F:</div><div id="oF" class="droL" style="margin-right:0;">100%</div>
+                                    <div class="btn-group btn-override">
+                                        <button id="iF" type="button" class="btn btn-sm" style="padding:2px;top:-3px;">
+                                            <span class="fa-stack fa-1x">
+                                                <i class="fa fa-arrow-up fa-stack-1x"></i>
+                                            </span>
+                                        </button>
+                                        <button id="dF" type="button" class="btn btn-sm" style="padding:2px;top:-3px;">
+                                            <span class="fa-stack fa-1x">
+                                                <i class="fa fa-arrow-down fa-stack-1x"></i>
+                                            </span>
+                                        </button>
+                                    </div><br />
+                                    <div id="rS" class="drolabel">S:</div><div id="oS" class="droL" style="margin-right:0;">100%</div>
+                                    <div class="btn-group btn-override">
+                                        <button id="iS" type="button" class="btn btn-sm" style="padding:2px;top:-3px;">
+                                            <span class="fa-stack fa-1x">
+                                                <i class="fa fa-arrow-up fa-stack-1x"></i>
+                                            </span>
+                                        </button>
+                                        <button id="dS" type="button" class="btn btn-sm" style="padding:2px;top:-3px;">
+                                            <span class="fa-stack fa-1x">
+                                                <i class="fa fa-arrow-down fa-stack-1x"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <table>
                                 <tr>
@@ -268,7 +296,16 @@
                                     <td colspan="5">&nbsp;</td>
                                 </tr>
                                 <tr>
-                                    <td></td>
+                                    <td>
+                                        <button id="lT" type="button" data-title="Laser Test" class="btn btn-ctl btn-default">
+                                            <span class="fa-stack fa-1x">
+                                                <i class="fa fa-bullseye fa-stack-1x"></i>
+                                                <strong class="fa-stack-1x icon-top-text">Laser</strong>
+                                                <strong class="fa-stack-1x icon-bot-text">Test</strong>
+                                            </span>
+                                        </button>
+
+                                    </td>
                                     <td>
                                         <button id="yP" type="button" data-title="Jog Y+" class="btn btn-ctl btn-default">
                                             <span class="fa-stack fa-1x">
@@ -601,6 +638,10 @@
                                         <textarea id="endgcode" class="form-control numpadgcode uppercase" placeholder="For example M81 G28 - supports multi line commands"></textarea>
                                         <label for="rapidspeed" class="control-label">Travel Moves (mm/s) <span style="color:red;">(Required)</span></label>
                                         <input id="rapidspeed" class="form-control numpad uppercase" placeholder="For example 30" />
+                                        <label for="lasertestpower" class="control-label">LaserTest power (S value) <span style="color:#FFA500;">(Optional)</span></label>
+                                        <input id="lasertestpower" class="form-control numpad uppercase" placeholder="For example 1" />
+                                        <label for="lasertestduration" class="control-label">LaserTest duration (ms) <span style="color:#FFA500;">(Optional)</span></label>
+                                        <input id="lasertestduration" class="form-control numpad uppercase" placeholder="For example 10 (0 means toggle)" />
                                     </form>
                                 </div><!-- #menu2 -->
 
@@ -1139,7 +1180,7 @@
 
     <!-- Socket.io -->
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/js/socketcomms.js"></script>
+    <script type="text/javascript" src="js/socketcomms.js"></script>
 
     <!-- DXF Library -->
     <script type="text/javascript" src="lib/dxf/dxf-parser.js"></script>

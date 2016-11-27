@@ -705,9 +705,9 @@ function gotStream(stream)
         $(window).on('resize', function() {
             //renderer.setSize(element.width(), element.height());
 
-            sceneWidth = document.getElementById("renderArea").offsetWidth,
+            sceneWidth = document.getElementById("renderArea").offsetWidth;
             sceneHeight = document.getElementById("renderArea").offsetHeight;
-            renderer.setSize(sceneWidth, sceneHeight)
+            renderer.setSize(sceneWidth, sceneHeight);
             //renderer.setSize(window.innerWidth, window.innerHeight);
             camera.aspect = sceneWidth / sceneHeight;
             camera.updateProjectionMatrix();

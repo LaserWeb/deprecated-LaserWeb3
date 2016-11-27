@@ -26,6 +26,8 @@ localParams = [
   ['lasermultiply', true],
   ['homingseq', true],
   ['endgcode', false],
+  ['lasertestpower', false],
+  ['lasertestduration', false],
   ['imagePosition', true],
   ['useNumPad', true],
   ['useVideo', true],

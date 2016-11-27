@@ -12,14 +12,23 @@ function initJog() {
     G0 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
     G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
     G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
-    G90\n`
-    sendGcode(moves)
-});
+    G90\n`;
+    sendGcode(moves);
+  });
+
+  $('#lT').on('click', function() {
+    if (isConnected) {
+      var power = $('#lasertestpower').val();
+      var duration = $('#lasertestduration').val();
+      console.log('Laser Test', power + ', ' + duration);
+      laserTest(power, duration);
+    }
+  });
 
     $('#xP').on('click', function() {
        if (isConnected) {
-         var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedxy').val() * 60
+         var dist = $('input[name=stp]:checked', '#stepsize').val();
+         var feedrate = $('#jogfeedxy').val() * 60;
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' X'+ dist + '\nG90\n');
        }
@@ -27,8 +36,8 @@ function initJog() {
 
     $('#yP').on('click', function() {
        if (isConnected) {
-         var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedxy').val() * 60
+         var dist = $('input[name=stp]:checked', '#stepsize').val();
+         var feedrate = $('#jogfeedxy').val() * 60;
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' Y'+ dist + '\nG90\n');
        }
@@ -36,8 +45,8 @@ function initJog() {
 
     $('#zP').on('click', function() {
        if (isConnected) {
-         var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedz').val() * 60
+         var dist = $('input[name=stp]:checked', '#stepsize').val();
+         var feedrate = $('#jogfeedz').val() * 60;
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' Z'+ dist + '\nG90\n');
        }
@@ -45,8 +54,8 @@ function initJog() {
 
     $('#xM').on('click', function() {
        if (isConnected) {
-         var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedxy').val() * 60
+         var dist = $('input[name=stp]:checked', '#stepsize').val();
+         var feedrate = $('#jogfeedxy').val() * 60;
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' X-'+ dist + '\nG90\n');
        }
@@ -54,8 +63,8 @@ function initJog() {
 
     $('#yM').on('click', function() {
        if (isConnected) {
-         var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedxy').val() * 60
+         var dist = $('input[name=stp]:checked', '#stepsize').val();
+         var feedrate = $('#jogfeedxy').val() * 60;
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' Y-'+ dist + '\nG90\n');
        }
@@ -63,8 +72,8 @@ function initJog() {
 
     $('#zM').on('click', function() {
        if (isConnected) {
-         var dist = $('input[name=stp]:checked', '#stepsize').val()
-         var feedrate = $('#jogfeedz').val() * 60
+         var dist = $('input[name=stp]:checked', '#stepsize').val();
+         var feedrate = $('#jogfeedz').val() * 60;
          console.log('Jog Distance', dist);
          sendGcode('G91\nG0 F'+ feedrate +' Z-'+ dist + '\nG90\n');
        }
@@ -103,7 +112,7 @@ function initJog() {
       printLog('Jog z speed settings saved', successcolor, "jog");
     });
 
-};
+}
 
 function saveJogSpeeds() {
   var jogfeedxy = parseFloat($("#jogfeedxy").val());
@@ -114,4 +123,4 @@ function saveJogSpeeds() {
 
   printLog('Jog speed settings saved', successcolor, "jog");
 
-};
+}
