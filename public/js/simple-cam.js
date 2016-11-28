@@ -8,6 +8,8 @@ function fillEasyCam() {
   $("#layerprep").empty();
   $("#tooloptions").empty();
 
+  var cncMode = lw.store.get('cncMode', 'Disable') !== 'Disable';
+
   // Instead of appending for each, we build a string and append at the end
   var layerprep = `<hr><div class="panel-group" id="accordion">`
 
@@ -62,8 +64,7 @@ function fillEasyCam() {
       if (!zdepth) {
         zdepth = 1;
       };
-      cncMode = $('#cncMode').val()
-      if (cncMode == "Enable") {
+      if (cncMode) {
         var cnctemplate = `
         <div class="panel panel-default">
         <div class="panel-heading">
@@ -204,7 +205,7 @@ function fillEasyCam() {
         layerprep += template;
       }
     } else if (objectsInScene[i].type == 'Mesh') {
-      
+
       if (typeof(object) != 'undefined') {
         lw.viewer.scene.remove(object);
       };
@@ -216,7 +217,7 @@ function fillEasyCam() {
       var xpos = objectsInScene[i].position.x
       var ypos = objectsInScene[i].position.y
       // var seq = objectsInScene[i].userData.seq;
-      
+
       var scale = objectsInScene[i].scale.y;
       // scale was already initialized during bitmap load, and may have been changed
       // We want to set the UI to the actual scale value instead of a default value here
@@ -297,7 +298,7 @@ function fillEasyCam() {
   }
 
 
-  if (cncMode == "Enable") {
+  if (cncMode) {
     if (hasTools) {
       var tools = `
       <label class="control-label">Tool Options</label>

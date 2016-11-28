@@ -21,6 +21,16 @@ var lw = lw || {};
         // Init progressbar
         NProgress.configure({ showSpinner: false });
 
+        // Enable CNC mode
+        this.enableCNCMode();
+
+        // On mode change
+        lw.store.on('set', function(item) {
+            if (item.name === 'cncMode') {
+                this.enableCNCMode(item.value !== 'Disable', true);
+            }
+        }, this);
+
         // Init tooltips
         $(document).tooltip();
         $(document).click(function() {
@@ -49,6 +59,22 @@ var lw = lw || {};
         $('#toggleFullScreen').on('click', function() {
             lw.toggleFullScreen();
         });
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.enableCNCMode = function(enable, show) {
+        if (! arguments.length) {
+            enable = lw.store.get('cncMode', 'Disable') !== 'Disable';
+        }
+
+        document.title = enable ? 'CNCWeb' : 'LaserWeb';
+
+        var $modal = $("#mode-switch-modal");
+
+        $modal.find('.laserMode').toggle(! enable);
+        $modal.find('.cncMode').toggle(enable);
+        show && $modal.modal('show');
     };
 
     // -------------------------------------------------------------------------

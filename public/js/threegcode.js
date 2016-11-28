@@ -24,8 +24,8 @@ $(document).ready(function() {
         var lasermultiply = document.getElementById('lasermultiply').value;
         var homingseq = document.getElementById('homingseq').value;
         var endgcode = document.getElementById('endgcode').value;
-        cncMode = $('#cncMode').val()
-        if (cncMode == "Enable") {
+        var cncMode = lw.store.get('cncMode', 'Disable') !== 'Disable';
+        if (cncMode) {
           var clearanceHeight = document.getElementById('clearanceHeight').value;
         } else {
           var clearanceHeight = 0
@@ -179,12 +179,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
     var isFeedrateSpecifiedAlready = false;
     var isSeekrateSpecifiedAlready = false;
 
-
-    var cncMode = false;
-
-    if  ($('#cncMode').val() == "Enable") {
-      cncMode = true;
-    }
+    var cncMode = lw.store.get('cncMode', 'Disable') !== 'Disable';
 
     // var subj_path2 = [];
     // var subj_paths = [];
