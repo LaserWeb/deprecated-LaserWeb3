@@ -1,27 +1,16 @@
 // Console header
 console.log("%c%s","color: #000; background: green; font-size: 12px;", "STARTING LASERWEB");
 
-// ????
-var activeObject, fileName;
-
 // Intialise
-lw.log.init();
-lw.store.init();
-lw.file.init();
-lw.menu.init();
-lw.numpad.init();
-lw.viewer.init();
-lw.dxf.loadFonts();
+lw.init();
 
 init3D();
 filePrepInit();
 initTabs();
 initJog();
-//errorHandlerJS();
 var paperscript = {};
 rasterInit();
 macrosInit();
-//svgInit();
 initSocket();
 initTour();
 initSmoothie();
@@ -226,51 +215,3 @@ $.get( "https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/vers
 $('.uppercase').keyup(function() {
     // this.value = this.value.toLocaleUpperCase();
 });
-
-// Error handling
-function errorHandlerJS() {
-    window.onerror = function(message, url, line) {
-        message = message.replace(/^Uncaught /i, "");
-        //alert(message+"\n\n("+url+" line "+line+")");
-        console.log(message + "\n\n(" + url + " line " + line + ")");
-        if (message.indexOf('updateMatrixWorld') == -1 ) { // Ignoring threejs/google api messages, add more || as discovered
-            lw.log.print(message + "\n(" + url + " on line " + line + ")", 'error');
-        }
-    };
-};
-
-
-// =============================================================================
-
-// LaserWeb scope
-var lw = lw || {};
-
-(function () {
-    'use strict';
-
-    lw.toggleFullScreen = function() {
-        if ((document.fullScreenElement && document.fullScreenElement !== null) ||
-        (!document.mozFullScreen && !document.webkitIsFullScreen)) {
-            if (document.documentElement.requestFullScreen) {
-                document.documentElement.requestFullScreen();
-            } else if (document.documentElement.mozRequestFullScreen) {
-                document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.webkitRequestFullScreen) {
-                document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-            }
-            lw.log.print('Going Fullscreen', 'success', "fullscreen");
-        } else {
-            if (document.cancelFullScreen) {
-                document.cancelFullScreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.webkitCancelFullScreen) {
-                document.webkitCancelFullScreen();
-            }
-            lw.log.print('Exiting Fullscreen', 'success', "fullscreen");
-        }
-    }
-
-    $('#toggleFullScreen').on('click', lw.toggleFullScreen);
-
-})();

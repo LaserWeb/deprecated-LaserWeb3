@@ -113,7 +113,7 @@ var lw = lw || {};
                     </div><!-- espConnect -->
 
                     <form class="navbar-form navbar-right" role="form">
-                        <a id="toggleFullScreen" data-placement="bottom" data-original-title="Fullscreen" data-toggle="tooltip" class="btn btn-default" onclick="toggleFullScreen();">
+                        <a id="toggleFullScreen" data-placement="bottom" data-original-title="Fullscreen" data-toggle="tooltip" class="btn btn-default">
                             <i class="fa fa-desktop"></i>
                         </a>
                     </form><!-- toggle fullscreen -->
