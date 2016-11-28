@@ -362,6 +362,18 @@ var lw = lw || {};
         });
     };
 
+    // Free object memory
+    lw.viewer.disposeObject = function(object) {
+        object.dispose  && object.dispose();
+        object.texture  && object.texture.dispose();
+        object.material && object.material.dispose();
+        object.geometry && object.geometry.dispose();
+
+        object.children.forEach(function(child) {
+            this.disposeObject(child);
+        }, this);
+    };
+
     // Remove an object from the scene
     lw.viewer.removeObject = function(object, settings) {
         // Defaults settings
@@ -380,8 +392,9 @@ var lw = lw || {};
         // Object by name or uuid
         object = this.getObjectFrom(object, target);
 
-        // Remove object
+        // Remove object and free memory
         target.remove(object);
+        this.disposeObject(object);
     };
 
     // Replace an object from the scene
