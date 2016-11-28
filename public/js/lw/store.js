@@ -209,7 +209,7 @@ var lw = lw || {};
     lw.store.saveFile = function() {
         var json = JSON.stringify(localStorage, null, '  ');
         var blob = new Blob([json], {type: 'application/json'});
-        invokeSaveAsDialog(blob, 'laserweb-settings-backup.json');
+        lw.file.saveAs(blob, 'laserweb-settings-backup.json');
     };
 
     // -------------------------------------------------------------------------

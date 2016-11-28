@@ -9,7 +9,7 @@ var lw = lw || {};
 
         <div id="gcode-menu-panel" class="mobtab" style="display: none;">
             <h4>G-CODE</h4>
-            <button class="btn btn-lg btn-default btn-file" title="Export GCODE to a file" onclick="saveFile()">
+            <button id="saveGCodeFile" class="btn btn-lg btn-default btn-file" title="Export GCODE to a file">
                 <i class="fa fa-save fa-fw"></i> Export to File
             </button>
             <form class="form-horizontal">

@@ -7,6 +7,7 @@ var activeObject, fileName;
 // Intialise
 lw.log.init();
 lw.store.init();
+lw.file.init();
 lw.menu.init();
 lw.numpad.init();
 lw.viewer.init();
@@ -26,7 +27,6 @@ initTour();
 initSmoothie();
 initEsp8266();
 initTree();
-initDragDrop();
 
 
 // Tooltips
@@ -43,18 +43,9 @@ $('#g-open').on('click', function() {
 });
 // Top toolbar Menu
 
-//File -> Open
-var fileOpen = document.getElementById('file');
-fileOpen.addEventListener('change', readFile, false);
-
 // Fix for opening same file from http://stackoverflow.com/questions/32916687/uploading-same-file-into-text-box-after-clearing-it-is-not-working-in-chrome?lq=1
 $('#file').bind('click', function() {
     $('#file').val(null);
-});
-
-// File -> Save
-$('#save').on('click', function() {
-    saveFile();
 });
 
 // View -> reset
@@ -248,272 +239,38 @@ function errorHandlerJS() {
     };
 };
 
-// Function to execute when opening file (triggered by fileOpen.addEventListener('change', readFile, false); )
-function readFile(evt) {
-    console.log('readFile:', evt);
-    // Close the menu
-    $("#drop1").dropdown("toggle");
 
-    // Files
-    var files = evt.target.files || evt.dataTransfer.files;
+// =============================================================================
 
-    for (var i = 0; i < files.length; i++) {
-        loadFile(files[i]);
-    }
-}
+// LaserWeb scope
+var lw = lw || {};
 
-// drag/drop
-function initDragDrop() {
-    var dropTarget = document.getElementById('container1');
+(function () {
+    'use strict';
 
-    var onDragLeave = function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        $('#draganddrop').hide();
-    }
-
-    var onDragOver = function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        $('#draganddrop').show();
-    }
-
-    var onDrop = function(e) {
-        onDragLeave(e);
-        readFile(e);
-    }
-
-
-    dropTarget.addEventListener('drop', onDrop, false);
-    dropTarget.addEventListener('dragover', onDragOver, false);
-    dropTarget.addEventListener('dragleave', onDragLeave, false);
-}
-
-// load file
-function loadFile(f) {
-    // No file...
-    if (! (f && f instanceof File)) {
-        throw new Error(f + ' is not an instance of File.');
-    }
-
-    // File reader object
-    var r = new FileReader();
-
-    // DXF file
-    if (f.name.match(/\.dxf$/i)) {
-        // On file loaded
-        r.onload = function(event) {
-            // Parse and create DXF 3D object
-            lw.dxf.draw(r.result, f.name, {
-                // On 3D object created
-                onObject: function(object) {
-                    // Add object to viewer
-                    lw.viewer.addObject(object, {
-                        name  : f.name,
-                        target: 'objects'
-                    });
-                }
-            });
-        };
-
-        // Read the file as text
-        r.readAsText(f);
-
-        // File handled
-        return;
-    }
-
-    if (f.name.match(/\.svg$/i)) {
-        // On file loaded
-        r.onload = function(event) {
-            // Parse and create SVG 3D object
-            lw.svg.drawFile(r.result, f.name, {
-                // On 3D object created
-                onObject: function(object) {
-                    // Add object to viewer
-                    lw.viewer.addObject(object, {
-                        name  : f.name,
-                        target: 'objects'
-                    });
-                },
-                // On error
-                onError: function(error) {
-                    console.error(error);
-                }
-            });
-        };
-
-        // Read the file as text
-        r.readAsText(f);
-
-        // File handled
-        return;
-    }
-
-    /*
-    else if (f.name.match(/\.svg$/i)) {
-        // console.log(f.name + " is a SVG file");
-        r.readAsText(f);
-        r.onload = function(event) {
-            svg = r.result
-            var svgpreview = document.getElementById('svgpreview');
-            svgpreview.innerHTML = r.result;
-            var svgfile = $('#svgpreview').html();
-            svg2three(svgfile, f.name);
-            lw.log.print('SVG Opened', 'message', "file");
-            resetView()
-        };
-    }
-    else if (f.name.match(/\.(gcode|gc|nc)$/i)) {
-        r.readAsText(f);
-        r.onload = function(event) {
-            // cleanupThree();
-            $("#gcodefile").show();
-            document.getElementById('gcodepreview').value = this.result;
-            lw.log.print('GCODE Opened', 'message', "file");
-            resetView()
-            setTimeout(function(){   openGCodeFromText(); }, 500);
-        };
-    }
-    else if (f.name.match(/\.stl$/i)) {
-        //r.readAsText(f);
-        // Remove the UI elements from last run
-        console.group("STL File");
-        var stlloader = new MeshesJS.STLLoader;
-        r.onload = function(event) {
-            // cleanupThree();
-            // Parse ASCII STL
-            if (typeof r.result === 'string') {
-                stlloader.loadString(r.result);
-                return;
+    lw.toggleFullScreen = function() {
+        if ((document.fullScreenElement && document.fullScreenElement !== null) ||
+        (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+            if (document.documentElement.requestFullScreen) {
+                document.documentElement.requestFullScreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullScreen) {
+                document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
             }
-            // buffer reader
-            var view = new DataView(this.result);
-            // get faces number
-            try {
-                var faces = view.getUint32(80, true);
-            } catch (error) {
-                self.onError(error);
-                return;
+            lw.log.print('Going Fullscreen', 'success', "fullscreen");
+        } else {
+            if (document.cancelFullScreen) {
+                document.cancelFullScreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
             }
-            // is binary ?
-            var binary = view.byteLength == (80 + 4 + 50 * faces);
-            if (!binary) {
-                // get the file contents as string
-                // (faster than convert array buffer)
-                r.readAsText(f);
-                return;
-            }
-            // parse binary STL
-            stlloader.loadBinaryData(view, faces, 100, window, f);
-        };
-        // start reading file as array buffer
-        r.readAsArrayBuffer(f);
-        lw.log.print('STL Opened', 'message', "file");
-        console.log("Opened STL, and asking user for Slice settings")
-        console.groupEnd();
-        $('#stlslice').modal('show')
-    }
-    else {
-        console.log(f.name + " is probably a Raster");
-        $('#origImage').empty();
-        r.readAsDataURL(f);
-        r.onload = function(event) {
-            var name = f.name;
-            var data = event.target.result;
-            drawRaster(name, data);
-        };
-    }
-
-    $('#filestatus').hide();
-    $('#cam-menu').click();
-
-    setTimeout(function(){ fillTree(); }, 250);
-    setTimeout(function(){ fillLayerTabs(); }, 300);
-    setTimeout(function(){ lw.viewer.extendsViewToObject(objectsInScene[objectsInScene.length - 1]); }, 300);
-    */
-};
-
-function saveFile() {
-    var textToWrite = prepgcodefile();
-    var blob = new Blob([textToWrite], {type: "text/plain"});
-    invokeSaveAsDialog(blob, 'file.gcode');
-
-};
-
-/**
-* @param {Blob} file - File or Blob object. This parameter is required.
-* @param {string} fileName - Optional file name e.g. "image.png"
-*/
-function invokeSaveAsDialog(file, fileName) {
-    if (!file) {
-        throw 'Blob object is required.';
-    }
-
-    if (!file.type) {
-        file.type = 'text/plain';
-    }
-
-    var fileExtension = file.type.split('/')[1];
-
-    if (fileName && fileName.indexOf('.') !== -1) {
-        var splitted = fileName.split('.');
-        fileName = splitted[0];
-        fileExtension = splitted[1];
-    }
-
-    var fileFullName = (fileName || (Math.round(Math.random() * 9999999999) + 888888888)) + '.' + fileExtension;
-
-    if (typeof navigator.msSaveOrOpenBlob !== 'undefined') {
-        return navigator.msSaveOrOpenBlob(file, fileFullName);
-    } else if (typeof navigator.msSaveBlob !== 'undefined') {
-        return navigator.msSaveBlob(file, fileFullName);
-    }
-
-    var hyperlink = document.createElement('a');
-    hyperlink.href = URL.createObjectURL(file);
-    hyperlink.target = '_blank';
-    hyperlink.download = fileFullName;
-
-    if (!!navigator.mozGetUserMedia) {
-        hyperlink.onclick = function() {
-            (document.body || document.documentElement).removeChild(hyperlink);
-        };
-        (document.body || document.documentElement).appendChild(hyperlink);
-    }
-
-    var evt = new MouseEvent('click', {
-        view: window,
-        bubbles: true,
-        cancelable: true
-    });
-
-    hyperlink.dispatchEvent(evt);
-
-    if (!navigator.mozGetUserMedia) {
-        URL.revokeObjectURL(hyperlink.href);
-    }
-}
-
-function toggleFullScreen() {
-    if ((document.fullScreenElement && document.fullScreenElement !== null) ||
-    (!document.mozFullScreen && !document.webkitIsFullScreen)) {
-        if (document.documentElement.requestFullScreen) {
-            document.documentElement.requestFullScreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-            document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullScreen) {
-            document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+            lw.log.print('Exiting Fullscreen', 'success', "fullscreen");
         }
-        lw.log.print('Going Fullscreen', 'success', "fullscreen");
-    } else {
-        if (document.cancelFullScreen) {
-            document.cancelFullScreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitCancelFullScreen) {
-            document.webkitCancelFullScreen();
-        }
-        lw.log.print('Exiting Fullscreen', 'success', "fullscreen");
     }
-}
+
+    $('#toggleFullScreen').on('click', lw.toggleFullScreen);
+
+})();
