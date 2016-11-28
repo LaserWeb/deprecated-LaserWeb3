@@ -11,39 +11,41 @@ var lw = lw || {};
             <span class="badge badge-default badge-warn" title="Items in Queue" id="syncstatus" style="margin-right: 5px;">Socket Closed</span>
             <span class="badge badge-default badge-notify" title="Items in Queue" id="machineStatus" style="margin-right: 5px;">Not Connected</span>
             <span class="badge badge-default badge-notify" title="Items in Queue" id="queueCnt" style="margin-right: 5px;">Queued: 0</span>
+
             <div id="mPosition" style="padding: 5px;">
                 <div class="drolabel">X:</div><div id="mX" class="dro">0.000</div><br />
                 <div class="drolabel">Y:</div><div id="mY" class="dro">0.000</div><br />
                 <div class="drolabel">Z:</div><div id="mZ" class="dro">0.000</div><br />
             </div>
-            <table>
+
+            <div id="armmachine" class="bs-callout bs-callout-danger">
+                <h4><i class="fa fa-fw fa-exclamation"></i>Machine Control Disabled</h4>
+                <table>
+                    <tr>
+                        <td style="width: 250px;">
+                            Enter <kbd>PIN</kbd> to unlock:
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span id="armerror" style="color: red;"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="armpin" style="margin: 5px;"><input type="text" /></div>
+                            <br />
+                            <a href="#" onclick="javascript:$('#armpin').pincodeInput().data('plugin_pincodeInput').clear()" class="btn btn-sm btn-danger">clear</a>
+                            <a href="#" onclick="javascript:$('#pinresetmodal').modal('show')" class="btn btn-sm btn-warning">set pin</a><br />
+                        </td>
+                    </tr>
+                </table>
+            </div><!-- #armmachine -->
+
+            <table id="controlmachine">
                 <tr>
                     <td colspan="5">
-                        <div id="armmachine" class="bs-callout bs-callout-danger">
-                            <h4><i class="fa fa-fw fa-exclamation"></i>Machine Control Disabled</h4>
-                            <table>
-                                <tr>
-                                    <td style="width: 250px;">
-                                        Enter <kbd>PIN</kbd> to unlock:
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <span id="armerror" style="color: red;"></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div id="armpin" style="margin: 5px;"><input type="text" /></div>
-                                        <br />
-                                        <a href="#" onclick="javascript:$('#armpin').pincodeInput().data('plugin_pincodeInput').clear()" class="btn btn-sm btn-danger">clear</a>
-                                        <a href="#" onclick="javascript:$('#pinresetmodal').modal('show')" class="btn btn-sm btn-warning">set pin</a><br />
-                                    </td>
-                                </tr>
-                            </table>
-                        </div><!-- #armmachine -->
-
-                        <div id="controlmachine" class="btn-group" role="group" aria-label="controljob">
+                        <div class="btn-group" role="group" aria-label="controljob">
                             <div class="btn-group">
                                 <button id="homeBtn" type="button" class="btn btn-ctl btn-default" onclick="homeMachine();">
                                     <span class="fa-stack fa-1x">

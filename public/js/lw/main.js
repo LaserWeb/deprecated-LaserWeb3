@@ -24,6 +24,9 @@ var lw = lw || {};
         // Enable CNC mode
         this.enableCNCMode();
 
+        // Enable machine control
+        this.initMachineControl();
+
         // On mode change
         lw.store.on('change', function(item) {
             if (item.name === 'cncMode') {
@@ -58,6 +61,54 @@ var lw = lw || {};
 
         $('#toggleFullScreen').on('click', function() {
             lw.toggleFullScreen();
+        });
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.enableMachineControl = function(enable) {
+        if (! arguments.length) {
+            enable = lw.store.get('safetyLockDisabled', 'Disable') !== 'Disable';
+        }
+
+        $('#controlmachine').toggle(! enable);
+        $('#armmachine').toggle(enable);
+
+        return enable;
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.initMachineControl = function() {
+        // Init arm machine control
+        this.enableMachineControl();
+
+        lw.store.on('refreshStore', function(item) {
+            this.enableMachineControl();
+        }, this);
+
+        $('#armpin').pincodeInput({
+            inputs    : 4,
+            hideDigits: true,
+            complete  : function(value) {
+                if (value !== lw.store.get('armpin',  '1234')) {
+                    $("#armerror").html("Code incorrect");
+                }
+                else {
+                    $('#controlmachine').toggle(true);
+                    $('#armmachine').toggle(false);
+                }
+            }
+        });
+
+        $('#setarmpin').pincodeInput({
+            inputs    : 4,
+            hideDigits: false,
+            complete  : function(value) {
+                lw.store.set('armpin', value);
+                $("#setpinmsg").html("<h3>Pin set to " + value + "</h3>");
+                setTimeout(function(){ $('#pinresetmodal').modal('hide') }, 1500);
+            }
         });
     };
 
