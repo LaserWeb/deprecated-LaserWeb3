@@ -21,8 +21,34 @@ var lw = lw || {};
         // Init progressbar
         NProgress.configure({ showSpinner: false });
 
-        // Init fullscreen toggle
-        $('#toggleFullScreen').on('click', lw.toggleFullScreen);
+        // Init tooltips
+        $(document).tooltip();
+        $(document).click(function() {
+            $(this).tooltip("option", "hide", { effect: "clip", duration: 500 })
+            .off("focusin focusout");
+        });
+
+        // Command Console History
+        $("#command").inputHistory({ enter: function () {
+            sendGcode($('#command').val());
+        }});
+
+        // Init some UI events handlers
+        $('#viewReset').on('click', function() {
+            lw.viewer.reset();
+        });
+
+        $('#savesettings').on('click', function() {
+            lw.store.refreshStore();
+        });
+
+        $('#backup').on('click', function() {
+            lw.store.saveFile();
+        });
+
+        $('#toggleFullScreen').on('click', function() {
+            lw.toggleFullScreen();
+        });
     };
 
     // -------------------------------------------------------------------------

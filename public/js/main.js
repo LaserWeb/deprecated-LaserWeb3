@@ -17,31 +17,6 @@ initSmoothie();
 initEsp8266();
 initTree();
 
-
-// Tooltips
-$(document).tooltip();
-$(document).click(function() {
-    $(this).tooltip("option", "hide", {
-        effect: "clip",
-        duration: 500
-    }).off("focusin focusout");
-});
-
-// Top toolbar Menu
-
-// View -> reset
-$('#viewReset').on('click', function() {
-    lw.viewer.reset();
-});
-
-$('#savesettings').on('click', function() {
-    lw.store.refreshStore();
-});
-
-$('#backup').on('click', function() {
-    lw.store.saveFile();
-});
-
 // Tabs on right side
 $('#drotabtn').on('click', function() {
     $('#drotab').show();
@@ -127,11 +102,3 @@ if (cncMode == "Enable") {
     $("#statusBody").html("Note: You have activated <b>CNC mode</b> from <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>");
     $("#statusBody2").html("While in CNC mode, Laser Raster Engraving is not enabled.  Please only open GCODE, DXF or SVG files.<hr>To revert to Laser Mode, go to <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>, and change it to <kbd>Disabled</kbd><hr>Please help us improve this experimental feature by giving feedback, asking for improvements, sharing ideas and posting bugs in the <a class='btn btn-sm btn-success' target='_blank' href='https://plus.google.com/communities/115879488566665599508'>Support Community</a>");
 };
-
-// Command Console History
-$("#command").inputHistory({
-    enter: function () {
-        var commandValue = $('#command').val();
-        sendGcode(commandValue);
-    }
-});
