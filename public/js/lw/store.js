@@ -148,6 +148,7 @@ var lw = lw || {};
         }, this);
 
         this.logEnd();
+        this.trigger('refreshForm');
     };
 
     // (Re)load all settings from the form and populate the localStorage
@@ -171,6 +172,7 @@ var lw = lw || {};
         }, this);
 
         this.logEnd();
+        this.trigger('refreshStore');
         lw.log.print('<b>Saved Settings: <br>NB:</b> Please refresh page for settings to take effect', 'error', 'settings');
     };
 
