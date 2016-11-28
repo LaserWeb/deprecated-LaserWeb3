@@ -20,7 +20,7 @@ var lw = lw || {};
         this.enable(lw.store.get('useNumPad') === 'Enable');
 
         // Enable/Disable on store value change
-        lw.store.on('set', function(item) {
+        lw.store.on('change', function(item) {
             if (item.name === 'useNumPad') {
                 this.enable(item.value === 'Enable');
             }

@@ -25,7 +25,7 @@ var lw = lw || {};
         this.enableCNCMode();
 
         // On mode change
-        lw.store.on('set', function(item) {
+        lw.store.on('change', function(item) {
             if (item.name === 'cncMode') {
                 this.enableCNCMode(item.value !== 'Disable', true);
             }

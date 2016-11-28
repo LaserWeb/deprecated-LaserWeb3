@@ -99,7 +99,11 @@ var lw = lw || {};
 
     // Set setting item in local storage
     lw.store.set = function(name, value) {
-        this.trigger('set', { name: name, value: value });
+        var oldValue = this.get(name, undefined);
+        this.trigger('set', { name: name, value: value, oldValue: oldValue });
+        if (oldValue !== value) {
+            this.trigger('change', { name: name, value: value, oldValue: oldValue });
+        }
         localStorage.setItem(name, value);
     };
 
