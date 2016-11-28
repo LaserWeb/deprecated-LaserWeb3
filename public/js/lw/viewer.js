@@ -573,8 +573,8 @@ var lw = lw || {};
 
                 if (mouseDown) {
                     name = this.getObjectName(object);
-                    this.log('Clicked on : ' + name);
-                    lw.log.print('Clicked on : ' + name, 'success', 'viewer');
+                    this.log('Clicked on : ' + name + '.' + object.uuid);
+                    lw.log.print('Clicked on : ' + name + '.' + object.uuid, 'success', 'viewer');
                 }
 
                 this.attachBoundingBox(object);
