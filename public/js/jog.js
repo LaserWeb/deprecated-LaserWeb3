@@ -81,10 +81,6 @@ function initJog() {
   });
 
   $('#ZProbeMin').on('click', function(ev) {
-    sendGcode('G38.2 Z20');
-  });
-
-  $('#ZProbeMax').on('click', function(ev) {
     sendGcode('G38.2 Z-20');
   });
 
@@ -105,6 +101,13 @@ function initJog() {
     console.log("Z zero");
     sendGcode('G10 L20 P0﻿ Z0\n');
   });
+
+  // zero all axes
+  $('#zeroAll').on('click', function(ev) {
+    console.log("Z zero");
+    sendGcode('G10 L20 P0﻿ X0 Y0 Z0');
+  });
+
 
   // increase feed override
   $('#iF').on('mousedown', function(ev) {

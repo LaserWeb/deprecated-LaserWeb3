@@ -198,7 +198,7 @@ font-family: '8bit'; /*a name to be used later*/
     margin-bottom: 3px;
     font-size: 18px;
     width: calc(99% - 85px);
-    border: 1px solid #aaa;
+    border: 1px solid #ccc;
     font-weight: bold;
     margin-left: 0px;
     margin-right: 0px;
@@ -212,7 +212,7 @@ font-family: '8bit'; /*a name to be used later*/
     margin-bottom: 3px;
     font-size: 20px;
     width: calc(99% - 152px);
-    border: 1px solid #aaa;
+    border: 1px solid #ccc;
     font-weight: bold;
     margin-left: 0px;
     margin-right: 10px;
@@ -229,7 +229,7 @@ font-family: '8bit'; /*a name to be used later*/
     padding-bottom: 2px;
     font-size: 12px;
     width: 38px;
-    border: 1px solid #aaa;
+    border: 1px solid #ccc;
     font-weight: bold;
     margin-left: 4px;
     margin-right: 3px;
@@ -245,7 +245,7 @@ font-family: '8bit'; /*a name to be used later*/
     margin-bottom: 3px;
     font-size: 20px;
     width: calc(99% - 167px);
-    border: 1px solid #aaa;
+    border: 1px solid #ccc;
     font-weight: bold;
     margin-left: 0px;
     margin-right: 3px;

@@ -24,11 +24,17 @@ function initSocket() {
     if (data.indexOf('LPC176')) {	//LPC1768 or LPC1769 should be Smoothie
       $('#overrides').removeClass('hide');
       $('#motorsOff').show();
+      $('homeX').show();
+      $('homeY').show();
+      $('homeZ').show();
     }
     if (data.indexOf('Grbl') === 0) {
       if (parseFloat(data.substr(5)) >= 1.1) {	//is Grbl >= v1.1
         $('#overrides').removeClass('hide');
         $('#motorsOff').hide();
+        $('homeX').hide();
+        $('homeY').hide();
+        $('homeZ').hide();
       } else {
         socket.emit('closePort', 1);
         isConnected = false;
