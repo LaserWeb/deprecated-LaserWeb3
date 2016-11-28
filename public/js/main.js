@@ -1,6 +1,8 @@
 // Console header
 console.log("%c%s","color: #000; background: green; font-size: 12px;", "STARTING LASERWEB");
 
+var objectsInScene = []; //array that holds all objects we added to the lw.viewer.scene.
+
 // Intialise
 lw.init();
 
