@@ -46,8 +46,46 @@ var lw = lw || {};
                 </div>
             </form>
             <br />
-            <div id="quoteprice"></div>
-            <div id="quoteresult"></div>
+            <div id="quoteprice">
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <td class="text-center"><strong>Qty</strong></td>
+                                <td class="text-center"><strong>Description</strong></td>
+                                <td class="text-right"><strong>Unit</strong></td>
+                                <td class="text-right"><strong>Total</strong></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Setup Cost</td>
+                                <td class="text-right setupfee"></td>
+                                <td class="text-right setupfee"></td>
+                            </tr>
+                            <tr>
+                                <td class="unitqty"></td>
+                                <td>Material</td>
+                                <td class="text-right materialcost"></td>
+                                <td class="text-right materialcosttotal"></td>
+                            </tr>
+                            <tr>
+                                <td class="unitqty"></td>
+                                <td>Laser Time</td>
+                                <td class="text-right timecost"></td>
+                                <td class="text-right timecosttotal"></td>
+                            </tr>
+                            <tr>
+                                <td class="thick-line"></td>
+                                <td class="thick"></td>
+                                <td class="thick-line text-center"><strong>Total</strong></td>
+                                <td class="thick-line text-right grandtotal"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <nav>
                 <ul class="pager">
                     <li class="previous"><a href="#" onclick="$('#cam-menu').click();">

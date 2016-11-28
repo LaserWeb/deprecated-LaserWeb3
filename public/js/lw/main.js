@@ -11,6 +11,7 @@ var lw = lw || {};
         lw.store.init();
         lw.file.init();
         lw.menu.init();
+        lw.quote.init();
         lw.numpad.init();
         lw.viewer.init();
         lw.dxf.loadFonts();
