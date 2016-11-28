@@ -167,13 +167,39 @@ var lw = lw || {};
         $(window).on('resize'   , onResize)
         .on('mousedown', onMouseDown)
         .on('mousemove', onMouseMove);
+
+        // On grid size change
+        lw.store.on('refreshStore', function(item) {
+            this.resizeGrid();
+        }, this);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.viewer.resizeGrid = function() {
+        // Workspace size
+        var laserXMax = parseInt(lw.store.get('laserXMax', 200));
+        var laserYMax = parseInt(lw.store.get('laserYMax', 200));
+
+        // Create new objects
+        var oldGrid = this.grid;
+        var oldAxes = this.axes;
+        this.grid   = new this.Grid(laserXMax, laserYMax);
+        this.axes   = new this.Axes(laserXMax, laserYMax);
+
+        // Replace objects
+        this.replaceObject(oldGrid, this.grid, { name: 'grid', target: 'workspace' });
+        this.replaceObject(oldAxes, this.axes, { name: 'axes', target: 'workspace', position: { x: 0, y: 0, z: 0 } });
+
+        // Move bullseye to origin
+        this.moveObject(this.bullseye, 0, 0, 0);
     };
 
     // -------------------------------------------------------------------------
 
     lw.viewer.reset = function(target) {
         this.extendsViewToObject(target || this.grid);
-    }
+    };
 
     // -------------------------------------------------------------------------
 
@@ -237,7 +263,32 @@ var lw = lw || {};
         for (var i = 0; i < object.children.length; i++) {
             this.setObjectOrder(object.children[i], order + i);
         }
-    }
+    };
+
+    // Remove an object from the scene
+    lw.viewer.removeObject = function(object, settings) {
+        // Defaults settings
+        settings = settings || {};
+
+        // Default target name
+        var targetName = settings.target || 'objects';
+
+        // Get the target object
+        var target = this[targetName];
+
+        if (! (target instanceof THREE.Object3D)) {
+            throw new Error(target + ' is not an instance of THREE.Object3D.');
+        }
+
+        // Remove object
+        target.remove(object);
+    };
+
+    // Replace an object from the scene
+    lw.viewer.replaceObject = function(object, newObject, settings) {
+        this.removeObject(object, settings);
+        this.addObject(newObject, settings);
+    };
 
     // Add an object to the scene
     lw.viewer.addObject = function(object, settings) {
@@ -379,7 +430,7 @@ var lw = lw || {};
         requestAnimationFrame(function() {
             lw.viewer.animate();
         });
-    }
+    };
 
     // -------------------------------------------------------------------------
 
