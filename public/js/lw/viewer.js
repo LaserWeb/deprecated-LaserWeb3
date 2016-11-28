@@ -6,6 +6,8 @@ var lw = lw || {};
 
     // Viewer scope
     lw.viewer = {
+        name        : 'viewer',
+        logging     : true,
         rendererMode: null,
         $render     : null,
         size        : null,
@@ -24,6 +26,9 @@ var lw = lw || {};
         lights      : null,
         bullseye    : null
     };
+
+    // Bind logging methods
+    lw.log.bind(lw.viewer);
 
     // -------------------------------------------------------------------------
 
@@ -377,6 +382,67 @@ var lw = lw || {};
         }
     };
 
+    // -------------------------------------------------------------------------
+
+    lw.viewer.objectAsParent = function(object, parent) {
+        if (typeof object === 'string') {
+            object = this[object];
+        }
+
+        if (typeof parent === 'string') {
+            parent = this[parent];
+        }
+
+        if (object.parent === parent) {
+            return true;
+        }
+
+        return object.parent && this.objectAsParent(object.parent, parent);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.viewer.getObjectName = function(object) {
+        if (typeof object === 'string') {
+            object = this[object];
+        }
+
+        if (object.name && object.name.length) {
+            return object.name;
+        }
+
+        return object.parent && this.getObjectName(object.parent);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.viewer.detachBoundingBox = function() {
+        this.lastBoundingBox && this.removeObject(this.lastBoundingBox);
+    };
+
+    // -------------------------------------------------------------------------
+
+    lw.viewer.attachBoundingBox = function(object) {
+        // Remove BoundingBox if any
+        this.detachBoundingBox();
+
+        // Create new one
+        this.lastBoundingBox = new lw.viewer.BoundingBox(object);
+
+        // Get object world coordinates
+        var position = new THREE.Vector3();
+        position.setFromMatrixPosition(object.matrixWorld);
+
+        // Ad BoundingBox at right position
+        this.addObject(this.lastBoundingBox, { position: {
+            x: Math.abs(position.x),
+            y: Math.abs(position.y),
+            z: Math.abs(position.z)
+        } });
+    };
+
+    // -------------------------------------------------------------------------
+
     // Update the mouse vector position
     lw.viewer.onMouseEvent = function(event) {
         // Update mouse position
@@ -384,25 +450,25 @@ var lw = lw || {};
         this.mouse.x =  ((event.clientX - offset.left) / this.size.width)  * 2 - 1;
         this.mouse.y = -((event.clientY - offset.top)  / this.size.height) * 2 + 1;
 
+        // Is mouseDown event
+        var mouseDown = event.type === 'mousedown';
+
         // Check if intersected objects
-        // var mouseDown   = event.type === 'mousedown';
-        // var coreObjects = ['cursor', 'bullseye', 'rastermesh', 'XY', 'GridHelper'];
-        // var objectName;
+        var object, name;
 
         this.intersectObjects(function(data) {
-            // // If not an core objects
-            // if (coreObjects.indexOf(data.object.parent.name) === -1 && coreObjects.indexOf(data.object.name) === -1) {
-            //     // Log event on "click"
-            //     if (mouseDown) {
-            //         objectName = [data.object.parent.name, data.object.name].join('.');
-            //         lw.log.print('Clicked on : ' + objectName, 'success', "viewer")
-            //         console.log('Clicked on : ' + objectName);
-            //         console.log(data.object);
-            //     }
-            //
-            //     // Attach bounding box
-            //     attachBB(data.object);
-            // }
+            // If in "objects" group
+            if (this.objectAsParent(data.object, this.objects)) {
+                object = data.object;
+
+                if (mouseDown) {
+                    name = this.getObjectName(object);
+                    this.log('Clicked on : ' + name);
+                    lw.log.print('Clicked on : ' + name, 'success', 'viewer');
+                }
+
+                this.attachBoundingBox(object);
+            }
 
             // Move cursor at intersection position
             this.cursor.moveTo(data.point);
@@ -475,7 +541,7 @@ var lw = lw || {};
         var fov = 2.2 * Math.atan(maxlen / (2 * dist)) * (180 / Math.PI);
 
         if (isNaN(fov)) {
-            return console.warn("giving up on viewing extents because fov could not be calculated");
+            return this.warning("giving up on viewing extents because fov could not be calculated");
         }
 
         this.viewControls.object.fov = fov;
