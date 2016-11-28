@@ -151,22 +151,46 @@ function initSocket() {
 		}
 	});
 
+  $('#XProbeMin').on('click', function(ev) {
+    sendGcode('G38.2 X-20');
+  });
+
+  $('#XProbeMax').on('click', function(ev) {
+    sendGcode('G38.2 X20');
+  });
+
+  $('#YProbeMin').on('click', function(ev) {
+    sendGcode('G38.2 Y-20');
+  });
+
+  $('#YProbeMax').on('click', function(ev) {
+    sendGcode('G38.2 Y20');
+  });
+
+  $('#ZProbeMin').on('click', function(ev) {
+    sendGcode('G38.2 Z-20');
+  });
+
+  $('#ZProbeMax').on('click', function(ev) {
+    sendGcode('G38.2 Z20');
+  });
+
 	// zero x axes
-    $('#zeroX').on('click', function(ev) {
+  $('#zeroX').on('click', function(ev) {
 		console.log("X zero");
-		sendGcode('G92 X0');
+		sendGcode('G10 L20 P0﻿ X0\n');
 	});
 
 	// zero y axes
 	$('#zeroY').on('click', function(ev) {
 		console.log("Y zero");
-		sendGcode('G92 Y0');
+		sendGcode('G10 L20 P0﻿ Y0\n');
 	});
 
 	// zero z axes
 	$('#zeroZ').on('click', function(ev) {
 		console.log("Z zero");
-		sendGcode('G92 Z0');
+		sendGcode('G10 L20 P0﻿ Z0\n');
 	});
 
 	// increase feed override
@@ -355,7 +379,7 @@ function playpauseMachine() {
             runCommand('suspend');
             runCommand(laseroffcmd);
           } else {
-            runCommand('pause');              
+            runCommand('pause');
           }
         } else if (connectVia === "ESP8266") {
           if (laseroffcmd !== 0) {
@@ -478,9 +502,9 @@ function updateStatus(data) {
     var ypos = parseFloat(pos[1]).toFixed(2);
     var zpos = parseFloat(pos[2]).toFixed(2);
 
-    $('#mX').html(xpos + "<span class='drounitlabel'> mm</span>");
-    $('#mY').html(ypos + "<span class='drounitlabel'> mm</span>");
-    $('#mZ').html(zpos + "<span class='drounitlabel'> mm</span>");
+    $('#mX').html(xpos);
+    $('#mY').html(ypos);
+    $('#mZ').html(zpos);
     if (bullseye) {
       setBullseyePosition(pos[0], pos[1], pos[2]); // Also updates #mX #mY #mZ
     }

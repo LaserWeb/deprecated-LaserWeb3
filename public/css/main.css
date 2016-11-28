@@ -217,6 +217,24 @@ font-family: '8bit'; /*a name to be used later*/
     margin-left: 0px;
     margin-right: 3px;
     /*font-family: '8bit';*/
+
+}
+
+.droUnit {
+    padding:3px;
+    top:-3px;
+    display:inline-block;
+    background-color: #dddddd;
+    text-align: center;
+    width: 40px;
+    border: 1px solid #aaa;
+    font-weight: bold;
+    margin-left: 3px;
+    margin-right: 0px;
+    /*font-family: '8bit';*/
+    font-size: 13px;
+    height: 28px;
+
 }
 
 .droOR {
@@ -250,10 +268,6 @@ font-family: '8bit'; /*a name to be used later*/
     margin-left: 0px;
     margin-right: 0px;
     /*font-family: '8bit';*/
-}
-
-.drounitlabel {
-  font-size: 13px;
 }
 
 .hide {
