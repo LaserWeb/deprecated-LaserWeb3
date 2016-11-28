@@ -6,7 +6,6 @@ var objectsInScene = []; //array that holds all objects we added to the lw.viewe
 // Intialise
 lw.init();
 
-filePrepInit();
 initTabs();
 initJog();
 var paperscript = {};

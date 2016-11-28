@@ -169,14 +169,72 @@ var lw = lw || {};
         });
 
         // On window resize
-        $(window).on('resize'   , onResize)
-        .on('mousedown', onMouseDown)
-        .on('mousemove', onMouseMove);
+        $(window)
+            .on('resize'   , onResize)
+            .on('mousedown', onMouseDown)
+            .on('mousemove', onMouseMove);
 
         // On grid size change
         lw.store.on('refreshStore', function(item) {
             this.resizeGrid();
         }, this);
+
+        // Register view pan/zoom events handlers
+        $('#panleft').on('click', function() {
+            TweenMax.to(lw.viewer.viewControls.target, 0.25, {
+                x: lw.viewer.viewControls.target.x + 20,
+                onUpdate: function() {
+                    lw.viewer.viewControls.update();
+                }
+            });
+        });
+
+        $('#panright').on('click', function() {
+            TweenMax.to(lw.viewer.viewControls.target, 0.25, {
+                x: lw.viewer.viewControls.target.x - 20,
+                onUpdate: function() {
+                    lw.viewer.viewControls.update();
+                }
+            });
+        });
+
+        $('#panup').on('click', function() {
+            TweenMax.to(lw.viewer.viewControls.target, 0.25, {
+                y: lw.viewer.viewControls.target.y - 20,
+                onUpdate: function() {
+                    lw.viewer.viewControls.update();
+                }
+            });
+        });
+
+        $('#pandown').on('click', function() {
+            TweenMax.to(lw.viewer.viewControls.target, 0.25, {
+                y: lw.viewer.viewControls.target.y + 20,
+                onUpdate: function() {
+                    lw.viewer.viewControls.update();
+                }
+            });
+        });
+
+        $('#zoomout').on('click', function() {
+            TweenMax.to(lw.viewer.camera, 0.25, {
+                fov     : "+=5",
+                onUpdate: function() {
+                    lw.viewer.camera.updateProjectionMatrix();
+                }
+            });
+            lw.viewer.viewControls.update();
+        });
+
+        $('#zoomin').on('click', function() {
+            TweenMax.to(lw.viewer.camera, 0.25, {
+                fov     : "-=5",
+                onUpdate: function() {
+                    lw.viewer.camera.updateProjectionMatrix();
+                }
+            });
+            lw.viewer.viewControls.update();
+        });
     };
 
     // -------------------------------------------------------------------------

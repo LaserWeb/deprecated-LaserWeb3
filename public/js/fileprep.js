@@ -3,56 +3,6 @@ var Ytofix;
 var oldxscale = 0;
 var oldyscale = 0;
 
-
-function filePrepInit() {
-
-    $('#panleft').on('click', function() {
-        var oldValue = lw.viewer.viewControls.target.x
-        var newVal = oldValue + 20;
-        TweenMax.to(lw.viewer.viewControls.target,0.25,{x:newVal,onUpdate:function(){
-            lw.viewer.viewControls.update();
-        }});
-    });
-
-    $('#panright').on('click', function() {
-        var oldValue = lw.viewer.viewControls.target.x
-        var newVal = oldValue - 20;
-        TweenMax.to(lw.viewer.viewControls.target,0.25,{x:newVal,onUpdate:function(){
-            lw.viewer.viewControls.update();
-        }});
-    });
-
-    $('#panup').on('click', function() {
-        var oldValue = lw.viewer.viewControls.target.y
-        var newVal = oldValue - 20;
-        TweenMax.to(lw.viewer.viewControls.target,0.25,{y:newVal,onUpdate:function(){
-            lw.viewer.viewControls.update();
-        }});
-    });
-
-    $('#pandown').on('click', function() {
-        var oldValue = lw.viewer.viewControls.target.y
-        var newVal = oldValue + 20;
-        TweenMax.to(lw.viewer.viewControls.target,0.25,{y:newVal,onUpdate:function(){
-            lw.viewer.viewControls.update();
-        }});
-    });
-
-    $('#zoomout').on('click', function() {
-        TweenMax.to(lw.viewer.camera,0.25,{fov:"+=5",onUpdate:function(){
-            lw.viewer.camera.updateProjectionMatrix();
-        }});
-        lw.viewer.viewControls.update();
-    });
-
-    $('#zoomin').on('click', function() {
-        TweenMax.to(lw.viewer.camera,0.25,{fov:"-=5",onUpdate:function(){
-            lw.viewer.camera.updateProjectionMatrix();
-        }});
-        lw.viewer.viewControls.update();
-    });
-}
-
 function putFileObjectAtZero(object) {
     if (! object) return;
     var laserxmax = lw.viewer.grid.userData.size.x;
