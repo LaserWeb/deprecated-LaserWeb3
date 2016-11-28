@@ -17,21 +17,6 @@ initSmoothie();
 initEsp8266();
 initTree();
 
-// Tabs on right side
-$('#drotabtn').on('click', function() {
-    $('#drotab').show();
-    $('#gcodetab').hide();
-    $("#drotabtn").addClass("active");
-    $("#gcodetabbtn").removeClass("active");
-});
-
-$('#gcodetabbtn').on('click', function() {
-    $('#drotab').hide();
-    $('#gcodetab').show();
-    $("#drotabtn").removeClass("active");
-    $("#gcodetabbtn").addClass("active");
-});
-
 // Bind Quote System
 $('.quoteVar').keyup(function(){
     var setupfee = ( parseFloat($("#setupcost").val()) ).toFixed(2);
