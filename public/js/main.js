@@ -50,52 +50,11 @@ $('#drotabtn').on('click', function() {
     $("#gcodetabbtn").removeClass("active");
 });
 
-
 $('#gcodetabbtn').on('click', function() {
     $('#drotab').hide();
     $('#gcodetab').show();
     $("#drotabtn").removeClass("active");
     $("#gcodetabbtn").addClass("active");
-});
-
-// Show/Hide Macro Pad
-$('#toggleviewer').on('click', function() {
-    if ($( "#toggleviewer" ).hasClass( "active" )) {
-
-    } else {
-        $('#hometab').show();
-        $('#camleftcol').hide();
-        $('#settingscol').hide();
-        $("#toggleviewer").addClass("active");
-        $("#togglefile").removeClass("active");
-        $("#togglesettings").removeClass("active");
-    }
-});
-
-$('#togglefile').on('click', function() {
-    if ($( "#togglefile" ).hasClass( "active" )) {
-
-    } else {
-        $('#hometab').hide();
-        $('#camleftcol').show();
-        $('#settingscol').hide();
-        $("#toggleviewer").removeClass("active");
-        $("#togglefile").addClass("active");
-        $("#togglesettings").removeClass("active");
-    }
-});
-
-$('#togglesettings').on('click', function() {
-    if ($( "#togglesettings" ).hasClass( "active" )) {
-
-    } else {
-        $('#hometab').hide();
-        $('#camleftcol').hide();
-        $('#settingscol').show();
-        $("#toggleviewer").removeClass("active");
-        $("#togglefile").removeClass("active");
-        $("#togglesettings").addClass("active");
-    }
 });
 
 // Bind Quote System

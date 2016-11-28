@@ -250,8 +250,8 @@ var lw = lw || {};
 
         if (anyissues) {
             lw.log.print('<b>MISSING CONFIG: You need to configure LaserWeb for your setup. </b>. Click <kbd>Settings <i class="fa fa-cogs"></i></kbd> on the left, and work through all the options', 'error', 'settings');
-            $('#togglesettings').click();
             $('#settingsstatus').show();
+            lw.menu.show('settings');
         }
     };
 
