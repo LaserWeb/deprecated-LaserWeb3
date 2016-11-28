@@ -27,10 +27,6 @@ $(document).click(function() {
     }).off("focusin focusout");
 });
 
-$('#g-open').on('click', function() {
-    $('#googledrive').modal('show');
-});
-
 // Top toolbar Menu
 
 // View -> reset
