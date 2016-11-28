@@ -151,13 +151,16 @@ var lw = lw || {};
         // Start animate
         this.animate();
 
+        // Reset view
+        this.reset();
+
         // Events handlers -----------------------------------------------------
 
         // Enable/Disable 3D view
         $('#3dview').prop('checked', cncMode);
         $('#3dview').change(function() {
             lw.viewer.viewControls.enableRotate = $(this).is(":checked");
-            resetView();
+            lw.viewer.reset();
         });
 
         // On window resize
@@ -165,6 +168,12 @@ var lw = lw || {};
         .on('mousedown', onMouseDown)
         .on('mousemove', onMouseMove);
     };
+
+    // -------------------------------------------------------------------------
+
+    lw.viewer.reset = function(target) {
+        this.extendsViewToObject(target || this.grid);
+    }
 
     // -------------------------------------------------------------------------
 

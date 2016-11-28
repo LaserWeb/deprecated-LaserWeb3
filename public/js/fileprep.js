@@ -54,20 +54,6 @@ function filePrepInit() {
 
 }
 
-function resetView() {
-    if (objectsInScene.length > 0) {
-        var insceneGrp = new THREE.Group()
-        for (i = 0; i < objectsInScene.length; i++) {
-            var object = objectsInScene[i].clone();
-            insceneGrp.add(object)
-        }
-        lw.viewer.extendsViewToObject(insceneGrp);
-    } else {
-        lw.viewer.extendsViewToObject(lw.viewer.grid);
-    }
-
-}
-
 function putFileObjectAtZero(object) {
 
     var bbox2 = new THREE.Box3().setFromObject(object);

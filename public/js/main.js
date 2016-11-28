@@ -31,7 +31,7 @@ $(document).click(function() {
 
 // View -> reset
 $('#viewReset').on('click', function() {
-    resetView();
+    lw.viewer.reset();
 });
 
 $('#savesettings').on('click', function() {
@@ -176,5 +176,3 @@ $("#command").inputHistory({
         sendGcode(commandValue);
     }
 });
-
-setTimeout(function(){ $('#viewReset').click(); }, 100);
