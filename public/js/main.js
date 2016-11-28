@@ -178,18 +178,3 @@ $("#command").inputHistory({
 });
 
 setTimeout(function(){ $('#viewReset').click(); }, 100);
-
-
-// Version check
-
-var version = $('meta[name=version]').attr("content");
-$.get( "https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/version.txt", function( data ) {
-    lw.log.print("Version currently Installed : " + version , 'message', "git")
-    lw.log.print("Version available online on Github : " + data , 'message', "git")
-    if ( parseInt(version) < parseInt(data) ) {
-        lw.log.print("<b><u>NB:  UPDATE AVAILABLE!</u></b>  - Execute 'git pull' from your laserweb terminal " , 'error', "git")
-    } else {
-        lw.log.print("Your version of LaserWeb is Up To Date! " , 'success', "git")
-    }
-
-});
