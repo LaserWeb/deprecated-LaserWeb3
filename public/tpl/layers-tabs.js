@@ -16,14 +16,7 @@ var lw = lw || {};
                     </span>
                 </td>
                 <td>
-                    <ul id="tabsLayers" class="nav nav-tabs" accesskey="">
-                        <li id="allView" role="presentation" class="active layertab">
-                            <a href="#">All Layers</a>
-                        </li>
-                        <li id="gCodeView" role="presentation" class="layertab">
-                            <a href="#">GCODE View</a>
-                        </li>
-                    </ul>
+                    <ul id="tabsLayers" class="nav nav-tabs"></ul>
                 </td>
             </tr>
         </table> <!-- layers tabs -->

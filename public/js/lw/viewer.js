@@ -174,6 +174,11 @@ var lw = lw || {};
             .on('mousedown', onMouseDown)
             .on('mousemove', onMouseMove);
 
+        // Mouseout
+        this.$render.on('mouseleave', function() {
+            lw.viewer.detachBoundingBox();
+        })
+
         // On grid size change
         lw.store.on('refreshStore', function(item) {
             this.resizeGrid();
@@ -328,6 +333,35 @@ var lw = lw || {};
         }
     };
 
+    // Return an object from the the target
+    lw.viewer.getObjectFrom = function(object, target) {
+        // Object by name or uuid
+        if (typeof object === 'string') {
+            //object = this[object];
+            target.children.some(function(child) {
+                if (child.name === object || child.uuid === object) {
+                    return object = child;
+                }
+            });
+        }
+
+        return object;
+    };
+
+    // Show only this object
+    lw.viewer.showObjectAlone = function(object) {
+        this.objects && this.objects.children.forEach(function(child) {
+            child.visible = child === object || child.name === object || child.uuid === object;
+        });
+    };
+
+    // Show all objects in scene
+    lw.viewer.showAllObjects = function() {
+        this.objects && this.objects.children.forEach(function(child) {
+            child.visible = true;
+        });
+    };
+
     // Remove an object from the scene
     lw.viewer.removeObject = function(object, settings) {
         // Defaults settings
@@ -342,6 +376,9 @@ var lw = lw || {};
         if (! (target instanceof THREE.Object3D)) {
             throw new Error(target + ' is not an instance of THREE.Object3D.');
         }
+
+        // Object by name or uuid
+        object = this.getObjectFrom(object, target);
 
         // Remove object
         target.remove(object);
@@ -475,7 +512,9 @@ var lw = lw || {};
     // -------------------------------------------------------------------------
 
     lw.viewer.detachBoundingBox = function() {
-        this.lastBoundingBox && this.removeObject(this.lastBoundingBox);
+        if (this.lastBoundingBox) {
+            this.removeObject(this.lastBoundingBox, { target: 'overlay' });
+        }
     };
 
     // -------------------------------------------------------------------------
@@ -492,7 +531,7 @@ var lw = lw || {};
         position.setFromMatrixPosition(object.matrixWorld);
 
         // Ad BoundingBox at right position
-        this.addObject(this.lastBoundingBox, { position: {
+        this.addObject(this.lastBoundingBox, { target: 'overlay', position: {
             x: Math.abs(position.x),
             y: Math.abs(position.y),
             z: Math.abs(position.z)

@@ -50,6 +50,19 @@ var lw = lw || {};
 
     // -----------------------------------------------------------------------------
 
+    lw.file.addFileObject = function(file, object) {
+        // Add layer tab [id, label, [active, [removable=true]]]
+        lw.tabs.add(object.uuid, file.name, true, true);
+
+        // Add object to viewer
+        lw.viewer.addObject(object, {
+            name  : file.name,
+            target: 'objects'
+        });
+    };
+
+    // -----------------------------------------------------------------------------
+
     lw.file.load = function(file) {
         // No file...
         if (! (file && file instanceof File)) {
@@ -67,11 +80,7 @@ var lw = lw || {};
                 lw.dxf.draw(reader.result, file.name, {
                     // On 3D object created
                     onObject: function(object) {
-                        // Add object to viewer
-                        lw.viewer.addObject(object, {
-                            name  : file.name,
-                            target: 'objects'
-                        });
+                        lw.file.addFileObject(file, object);
                     }
                 });
             };
@@ -90,11 +99,7 @@ var lw = lw || {};
                 lw.svg.drawFile(reader.result, file.name, {
                     // On 3D object created
                     onObject: function(object) {
-                        // Add object to viewer
-                        lw.viewer.addObject(object, {
-                            name  : file.name,
-                            target: 'objects'
-                        });
+                        lw.file.addFileObject(file, object);
                     },
                     // On error
                     onError: function(error) {
