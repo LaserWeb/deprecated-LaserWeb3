@@ -165,6 +165,9 @@ function GCodeParser(handlers) {
 
         var tbody = '';
 
+        var laserxmax = lw.viewer.grid.userData.size.x;
+        var laserymax = lw.viewer.grid.userData.size.y;
+
         function doChunk() {
             var progress = (index / count);
             NProgress.set(progress);

@@ -28,7 +28,6 @@ function initTree() {
             attachBB(objectsInScene[objectseq]);
         } else if ( id.indexOf('rasterDPI') == 0 ) {
             var bboxpre = new THREE.Box3().setFromObject(objectsInScene[objectseq]);
-            // console.log('bbox for BEFORE SCALE: Min X: ', (bboxpre.min.x + (laserxmax / 2)), '  Max X:', (bboxpre.max.x + (laserxmax / 2)), 'Min Y: ', (bboxpre.min.y + (laserymax / 2)), '  Max Y:', (bboxpre.max.y + (laserymax / 2)));
             // console.log('Scaling ' +objectsInScene[objectseq].name+ ' to: '+scale);
             var scale = (25.4 / newval);
             objectsInScene[objectseq].scale.x = scale;

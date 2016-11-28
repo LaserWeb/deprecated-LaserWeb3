@@ -75,6 +75,9 @@ var stlxsize, stlysize, stlzsize;
         mesh.translateZ(bbox.box.min.z * -1)
         bbox.translateZ(bbox.box.min.z * -1)
 
+        var laserxmax = lw.viewer.grid.userData.size.x;
+        var laserymax = lw.viewer.grid.userData.size.y;
+
         mesh.translateX(- laserxmax / 2)
         bbox.translateX(- laserxmax / 2)
 

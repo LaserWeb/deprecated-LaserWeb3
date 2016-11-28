@@ -1,14 +1,4 @@
-// Global Vars
-var laserxmax;
-var laserymax;
-
 var objectsInScene = []; //array that holds all objects we added to the lw.viewer.scene.
-
-function init3D() {
-    // LaserWEB UI Grids
-    laserxmax = lw.viewer.grid.userData.size.x;
-    laserymax = lw.viewer.grid.userData.size.y;
-}
 
 // Attach an bounding box to object
 function attachBB(object) {

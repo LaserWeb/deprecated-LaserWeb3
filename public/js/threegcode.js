@@ -193,6 +193,9 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
         // console.log(child);
         if (child.type == "Line") {
 
+            var laserxmax = lw.viewer.grid.userData.size.x;
+            var laserymax = lw.viewer.grid.userData.size.y;
+
             var xpos_offset = child.position.x;
             var ypos_offset = child.position.y;
 
