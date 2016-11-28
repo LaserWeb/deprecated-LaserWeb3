@@ -262,6 +262,9 @@ var lw = lw || {};
         for (var i = 0; i < files.length; i++) {
             this.load(files[i]);
         }
+
+        // Fix for opening same file...
+        $('#file').val(null);
     }
 
 })();

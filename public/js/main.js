@@ -30,12 +30,8 @@ $(document).click(function() {
 $('#g-open').on('click', function() {
     $('#googledrive').modal('show');
 });
-// Top toolbar Menu
 
-// Fix for opening same file from http://stackoverflow.com/questions/32916687/uploading-same-file-into-text-box-after-clearing-it-is-not-working-in-chrome?lq=1
-$('#file').bind('click', function() {
-    $('#file').val(null);
-});
+// Top toolbar Menu
 
 // View -> reset
 $('#viewReset').on('click', function() {
