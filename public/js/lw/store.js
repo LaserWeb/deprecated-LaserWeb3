@@ -57,6 +57,9 @@ var lw = lw || {};
         // Load all settings from local storage
         this.refreshForm();
 
+        // Check if all required settings are loaded
+        lw.store.checkParams();
+
         // Register event handler
         $('#jsonFile').on('change', function(event) {
             lw.store.loadFile(event.target.files[0]);

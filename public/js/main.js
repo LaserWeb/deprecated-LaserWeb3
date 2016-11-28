@@ -98,15 +98,6 @@ $('#togglesettings').on('click', function() {
     }
 });
 
-// Progressbar
-// NProgress.configure({ parent: '#gcode-menu-panel' });
-NProgress.configure({
-    showSpinner: false
-});
-
-// Check if all required settings are loaded
-lw.store.checkParams();
-
 // Bind Quote System
 $('.quoteVar').keyup(function(){
     var setupfee = ( parseFloat($("#setupcost").val()) ).toFixed(2);
