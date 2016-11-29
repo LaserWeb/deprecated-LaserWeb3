@@ -60,7 +60,13 @@ function initSocket() {
     $('#oS').html(data.toString() + '<span class="drounitlabel"> %</span>');
   });
 
+  socket.on('syslog', function (data) {
+    console.log(data.toString());
+  });
+
+
   socket.on('ports', function (data) {
+    console.log(data)
     $('#syncstatus').html('Socket Init');
     var options = $("#port");
     for (var i = 0; i< data.length; i++) {
@@ -73,6 +79,22 @@ function initSocket() {
     $("#port option:contains(" + lastUsed + ")").attr('selected', 'selected');
     $("#baud option:contains(" + lastBaud + ")").attr('selected', 'selected');
   });
+
+  socket.on('portsgo', function (data) {
+    console.log(data)
+    $('#syncstatus').html('Socket Init');
+    var options = $("#port");
+    for (var i = 0; i< data.length; i++) {
+      options.append($("<option />").val(data[i].Name).text(data[i].Name));
+    }
+    $('#connect').removeClass('disabled');
+    // Might as well pre-select the last-used port and buffer
+    var lastUsed = loadSetting("lastUsedPort");
+    var lastBaud = loadSetting("lastUsedBaud");
+    $("#port option:contains(" + lastUsed + ")").attr('selected', 'selected');
+    $("#baud option:contains(" + lastBaud + ")").attr('selected', 'selected');
+  });
+
 
   socket.on('activeports', function (data) {
     console.log('activePorts' + data);
