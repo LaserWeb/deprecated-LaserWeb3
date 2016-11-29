@@ -84,7 +84,7 @@ function initSocket() {
     $('#syncstatus').html('Socket OK');
   });
 
-  $('#refreshport').on('click', function() {
+  $('#refreshPort').on('click', function() {
     $('#port').find('option').remove().end();
     socket.emit('refreshports', "1");
     $('#syncstatus').html('Socket Refreshed');
