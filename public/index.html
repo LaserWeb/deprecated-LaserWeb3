@@ -1111,11 +1111,11 @@
                     <div class="modal-body">
                       Your controller has entered an ALARM state!  This locks the controller to ensure your safety.
                       <div class="btn-group btn-group-justified" role="group">
-                        <a class="btn btn-success btn-block" onclick="socket.emit('clearAlarm', '2')">[Option 1] <i class="fa fa-fw fa-times" aria-hidden="true"></i>Purge Queue and <i class="fa fa-unlock" aria-hidden="true"></i> Clear Lockout</a>
+                        <a class="btn btn-success btn-block" onclick="socket.emit('clearalarm', '2')">[Option 1] <i class="fa fa-fw fa-times" aria-hidden="true"></i>Purge Queue and <i class="fa fa-unlock" aria-hidden="true"></i> Clear Lockout</a>
                       </div>
                       <p>
                       <div class="btn-group btn-group-justified" role="group">
-                        <a class="btn btn-danger btn-block" onclick="socket.emit('clearAlarm', '1')" >[Option 2] <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i>Ignore the error, <i class="fa fa-fw fa-unlock" aria-hidden="true"></i> Clear Lockout and <i class="fa fa-fw fa-step-forward" aria-hidden="true"></i> Continue with Queue</a>
+                        <a class="btn btn-danger btn-block" onclick="socket.emit('clearalarm', '1')" >[Option 2] <i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i>Ignore the error, <i class="fa fa-fw fa-unlock" aria-hidden="true"></i> Clear Lockout and <i class="fa fa-fw fa-step-forward" aria-hidden="true"></i> Continue with Queue</a>
                       </div>
                       <br>
                       Note:
@@ -1299,7 +1299,8 @@
     <script type="text/javascript" src="js/viewer.js"></script>
 
     <!-- Socket.io -->
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+    <script type="text/javascript" src="/lib/socket.io.min.js"></script>
     <script type="text/javascript" src="js/socketcomms.js"></script>
 
     <!-- DXF Library -->

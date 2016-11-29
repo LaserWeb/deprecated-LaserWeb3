@@ -118,12 +118,12 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     socket.emit("ports", ports);
   });
 
-  socket.on('firstLoad', function(data) {
+  socket.on('firstload', function(data) {
     socket.emit('config', config);
   });
 
   socket.on('stop', function(data) {
-    socket.emit("connectStatus", 'stopped:'+port.path);
+    socket.emit("connectstatus", 'stopped:'+port.path);
     gcodeQueue.length = 0; // dump the queye
     if (data !== 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
@@ -143,24 +143,24 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.write("M5\n");  //  Hopefully M5!
       console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
     }
-    socket.emit("connectStatus", 'paused:'+port.path);
+    socket.emit("connectstatus", 'paused:'+port.path);
     paused = true;
   });
 
   socket.on('unpause', function(data) {
-    socket.emit("connectStatus", 'unpaused:'+port.path);
+    socket.emit("connectstatus", 'unpaused:'+port.path);
     paused = false;
     send1Q();
   });
 
-  socket.on('serialSend', function(data) {
+  socket.on('serialsend', function(data) {
     data = data.split('\n');
     for (var i=0; i<data.length; i++) {
       addQ(data[i]);
     }
   });
 
-  socket.on('feedOverride', function(data) {
+  socket.on('feedoverride', function(data) {
     if (data === 0) {
       feedOverride = 100;
   	} else {
@@ -171,12 +171,12 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   	}
   	jumpQ('M220S' + feedOverride);
       for (var i in connections) {   // iterate over the array of connections
-        connections[i].emit('feedOverride', feedOverride);
+        connections[i].emit('feedoverride', feedOverride);
       }
     console.log('Feed Override ' + feedOverride.toString() + '%');
   });
 
-  socket.on('spindleOverride', function(data) {
+  socket.on('spindleoverride', function(data) {
     if (data === 0) {
       spindleOverride = 100;
   	} else {
@@ -187,12 +187,12 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   	}
   	jumpQ('M221S' + spindleOverride);
       for (var i in connections) {   // iterate over the array of connections
-        connections[i].emit('spindleOverride', spindleOverride);
+        connections[i].emit('spindleoverride', spindleOverride);
     }
     console.log('Spindle (Laser) Override ' + spindleOverride.toString() + '%');
   });
 
-  socket.on('laserTest', function(data) { // Laser Test Fire
+  socket.on('lasertest', function(data) { // Laser Test Fire
     data = data.split(',');
     var power = parseInt(data[0]);
     var duration = parseInt(data[1]);
@@ -218,7 +218,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
   // 1 = clear alarm state and resume queueCnt
   // 2 = clear quue, clear alarm state, and wait for new queue
-  socket.on('clearAlarm', function(data) { // Laser Test Fire
+  socket.on('clearalarm', function(data) { // Laser Test Fire
     console.log('Clearing Queue: Method ' + data);
     if (data == "1") {
         console.log('Clearing Lockout');
@@ -234,37 +234,37 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
   });
 
-  socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
+  socket.on('getfirmware', function(data) { // Deliver Firmware to Web-Client
     socket.emit("firmware", firmware);
   });
 
-  socket.on('refreshPorts', function(data) { // Or when asked
+  socket.on('refreshports', function(data) { // Or when asked
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
       socket.emit("ports", ports);
     });
   });
 
-  socket.on('closePort', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
+  socket.on('closeport', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
     console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
-    socket.emit("connectStatus", 'closed:'+port.path);
+    socket.emit("connectstatus", 'closed:'+port.path);
     port.close();
   });
 
-  socket.on('areWeLive', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
+  socket.on('arewelive', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
     socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
   });
 
 
-  socket.on('connectTo', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
+  socket.on('connectto', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
     data = data.split(',');
     console.log(chalk.yellow('WARN:'), chalk.blue('Connecting to Port ' + data));
     if (!isConnected) {
       port = new SerialPort(data[0], {  parser: serialport.parsers.readline("\n"), baudrate: parseInt(data[1]) });
-      socket.emit("connectStatus", 'opening:'+port.path);
+      socket.emit("connectstatus", 'opening:'+port.path);
       port.on('open', function() {
         socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
-        socket.emit("connectStatus", 'opened:'+port.path);
+        socket.emit("connectstatus", 'opened:'+port.path);
         // port.write("?\n"); // Lets check if its LasaurGrbl?
         // port.write("M115\n"); // Lets check if its Marlin?
         port.write("version\n"); // Lets check if its Smoothieware?
@@ -290,7 +290,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.on('close', function(err) { // open errors will be emitted as an error event
         clearInterval(queueCounter);
         clearInterval(queryLoop);
-        socket.emit("connectStatus", 'closed:'+port.path);
+        socket.emit("connectstatus", 'closed:'+port.path);
         isConnected = false;
         connectedTo = false;
       });
@@ -327,7 +327,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       });
 
     } else {
-      socket.emit("connectStatus", 'resume:'+port.path);
+      socket.emit("connectstatus", 'resume:'+port.path);
       port.write("?\n"); // Lets check if its LasaurGrbl?
       port.write("M115\n"); // Lets check if its Marlin?
       port.write("version\n"); // Lets check if its Smoothieware?
