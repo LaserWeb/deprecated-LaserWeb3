@@ -119,11 +119,13 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   socket.on('stop', function(data) {
     if (isConnected) {
       paused = true;
-      port.write(0x18);
-      gcodeQueue.length = 0;	// dump the queye
-      grblBufferSize.length = 0;	// dump bufferSizes
+      port.write('!');              // hold
+      port.write('?');
+      gcodeQueue.length = 0;        // dump the queye
+      grblBufferSize.length = 0;    // dump bufferSizes
       blocked = false;
       paused = false;
+      port.write(String.fromCharCode(0x18));    // ctrl-x
       console.log(chalk.red('STOP'));
       /*
       if (data !== 0) {
@@ -301,7 +303,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         send1Q();
     } else if (data == "2") {
         console.log('Emptying Queue');
-        gcodeQueue.length = 0;
+        gcodeQueue.length = 0;        // dump the queye
+        grblBufferSize.length = 0;    // dump bufferSizes
         console.log('Clearing Lockout');
         port.write('$X\n');
     }
