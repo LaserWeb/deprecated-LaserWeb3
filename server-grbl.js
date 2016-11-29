@@ -1,4 +1,4 @@
-"use strict";
+fonn"use strict";
 /*
 
     AUTHOR:  Peter van der Walt openhardwarecoza.github.io/donate
@@ -112,7 +112,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     socket.emit("ports", ports);
   });
 
-  socket.on('firstLoad', function(data) {
+  socket.on('firstload', function(data) {
     socket.emit('config', config);
   });
 
@@ -137,9 +137,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       }
       */
       laserTestOn = false;
-      io.sockets.emit("connectStatus", 'stopped:'+port.path);
+      io.sockets.emit("connectstatus", 'stopped:'+port.path);
     } else {
-      io.sockets.emit("connectStatus", 'closed');
+      io.sockets.emit("connectstatus", 'closed');
     }
   });
 
@@ -157,9 +157,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
       }
       */
-      io.sockets.emit("connectStatus", 'paused:'+port.path);
+      io.sockets.emit("connectstatus", 'paused:'+port.path);
     } else {
-      io.sockets.emit("connectStatus", 'closed');
+      io.sockets.emit("connectstatus", 'closed');
     }
   });
 
@@ -175,15 +175,15 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         port.write("M3S0\n");	// ->S0 for security reason
 	  }
       */
-      io.sockets.emit("connectStatus", 'unpaused:'+port.path);
+      io.sockets.emit("connectstatus", 'unpaused:'+port.path);
       paused = false;
       send1Q();
     } else {
-      io.sockets.emit("connectStatus", 'closed');
+      io.sockets.emit("connectstatus", 'closed');
     }
   });
 
-  socket.on('serialSend', function(data) {
+  socket.on('serialsend', function(data) {
     if (isConnected) {
       data = data.split('\n');
       for (var i=0; i<data.length; i++) {
@@ -195,11 +195,11 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         }
       }
     } else {
-      io.sockets.emit("connectStatus", 'closed');
+      io.sockets.emit("connectstatus", 'closed');
     }
   });
 
-  socket.on('feedOverride', function(data) {
+  socket.on('feedoverride', function(data) {
     if (isConnected) {
       var code;
       switch (data) {
@@ -228,11 +228,11 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         console.log(chalk.red('Override feed: ' + data + '%'));
       }
     } else {
-      io.sockets.emit("connectStatus", 'closed');
+      io.sockets.emit("connectstatus", 'closed');
     }
   });
 
-  socket.on('spindleOverride', function(data) {
+  socket.on('spindleoverride', function(data) {
     if (isConnected) {
       var code;
       switch (data) {
@@ -261,11 +261,11 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         console.log(chalk.red('Override spindle: ' + data + '%'));
       }
     } else {
-      io.sockets.emit("connectStatus", 'closed');
+      io.sockets.emit("connectstatus", 'closed');
     }
   });
 
-  socket.on('laserTest', function(data) { // Laser Test Fire
+  socket.on('lasertest', function(data) { // Laser Test Fire
     if (isConnected) {
       data = data.split(',');
       var power = parseInt(data[0]);
@@ -290,11 +290,11 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         }
       }
     } else {
-      io.sockets.emit("connectStatus", 'closed');
+      io.sockets.emit("connectstatus", 'closed');
     }
   });
 
-  socket.on('clearAlarm', function(data) { // Laser Test Fire
+  socket.on('clearalarm', function(data) { // Laser Test Fire
     console.log('Clearing Queue: Method ' + data);
     if (data == "1") {
         console.log('Clearing Lockout');
@@ -312,20 +312,20 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
 
-  socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
+  socket.on('getfirmware', function(data) { // Deliver Firmware to Web-Client
     socket.emit("firmware", firmware);
   });
 
-  socket.on('refreshPorts', function(data) {	// Refresh serial port list
+  socket.on('refreshports', function(data) {	// Refresh serial port list
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
       socket.emit("ports", ports);
     });
   });
 
-  socket.on('closePort', function(data) {		// Close serial port and dump queue
+  socket.on('closeport', function(data) {		// Close serial port and dump queue
     console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
-    io.sockets.emit("connectStatus", 'closed:'+port.path);
+    io.sockets.emit("connectstatus", 'closed:'+port.path);
     gcodeQueue.length = 0;	// dump the queye
     grblBufferSize.length = 0;	// dump bufferSizes
     port.close();
@@ -336,7 +336,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
   socket.on('areWeLive', function(data) { 		// Report active serial port to web-client
-    socket.emit("activePorts", port.path + ',' + port.options.baudRate);
+    socket.emit("activeports", port.path + ',' + port.options.baudRate);
   });
 
   socket.on('connectTo', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
@@ -344,11 +344,11 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     console.log(chalk.yellow('WARN:'), chalk.blue('Connecting to Port ' + data));
     if (!isConnected) {
       port = new SerialPort(data[0], {  parser: serialport.parsers.readline("\n"), baudrate: parseInt(data[1]) });
-      io.sockets.emit("connectStatus", 'opening:'+port.path);
+      io.sockets.emit("connectstatus", 'opening:'+port.path);
 
       port.on('open', function() {
         io.sockets.emit("activePorts", port.path + ',' + port.options.baudRate);
-        io.sockets.emit("connectStatus", 'opened:'+port.path);
+        io.sockets.emit("connectstatus", 'opened:'+port.path);
         port.write("?"); // Lets check if its Grbl?
         console.log('Connected to ' + port.path + 'at ' + port.options.baudRate);
         isConnected = true;
@@ -369,7 +369,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.on('close', function() { // open errors will be emitted as an error event
         clearInterval(queueCounter);
 		clearInterval(statusLoop);
-        io.sockets.emit("connectStatus", 'closed:'+port.path);
+        io.sockets.emit("connectstatus", 'closed:'+port.path);
         isConnected = false;
         connectedTo = false;
       });
@@ -395,7 +395,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         io.sockets.emit("data", data);
       });
     } else {
-      io.sockets.emit("connectStatus", 'resume:'+port.path);
+      io.sockets.emit("connectstatus", 'resume:'+port.path);
       port.write("?"); // Lets check if its Grbl?
     }
   });

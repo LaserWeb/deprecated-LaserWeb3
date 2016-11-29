@@ -20,7 +20,7 @@
     "dotenv": "*",
     "node-static": "*",
     "request": "*",
-    "serialport": "*",
+    "serialport": "^4.0.6",
     "socket.io": "*",
     "tinyg": "^0.4.5"
   },

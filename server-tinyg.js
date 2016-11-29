@@ -117,16 +117,16 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   g.list().then(function(results) {
     console.log(util.inspect(results));
     socket.emit("ports", results);
-  }).catch(function(err) { 
-    //couldnt_list(err); 
+  }).catch(function(err) {
+    //couldnt_list(err);
   });
-	
+
   socket.on('firstLoad', function(data) {
     socket.emit('config', config);
   });
 
   socket.on('stop', function(data) {
-    socket.emit("connectStatus", 'stopped:'+port.path);
+    socket.emit("connectstatus", 'stopped:'+port.path);
     gcodeQueue.length = 0; // dump the queye
     if (data !== 0) {
       port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
@@ -146,7 +146,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.write("M5\n");  //  Hopefully M5!
       console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
     }
-    socket.emit("connectStatus", 'paused:'+port.path);
+    socket.emit("connectstatus", 'paused:'+port.path);
     paused = true;
   });
 
@@ -157,7 +157,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     } else {
       port.write("M3\n");
 	}
-    socket.emit("connectStatus", 'unpaused:'+port.path);
+    socket.emit("connectstatus", 'unpaused:'+port.path);
     paused = false;
     send1Q();
   });
@@ -183,7 +183,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         code = 145;	// +10%
         break;
       case -10:
-        code = 146;	// -10%	
+        code = 146;	// -10%
         break;
       case 1:
         code = 147;	// +1%
@@ -224,20 +224,20 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   socket.on('getFirmware', function(data) { // Deliver Firmware to Web-Client
     socket.emit("firmware", firmware);
   });
-  
+
   socket.on('refreshPorts', function(data) { // Or when asked
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     g.list().then(function(results) {
       console.log(util.inspect(results));
       socket.emit("ports", results);
-    }).catch(function(err) { 
-      //couldnt_list(err); 
+    }).catch(function(err) {
+      //couldnt_list(err);
 	});
   });
 
   socket.on('closePort', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
     console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
-    socket.emit("connectStatus", 'closed:'+port.path);
+    socket.emit("connectstatus", 'closed:'+port.path);
     g.close();
   });
 
@@ -250,11 +250,11 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     console.log(chalk.yellow('WARN:'), chalk.blue('Connecting to Port ' + data));
     if (!isConnected) {
       port = new SerialPort(data[0], {  parser: serialport.parsers.readline("\n"), baudrate: parseInt(data[1]) });
-      socket.emit("connectStatus", 'opening:'+port.path);
+      socket.emit("connectstatus", 'opening:'+port.path);
 
       port.on('open', function() {
         socket.broadcast.emit("activePorts", port.path + ',' + port.options.baudRate);
-        socket.emit("connectStatus", 'opened:'+port.path);
+        socket.emit("connectstatus", 'opened:'+port.path);
         port.write("?"); // Lets check if its Grbl?
         //port.write("?\n"); // Lets check if its LasaurGrbl?
         // port.write("M115\n"); // Lets check if its Marlin?
@@ -286,7 +286,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         clearInterval(queueCounter);
         clearInterval(queryLoop);
 		clearInterval(infoLoop);
-        socket.emit("connectStatus", 'closed:'+port.path);
+        socket.emit("connectstatus", 'closed:'+port.path);
         isConnected = false;
         connectedTo = false;
       });
@@ -322,7 +322,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         }
       });
     } else {
-      socket.emit("connectStatus", 'resume:'+port.path);
+      socket.emit("connectstatus", 'resume:'+port.path);
       port.write("?\n"); // Lets check if its LasaurGrbl?
       port.write("M115\n"); // Lets check if its Marlin?
       port.write("version\n"); // Lets check if its Smoothieware?

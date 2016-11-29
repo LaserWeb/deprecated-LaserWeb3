@@ -9,7 +9,7 @@ var ovLoop;
 
 function initSocket() {
   socket = io.connect(''); // socket.io init
-  socket.emit('firstLoad', 1);
+  socket.emit('firstload', "1");
 
   socket.on('data', function (data) {
     $('#syncstatus').html('Socket OK');
@@ -36,7 +36,7 @@ function initSocket() {
         $('homeY').hide();
         $('homeZ').hide();
       } else {
-        socket.emit('closePort', 1);
+        socket.emit('closeport', "1");
         isConnected = false;
         $('#closePort').addClass('disabled');
         $('#machineStatus').html('Not Connected');
@@ -51,16 +51,22 @@ function initSocket() {
   });
 
   // smoothie feed override report (from server)
-  socket.on('feedOverride', function (data) {
+  socket.on('feedoverride', function (data) {
     $('#oF').html(data.toString() + '<span class="drounitlabel"> %</span>');
   });
 
   // smoothie spindle override report (from server)
-  socket.on('spindleOverride', function (data) {
+  socket.on('spindleoverride', function (data) {
     $('#oS').html(data.toString() + '<span class="drounitlabel"> %</span>');
   });
 
+  socket.on('syslog', function (data) {
+    console.log(data.toString());
+  });
+
+
   socket.on('ports', function (data) {
+    console.log(data)
     $('#syncstatus').html('Socket Init');
     var options = $("#port");
     for (var i = 0; i< data.length; i++) {
@@ -74,11 +80,27 @@ function initSocket() {
     $("#baud option:contains(" + lastBaud + ")").attr('selected', 'selected');
   });
 
-  socket.on('activePorts', function (data) {
+  socket.on('portsgo', function (data) {
+    console.log(data)
+    $('#syncstatus').html('Socket Init');
+    var options = $("#port");
+    for (var i = 0; i< data.length; i++) {
+      options.append($("<option />").val(data[i].Name).text(data[i].Name));
+    }
+    $('#connect').removeClass('disabled');
+    // Might as well pre-select the last-used port and buffer
+    var lastUsed = loadSetting("lastUsedPort");
+    var lastBaud = loadSetting("lastUsedBaud");
+    $("#port option:contains(" + lastUsed + ")").attr('selected', 'selected');
+    $("#baud option:contains(" + lastBaud + ")").attr('selected', 'selected');
+  });
+
+
+  socket.on('activeports', function (data) {
     console.log('activePorts' + data);
   });
 
-  socket.on('connectStatus', function (data) {
+  socket.on('connectstatus', function (data) {
 	console.log(data);
     $('#connectStatus').html(data);
     $('#syncstatus').html('Socket OK');
@@ -86,14 +108,14 @@ function initSocket() {
 
   $('#refreshPort').on('click', function() {
     $('#port').find('option').remove().end();
-    socket.emit('refreshPorts', 1);
+    socket.emit('refreshports', "1");
     $('#syncstatus').html('Socket Refreshed');
   });
 
   $('#connect').on('click', function() {
     var portName = $('#port').val();
     var baudRate = $('#baud').val();
-    socket.emit('connectTo', portName + ',' + baudRate);
+    socket.emit('connectto', portName + ',' + baudRate);
     isConnected = true;
     saveSetting("lastUsedPort", portName);
     saveSetting("lastUsedBaud", baudRate);
@@ -101,7 +123,7 @@ function initSocket() {
   });
 
   $('#closePort').on('click', function() {
-    socket.emit('closePort', 1);
+    socket.emit('closeport', "1");
     isConnected = false;
     $('#closePort').addClass('disabled');
     $('#machineStatus').html('Not Connected');
@@ -151,7 +173,7 @@ function sendGcode(gcode) {
     // console.log('Sending', gcode)
     var connectVia = $('#connectVia').val();
     if (connectVia === "USB") {
-      socket.emit('serialSend', gcode);
+      socket.emit('serialsend', gcode);
     } else if (connectVia === "Ethernet") {
       runCommand(gcode);
     } else if (connectVia === "ESP8266") {
@@ -175,7 +197,7 @@ function stopMachine () {
     if (laseroffcmd) {
       socket.emit('stop', laseroffcmd);
     } else {
-      socket.emit('stop', 0);
+      socket.emit('stop', "0");
     }
   } else if (connectVia === "Ethernet") {
     if (laseroffcmd) {
@@ -397,10 +419,10 @@ function override(param, value) {
     if (connectVia === "USB") {
       switch (param) {
         case 'F':
-		  socket.emit('feedOverride', value);
+		  socket.emit('feedoverride', value);
 		  break;
 		case 'S':
-		  socket.emit('spindleOverride', value);
+		  socket.emit('spindleoverride', value);
 		  break;
       }
     } else if (connectVia === "Ethernet") {
@@ -420,7 +442,7 @@ function laserTest(power, duration) {
       if (!power || !duration) {
           printLog('You must setup "LaserTest Power" and "LaserTest Duratuion" first!', errorcolor, "usb");
       } else {
-        socket.emit('laserTest', power + ',' + duration);
+        socket.emit('lasertest', power + ',' + duration);
       }
     } else if (connectVia === "Ethernet") {
       // needs to be programmed
@@ -435,5 +457,5 @@ function laserTest(power, duration) {
 // 1 = clear alarm state and resume queueCnt
 // 2 = clear quue, clear alarm state, and wait for new queue
 function clearQueueAlarm(value) {
-  socket.emit('clearAlarm', value);
+  socket.emit('clearalarm', value);
 }
