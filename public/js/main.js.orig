@@ -33,8 +33,12 @@ $(document).ready(function() {
     initEsp8266();
     initTree();
     initDragDrop();
+<<<<<<< HEAD
     initKeyboardShortcut();
     invalidateVideoSettingsDisplay();
+=======
+>>>>>>> master
+
     // Tooltips
     // $(document).tooltip();
     $('[data-toggle="tooltip"]').tooltip()
@@ -156,16 +160,78 @@ $(document).ready(function() {
     });
 
 
+<<<<<<< HEAD
     setupJogPanel();
-
+    
     cncMode = $('#cncMode').val()
+=======
+    $('#controlmachine').hide();
+    $('#armmachine').show();
+    $('#armpin').pincodeInput({
+        // 4 input boxes = code of 4 digits long
+        inputs:4,
+        // hide digits like password input
+        hideDigits:true,
+        // keyDown callback
+        keydown : function(e){},
+        // callback when all inputs are filled in (keyup event)
+        complete : function(value, e, errorElement){
+            var val = loadSetting(armpin);
+            if (val) {
+
+            } else {
+                val = "1234";
+            }
+            if ( value != val ){
+                $("#armerror").html("Code incorrect");
+                // $("#armButton").addClass('disabled');
+            } else {
+                $("#armerror").html("Code correct");
+                $('#controlmachine').show();
+                $('#armmachine').hide();
+                // $("#armButton").removeClass('disabled');
+            }
+        }
+    });
+    $('#setarmpin').pincodeInput({
+        // 4 input boxes = code of 4 digits long
+        inputs:4,
+        // hide digits like password input
+        hideDigits:false,
+        // keyDown callback
+        keydown : function(e){},
+        // callback when all inputs are filled in (keyup event)
+        complete : function(value, e, errorElement){
+            saveSetting(armpin, value);
+            $("#setpinmsg").html("<h3>Pin set to "+value+"</h3>");
+            setTimeout(function() {
+				$('#pinresetmodal').modal('hide');
+			}, 500);
+            // $('#pinresetmodal').modal('hide');
+        }
+    });
+
+    var overridePinCode = loadSetting('safetyLockDisabled');
+    if (overridePinCode == 'Disable') {
+      $('#controlmachine').show();
+      $('#armmachine').hide();
+    }
+
+    cncMode = $('#cncMode').val();
+>>>>>>> master
     if (cncMode == "Enable") {
         document.title = "CNCWeb";
         $("#statusmodal").modal('show');
         $("#statusTitle").html("<h4>CNC Mode Activated</h4>");
+<<<<<<< HEAD
         $("#statusBody").html("Note: You have activated <b>CNC mode</b> from <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>");
         $("#statusBody2").html("While in CNC mode, Laser Raster Engraving is not enabled.  Please only open GCode, DXF or SVG files.<hr>To revert to Laser Mode, go to <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>Enable CNC Cam</kbd>, and change it to <kbd>Disabled</kbd><hr>Please help us improve this experimental feature by giving feedback, asking for improvements, sharing ideas and posting bugs in the <a class='btn btn-sm btn-success' target='_blank' href='https://plus.google.com/communities/115879488566665599508'>Support Community</a>");
     };
+=======
+        $("#statusBody").html("Note: You have activated <b>CNC mode</b> from <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>CNC Cam</kbd>");
+        $("#statusBody2").html("While in CNC mode, Laser Raster Engraving is not enabled.  Please only open GCODE, DXF or SVG files.<hr>To revert to Laser Mode, go to <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>CNC Cam</kbd>, and change it to <kbd>Disabled</kbd><hr>Please help us improve this experimental feature by giving feedback, asking for improvements, sharing ideas and posting bugs in the <a class='btn btn-sm btn-success' target='_blank' href='https://plus.google.com/communities/115879488566665599508'>Support Community</a>");
+    }
+>>>>>>> master
 
     // Command Console History
     $("#command").inputHistory({
@@ -182,19 +248,19 @@ $(document).ready(function() {
 
     var version = $('meta[name=version]').attr("content");
     $.get( "https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/version.txt", function( data ) {
-        printLog("Version currently Installed : " + version , msgcolor, "git")
-        printLog("Version available online on Github : " + data , msgcolor, "git")
+        printLog("Version currently Installed : " + version , msgcolor, "git");
+        printLog("Version available online on Github : " + data , msgcolor, "git");
         if ( parseInt(version) < parseInt(data) ) {
-            printLog("<b><u>NB:  UPDATE AVAILABLE!</u></b>  - Execute 'git pull' from your laserweb terminal " , errorcolor, "git")
+            printLog("<b><u>NB:  UPDATE AVAILABLE!</u></b>  - Execute 'git pull' from your laserweb terminal " , errorcolor, "git");
         } else {
-            printLog("Your version of LaserWeb is Up To Date! " , successcolor, "git")
+            printLog("Your version of LaserWeb is Up To Date! " , successcolor, "git");
         }
 
     });
 
     // A few gcode input fields need to be caps for the firmware to support it
     $('.uppercase').keyup(function() {
-        // this.value = this.value.toLocaleUpperCase();
+        this.value = this.value.toLocaleUpperCase();
     });
 
 
@@ -224,12 +290,8 @@ function setupVideoSources() {
 
 function setupJogPanel() {
 
-    var overridePinCode = loadSetting('safetyLockDisabled');
+    var overridePinCode = loadSetting('safetyLock');
 
-    if (!overridePinCode) {
-      overridePinCode = "Enable"
-    }
-    
     if (overridePinCode == 'Enable') {
         $('[id^=controlmachine]').hide();
         $('#armmachine').show();
@@ -246,7 +308,7 @@ function setupJogPanel() {
                 if (val) {
 
                 } else {
-                val = "1234";
+                    val = "1234"
                 }
                 if ( value != val ){
                     $("#armerror").html("Code incorrect");
@@ -270,24 +332,19 @@ function setupJogPanel() {
             complete : function(value, e, errorElement){
                 saveSetting(armpin, value);
                 $("#setpinmsg").html("<h3>Pin set to "+value+"</h3>");
-            setTimeout(function() {
-				$('#pinresetmodal').modal('hide');
-			}, 500);
+                setTimeout(function(){ $('#pinresetmodal').modal('hide') }, 500);
                 // $('#pinresetmodal').modal('hide');
             }
         });
     } else {
-        // PIN Pad is disabled in configuration, so we can
-    if (overridePinCode == 'Disable') {
+        // PIN Pad is disabled in configuration, so we can 
+        //just hide the PIN panel (actually starts hidden)
         // and unhide all the machine controls.
         $('#armmachine').hide();
         $('[id^=controlmachine]').show();
     }
-    cncMode = $('#cncMode').val();
-        $("#statusBody").html("Note: You have activated <b>CNC mode</b> from <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>CNC Cam</kbd>");
-        $("#statusBody2").html("While in CNC mode, Laser Raster Engraving is not enabled.  Please only open GCODE, DXF or SVG files.<hr>To revert to Laser Mode, go to <kbd>Settings</kbd> -> <kbd>Tools</kbd> -> <kbd>CNC Cam</kbd>, and change it to <kbd>Disabled</kbd><hr>Please help us improve this experimental feature by giving feedback, asking for improvements, sharing ideas and posting bugs in the <a class='btn btn-sm btn-success' target='_blank' href='https://plus.google.com/communities/115879488566665599508'>Support Community</a>");
-    }
 }
+
 
 
 function checkNumPad() {
@@ -417,9 +474,15 @@ function loadFile(f) {
                 // cleanupThree();
                 $("#gcodefile").show();
                 document.getElementById('gcodepreview').value = this.result;
+<<<<<<< HEAD
                 printLog('GCode Opened', msgcolor, "file");
+                resetView()
+                setTimeout(function(){   openGCodeFromText(); }, 500);
+=======
+                printLog('GCODE Opened', msgcolor, "file");
                 resetView();
                 setTimeout(function(){ openGCodeFromText(); }, 500);
+>>>>>>> master
             };
         } else if (f.name.match(/.nc$/i)) {
               r.readAsText(f);

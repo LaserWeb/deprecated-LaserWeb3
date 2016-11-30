@@ -278,6 +278,15 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             send1Q();
         }, 200);
         queueCounter = setInterval(function(){
+<<<<<<< HEAD
+                 for (i in connections) {   // iterate over the array of connections
+                   connections[i].emit('qCount', gcodeQueue.length);
+                 };
+         },500);
+         for (i in connections) {   // iterate over the array of connections
+           connections[i].emit("activePorts", port.path + ',' + port.options.baudRate);
+         };
+=======
           for (var i in connections) {   // iterate over the array of connections
             connections[i].emit('qCount', gcodeQueue.length);
           }
@@ -285,6 +294,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         for (var i in connections) {   // iterate over the array of connections
           connections[i].emit("activePorts", port.path + ',' + port.options.baudRate);
         }
+>>>>>>> master
       });
 
       port.on('close', function(err) { // open errors will be emitted as an error event

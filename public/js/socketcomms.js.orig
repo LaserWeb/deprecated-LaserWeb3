@@ -8,8 +8,13 @@ var ovStep = 1;
 var ovLoop;
 
 function initSocket() {
+<<<<<<< HEAD
   socket = io.connect('http://localhost:8000'); // socket.io init
+  socket.emit('firstLoad', 1);
+=======
+  socket = io.connect(''); // socket.io init
   socket.emit('firstload', "1");
+>>>>>>> master
 
   socket.on('data', function (data) {
     $('#syncstatus').html('Socket OK');

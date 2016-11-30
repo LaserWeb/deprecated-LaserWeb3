@@ -1,3 +1,8 @@
+@font-face {
+    font-family: sevensegment;
+    src: url(fonts/7segment.woff);
+}
+
 body {
     height: 100%;
     width: 100%;
@@ -167,7 +172,7 @@ margin-top: 0px;
 
 .drolabel {
     display:inline-block;
-    background-color: #ffffff;
+    background-color: #dddddd;
     text-align: left;
     padding-left: 15px;
     margin-bottom: 3px;
@@ -178,6 +183,7 @@ margin-top: 0px;
     margin-left: 0px;
     margin-right: 3px;
 }
+
 
 /*@font-face {
 font-family: '8bit'; /*a name to be used later*/
@@ -190,13 +196,85 @@ font-family: '8bit'; /*a name to be used later*/
     text-align: left;
     padding-left: 18px;
     margin-bottom: 3px;
-    font-size: 20px;
+    font-size: 18px;
     width: calc(99% - 85px);
+    border: 1px solid #ccc;
+    font-weight: bold;
+    margin-left: 0px;
+    margin-right: 0px;
+    /*font-family: '8bit';*/
+}
+.droPos {
+    display:inline-block;
+    background-color: #ffffff;
+    text-align: right;
+    padding-right: 18px;
+    margin-bottom: 3px;
+    font-size: 20px;
+    width: calc(99% - 152px);
+    border: 1px solid #ccc;
+    font-weight: bold;
+    margin-left: 0px;
+    margin-right: 10px;
+    /*font-family: '8bit';*/
+}
+
+.droUnit {
+    display:inline-block;
+    background-color: #ffffff;
+    text-align: center;
+    /*padding-left: 3px;
+    padding-right: 3px;*/
+    padding-top: 9px;
+    padding-bottom: 2px;
+    font-size: 12px;
+    width: 38px;
+    border: 1px solid #ccc;
+    font-weight: bold;
+    margin-left: 4px;
+    margin-right: 3px;
+    margin-bottom: 3px;
+    /*font-family: '8bit';*/
+}
+
+.droOR {
+    display:inline-block;
+    background-color: #ffffff;
+    text-align: center;
+    padding-left: 18px;
+    margin-bottom: 3px;
+    font-size: 20px;
+    width: calc(99% - 167px);
+    border: 1px solid #ccc;
+    font-weight: bold;
+    margin-left: 0px;
+    margin-right: 3px;
+    /*font-family: '8bit';*/
+}
+
+
+.droR {
+
+    display:inline-block;
+    background-color: #ffffff;
+    text-align: left;
+    padding-left: 18px;
+    margin-bottom: 3px;
+    font-size: 20px;
+    width: 85px;
+	height: 31px;
     border: 1px solid #aaa;
     font-weight: bold;
     margin-left: 0px;
     margin-right: 0px;
     /*font-family: '8bit';*/
+}
+
+.hide {
+	display: none;
+}
+.btn-override {
+
 }
 #console {
     height: 110px;
@@ -210,7 +288,7 @@ font-family: '8bit'; /*a name to be used later*/
     padding-left: 20px;
     /*word-break: break-all;*/
     white-space:normal;
-    border-left: dashed 1px #aaa;*/
+    border-left: dashed 1px #aaa;
     /*border-top: dashed 1px #aaa;*/
     /*border-bottom: dashed 1px #aaa;*/
     margin-top: 5px;

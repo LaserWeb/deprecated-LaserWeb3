@@ -26,6 +26,8 @@ localParams = [
   ['lasermultiply', true],
   ['homingseq', true],
   ['endgcode', false],
+  ['lasertestpower', false],
+  ['lasertestduration', false],
   ['imagePosition', true],
   ['useNumPad', true],
   ['useVideo', true],
@@ -40,7 +42,7 @@ localParams = [
   ['materialThickness', false],
   ['cuttingMatThickness', false],
   ['zFocusHeight', true],
-  ['safetyLock', false],
+  ['safetyLockDisabled', false],
   ['optimisegcode', false]
 ];
 

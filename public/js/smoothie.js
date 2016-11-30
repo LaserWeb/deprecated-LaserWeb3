@@ -1,21 +1,21 @@
+"use strict";
 var queryLoop;
 var connectMode;
 var scanned, scanok, scanfail;
 
 function initSmoothie() {
 
-$('#uploadsdbtn').on('click', function () {
-  var filename = $('#saveasname').val() + '.gcode'
-  printLog("Starting upload of " + filename + '.gcode', msgcolor, "wifi")
-  var g;
-  g = prepgcodefile();
-  upload(filename, g)
-  $('#sdupload').modal('hide');
-
-});
+  $('#uploadsdbtn').on('click', function () {
+    var filename = $('#saveasname').val() + '.gcode';
+    printLog("Starting upload of " + filename + '.gcode', msgcolor, "wifi");
+    var g;
+    g = prepgcodefile();
+    upload(filename, g);
+    $('#sdupload').modal('hide');
+  });
 
   $('#connectVia').change(function() {
-    var connectVia = $('#connectVia').val()
+    var connectVia = $('#connectVia').val();
     if (connectVia == "USB") {
         connectMode = "USB";
         $('#espConnect').hide();
@@ -41,7 +41,6 @@ $('#uploadsdbtn').on('click', function () {
       if (espIpAddress) {
         $('#espIp').val(espIpAddress);
       }
-
     }
   });
 
@@ -52,7 +51,7 @@ $('#uploadsdbtn').on('click', function () {
   $('#scansubnet').on('click', function(e) {
       e.preventDefault();
       e.stopPropagation(); // only neccessary if something above is listening to the (default-)event too
-      scanSubnet()
+      scanSubnet();
   });
 
   $('#ethConnect').on('click', function() {
@@ -63,23 +62,23 @@ $('#uploadsdbtn').on('click', function () {
         url: 'http://' +smoothieIp + '/',
         success: function(data, textStatus, XMLHttpRequest) {
           console.log(data, textStatus, XMLHttpRequest);
-          if (textStatus = '200') {
+          if (textStatus == '200') {
             // alert('Found board at' + ip)
-            printLog('Got response from  '+smoothieIp, successcolor, "wifi")
+            printLog('Got response from  '+smoothieIp, successcolor, "wifi");
             isConnected = true;
-            $('#ethConnectStatus').html("Ethernet OK")
+            $('#ethConnectStatus').html("Ethernet OK");
             $('#syncstatus').html('Eth Connected');
-            queryLoop = setInterval(function(){ getStatus() }, 300);
+            queryLoop = setInterval(function(){ getStatus(); }, 300);
           }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          $('#ethConnectStatus').html("Connect")
+          $('#ethConnectStatus').html("Connect");
           $('#syncstatus').html('Eth Failed');
         }
     });
 
   });
-};
+}
 
 function scanSubnet() {
   scanned = 254;
@@ -101,16 +100,16 @@ function scanSubnet() {
   var subnet = subnet1 + '.' +  subnet2 + '.' + subnet3 + '.' ;
 
   for (var ctr = 1; ctr < 255; ctr++) {
-    var ip = subnet + ctr
-    var result = scanIP(ip)
+    var ip = subnet + ctr;
+    var result = scanIP(ip);
   }
   saveSetting("subnet1", subnet1);
   saveSetting("subnet2", subnet2);
   saveSetting("subnet3", subnet3);
-};
+}
 
 function  scanIP(ip) {
-  printLog('Checking: '+ip, successcolor, "wifi")
+  printLog('Checking: '+ip, successcolor, "wifi");
   var cmd = "version\n";
   var url = "http://" + ip + "/command";
   // Send the data using post
@@ -118,10 +117,10 @@ function  scanIP(ip) {
   // Put the results in a div
   posting.done(function(data) {
     scanned = scanned - 1;
-    scanok += 1
-    $("#scannumber").html('Scanning: <span style="color: #00cc00">'+scanok+ '</span>+<span style="color: #cc0000">'+scanfail+ '</span> done. '+scanned+' to go.' )
+    scanok += 1;
+    $("#scannumber").html('Scanning: <span style="color: #00cc00">'+scanok+ '</span>+<span style="color: #cc0000">'+scanfail+ '</span> done. '+scanned+' to go.' );
       $.each(data.split('\n'), function(index) {
-        printLog(this, msgcolor, "wifi")
+        printLog(this, msgcolor, "wifi");
         var pattern = /Build version: (.*), Build date: (.*), MCU: (.*), System Clock: (.*)/;
          // test the pattern
          var matches = this.match(pattern);
@@ -140,8 +139,8 @@ function  scanIP(ip) {
     });
   posting.fail(function(data) {
     scanned = scanned - 1;
-    scanfail += 1
-    $("#scannumber").html('Scanning: <span style="color: #00cc00">'+scanok+ '</span>+<span style="color: #cc0000">'+scanfail+ '</span> done. '+scanned+' to go.' )
+    scanfail += 1;
+    $("#scannumber").html('Scanning: <span style="color: #00cc00">'+scanok+ '</span>+<span style="color: #cc0000">'+scanfail+ '</span> done. '+scanned+' to go.' );
   });
 }
 
@@ -154,7 +153,7 @@ function runCommand(cmd, silent) {
   if (host) {
       // console.log('Connecting Smoothie at ', host);
   } else {
-      host = '127.0.0.1'
+      host = '127.0.0.1';
   }
   cmd += "\n";
   url = silent ? "http://" + host + "/command_silent" : "http://" + host + "/command";
@@ -164,7 +163,7 @@ function runCommand(cmd, silent) {
   if (!silent) {
     posting.done(function(data) {
       $.each(data.split('\n'), function(index) {
-        printLog(this, msgcolor, "wifi")
+        printLog(this, msgcolor, "wifi");
         console.log(this);
       });
     });
@@ -176,7 +175,7 @@ function getStatus() {
   if (host) {
       // console.log('Connecting Smoothie at ', host);
   } else {
-      host = '127.0.0.1'
+      host = '127.0.0.1';
   }
   // Get some values from elements on the page:
   cmd = "get status\n";
@@ -214,63 +213,66 @@ function getTemperature() {
 }
 
 function upload(filename, gcode) {
-        var host = $('#smoothieIp').val();
-        // create XHR instance
-        xhr = new XMLHttpRequest();
+	var host = $('#smoothieIp').val();
+	// create XHR instance
+	xhr = new XMLHttpRequest();
 
-        // send the file through POST
-        // var posting = $.post("http://" + host + "/command", "M105\n");
-        xhr.open("POST", 'http://' +host + '/upload', true);
-        xhr.setRequestHeader('X-Filename', filename);
+	// send the file through POST
+	// var posting = $.post("http://" + host + "/command", "M105\n");
+	xhr.open("POST", 'http://' +host + '/upload', true);
+	xhr.setRequestHeader('X-Filename', filename);
 
-        // make sure we have the sendAsBinary method on all browsers
-        XMLHttpRequest.prototype.mySendAsBinary = function(text){
-            console.log(this)
-            var data = new ArrayBuffer(text.length);
-            var ui8a = new Uint8Array(data, 0);
-            for (var i = 0; i < text.length; i++) ui8a[i] = (text.charCodeAt(i) & 0xff);
+	// make sure we have the sendAsBinary method on all browsers
+	XMLHttpRequest.prototype.mySendAsBinary = function(text){
+		console.log(this);
+		var data = new ArrayBuffer(text.length);
+		var ui8a = new Uint8Array(data, 0);
+		for (var i = 0; i < text.length; i++) {
+			ui8a[i] = (text.charCodeAt(i) & 0xff);
+		}
 
-            if(typeof window.Blob == "function")
-            {
-                 var blob = new Blob([text]);
-            }else{
-                 var bb = new (window.MozBlobBuilder || window.WebKitBlobBuilder || window.BlobBuilder)();
-                 bb.append(text);
-                 var blob = bb.getBlob();
-            }
-            console.log(blob)
-            this.send(blob);
-        }
+		var blob;
+		if(typeof window.Blob == "function")
+		{
+			 blob = new Blob([text]);
+		} else {
+			 var bb = new (window.MozBlobBuilder || window.WebKitBlobBuilder || window.BlobBuilder)();
+			 bb.append(text);
+			 blob = bb.getBlob();
+		}
+		console.log(blob);
+		this.send(blob);
+	};
 
-        // let's track upload progress
-        var eventSource = xhr.upload || xhr;
-        eventSource.addEventListener("progress", function(e) {
-            // get percentage of how much of the current file has been sent
-            var position = e.position || e.loaded;
-            var total = e.totalSize || e.total;
-            var percentage = Math.round((position/total)*100);
+	// let's track upload progress
+	var eventSource = xhr.upload || xhr;
+	eventSource.addEventListener("progress", function(e) {
+		// get percentage of how much of the current file has been sent
+		var position = e.position || e.loaded;
+		var total = e.totalSize || e.total;
+		var percentage = Math.round((position/total)*100);
 
-            // here you should write your own code how you wish to proces this
-            printLog('uploaded ' + percentage + '%', msgcolor, "wifi");
-        });
+		// here you should write your own code how you wish to proces this
+		printLog('uploaded ' + percentage + '%', msgcolor, "wifi");
+	});
 
-        // state change observer - we need to know when and if the file was successfully uploaded
-        xhr.onreadystatechange = function()
-        {
-            if(xhr.readyState == 4)
-            {
-                if(xhr.status == 200)
-                {
-                    // process success
-                    printLog('Uploaded Ok', successcolor, "wifi");
-                }else{
-                    // process error
-                    printLog('Uploaded Failed' + xhr.status, errorcolor, "wifi");
-                    console.log("XHR Failed: ", xhr)
-                }
-            }
-        };
+	// state change observer - we need to know when and if the file was successfully uploaded
+	xhr.onreadystatechange = function()
+	{
+		if(xhr.readyState == 4)
+		{
+			if(xhr.status == 200)
+			{
+				// process success
+				printLog('Uploaded Ok', successcolor, "wifi");
+			}else{
+				// process error
+				printLog('Uploaded Failed' + xhr.status, errorcolor, "wifi");
+				console.log("XHR Failed: ", xhr);
+			}
+		}
+	};
 
-        // start sending
-        xhr.mySendAsBinary(gcode);
-    };
+	// start sending
+	xhr.mySendAsBinary(gcode);
+}
