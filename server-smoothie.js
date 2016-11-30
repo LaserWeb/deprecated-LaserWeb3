@@ -369,10 +369,6 @@ const electron = require('electron');
 // Module to control application life.
 const electronApp = electron.app;
 
-electronApp.on('window-all-closed', () => {
-  electronApp.quit()
-})
-
 if (electronApp) {
     // Module to create native browser window.
     const BrowserWindow = electron.BrowserWindow;

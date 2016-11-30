@@ -453,7 +453,7 @@ if (electronApp) {
 
     function createWindow() {
         // Create the browser window.
-        mainWindow = new BrowserWindow({width: 800, height: 600, fullscreen: true});
+        mainWindow = new BrowserWindow({width: 1200, height: 900, fullscreen: false, center: true, resizable: true, title: "LaserWeb", frame: true, autoHideMenuBar: true, icon: '/public/favicon.png' });
 
         // and load the index.html of the app.
         mainWindow.loadURL('file://' + __dirname + '/public/index.html');
@@ -465,6 +465,7 @@ if (electronApp) {
             // when you should delete the corresponding element.
             mainWindow = null;
         });
+        mainWindow.maximize()
     };
 
     electronApp.commandLine.appendSwitch("--ignore-gpu-blacklist");
@@ -478,7 +479,7 @@ if (electronApp) {
         // On OS X it is common for applications and their menu bar
         // to stay active until the user quits explicitly with Cmd + Q
         if (process.platform !== 'darwin') {
-            app.quit();
+            electronApp.quit();
         }
     });
 
