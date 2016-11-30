@@ -86,11 +86,11 @@ $(document).ready(function() {
                     for (m = 0; m < passes; m++) {
                       console.log("Mulipass Layer: " + m);
                       var zoffset = passdepth * m;
-                       gcodewithmultipass += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
+                       gcodewithmultipass += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
                     }
                     objectsInScene[j].userData.gcode = gcodewithmultipass;
                   } else {
-                    objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
+                    objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, 0);
                   }
 
                 }
@@ -195,6 +195,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
       cncMode = true;
     }
 
+    var airAssist = $('#airAssistAttached').val() == "Enable";
     // var subj_path2 = [];
     // var subj_paths = [];
     // console.log(txtGrp);
@@ -227,14 +228,19 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                 }
 
 
-                // FIXME airassist
-                // Think this needs to be clamped when air assist is connected
-                var zpos = worldPt.z;
+                // For any ordinary loaded 2D image, worldPt.z is 0 here.
+                var zpos = worldPt.z + getBaseZHeight();
 
+                // We now offset for multiple passes
+                // If air assist is attached, maximum offset is 10mm (to preserve clearance over material)
+                // Since we are subtracting the offset from the current Z height, we want the minimum offset of 
+                // either the request pass offset, or 10 mm 
                 if (zoffset) {
+                  if (airAssist == true) {
+                    zoffset = Math.min(zoffset, 10);
+                  }
                   zpos = zpos - zoffset;
                 }
-
 
                 // First Move To
                 if (i == 0) {
