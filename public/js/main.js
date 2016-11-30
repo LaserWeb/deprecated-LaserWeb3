@@ -197,7 +197,9 @@ $(document).ready(function() {
         // this.value = this.value.toLocaleUpperCase();
     });
 
-
+    if (process.versions.electron) {
+      printLog("Running from Electron Backend", msgcolor, "settings")
+    }
 
 }); // End of document.ready
 
@@ -229,7 +231,7 @@ function setupJogPanel() {
     if (!overridePinCode) {
       overridePinCode = "Enable"
     }
-    
+
     if (overridePinCode == 'Enable') {
         $('[id^=controlmachine]').hide();
         $('#armmachine').show();
