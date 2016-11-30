@@ -33,7 +33,7 @@ function initTour() {
     },
     {
       element: "#cam-menu",
-      title: "CAM / Convert to GCODE",
+      title: "CAM / Convert to GCode",
       content: "Used to configure feeds, speeds, operations for jobs",
       onShow: function (tour) { $('#cam-menu').click()},
       onHide: function (tour) { $('#jog-menu').click()}
@@ -41,7 +41,7 @@ function initTour() {
     {
       element: "#gcode-menu",
       title: "GCode Preview and Export",
-      content: "Checking and Exporting GCODE",
+      content: "Checking and Exporting GCode",
       onShow: function (tour) { $('#gcode-menu').click()},
       onHide: function (tour) { $('#jog-menu').click()},
     },
@@ -94,7 +94,7 @@ function initTour() {
     {
       element: "#renderArea",
       title: "The Viewer",
-      content: "Here you'll see your files opened as well as preview GCODE and machine moves"
+      content: "Here you'll see your files opened as well as preview GCode and machine moves"
     },
     {
       element: "#dropdownMenu1",

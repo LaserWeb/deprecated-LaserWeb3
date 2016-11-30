@@ -12,7 +12,7 @@ function fillEasyCam() {
   var layerprep = `<hr><div class="panel-group" id="accordion">`
 
 
-  $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="jobView"><a href="#">Toolpaths</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCODE View</a></li>');
+  $("#tabsLayers").append('<li role="presentation" class="active layertab" id="allView"><a href="#">All Layers</a></li><li role="presentation" class="layertab" id="jobView"><a href="#">Toolpaths</a></li><li role="presentation" class="layertab" id="gCodeView"><a href="#">GCode View</a></li>');
   for (j = 6; j < scene.children.length+1; j++) {
     scene.remove(scene.children[j])
   }

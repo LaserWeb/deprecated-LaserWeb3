@@ -9,26 +9,19 @@ $(document).ready(function() {
 
 
     $('#generategcode').on('click', function() {
-        console.group("Generating GCODE");
-        for (j = 0; j < objectsInScene.length; j++) {
-          // Cleanup Existing GCODE
-          objectsInScene[j].userData.gcode = "";
-        }
+
+        // FIXME
+        // What is this check for?
         if (typeof(fileObject) == 'undefined') {
             printLog('No file loaded. do, File -> Open, first!', errorcolor, "file")
         };
-        // Lets get the machine specific Gcode from the settings Modal (:
-        var startgcode = document.getElementById('startgcode').value;
-        var laseron = document.getElementById('laseron').value;
-        var laseroff = document.getElementById('laseroff').value;
-        var lasermultiply = document.getElementById('lasermultiply').value;
-        var homingseq = document.getElementById('homingseq').value;
-        var endgcode = document.getElementById('endgcode').value;
-        cncMode = $('#cncMode').val()
-        if (cncMode == "Enable") {
-          var clearanceHeight = document.getElementById('clearanceHeight').value;
-        } else {
-          var clearanceHeight = 0
+
+        console.group("Generating GCode");
+
+        console.log("Removing any existing GCode");
+        for (j = 0; j < objectsInScene.length; j++) {
+          // Cleanup Existing GCode
+          objectsInScene[j].userData.gcode = "";
         }
 
         // Remove old Gcode
@@ -46,8 +39,6 @@ $(document).ready(function() {
         }
 
         scene.updateMatrixWorld();
-        pwr = [];
-        cutSpeed = [];
 
         for (j = 0; j < objectsInScene.length; j++) {
             printLog('Processing ' + objectsInScene[j].name, msgcolor, "file");
@@ -59,6 +50,24 @@ $(document).ready(function() {
                 runRaster(j)
               } else {
                 console.log('Object: '+objectsInScene[j].name+' is a Vector');
+
+                // Lets get the machine specific Gcode from the settings Modal (:
+                var startgcode = document.getElementById('startgcode').value;
+                var laseron = document.getElementById('laseron').value;
+                var laseroff = document.getElementById('laseroff').value;
+                var lasermultiply = document.getElementById('lasermultiply').value;
+                var homingseq = document.getElementById('homingseq').value;
+                var endgcode = document.getElementById('endgcode').value;
+
+                cncMode = $('#cncMode').val()
+                if (cncMode == "Enable") {
+                  var clearanceHeight = document.getElementById('clearanceHeight').value;
+                } else {
+                  var clearanceHeight = 0
+                }
+
+
+
                 var cutSpeed0 = parseFloat( $("#speed"+(j)).val() ) * 60;
                 var pwr0 = parseFloat( $("#power"+(j)).val() );
                 var plungeSpeed0 = parseFloat( $("#plungespeed"+(j)).val() ) * 60;
@@ -77,11 +86,11 @@ $(document).ready(function() {
                     for (m = 0; m < passes; m++) {
                       console.log("Mulipass Layer: " + m);
                       var zoffset = passdepth * m;
-                       gcodewithmultipass += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
+                       gcodewithmultipass += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
                     }
                     objectsInScene[j].userData.gcode = gcodewithmultipass;
                   } else {
-                    objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
+                    objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, 0);
                   }
 
                 }
@@ -118,7 +127,7 @@ $(document).ready(function() {
 
 function prepgcodefile() {
 
-  console.group("Consolidating GCODE file");
+  console.group("Consolidating GCode file");
   var startgcode = document.getElementById('startgcode').value;
   var endgcode = document.getElementById('endgcode').value;
   var g = ""
@@ -186,6 +195,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
       cncMode = true;
     }
 
+    var airAssist = $('#airAssistAttached').val() == "Enable";
     // var subj_path2 = [];
     // var subj_paths = [];
     // console.log(txtGrp);
@@ -218,12 +228,19 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
                 }
 
 
-                var zpos = worldPt.z;
+                // For any ordinary loaded 2D image, worldPt.z is 0 here.
+                var zpos = worldPt.z + getBaseZHeight();
 
+                // We now offset for multiple passes
+                // If air assist is attached, maximum offset is 10mm (to preserve clearance over material)
+                // Since we are subtracting the offset from the current Z height, we want the minimum offset of 
+                // either the request pass offset, or 10 mm 
                 if (zoffset) {
+                  if (airAssist == true) {
+                    zoffset = Math.min(zoffset, 10);
+                  }
                   zpos = zpos - zoffset;
                 }
-
 
                 // First Move To
                 if (i == 0) {

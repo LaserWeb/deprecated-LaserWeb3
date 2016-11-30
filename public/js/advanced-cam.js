@@ -596,7 +596,7 @@ function fillTree() {
     <label for="toolpathstable">Toolpaths</label>
     </td>
     <td>
-    <a class="btn btn-xs btn-success disabled" id="generatetpgcode"><i class="fa fa-cubes" aria-hidden="true"></i> Generate G-Code</a>
+    <a class="btn btn-xs btn-success disabled" id="generatetpgcode"><i class="fa fa-cubes" aria-hidden="true"></i> Generate GCode</a>
     </td>
     </tr>
     </table>`

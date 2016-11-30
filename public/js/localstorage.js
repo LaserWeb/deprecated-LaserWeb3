@@ -3,7 +3,7 @@ function initLocalStorage() {
     settingsOpen.addEventListener('change', restoreSettingsLocal, false);
 }
 
-// FIXME
+// FIXME settings
 // A way to access all of the settings
 // $("#settings-menu-panel input, #settings-menu-panel textarea, #settings-menu-panel select, #ethernetConnect input").each(function() {console.log(this.id + ": " + $(this).val())});
 
@@ -31,12 +31,17 @@ localParams = [
   ['imagePosition', true],
   ['useNumPad', true],
   ['useVideo', true],
+  ['videoSource', false],
   ['cncMode', true],
   ['webcamUrl', false],
   ['defaultDPI', true],
   ['illustratorDPI', false],
   ['inkscapeDPI', false],
   ['defaultBitmapDPI', true],
+  ['airAssistAttached', false],
+  ['materialThickness', false],
+  ['cuttingMatThickness', false],
+  ['zFocusHeight', true],
   ['safetyLockDisabled', false],
   ['optimisegcode', false]
 ];
@@ -57,13 +62,19 @@ function saveSettingsLocal() {
   for (i = 0; i < localParams.length; i++) {
       var localParam = localParams[i];
       var paramName = localParam[0];
-      var val = $('#' + paramName).val(); // Read the value from form
+      var paramSelector = '#' + paramName;
+      var val = $(paramSelector).val(); // Read the value from form
+      // Special handling for checkboxes here
+      if ($(paramSelector).is(':checkbox')) {
+        val = $(paramSelector).prop('checked');
+      }
       console.log('Saving: ' + paramName + ' : ' + val);
       printLog('Saving: ' + paramName + ' : ' + val, successcolor);
       saveSetting(paramName, val);
   }
   printLog('<b>Saved Settings: <br>NB:</b> Please refresh page for settings to take effect', errorcolor, "settings");
   console.groupEnd();
+  location.reload();
 };
 
 function loadSettingsLocal() {
@@ -75,7 +86,18 @@ function loadSettingsLocal() {
 
     if (val) {
       console.log('Loading: ' + paramName + ' : ' + val);
-      $('#' + paramName).val(val);// Set the value to Form from Storage
+      // Checkboxes need special handling
+      // If we have a checkbox setting, and the value is "on", we set it to checked.
+      var paramSelector = '#' + paramName;
+      if ($(paramSelector).is(':checkbox')) {
+        if (val === 'true') {
+          $(paramSelector).prop('checked', true);
+        } else {
+          $(paramSelector).prop('checked', false);
+        }
+      } else {
+        $(paramSelector).val(val);// Set the value to Form from Storage
+      }
     } else {
       console.log('Not in local storage: ' +  paramName);
     }

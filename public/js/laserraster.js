@@ -5,7 +5,7 @@
     AUTHOR:  Peter van der Walt
     Addional work by Nathaniel Stenzel and Sven Hecht
 
-    LaserWeb Raster to GCODE Paperscript
+    LaserWeb Raster to GCode Paperscript
     Copyright (C) 2015 Peter van der Walt
 
     THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
@@ -73,7 +73,7 @@ function Rasterizer(config) {
     this.startTime = 0;
     this.rasterIntervalTimer = null;
 
-    // GCODE Header
+    // GCode Header
     // var useVariableSpeed = this.config.useVariableSpeed;
 
     startgcode = $('#startgcode').val();
@@ -98,8 +98,9 @@ function Rasterizer(config) {
         '; Resolution (mm per pixel): {4}mm',
         '; Laser Spot Size: {5}mm',
         '; X Offset: {7}mm',
-        '; Y Offset: {8}mm \n',
-        'G0 F{6}\n'
+        '; Y Offset: {8}mm',
+        '; Z Height: {9}mm\n',
+        'G0 Z{9} F{6}\n'
     ].join('\n').format(
         this.config.minIntensity,
         this.config.maxIntensity,
@@ -109,7 +110,8 @@ function Rasterizer(config) {
         this.config.beamSize1,
         this.config.rapidRate,
         this.config.xOffset,
-        this.config.yOffset);
+        this.config.yOffset,
+        this.config.zHeight);
 
       if (this.config.optimiseGcode == "Enable") {
         console.log("Raster:  GCODE Concatenation is Enabled")

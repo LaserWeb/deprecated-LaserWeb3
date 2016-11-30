@@ -131,7 +131,17 @@ function runRaster(index) {
   var minpwr = $("#minpwr"+index).val();
   var maxpwr = $("#maxpwr"+index).val();
 
+  // FIXME material
+  // This might need to go into common code
+  var zHeightRaw = (parseFloat($('#cuttingMatThickness').val() || 0) +
+                parseFloat($('#materialThickness').val() || 0));
+
+  // FIXME
+  // The clamp assumes material can go up to 50mm high -- this assumption might be bad.
+  var zHeight = zHeightRaw.clamp(0,50) +
+                parseFloat($('zFocusHeight').val() || 0);
   var optimisegcode = $('#optimisegcode').val()
+
 
 
   var img = new Image();
@@ -177,6 +187,7 @@ function runRaster(index) {
         rapidRate: [laserRapid],
         xOffset: [xoffset],
         yOffset: [yoffset],
+        zHeight: [zHeight],
         imagePos: [imagePosition],
         physicalHeight: [physheight],
         physicalWidth: [physwidth],
@@ -184,9 +195,8 @@ function runRaster(index) {
     });
   };
 
-  // Loadsing the image, which will cause the onload callback
-  // img.src = threejsobject.userData.imgdata;
 
+  // Loading the image, which will cause the onload callback
   if (threejsobject.name.match(/.svg$/i)) {
     img.src = 'data:image/svg+xml;utf8,' + threejsobject.userData.imgdata;
   } else {

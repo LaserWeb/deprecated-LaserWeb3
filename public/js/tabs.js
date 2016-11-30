@@ -76,12 +76,14 @@ function initTabs() {
     // console.log("selected object id: " + $(this).attr('layerindex'));
     // console.log("selected tab name: " + $(this).parents('li').attr('id'));
     clearScene();
+    hideCameraOverlay();
 
     var tabName = $(this).parents('li').attr('id')
     $(".layertab").removeClass('active');
     $(this).parents('li').addClass('active');
     if (tabName == "allView") {
       clearScene();
+      showCameraOverlay();
       for (var j = 0; j < objectsInScene.length; j++) {
         // console.log('added object ' + j)
         scene.add(objectsInScene[j]);
@@ -89,17 +91,18 @@ function initTabs() {
           if (objectsInScene[j].userData.inflated) {
             scene.add(objectsInScene[j].userData.inflated);
           }
-        };
+        }
       }
       if (typeof(object) != 'undefined') {
           scene.add(object);
       }
       if (typeof(boundingBox) != 'undefined') {
-        scene.remove(boundingBox)
+        scene.remove(boundingBox);
       }
-      resetColors()
+      resetColors();
     } else if (tabName == "jobView") {
       clearScene();
+      hideCameraOverlay();
       for (var j = 0; j < toolpathsInScene.length; j++) {
         // console.log('added object ' + j)
         scene.add(toolpathsInScene[j]);
@@ -114,13 +117,14 @@ function initTabs() {
       }
     } else if (tabName == "gCodeView") {
       clearScene();
+      hideCameraOverlay();
       if (objectsInScene.length > 0 || toolpathsInScene.length > 0) {
         // console.log('L: ', scene.children.length)
         if (typeof(boundingBox) != 'undefined') {
             scene.remove(boundingBox);
         }
           if (typeof(object) != 'undefined') {
-          clearScene();
+          //clearScene();
           scene.add(object);
           attachBB(object);
         } else {
@@ -131,6 +135,7 @@ function initTabs() {
       }
     } else {
       clearScene();
+      hideCameraOverlay();
       var i = parseInt($(this).attr('layerindex'));
       if (objectsInScene.length > 0) {
         scene.add(objectsInScene[i]);
