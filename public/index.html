@@ -606,14 +606,11 @@
                                             <span class="input-group-addon">mm</span>
                                         </div>
 
-                                        <div class="setting-checkbox">
-                                            <label class="control-label"><input id="airAssistAttached" type="checkbox" value="on">Air Assist Attached</label>
-                                        </div>
-
-                                        <div class="setting-checkbox">
-                                            <label class="control-label"><input id="usePINPad" type="checkbox" value="on" checked>Enable PIN Pad</label>
-                                        </div>
-
+                                        <label for="airAssistAttached" class="control-label">Air Assist Nozzle</label>
+                                        <select id="airAssistAttached" class="form-control">
+                                            <option>Disable</option>
+                                            <option>Enable</option>
+                                        </select>
                                     </form>
                                     <hr />
                                     <form class="form-horizontal">
@@ -690,7 +687,7 @@
                                             <option>Disable</option>
                                             <option>Enable</option>
                                         </select>
-                                        <label for="imagePosition" class="control-label">Place uploaded image in quadrant <a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/wiki/Settings:--Image-Position">(help)</a></label>
+                                        <label for="imagePosition" class="control-label">Place Image in Quadrant <a target="_blank" href="https://github.com/openhardwarecoza/LaserWeb3/wiki/Settings:--Image-Position">(help)</a></label>
                                         <select id="imagePosition" class="form-control">
                                             <option>BottomLeft</option>
                                             <option>TopLeft</option>
