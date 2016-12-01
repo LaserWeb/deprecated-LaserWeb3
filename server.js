@@ -152,6 +152,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             port.write("M5\n");  //  Hopefully M5!
             console.log('STOPPING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
           }
+          port.write(String.fromCharCode(0x18));    // ctrl-x
           break;
       }
       laserTestOn = false;
@@ -179,6 +180,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           */
           break;
         case 'smoothie':
+          port.write("M600\n");
+          /* Laser will be turned off by smoothie (default config!)
           if (data !== 0) {
             port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before pausing... Probably safer (;
             console.log('PAUSING:  Sending Laser Off Command as ' + data);
@@ -186,6 +189,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             port.write("M5\n");  //  Hopefully M5!
             console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
           }
+          */
           break;
       }
       io.sockets.emit("connectStatus", 'paused:'+port.path);
@@ -210,11 +214,14 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           */
           break;
         case 'smoothie':
+          port.write("M601\n");
+          /*
           if (data !== 0) {
             port.write(data+"\n");
           } else {
             port.write("M3S0\n");	// ->S0 for security reason
           }
+          */
           break;
       }
       paused = false;
