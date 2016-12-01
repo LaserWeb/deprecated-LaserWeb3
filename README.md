@@ -6,7 +6,7 @@ Donations to the developers to further things along are always welcome, but even
 
 ## Documentation:
 
-We have a pretty detailed Wiki on [https://github.com/openhardwarecoza/LaserWeb3/wiki](https://github.com/openhardwarecoza/LaserWeb3/wiki) - with details of Installing LaserWeb, Common application Workflows, Firmware setup tricks, and help for setting up LaserWeb's settings
+We have a pretty detailed Wiki on [https://github.com/LaserWeb/LaserWeb3/wiki](https://github.com/LaserWeb/LaserWeb3/wiki) - with details of Installing LaserWeb, Common application Workflows, Firmware setup tricks, and help for setting up LaserWeb's settings
 
 
 ## Contact Us if you need help! We can't fix bugs if we don't hear about them (;
@@ -30,25 +30,25 @@ By using this software, the user accepts complete responsibility for each and ev
 6. You are entirely operating at your own risk. Lasers can be lethally dangerous. 
 
 
-![Screenshot](https://raw.githubusercontent.com/openhardwarecoza/LaserWeb3/master/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/LaserWeb/LaserWeb3/master/screenshot.png)
 
 ## Supported firmwares
 
-Note: Ever changing.  See the Issues tab above for details.
+Note: Ever changing. See the Issues tab above for details.
 
 | Firmware      | Supported by LW  | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
 | ------------- |------------------| :----------------:|:-----------------:|:----------------------:|
 | Smoothieware  | Fully            |   Yes             |   Yes             | Yes - improvements     |
-| Grbl          | Fully            |   Yes **          |   Yes             | Yes - improved  error handling |
+| Grbl (>1.1d)  | Fully            |   Yes **          |   Yes             | Yes - improvements     |
 | TinyG         | Planned          |   Yes **          |   Yes             | Yes - please           |
-| Marlin        | Not yet          |   Yes **          |   No              | Yes - test and improve | 
-| Repetier      | Not planned      |   No              |   No              | Yes                    |
+| Marlin        | Not yet          |   Yes **          |   No              | Yes - please           | 
+| Repetier      | Not planned      |   No              |   No              | Yes - please           |
 
-Long story short:  Smoothieware wins at the moment. It's the ONLY open source firmware which automatically modulates its laser power output according to the realtime acceleration values - ensuring that (de)acceleration does not cause larger kerf / darker engraves - which the other firmwares causes. This is a MUST for good Raster engraving, and is needed for Raster Grayscale!
+Long story short:  Smoothieware wins at the moment. It's the ONLY open source firmware at the moment which automatically modulates its laser power output according to the realtime acceleration values - ensuring that (de)acceleration does not cause larger kerf / darker engraves - which the other firmwares causes. This is a MUST for good Raster engraving, and is needed for Raster Grayscale! Grbl is working on this feature.
 
 Smoothieware is also a massively faster (up to 120Mhz vs the 16Mhz of the Arduino based controllers) - which means we can pull near realtime feedback from the controller. This keeps the UI massively responsive, and ensures you are always aware of what your machine is doing. 
 
-`**`Marlin and Grbl Firmwares support grayscale, but don't modulate power according to acceleration: Thus start/end of raster moves burn a little darker. On some machines / some graphics, this can really look bad, so i'd rather not say "yes" since the experience is not what it could be. Grbl is working on this feature.
+`**`Grbl and Marlin Firmwares support grayscale, but don't modulate power according to acceleration (yet): Thus start/end of raster moves burn a little darker. On some machines / some graphics, this can really look bad, so i'd rather not say "yes" since the experience is not what it could be.
 
 ## Wishlist
 
