@@ -39,23 +39,22 @@ Note: Ever changing.  See the Issues tab above for details.
 | Firmware      | Supported by LW  | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
 | ------------- |------------------| :----------------:|:-----------------:|:----------------------:|
 | Smoothieware  | Fully            |   Yes             |   Yes             | Yes - improvements     |
-| Marlin        | Not yet          |   **Yes, but...   |   No              | Yes - test and improve | 
-| Grbl          |Implemented Jul'16| **Yes,  but...    |   almost          | Yes - improved  error handling  |
-| TinyG         | not planned      |   No              |   Yes             | Yes - please           |
-| Repetier      | not planned      |   No              |   No              | Yes                    |
+| Grbl          | Fully            |   Yes **          |   Yes             | Yes - improved  error handling |
+| TinyG         | Planned          |   Yes **          |   Yes             | Yes - please           |
+| Marlin        | Not yet          |   Yes **          |   No              | Yes - test and improve | 
+| Repetier      | Not planned      |   No              |   No              | Yes                    |
 
-Long story short:  Smoothieware wins on all fronts.  its the ONLY open source firmware which automatically modulates its laser power output according to the realtime acceleration values - ensuring that (de)acceleration does not cause larger kerf / darker engraves - which the other firmwares causes.   This is a MUST for good Raster engraving, and is needed for Raster Grayscale!
+Long story short:  Smoothieware wins at the moment. It's the ONLY open source firmware which automatically modulates its laser power output according to the realtime acceleration values - ensuring that (de)acceleration does not cause larger kerf / darker engraves - which the other firmwares causes. This is a MUST for good Raster engraving, and is needed for Raster Grayscale!
 
 Smoothieware is also a massively faster (up to 120Mhz vs the 16Mhz of the Arduino based controllers) - which means we can pull near realtime feedback from the controller. This keeps the UI massively responsive, and ensures you are always aware of what your machine is doing. 
 
-`**`Marlin and Grbl Firmwares support grayscale, but don't modulate power according to acceleration: Thus start/end of raster moves burn a little darker.  On some machines / some graphics, this can really look bad, so i'd rather not say "yes" since the experience is not what it could be.  Again, Smoothieware is sooo much better at this!
+`**`Marlin and Grbl Firmwares support grayscale, but don't modulate power according to acceleration: Thus start/end of raster moves burn a little darker. On some machines / some graphics, this can really look bad, so i'd rather not say "yes" since the experience is not what it could be. Grbl is working on this feature.
 
 ## Wishlist
 
 If you want to contribute, the below are long standing community-requested enhancements, that a) we don't have time to code or b) don't know how to
 
 * GCODE Optimiser - to cut down on G0 moves (something like http://parano.github.io/GeneticAlgorithm-TSP/)
-* Realtime commands:  Our present implementation adds commands to the back of the queue, we need some code enhancement to do `if playing == true, then prepend the following commands to the front of the queue` for things like feedrate / power / spindle override
 * More Controllers! Help us code up the Marlin and TinyG interfaces
 * Smoothieware Ethernet - is about halfway done - if you'd like to help, please continue on from https://github.com/openhardwarecoza/LaserWeb3/issues/16
 * Rotary Support - initial groundwork is done - but needs a lot of work to be fully usable https://github.com/openhardwarecoza/LaserWeb3/issues/51
