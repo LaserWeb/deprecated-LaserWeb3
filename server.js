@@ -125,19 +125,11 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       switch (firmware) {
         case 'grbl':
           port.write('!');              // hold
+          port.write(String.fromCharCode(0x9E)); // Stop Spindle/Laser
           gcodeQueue.length = 0;        // dump the queye
           grblBufferSize.length = 0;    // dump bufferSizes
           blocked = false;
           paused = false;
-          /*
-          if (data !== 0) {
-            jumpQ(data); // Ui sends the Laser Off command to us if configured, so lets turn laser off before pausing... Probably safer (;
-            console.log('STOPPING:  Sending Laser Off Command as ' + data);
-          } else {
-            jumpQ("M5");  //  Hopefully M5!
-            console.log('STOPPING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
-          }
-          */
           port.write(String.fromCharCode(0x18));    // ctrl-x
           break;
         case 'smoothie':
@@ -169,27 +161,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       switch (firmware) {
         case 'grbl':
           port.write('!');    // Send hold command
-          /* Since grbl v1.1d of 2016/11/12 Hold also disables laser.
-          if (data !== 0) {
-            port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before pausing... Probably safer (;
-            console.log('PAUSING:  Sending Laser Off Command as ' + data);
-          } else {
-            port.write("M5\n");  //  Hopefully M5!
-            console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
-          }
-          */
+          port.write(String.fromCharCode(0x9E)); // Stop Spindle/Laser
           break;
         case 'smoothie':
-          port.write("M600\n");
-          /* Laser will be turned off by smoothie (default config!)
-          if (data !== 0) {
-            port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before pausing... Probably safer (;
-            console.log('PAUSING:  Sending Laser Off Command as ' + data);
-          } else {
-            port.write("M5\n");  //  Hopefully M5!
-            console.log('PAUSING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
-          }
-          */
+          port.write("M600\n"); // Laser will be turned off by smoothie (in default config!)
           break;
       }
       io.sockets.emit("connectStatus", 'paused:'+port.path);
@@ -205,23 +180,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       switch (firmware) {
         case 'grbl':
           port.write('~');    // Send resume command
-          /*
-          if (data !== 0) {
-            port.write(data+"\n");
-          } else {
-            port.write("M3S0\n");	// ->S0 for security reason
-          }
-          */
           break;
         case 'smoothie':
           port.write("M601\n");
-          /*
-          if (data !== 0) {
-            port.write(data+"\n");
-          } else {
-            port.write("M3S0\n");	// ->S0 for security reason
-          }
-          */
           break;
       }
       paused = false;
