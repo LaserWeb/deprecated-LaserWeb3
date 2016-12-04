@@ -161,7 +161,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       switch (firmware) {
         case 'grbl':
           port.write('!');    // Send hold command
-          port.write(String.fromCharCode(0x9E)); // Stop Spindle/Laser
+          if (fVersion === '1.1d') {
+            port.write(String.fromCharCode(0x9E)); // Stop Spindle/Laser
+          }
           break;
         case 'smoothie':
           port.write("M600\n"); // Laser will be turned off by smoothie (in default config!)
@@ -468,9 +470,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
       port.on("data", function (data) {
         console.log('Recv: ' + data);
-        if (data.indexOf('Grbl') === 0) {     // Check if it's Grbl
+        if (data.indexOf('Grbl') === 0) {   // Check if it's Grbl
           firmware = 'grbl';
-          fVersion = parseFloat(data.substr(5));    // get version
+          fVersion = data.substr(5, 4);        // get version
           console.log('GRBL detected (' + fVersion + ')');
         }
         if (data.indexOf('LPC176') >= 0) {	// LPC1768 or LPC1769 should be Smoothie
