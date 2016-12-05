@@ -48,6 +48,8 @@ var laserTestOn = false;
 const GRBL_RX_BUFFER_SIZE = 128;
 var grblBufferSize = [];
 
+var jsObject;
+
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log(chalk.green(' '));
@@ -383,7 +385,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       case '2':
         console.log('Emptying Queue');
         gcodeQueue.length = 0;        // dump the queye
-        grblBufferSize.length = 0;    // dump bufferSizes        
+        grblBufferSize.length = 0;    // dump bufferSizes
         console.log('Clearing Lockout');
         switch (firmware) {
           case 'grbl':
@@ -437,16 +439,16 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         io.sockets.emit("connectStatus", 'opened:'+port.path);
         // port.write("?");         // Lets check if its Grbl?
         port.write("version\n");    // Lets check if its Smoothieware?
-        // port.write("$fb\n");     // Lets check if its TinyG
+        port.write("$fb\n");     // Lets check if its TinyG
         // port.write("M115\n");    // Lets check if its Marlin?
         console.log('Connected to ' + port.path + 'at ' + port.options.baudRate);
         isConnected = true;
         connectedTo = port.path;
 
-		// Start intervall for status queries to grbl
-		statusLoop = setInterval(function() {
-          port.write('?');
-        }, 250);
+		// // Start intervall for status queries to grbl
+		// statusLoop = setInterval(function() {
+    //       port.write('?');
+    //     }, 250);
 
 		// Start interval for qCount messages to socket clients
 		queueCounter = setInterval(function(){
@@ -470,19 +472,108 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
       port.on("data", function (data) {
         console.log('Recv: ' + data);
+        if (data.indexOf('{') === 0) {   // Check if it's Grbl
+          firmware = 'tinyg';
+          jsObject = JSON.parse(data);
+          if (jsObject.hasOwnProperty('r')) {
+            var footer = jsObject.f || (jsObject.r && jsObject.r.f);
+            if (footer !== undefined) {
+              if (footer[1] == 108) {
+                console.log(
+                  "Response",
+                  util.format("TinyG reported an syntax error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]),
+                  jsObject
+                );
+              }
+
+              else if (footer[1] == 20) {
+                console.log(
+                  "Response",
+                  util.format("TinyG reported an internal error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]),
+                  jsObject
+                );
+              }
+
+              else if (footer[1] == 202) {
+                console.log(
+                  "Response",
+                  util.format("TinyG reported an TOO SHORT MOVE on line %d", jsObject.r.n),
+                  jsObject
+                );
+              }
+
+              else if (footer[1] == 204) {
+                console.log(
+                  "InAlarm",
+                  util.format("TinyG reported COMMAND REJECTED BY ALARM '%s'", part),
+                  jsObject
+                );
+              }
+
+              else if (footer[1] != 0) {
+                console.log(
+                  "Response",
+                  util.format("TinyG reported an error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]),
+                  jsObject
+                );
+              }
+
+              // Remove the object so it doesn't get parsed anymore
+              // delete jsObject.f;
+              // if (jsObject.r) {
+              //   delete jsObject.r.f;
+              // }
+            }
+
+            console.log("response", jsObject.r, footer);
+
+            jsObject = jsObject.r;
+          }
+
+          if (jsObject.hasOwnProperty('er')) {
+            console.log("errorReport", jsObject.er);
+          }
+          else if (jsObject.hasOwnProperty('sr')) {
+            console.log("statusChanged", jsObject.sr);
+          }
+          else if (jsObject.hasOwnProperty('gc')) {
+            console.log("gcodeReceived", jsObject.gc);
+          }
+
+          if (jsObject.hasOwnProperty('rx')) {
+            console.log("rxReceived", jsObject.rx);
+          }
+          if (jsObject.hasOwnProperty('fb')) {
+            var fVersion = 'TinyG '+jsObject.fb;
+            console.log("Firmware", jsObject.fb);
+            console.log('TinyG detected (' + fVersion + ')');
+          }
+          //
+
+          blocked = false;
+          send1Q();
+        }
         if (data.indexOf('Grbl') === 0) {   // Check if it's Grbl
           firmware = 'grbl';
           fVersion = data.substr(5, 4);        // get version
           console.log('GRBL detected (' + fVersion + ')');
+          // // Start intervall for status queries to grbl
+          statusLoop = setInterval(function() {
+                port.write('?');
+              }, 250);
         }
         if (data.indexOf('LPC176') >= 0) {	// LPC1768 or LPC1769 should be Smoothie
           firmware = 'smoothie';
           var startPos = data.search(/Version:/i) + 9;
           fVersion = data.substr(startPos).split(/,/, 1);
           console.log('Smoothieware detected (' + fVersion + ')');
+          // // Start intervall for status queries to grbl
+          statusLoop = setInterval(function() {
+                port.write('?');
+              }, 250);
         }
         if (data.indexOf("ok") === 0) { // Got an OK so we are clear to send
-		  blocked = false;
+		      blocked = false;
           if (firmware === 'grbl') {
             grblBufferSize.shift();
           }
@@ -545,6 +636,17 @@ function send1Q() {
       }
       break;
     case 'smoothie':
+      if (gcodeQueue.length > 0 && !blocked && !paused) {
+        var gcode = gcodeQueue.shift();
+        // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
+        gcode = gcode.replace(/\s+/g, '');
+        console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
+        lastSent = gcode;
+        port.write(gcode + '\n');
+        blocked = true;
+      }
+      break;
+    case 'tinyg':
       if (gcodeQueue.length > 0 && !blocked && !paused) {
         var gcode = gcodeQueue.shift();
         // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
