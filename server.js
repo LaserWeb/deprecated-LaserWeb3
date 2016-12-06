@@ -45,9 +45,10 @@ var feedOverride = 100;
 var spindleOverride = 100;
 var laserTestOn = false;
 
-const GRBL_RX_BUFFER_SIZE = 128;
+var GRBL_RX_BUFFER_SIZE = 128; // 128 characters
 var grblBufferSize = [];
 
+var tinygBufferSize = 4; // space for 4 lines of gcode left
 var jsObject;
 
 
@@ -127,7 +128,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       switch (firmware) {
         case 'grbl':
           port.write('!');              // hold
-          port.write(String.fromCharCode(0x9E)); // Stop Spindle/Laser
+          if (fVersion === '1.1d') {
+            port.write(String.fromCharCode(0x9E)); // Stop Spindle/Laser
+          }
           gcodeQueue.length = 0;        // dump the queye
           grblBufferSize.length = 0;    // dump bufferSizes
           blocked = false;
@@ -135,6 +138,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           port.write(String.fromCharCode(0x18));    // ctrl-x
           break;
         case 'smoothie':
+          port.write('!');              // hold
           gcodeQueue.length = 0;        // dump the queye
           grblBufferSize.length = 0;    // dump bufferSizes
           blocked = false;
@@ -147,6 +151,14 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             console.log('STOPPING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
           }
           port.write(String.fromCharCode(0x18));    // ctrl-x
+          break;
+        case 'tinyg':
+          port.write('!');              // hold
+          port.write('%');              // flush tinyg quere
+          gcodeQueue.length = 0;        // dump LW queye
+          tinygBufferSize = 4;
+          blocked = false;
+          paused = false;
           break;
       }
       laserTestOn = false;
@@ -170,6 +182,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         case 'smoothie':
           port.write("M600\n"); // Laser will be turned off by smoothie (in default config!)
           break;
+        case 'tinyg':
+          port.write('!');    // Send hold command
+          break;
       }
       io.sockets.emit("connectStatus", 'paused:'+port.path);
     } else {
@@ -187,6 +202,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           break;
         case 'smoothie':
           port.write("M601\n");
+          break;
+        case 'tinyg':
+          port.write('~');    // Send resume command
           break;
       }
       paused = false;
@@ -257,6 +275,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           console.log('Feed Override ' + feedOverride.toString() + '%');
           send1Q();
           break;
+        case 'tinyg':
+          break;
       }
     } else {
       io.sockets.emit("connectStatus", 'closed');
@@ -308,6 +328,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           console.log('Spindle (Laser) Override ' + spindleOverride.toString() + '%');
           send1Q();
           break;
+        case 'tinyg':
+          break;
       }
     } else {
       io.sockets.emit("connectStatus", 'closed');
@@ -346,6 +368,16 @@ function handleConnection (socket) { // When we open a WS connection, send the l
                   laserTestOn = false;
                 }
                 break;
+              case 'tinyg':
+                addQ('M3S' + power);
+                laserTestOn = true;
+                if (duration > 0) {
+                  addQ('G4 P' + duration / 1000);
+                  addQ('M5S0');
+                  laserTestOn = false;
+                }
+                send1Q();
+                break;
             }
           }
         } else {
@@ -357,6 +389,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             case 'smoothie':
               port.write('fire Off');
               console.log('Fire Off');
+              break;
+            case 'tinyg':
+              addQ('M5S0');
+              send1Q();
               break;
           }
           laserTestOn = false;
@@ -379,6 +415,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           case 'smoothie':
             port.write("M999\n");
             break;
+          case 'tinyg':
+            break;
         }
         console.log('Resuming Queue Lockout');
         break;
@@ -393,6 +431,8 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             break;
           case 'smoothie':
             port.write("M999\n");
+            break;
+          case 'tinyg':
             break;
         }
         break;
@@ -437,18 +477,18 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.on('open', function() {
         io.sockets.emit("activePorts", port.path + ',' + port.options.baudRate);
         io.sockets.emit("connectStatus", 'opened:'+port.path);
-        // port.write("?");         // Lets check if its Grbl?
+        // port.write("?");         // Lets check if its Grbl? 
         port.write("version\n");    // Lets check if its Smoothieware?
-        port.write("$fb\n");     // Lets check if its TinyG
+        port.write("$fb\n");        // Lets check if its TinyG
         // port.write("M115\n");    // Lets check if its Marlin?
         console.log('Connected to ' + port.path + 'at ' + port.options.baudRate);
         isConnected = true;
         connectedTo = port.path;
 
-		// // Start intervall for status queries to grbl
+		// // Start intervall for status queries to grbl & smoothie
 		// statusLoop = setInterval(function() {
-    //       port.write('?');
-    //     }, 250);
+        //   port.write('?');
+        // }, 250);
 
 		// Start interval for qCount messages to socket clients
 		queueCounter = setInterval(function(){
@@ -472,8 +512,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
       port.on("data", function (data) {
         console.log('Recv: ' + data);
-        if (data.indexOf('{') === 0) {   // Check if it's Grbl
-          firmware = 'tinyg';
+        if (data.indexOf('{') === 0) {   // TinyG response
           jsObject = JSON.parse(data);
           if (jsObject.hasOwnProperty('r')) {
             var footer = jsObject.f || (jsObject.r && jsObject.r.f);
@@ -528,6 +567,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             console.log("response", jsObject.r, footer);
 
             jsObject = jsObject.r;
+
+            tinygBufferSize++;
+            blocked = false;
+            send1Q();
           }
 
           if (jsObject.hasOwnProperty('er')) {
@@ -543,37 +586,37 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           if (jsObject.hasOwnProperty('rx')) {
             console.log("rxReceived", jsObject.rx);
           }
-          if (jsObject.hasOwnProperty('fb')) {
-            var fVersion = 'TinyG '+jsObject.fb;
-            console.log("Firmware", jsObject.fb);
+          if (jsObject.hasOwnProperty('fb')) {   // Check if it's TinyG
+            firmware = 'tinyg';
+            fVersion = jsObject.fb;
             console.log('TinyG detected (' + fVersion + ')');
+            // Start intervall for status queries
+            statusLoop = setInterval(function() {
+              port.write('{"sr":null}');
+            }, 250);
           }
-          //
-
-          blocked = false;
-          send1Q();
         }
         if (data.indexOf('Grbl') === 0) {   // Check if it's Grbl
           firmware = 'grbl';
           fVersion = data.substr(5, 4);        // get version
           console.log('GRBL detected (' + fVersion + ')');
-          // // Start intervall for status queries to grbl
+          // Start intervall for status queries
           statusLoop = setInterval(function() {
-                port.write('?');
-              }, 250);
+            port.write('?');
+          }, 250);
         }
         if (data.indexOf('LPC176') >= 0) {	// LPC1768 or LPC1769 should be Smoothie
           firmware = 'smoothie';
           var startPos = data.search(/Version:/i) + 9;
           fVersion = data.substr(startPos).split(/,/, 1);
           console.log('Smoothieware detected (' + fVersion + ')');
-          // // Start intervall for status queries to grbl
+          // Start intervall for status queries
           statusLoop = setInterval(function() {
-                port.write('?');
-              }, 250);
+            port.write('?');
+          }, 250);
         }
         if (data.indexOf("ok") === 0) { // Got an OK so we are clear to send
-		      blocked = false;
+		  blocked = false;
           if (firmware === 'grbl') {
             grblBufferSize.shift();
           }
@@ -590,7 +633,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       io.sockets.emit("connectStatus", 'resume:'+port.path);
       // port.write(String.fromCharCode(0x18));    // Lets check if its Grbl?
       port.write("version\n");    // Lets check if its Smoothieware?
-      //port.write("$fb\n");        // Lets check if its TinyG
+      port.write("$fb\n");        // Lets check if its TinyG
       //port.write("M115\n");       // Lets check if its Marlin?
     }
   });
@@ -647,14 +690,14 @@ function send1Q() {
       }
       break;
     case 'tinyg':
-      if (gcodeQueue.length > 0 && !blocked && !paused) {
+      while (tinygBufferSize>0 && gcodeQueue.length > 0 && !blocked && !paused) {
         var gcode = gcodeQueue.shift();
         // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
         gcode = gcode.replace(/\s+/g, '');
         console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
         lastSent = gcode;
         port.write(gcode + '\n');
-        blocked = true;
+        tinygBufferSize--;
       }
       break;
   }
