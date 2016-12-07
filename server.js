@@ -142,11 +142,14 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           port.write(String.fromCharCode(0x18));    // ctrl-x
           break;
         case 'smoothie':
-          port.write('!');              // hold
+          //port.write('!');              // hold
+          paused = true;
+          port.write(String.fromCharCode(0x18));    // ctrl-x
           gcodeQueue.length = 0;        // dump the queye
           grblBufferSize.length = 0;    // dump bufferSizes
           blocked = false;
           paused = false;
+          /*
           if (data !== 0) {
             port.write(data+"\n"); // Ui sends the Laser Off command to us if configured, so lets turn laser off before unpausing... Probably safer (;
             console.log('STOPPING:  Sending Laser Off Command as ' + data);
@@ -154,13 +157,14 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             port.write("M5\n");  //  Hopefully M5!
             console.log('STOPPING: NO LASER OFF COMMAND CONFIGURED. PLEASE CHECK THAT BEAM IS OFF!  We tried the detault M5!  Configure your settings please!');
           }
-          port.write(String.fromCharCode(0x18));    // ctrl-x
+          */
           break;
         case 'tinyg':
           port.write('!');              // hold
           port.write('%');              // dump TinyG queue
           gcodeQueue.length = 0;        // dump LW queue
           grblBufferSize.length = 0;    // dump bufferSizes
+          tinygBufferSize = 4;
           blocked = false;
           paused = false;
           break;
@@ -418,7 +422,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
               port.write("$X\n");
               break;
             case 'smoothie':
-              port.write("M999\n");
+              port.write("$X\n");
               break;
             case 'tinyg':
               port.write('$X/n');          // resume
@@ -436,7 +440,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
               port.write("$X\n");
               break;
             case 'smoothie':
-              port.write("M999\n");
+              port.write("$X\n");       //M999
               break;
             case 'tinyg':
               port.write('%');          // flush tinyg quere
@@ -467,8 +471,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     if (isConnected) {
       console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
       io.sockets.emit("connectStatus", 'closing:'+port.path);
-      gcodeQueue.length = 0;	// dump the queye
+      port.write(String.fromCharCode(0x18));    // ctrl-x
+      gcodeQueue.length = 0;        // dump the queye
       grblBufferSize.length = 0;	// dump bufferSizes
+      tinygBufferSize = 4;          // reset tinygBufferSize
       clearInterval(queueCounter);
       clearInterval(statusLoop);
       port.close();
