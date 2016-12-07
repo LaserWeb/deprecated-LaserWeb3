@@ -57,15 +57,15 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log(chalk.green('***************************************************************'));
     console.log(chalk.white('                 ---- LaserWeb Started ----                    '));
     console.log(chalk.green('***************************************************************'));
-    console.log(chalk.white('  Access the LaserWeb User Interface:                        '));
-    console.log(chalk.green('  1. Open Chrome                                              '));
+    console.log(chalk.white('  Access the LaserWeb User Interface:                          '));
+    console.log(chalk.green('  1. Open Chrome                                               '));
     console.log(chalk.green('  2. Go to : '), chalk.yellow(' http://'+add+':'+config.webPort+'/'));
     console.log(chalk.green('***************************************************************'));
     console.log(chalk.green(' '));
     console.log(chalk.green(' '));
     console.log(chalk.red('* Updates: '));
     console.log(chalk.green('  Remember to check the commit log on'));
-    console.log(chalk.green(' '), chalk.yellow('https://github.com/openhardwarecoza/LaserWeb3/commits/master'));
+    console.log(chalk.green(' '), chalk.yellow('https://github.com/LaserWeb/LaserWeb3/commits/master'));
     console.log(chalk.green('  regularly, to know about updates and fixes, and then when ready'));
     console.log(chalk.green('  update LaserWeb3 accordingly by running'), chalk.cyan("git pull"));
     console.log(chalk.green(' '));
@@ -483,7 +483,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
   socket.on('areWeLive', function(data) { 		// Report active serial port to web-client
-    socket.emit("activePorts", port.path + ',' + port.options.baudRate);
+    if (isConnected) {
+      socket.emit("activePorts", port.path + ',' + port.options.baudRate);
+    }
   });
 
   socket.on('connectTo', function(data) { // If a user picks a port to connect to, open a Node SerialPort Instance to it
@@ -504,22 +506,16 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         isConnected = true;
         connectedTo = port.path;
 
-		// // Start intervall for status queries to grbl & smoothie
-		// statusLoop = setInterval(function() {
-        //   port.write('?');
-        // }, 250);
-
 		// Start interval for qCount messages to socket clients
 		queueCounter = setInterval(function(){
           io.sockets.emit('qCount', gcodeQueue.length);
         },500);
-        io.sockets.emit("activePorts", port.path + ',' + port.options.baudRate);
       });
 
       port.on('close', function() { // open errors will be emitted as an error event
         clearInterval(queueCounter);
 		clearInterval(statusLoop);
-        io.sockets.emit("connectStatus", 'closed:'+port.path);
+        io.sockets.emit("connectStatus", 'closed'+connectedTo);
         isConnected = false;
         connectedTo = false;
       });
@@ -611,7 +607,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             console.log('TinyG detected (' + fVersion + ')');
             // Start intervall for status queries
             statusLoop = setInterval(function() {
-              port.write('{"sr":null}');
+              if (isConnected) {
+                port.write('{"sr":null}');
+              }
             }, 250);
           }
         }
@@ -621,7 +619,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           console.log('GRBL detected (' + fVersion + ')');
           // Start intervall for status queries
           statusLoop = setInterval(function() {
-            port.write('?');
+            if (isConnected) {
+              port.write('?');
+            }
           }, 250);
         }
         if (data.indexOf('LPC176') >= 0) {	// LPC1768 or LPC1769 should be Smoothie
@@ -631,7 +631,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           console.log('Smoothieware detected (' + fVersion + ')');
           // Start intervall for status queries
           statusLoop = setInterval(function() {
-            port.write('?');
+            if (isConnected) {
+              port.write('?');
+            }
           }, 250);
         }
         if (data.indexOf("ok") === 0) { // Got an OK so we are clear to send
@@ -678,46 +680,48 @@ function grblBufferSpace() {
 }
 
 function send1Q() {
-  switch (firmware) {
-    case 'grbl':
-      while (gcodeQueue.length > 0 && !blocked && !paused) {
-        var gcode = gcodeQueue.shift();
-        gcode = gcode.replace(/\s+/g, '');
-        var spaceLeft = grblBufferSpace();
-        var gcodeLen = gcode.length;
-        //console.log('BufferSpace: ' + spaceLeft + ' gcodeLen: ' + gcodeLen);
-        if (gcodeLen <= spaceLeft) {
-          console.log('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
-          grblBufferSize.push(gcodeLen);
+  if (isConnected) {
+    switch (firmware) {
+      case 'grbl':
+        while (gcodeQueue.length > 0 && !blocked && !paused) {
+          var gcode = gcodeQueue.shift();
+          gcode = gcode.replace(/\s+/g, '');
+          var spaceLeft = grblBufferSpace();
+          var gcodeLen = gcode.length;
+          //console.log('BufferSpace: ' + spaceLeft + ' gcodeLen: ' + gcodeLen);
+          if (gcodeLen <= spaceLeft) {
+            console.log('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
+            grblBufferSize.push(gcodeLen);
+            lastSent = gcode;
+            port.write(gcode + '\n');
+          } else {
+            gcodeQueue.unshift(gcode);
+            blocked = true;
+          }
+        }
+        break;
+      case 'smoothie':
+        if (gcodeQueue.length > 0 && !blocked && !paused) {
+          var gcode = gcodeQueue.shift();
+          // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
+          gcode = gcode.replace(/\s+/g, '');
+          console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
           lastSent = gcode;
           port.write(gcode + '\n');
-        } else {
-          gcodeQueue.unshift(gcode);
           blocked = true;
         }
-      }
-      break;
-    case 'smoothie':
-      if (gcodeQueue.length > 0 && !blocked && !paused) {
-        var gcode = gcodeQueue.shift();
-        // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
-        gcode = gcode.replace(/\s+/g, '');
-        console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
-        lastSent = gcode;
-        port.write(gcode + '\n');
-        blocked = true;
-      }
-      break;
-    case 'tinyg':
-      while (tinygBufferSize>0 && gcodeQueue.length > 0 && !blocked && !paused) {
-        var gcode = gcodeQueue.shift();
-        // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
-        gcode = gcode.replace(/\s+/g, '');
-        console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
-        lastSent = gcode;
-        port.write(gcode + '\n');
-        tinygBufferSize--;
-      }
-      break;
+        break;
+      case 'tinyg':
+        while (tinygBufferSize>0 && gcodeQueue.length > 0 && !blocked && !paused) {
+          var gcode = gcodeQueue.shift();
+          // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
+          gcode = gcode.replace(/\s+/g, '');
+          console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
+          lastSent = gcode;
+          port.write(gcode + '\n');
+          tinygBufferSize--;
+        }
+        break;
+    }
   }
 }
