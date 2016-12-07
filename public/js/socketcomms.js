@@ -84,6 +84,10 @@ function initSocket() {
 	console.log(data);
     $('#connectStatus').html(data);
     $('#syncstatus').html('Socket OK');
+    if (data.indexOf('opened') >== 0) {
+      //isConnected = true;
+      //$('#closePort').removeClass('disabled');
+    }
   });
 
   $('#refreshPort').on('click', function() {

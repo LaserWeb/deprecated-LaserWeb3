@@ -119,6 +119,10 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 
   socket.on('firstLoad', function(data) {
     socket.emit('config', config);
+    if (isConnected) {
+      socket.emit("activePorts", port.path + ',' + port.options.baudRate);
+      socket.emit("connectStatus", 'opened:'+port.path);
+    }
   });
 
   socket.on('stop', function(data) {
@@ -154,9 +158,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           break;
         case 'tinyg':
           port.write('!');              // hold
-          port.write('%');              // flush tinyg quere
-          gcodeQueue.length = 0;        // dump LW queye
-          tinygBufferSize = 4;
+          port.write('%');              // dump TinyG queue
+          gcodeQueue.length = 0;        // dump LW queue
+          grblBufferSize.length = 0;    // dump bufferSizes
           blocked = false;
           paused = false;
           break;
@@ -404,38 +408,46 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
   socket.on('clearAlarm', function(data) { // Laser Test Fire
-    console.log('Clearing Queue: Method ' + data);
-    switch (data) {
-      case '1':
-        console.log('Clearing Lockout');
-        switch (firmware) {
-          case 'grbl':
-            port.write("$X\n");
-            break;
-          case 'smoothie':
-            port.write("M999\n");
-            break;
-          case 'tinyg':
-            break;
-        }
-        console.log('Resuming Queue Lockout');
-        break;
-      case '2':
-        console.log('Emptying Queue');
-        gcodeQueue.length = 0;        // dump the queye
-        grblBufferSize.length = 0;    // dump bufferSizes
-        console.log('Clearing Lockout');
-        switch (firmware) {
-          case 'grbl':
-            port.write("$X\n");
-            break;
-          case 'smoothie':
-            port.write("M999\n");
-            break;
-          case 'tinyg':
-            break;
-        }
-        break;
+    if (isConnected) {
+      console.log('Clearing Queue: Method ' + data);
+      switch (data) {
+        case '1':
+          console.log('Clearing Lockout');
+          switch (firmware) {
+            case 'grbl':
+              port.write("$X\n");
+              break;
+            case 'smoothie':
+              port.write("M999\n");
+              break;
+            case 'tinyg':
+              port.write('$X/n');          // resume
+              break;
+          }
+          console.log('Resuming Queue Lockout');
+          break;
+        case '2':
+          console.log('Emptying Queue');
+          gcodeQueue.length = 0;        // dump the queye
+          grblBufferSize.length = 0;    // dump bufferSizes
+          console.log('Clearing Lockout');
+          switch (firmware) {
+            case 'grbl':
+              port.write("$X\n");
+              break;
+            case 'smoothie':
+              port.write("M999\n");
+              break;
+            case 'tinyg':
+              port.write('%');          // flush tinyg quere
+              tinygBufferSize = 4;
+              port.write('~');          // resume
+              break;
+          }
+          break;
+      }
+    } else {
+      io.sockets.emit("connectStatus", 'closed');
     }
   });
 
@@ -452,15 +464,22 @@ function handleConnection (socket) { // When we open a WS connection, send the l
   });
 
   socket.on('closePort', function(data) {		// Close serial port and dump queue
-    console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
-    io.sockets.emit("connectStatus", 'closed:'+port.path);
-    gcodeQueue.length = 0;	// dump the queye
-    grblBufferSize.length = 0;	// dump bufferSizes
-    port.close();
-    isConnected = false;
-    connectedTo = false;
-    paused = false;
-    blocked = false;
+    if (isConnected) {
+      console.log(chalk.yellow('WARN:'), chalk.blue('Closing Port ' + port.path));
+      io.sockets.emit("connectStatus", 'closing:'+port.path);
+      gcodeQueue.length = 0;	// dump the queye
+      grblBufferSize.length = 0;	// dump bufferSizes
+      clearInterval(queueCounter);
+      clearInterval(statusLoop);
+      port.close();
+      isConnected = false;
+      connectedTo = false;
+      paused = false;
+      blocked = false;
+      io.sockets.emit("connectStatus", 'closed');
+    } else {
+      io.sockets.emit("connectStatus", 'closed');
+    }
   });
 
   socket.on('areWeLive', function(data) { 		// Report active serial port to web-client
