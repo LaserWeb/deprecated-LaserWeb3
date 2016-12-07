@@ -515,7 +515,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
       port.on('close', function() { // open errors will be emitted as an error event
         clearInterval(queueCounter);
 		clearInterval(statusLoop);
-        io.sockets.emit("connectStatus", 'closed'+connectedTo);
+        io.sockets.emit("connectStatus", 'closed');
         isConnected = false;
         connectedTo = false;
       });
