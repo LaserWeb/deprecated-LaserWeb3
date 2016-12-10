@@ -832,8 +832,14 @@
                                                   <i class="fa fa-upload  fa-fw"></i> Restore from file <input id="jsonFile" type="file" accept=".json" />
                                               </span>
                                           </div>
-
                                       </div>
+                                      <div class="btn-group input-group  btn-group-justified" role="group" id="jogx" aria-label="Load">
+                                            <div class="btn-group" role="group">
+                                                <span id="loadprofilemodal" href="#" class="btn btn-lg btn-default btn-file" data-toggle="modal" data-target="#profilemodal" title="Load a preconfigured profile">
+                                                    <i class="fa fa-cloud-download  fa-fw"></i> Load Preconfigured Profile
+                                                </span>
+                                            </div>
+                                       </div>
                                   </form>
                               </div><!-- #menu4 -->
 
@@ -1302,6 +1308,26 @@
         </div><!-- tracing model -->
 
 
+        <div id="profilemodal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Load a Profile</h4>
+                    </div>
+                    <div class="modal-body">
+                        Choose a profile
+                        <select id="preconfigprofiles" class="form-control"></select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="loadprofile" data-dismiss="modal">Load</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- profile modal -->
+
+
     </body>
 
     <script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
@@ -1397,6 +1423,9 @@
 
     <!-- Saved/load settings -->
     <script type="text/javascript" src="js/localstorage.js"></script>
+
+    <!-- Preconfigured Profiles -->
+    <script type="text/javascript" src="js/profiles.js"></script>
 
     <!-- Gcode Viewer -->
     <script type="text/javascript" src="lib/gcode-viewer/gcode-parser.js"></script>
