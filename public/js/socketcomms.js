@@ -16,6 +16,8 @@ function initSocket() {
     // isConnected = true;
     if (data.indexOf('<') === 0) {
       updateStatus(data);
+    } else if (data.indexOf('{\"sr\"') === 0) {
+        updateStatusTinyG(data);
     } else if (data ==='ok') {
       printLog(data, '#cccccc', "usb");
     } else {
@@ -82,6 +84,10 @@ function initSocket() {
 	console.log(data);
     $('#connectStatus').html(data);
     $('#syncstatus').html('Socket OK');
+    if (data.indexOf('opened') >= 0) {
+      isConnected = true;
+      $('#closePort').removeClass('disabled');
+    }
   });
 
   $('#refreshPort').on('click', function() {
@@ -289,6 +295,33 @@ function playGcode() {
     $('#playicon').addClass('fa-pause');
     playing = true;
     espPlay();
+  }
+}
+
+
+var lastPosx = 0, lastPosy = 0, lastPosz = 0;
+
+function updateStatusTinyG(data) {
+  var jsObject = JSON.parse(data);
+  console.log(jsObject)
+  if (jsObject.sr.posx) {
+    lastPosx = jsObject.sr.posx
+  }
+  if (jsObject.sr.posy) {
+    lastPosy = jsObject.sr.posy
+  }
+  if (jsObject.sr.posz) {
+    lastPosz = jsObject.sr.posz
+  }
+  var xpos = parseFloat(lastPosx).toFixed(2);
+  var ypos = parseFloat(lastPosy).toFixed(2);
+  var zpos = parseFloat(lastPosz).toFixed(2);
+
+  $('#mX').html(xpos);
+  $('#mY').html(ypos);
+  $('#mZ').html(zpos);
+  if (bullseye) {
+    setBullseyePosition(xpos, ypos, zpos); // Also updates #mX #mY #mZ
   }
 }
 

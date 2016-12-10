@@ -20,9 +20,8 @@
     "dotenv": "*",
     "node-static": "*",
     "request": "*",
-    "serialport": "*",
-    "socket.io": "*",
-    "tinyg": "^0.4.5"
+    "serialport": "^4.0.6",
+    "socket.io": "*"
   },
   "license": "AGPL-3.0",
   "bugs": {
