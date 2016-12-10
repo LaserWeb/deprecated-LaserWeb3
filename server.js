@@ -355,6 +355,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           if (duration >= 0) {
             switch (firmware) {
               case 'grbl':
+                addQ('G1');
                 addQ('M3S' + power);
                 laserTestOn = true;
                 if (duration > 0) {
