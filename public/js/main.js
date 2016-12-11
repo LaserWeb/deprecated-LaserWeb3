@@ -123,7 +123,6 @@ $(document).ready(function() {
         }
     });
 
-
     // Viewer
     var viewer = document.getElementById('renderArea');
 
@@ -137,6 +136,9 @@ $(document).ready(function() {
     checkNumPad();
 
     checkSettingsLocal();
+    
+    // Show/Hide quote tab
+    $("#quote-menu").toggle(loadSetting("showQuoteTab") == "Hide" ? false : true);
 
     // Bind Quote System
     $('.quoteVar').keyup(function(){

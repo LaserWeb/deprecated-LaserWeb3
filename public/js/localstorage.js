@@ -38,7 +38,8 @@ localParams = [
   ['inkscapeDPI', false],
   ['defaultBitmapDPI', true],
   ['safetyLockDisabled', false],
-  ['optimisegcode', false]
+  ['optimisegcode', false],
+  ['showQuoteTab', true]
 ];
 
 
