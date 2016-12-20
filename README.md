@@ -39,16 +39,11 @@ Note: Ever changing. See the Issues tab above for details.
 | Firmware      | Supported by LW  | Raster Grayscale  |Realtime Feedback  |Pull Requests Accepted  |
 | ------------- |------------------| :----------------:|:-----------------:|:----------------------:|
 | Smoothieware  | Fully            |   Yes             |   Yes             | Yes - improvements     |
-| Grbl (>1.1d)  | Fully            |   Yes **          |   Yes             | Yes - improvements     |
+| Grbl (>1.1d)  | Fully            |   Yes             |   Yes             | Yes - improvements     |
 | TinyG         | Planned          |   Yes **          |   Yes             | Yes - please           |
 | Marlin        | Not yet          |   Yes **          |   No              | Yes - please           | 
 | Repetier      | Not planned      |   No              |   No              | Yes - please           |
 
-Long story short:  Smoothieware wins at the moment. It's the ONLY open source firmware at the moment which automatically modulates its laser power output according to the realtime acceleration values - ensuring that (de)acceleration does not cause larger kerf / darker engraves - which the other firmwares causes. This is a MUST for good Raster engraving, and is needed for Raster Grayscale! Grbl is working on this feature.
-
-Smoothieware is also a massively faster (up to 120Mhz vs the 16Mhz of the Arduino based controllers) - which means we can pull near realtime feedback from the controller. This keeps the UI massively responsive, and ensures you are always aware of what your machine is doing. 
-
-`**`Grbl and Marlin Firmwares support grayscale, but don't modulate power according to acceleration (yet): Thus start/end of raster moves burn a little darker. On some machines / some graphics, this can really look bad, so i'd rather not say "yes" since the experience is not what it could be.
 
 ## Wishlist
 
