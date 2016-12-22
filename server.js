@@ -52,7 +52,7 @@ var laserTestOn = false;
 var GRBL_RX_BUFFER_SIZE = 128;      // 128 characters
 var grblBufferSize = [];
 
-var SMOOTHIE_RX_BUFFER_SIZE = 128;  // max. length of one command line
+var SMOOTHIE_RX_BUFFER_SIZE = 64;  // max. length of one command line
 var smoothie_buffer = true;
 
 var TINYG_RX_BUFFER_SIZE = 4;       // max. lines of gcode to send before wait for ok
@@ -715,8 +715,8 @@ function send1Q() {
                             newMode = gcode.substr(0,2);
                             if (lastMode === newMode) {
                                 // same G mode as before -> stripe mode
-                                gcode = gcode.substr(2);
-                                gcodeLen = gcode.length;
+                                //gcode = gcode.substr(2);
+                                //gcodeLen = gcode.length;
                             } else {
                                 if (lastMode !== '') {
                                     gcodeQueue.unshift(gcode);
