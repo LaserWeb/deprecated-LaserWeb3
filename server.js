@@ -711,26 +711,21 @@ function send1Q() {
                     while (gcodeQueue.length > 0 && spaceLeft > 0 && !blocked && !paused) {
                         gcode = gcodeQueue.shift().replace(/\s+/g, '');
                         gcodeLen = gcode.length;
-                        if (gcodeLen <= spaceLeft) {
+                        if (gcodeLen < spaceLeft) {
                             newMode = gcode.substr(0,2);
-                            if (lastMode === newMode) {
-                                // same G mode as before -> stripe mode
-                                //gcode = gcode.substr(2);
-                                //gcodeLen = gcode.length;
+                            if (lastMode !== '' && lastMode !== newMode) {
+                                gcodeQueue.unshift(gcode);
+                                blocked = true;
+                                port.write(gcodeLine + '\n');
+                                lastSent = gcodeLine;
+                                console.log('Sent: ' + gcodeLine + ' Q: ' + gcodeQueue.length);
+                                gcodeLine = '';
+                                lastMode = '';
                             } else {
-                                if (lastMode !== '') {
-                                    gcodeQueue.unshift(gcode);
-                                    blocked = true;
-                                    port.write(gcodeLine + '\n');
-                                    lastSent = gcodeLine;
-                                    console.log('Sent: ' + gcodeLine + ' Q: ' + gcodeQueue.length);
-                                    gcodeLine = '';
-                                    lastMode = '';
-                                }
+                                lastMode = newMode;
+                                gcodeLine += gcode;
+                                spaceLeft -= gcodeLen;
                             }
-                            lastMode = newMode;
-                            gcodeLine += gcode;
-                            spaceLeft -= gcodeLen;
                         } else {
                             gcodeQueue.unshift(gcode);
                             blocked = true;

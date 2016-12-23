@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>jQuery.NumPad - numeric keypad for jQuery Mobile (Demo)</title>
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+		<link rel="stylesheet" href="../../jquery.numpad.css">
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+		<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+		<script src="../../jquery.numpad.js"></script>
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		<script type="text/javascript">
+			// Set NumPad defaults for jQuery mobile. 
+			// These defaults will be applied to all NumPads within this document!
+			$.fn.numpad.defaults.gridTpl = '<table class="ui-bar-a"></table>';
+			$.fn.numpad.defaults.backgroundTpl = '<div class="ui-popup-screen ui-overlay-a"></div>';
+			$.fn.numpad.defaults.displayTpl = '<input data-theme="b" type="text" />';
+			$.fn.numpad.defaults.buttonNumberTpl =  '<a data-role="button" data-theme="b"></a>';
+			$.fn.numpad.defaults.buttonFunctionTpl = '<a data-role="button" data-theme="a"></a>';
+			$.fn.numpad.defaults.onKeypadCreate = function(){$(this).enhanceWithin();};
+			
+			// Instantiate NumPad once the page is ready to be shown
+			$(document).on('pageshow', function(){
+				$('#text-basic').numpad();
+				$('#password').numpad({
+					displayTpl: '<input data-theme="b" type="password" />',
+					hidePlusMinusButton: true,
+					hideDecimalButton: true
+				});
+				$('#numpadButton-btn').numpad({
+					target: $('#numpadButton'),
+				});
+				$('#numpad4div').numpad();
+				$('#numpad4column .qtyInput').numpad();
+			});
+		</script>
+		<style type="text/css">
+			.controlgroup-textinput{
+				padding-top: .22em;
+				padding-bottom: .22em;
+			}
+		</style>
+	</head>
+	<body>
+	<div data-role="page" class="jqm-demos" data-quicklinks="true">
+
+		<div data-role="header" class="jqm-header">
+			<h2>Numeric keypad for jQuery mobile</h2>
+		</div><!-- /header -->
+
+    <div role="main" class="ui-content jqm-content">
+    	<div class="ui-body ui-body-a ui-corner-all">
+          <p>jQuery.NumPad is a touch optimized on-screen numeric keypad, which can be used within any web UIs based on jQuery. This page shows how the NumPad can be integrated with jQuery mobile. It is even compatible with ThemeRoller!</p>
+      	</div>
+		<h2>Numeric keypads for input fields</h2>
+        <div data-demo-html="true">
+             <label for="text-basic">Simple input (click to toggle numpad)</label>
+             <input type="text" name="text-basic" id="text-basic" value="1">
+        </div><!-- /demo-html -->
+        
+        <div data-demo-html="true">
+             <label for="password">Password input for PIN codes (click to toggle numpad - note, that sensitive data is hidden at all times!)</label>
+             <input type="password" name="password" id="password" value="">
+        </div><!-- /demo-html -->
+
+        <div>
+			<label for="numpadButton">Input with extra numpad button (the input is directly editable, while the button shows the NumPad). Additionally this one has a maxlength="4" and an onChange event handler.</label>
+			<div data-role="controlgroup" data-type="horizontal">
+				<input type="text" id="numpadButton" data-wrapper-class="controlgroup-textinput ui-btn" value="2" maxlength="4" onchange="alert('Value changed to ' + $(this).val());">
+				<button id="numpadButton-btn" class="ui-btn ui-icon-grid ui-btn-icon-notext ui-alt-icon ui-nodisc-icon">&nbsp;</button>
+			</div>
+        </div><!-- /demo-html -->
+		<h2>Numeric keypad for a div element</h2>
+		<div data-demo-html="true">
+             <div id="numpad4div">3</div>
+        </div><!-- /demo-html -->
+		<h2>Numeric keypad for table column</h2>
+		<p>Click on a cell of the quantity column to get a numeric keypad for editing the quantity.</p>
+		<div data-demo-html="true">
+             <table id="numpad4column" data-role="table" class="ui-responsive">
+				<thead>
+					<tr>
+						<th>Product</th>
+						<th>Price</th>
+						<th>Quantity</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>XXL Keyboard</td>
+						<td>29,95</td>
+						<td class="qtyInput">1</td>
+					</tr>
+					<tr>
+						<td>XXL Mouse</td>
+						<td>19,95</td>
+						<td class="qtyInput">1</td>
+					</tr>
+					<tr>
+						<td>DVD-RW</td>
+						<td>1,95</td>
+						<td class="qtyInput">20</td>
+					</tr>
+				</tbody>
+			 </table>
+        </div><!-- /demo-html -->
+	</div>
+
+
+</div><!-- /page -->
+
+</body>
+</html>

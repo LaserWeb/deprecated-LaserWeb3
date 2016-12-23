@@ -1,0 +1,24 @@
+{
+  "name": "jquery.numpad",
+  "version": "1.3.2",
+  "description": "Touch-optimized numeric on-screen keypad for jQuery",
+  "main": "jquery.numpad.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kabachello/jQuery.NumPad"
+  },
+  "keywords": [
+    "jquery-plugin",
+    "ecosystem:jquery",
+    "keyboard",
+    "keypad",
+    "numeric",
+    "input"
+  ],
+  "author": "Andrej Kabachnik",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kabachello/jQuery.NumPad/issues"
+  },
+  "homepage": "http://a.kabachnik.info/jquery-numpad.html"
+}
