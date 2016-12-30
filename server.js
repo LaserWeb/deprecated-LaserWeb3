@@ -508,10 +508,18 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             port.on('open', function () {
                 io.sockets.emit("activePorts", port.path + ',' + port.options.baudRate);
                 io.sockets.emit("connectStatus", 'opened:' + port.path);
-                // port.write("?");         // Lets check if its Grbl? 
-                port.write("version\n"); // Lets check if its Smoothieware?
-                port.write("$fb\n"); // Lets check if its TinyG
+                setTimeout(function() { //wait for controller to be ready
+                    if (!firmware) { // Grbl should be allready retected
+                        port.write("version\n"); // Check if it's Smoothieware?
+                        setTimeout(function() {  // Wait for Smoothie to answer
+                            if (!firmware) {     // If still not set
+                                port.write("$fb\n"); // Check if it's TinyG
+                            }
+                        }, 500);
+                    }
+                }, 500);
                 // port.write("M115\n");    // Lets check if its Marlin?
+                
                 console.log('Connected to ' + port.path + 'at ' + port.options.baudRate);
                 isConnected = true;
                 connectedTo = port.path;
@@ -525,9 +533,11 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             port.on('close', function () { // open errors will be emitted as an error event
                 clearInterval(queueCounter);
                 clearInterval(statusLoop);
-                io.sockets.emit("connectStatus", 'closed');
+                io.sockets.emit("connectStatus", 'closed:');
+                io.sockets.emit("connectStatus", 'Connect');
                 isConnected = false;
                 connectedTo = false;
+                firmware = false;
             });
 
             port.on('error', function (err) { // open errors will be emitted as an error event
@@ -651,11 +661,11 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                 io.sockets.emit("data", data);
             });
         } else {
-            io.sockets.emit("connectStatus", 'resume:' + port.path);
+            io.sockets.emit("connectStatus", 'opened:' + port.path);
             // port.write(String.fromCharCode(0x18));    // Lets check if its Grbl?
-            port.write("version\n"); // Lets check if its Smoothieware?
-            port.write("$fb\n"); // Lets check if its TinyG
-            //port.write("M115\n");       // Lets check if its Marlin?
+            // port.write("version\n"); // Lets check if its Smoothieware?
+            // port.write("$fb\n"); // Lets check if its TinyG
+            // port.write("M115\n");       // Lets check if its Marlin?
         }
     });
 }
