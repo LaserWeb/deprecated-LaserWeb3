@@ -230,9 +230,10 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                 var tosend = line[0];
                 if (tosend.length > 0) {
                     addQ(tosend);
-                    send1Q();
+                    //send1Q();
                 }
             }
+            send1Q();
         } else {
             io.sockets.emit("connectStatus", 'closed');
         }
@@ -352,6 +353,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             console.log('laserTest: ', 'Power ' + power + ', Duration ' + duration);
             if (power > 0) {
                 if (!laserTestOn) {
+                    // laserTest is off
                     if (duration >= 0) {
                         switch (firmware) {
                             case 'grbl':
@@ -366,16 +368,14 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                                 send1Q();
                                 break;
                             case 'smoothie':
-                                port.write('fire ' + power);
-                                console.log('Fire ' + power);
+                                addQ('fire ' + power + '\n');
                                 laserTestOn = true;
                                 if (duration > 0) {
-                                    port.write('G4 P' + duration);
-                                    console.log('G4 P' + duration);
-                                    port.write('fire Off');
-                                    console.log('Fire Off');
+                                    addQ('G4 P' + duration + '\n');
+                                    addQ('fire off\n');
                                     laserTestOn = false;
                                 }
+                                send1Q();
                                 break;
                             case 'tinyg':
                                 addQ('M3S' + power);
@@ -388,16 +388,21 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                                 send1Q();
                                 break;
                         }
+                    } else {
+                        // laserTestDuration has invalid value
                     }
                 } else {
+                    // laserTest is on
                     switch (firmware) {
                         case 'grbl':
                             addQ('M5S0');
                             send1Q();
                             break;
                         case 'smoothie':
-                            port.write('fire Off');
-                            console.log('Fire Off');
+                            addQ('fire off\n');
+                            send1Q();
+                            //port.write('fire off\n');
+                            //console.log('Sent: fire off');
                             break;
                         case 'tinyg':
                             addQ('M5S0');
@@ -689,6 +694,7 @@ function grblBufferSpace() {
     return GRBL_RX_BUFFER_SIZE - total;
 }
 
+
 function send1Q() {
     var gcode;
     var gcodeLen = 0;
@@ -697,6 +703,7 @@ function send1Q() {
         switch (firmware) {
             case 'grbl':
                 while (gcodeQueue.length > 0 && !blocked && !paused) {
+                    // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
                     gcode = gcodeQueue.shift().replace(/\s+/g, '');
                     spaceLeft = grblBufferSpace();
                     gcodeLen = gcode.length;
@@ -714,39 +721,28 @@ function send1Q() {
                 break;
             case 'smoothie':
                 if (smoothie_buffer) {
-                    spaceLeft = SMOOTHIE_RX_BUFFER_SIZE;
                     var gcodeLine = '';
                     var lastMode = '';
                     var newMode = '';
+                    spaceLeft = SMOOTHIE_RX_BUFFER_SIZE - gcodeLine.length;
                     while (gcodeQueue.length > 0 && spaceLeft > 0 && !blocked && !paused) {
-                        gcode = gcodeQueue.shift().replace(/\s+/g, '');
-                        gcodeLen = gcode.length;
-                        if (gcodeLen < spaceLeft) {
-                            newMode = gcode.substr(0,2);
-                            if (lastMode !== '' && lastMode !== newMode) {
-                                gcodeQueue.unshift(gcode);
-                                blocked = true;
-                                port.write(gcodeLine + '\n');
-                                lastSent = gcodeLine;
-                                console.log('Sent: ' + gcodeLine + ' Q: ' + gcodeQueue.length);
-                                gcodeLine = '';
-                                lastMode = '';
-                            } else {
-                                lastMode = newMode;
-                                gcodeLine += gcode;
-                                spaceLeft -= gcodeLen;
-                            }
+                        gcode = gcodeQueue.shift();
+                        if (gcode.indexOf('fire ') === -1) {
+                            gcode = gcode.replace(/\s+/g, '');
+                        }
+                        if (gcode.length < spaceLeft) {
+                            // Add gcode to send buffer
+                            gcodeLine += gcode;
+                            spaceLeft = SMOOTHIE_RX_BUFFER_SIZE - gcodeLine.length;
                         } else {
+                            // Not enough space left in send buffer 
+                            // -> push gcode back to queue and leave while loop
                             gcodeQueue.unshift(gcode);
                             blocked = true;
-                            port.write(gcodeLine + '\n');
-                            lastSent = gcodeLine;
-                            console.log('Sent: ' + gcodeLine + ' Q: ' + gcodeQueue.length);
-                            gcodeLine = '';
-                            lastMode = '';
                         }
                     }
-                    if (gcodeQueue.length === 0 && gcodeLine.length > 0) {
+                    if (gcodeLine.length > 0) {
+                        // Send the buffer
                         blocked = true;
                         port.write(gcodeLine + '\n');
                         lastSent = gcodeLine;
@@ -757,12 +753,13 @@ function send1Q() {
                 } else {
                     if (gcodeQueue.length > 0 && !blocked && !paused) {
                         var gcode = gcodeQueue.shift();
-                        // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
-                        gcode = gcode.replace(/\s+/g, '');
-                        console.log('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
-                        lastSent = gcode;
-                        port.write(gcode + '\n');
+                        if (gcode.indexOf('fire ') === -1) {
+                            gcode = gcode.replace(/\s+/g, '');
+                        }
                         blocked = true;
+                        port.write(gcode + '\n');
+                        lastSent = gcode;
+                        console.log('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
                     }
                 }
                 break;

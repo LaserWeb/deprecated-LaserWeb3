@@ -133,11 +133,11 @@ function initSocket() {
     socket.on('qCount', function (data) {
         data = parseInt(data);
         $('#queueCnt').html('Queued: ' + data);
-        if (data < 1) {
-            $('#playicon').removeClass('fa-pause');
-            $('#playicon').addClass('fa-play');
+        if (data === 0) {
             playing = false;
             paused = false;
+            $('#playicon').removeClass('fa-pause');
+            $('#playicon').addClass('fa-play');
             if (jobStartTime >= 0) {
                 var jobFinishTime = new Date(Date.now());
                 var elapsedTimeMS = jobFinishTime.getTime() - jobStartTime.getTime();
@@ -215,6 +215,7 @@ function stopMachine() {
     $('#playicon').addClass('fa-play');
     $('#playicon').removeClass('fa-pause');
     playing = false;
+    paused = false;
 }
 
 function playpauseMachine() {
@@ -223,7 +224,6 @@ function playpauseMachine() {
         if (playing === true) {
             if (paused === true) {
                 // unpause
-                // sendGcode('~');
                 var laseroncmd = document.getElementById('laseron').value;
                 if (laseroncmd.length === 0) {
                     laseroncmd = 0;
@@ -286,10 +286,10 @@ function playGcode() {
         if (isConnected) {
             var g;
             g = prepgcodefile();
-            sendGcode(g);
             playing = true;
             $('#playicon').removeClass('fa-play');
             $('#playicon').addClass('fa-pause');
+            sendGcode(g);
         } else {
             printLog('Not Connected', errorcolor, "usb");
         }
