@@ -3,6 +3,7 @@ var socket, isConnected, connectVia;
 var jobStartTime = -1;
 var playing = false;
 var paused = false;
+var queueEmptyCount = 0;
 var laserTestOn = false;
 var firmware;
 var ovStep = 1;
@@ -134,23 +135,27 @@ function initSocket() {
         data = parseInt(data);
         $('#queueCnt').html('Queued: ' + data);
         if (data === 0) {
-            playing = false;
-            paused = false;
-            $('#playicon').removeClass('fa-pause');
-            $('#playicon').addClass('fa-play');
-            if (jobStartTime >= 0) {
-                var jobFinishTime = new Date(Date.now());
-                var elapsedTimeMS = jobFinishTime.getTime() - jobStartTime.getTime();
-                var elapsedTime = Math.round(elapsedTimeMS / 1000);
-                printLog("Job started at " + jobStartTime.toString(), msgcolor, "file");
-                printLog("Job finished at " + jobFinishTime.toString(), msgcolor, "file");
-                printLog("Elapsed time: " + elapsedTime + " seconds.", msgcolor, "file");
-                jobStartTime = -1;
+            queueEmptyCount++;
+            if (queueEmptyCount == 4) {
+                playing = false;
+                paused = false;
+                $('#playicon').removeClass('fa-pause');
+                $('#playicon').addClass('fa-play');
 
-                // Update accumulated job time
-                var accumulatedJobTimeMS = accumulateTime(elapsedTimeMS);
+                if (jobStartTime >= 0) {
+                    var jobFinishTime = new Date(Date.now());
+                    var elapsedTimeMS = jobFinishTime.getTime() - jobStartTime.getTime();
+                    var elapsedTime = Math.round(elapsedTimeMS / 1000);
+                    printLog("Job started at " + jobStartTime.toString(), msgcolor, "file");
+                    printLog("Job finished at " + jobFinishTime.toString(), msgcolor, "file");
+                    printLog("Elapsed time: " + elapsedTime + " seconds.", msgcolor, "file");
+                    jobStartTime = -1;
 
-                printLog("Total accumulated job time: " + (accumulatedJobTimeMS / 1000).toHHMMSS());
+                    // Update accumulated job time
+                    var accumulatedJobTimeMS = accumulateTime(elapsedTimeMS);
+
+                    printLog("Total accumulated job time: " + (accumulatedJobTimeMS / 1000).toHHMMSS());
+                }
             }
         }
     });
@@ -282,6 +287,7 @@ function playGcode() {
     jobStartTime = new Date(Date.now());
     printLog("Job started at " + jobStartTime.toString(), msgcolor, "file");
     var connectVia = $('#connectVia').val();
+    queueEmptyCount = 0;
     if (connectVia === "USB") {
         if (isConnected) {
             var g;
