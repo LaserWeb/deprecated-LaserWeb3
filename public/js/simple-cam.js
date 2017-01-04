@@ -172,6 +172,16 @@ function fillEasyCam() {
                 <span class="input-group-addon">mm/s</span>
               </div>
             </div>
+	    <div class="form-group">
+              <label>Optimization Method</label>
+              <div class="input-group">
+                <select id="optimization_mode`+i+`" class="form-control">
+                    <option value="none">None</option>
+                    <option value="standard">Cartesian Distance</option>
+		    <option value="manhattan">Manhattan Distance</option>
+                </select>
+              </div>
+            </div>
             <div class="form-group">
               <label>Multipass Cutting</label>
               <div class="input-group">

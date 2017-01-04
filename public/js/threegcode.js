@@ -24,8 +24,6 @@ $(document).ready(function() {
         var lasermultiply = document.getElementById('lasermultiply').value;
         var homingseq = document.getElementById('homingseq').value;
         var endgcode = document.getElementById('endgcode').value;
-	//"none"=doesn't change cutting order, "standard"=optimize using cartesian distance, "manhattan"=optimize using manhattan distance.	
-	var optimization = "standard"; 
 	
         cncMode = $('#cncMode').val()
         if (cncMode == "Enable") {
@@ -68,6 +66,8 @@ $(document).ready(function() {
                 var passes = parseInt( $("#passes"+(j)).val() );
                 var passdepth = parseFloat( $("#depth"+(j)).val() );
                 var rapidSpeed = parseFloat($("#rapidspeed").val() ) * 60;
+		//"none"=doesn't change cutting order, "standard"=optimize using cartesian distance, "manhattan"=optimize using manhattan distance.	
+		var optimization = $("#optimization_mode"+(j)).val(); 
                 if (objectsInScene[j].userData.inflated) {
                   // g += generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                   printLog('Separate Operation for ' + objectsInScene[j].name, msgcolor, "file")
