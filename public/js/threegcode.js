@@ -68,7 +68,7 @@ $(document).ready(function() {
                 if (objectsInScene[j].userData.inflated) {
                   // g += generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                   printLog('Separate Operation for ' + objectsInScene[j].name, msgcolor, "file")
-                  objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
+                  objectsInScene[j].userData.gcode = generate_optimized_Gcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                 } else {
                   // g += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                   if (passes > 1) {
@@ -77,11 +77,11 @@ $(document).ready(function() {
                     for (m = 0; m < passes; m++) {
                       console.log("Mulipass Layer: " + m);
                       var zoffset = passdepth * m;
-                       gcodewithmultipass += generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
+                       gcodewithmultipass += generate_optimized_Gcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
                     }
                     objectsInScene[j].userData.gcode = gcodewithmultipass;
                   } else {
-                    objectsInScene[j].userData.gcode = generateGcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
+                    objectsInScene[j].userData.gcode = generate_optimized_Gcode(objectsInScene[j], j, cutSpeed0, plungeSpeed0 ,pwr0, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset);
                   }
 
                 }
@@ -148,6 +148,238 @@ function prepgcodefile() {
   console.groupEnd();
   return g;
 }
+
+function get_cut_begin_point( threeGroup, i ){
+	var localPt = threeGroup.children[i].geometry.vertices[0];
+	var worldPt = threeGroup.localToWorld(localPt.clone());
+        var xpos = worldPt.x + (parseFloat(laserxmax) / 2);
+        var ypos = worldPt.y + (parseFloat(laserymax) / 2);
+
+	var xpos_offset = threeGroup.children[i].position.x;
+        var ypos_offset = threeGroup.children[i].position.y;
+        
+	if (threeGroup.children[i].geometry.type == "CircleGeometry") {
+		xpos = (xpos + xpos_offset);
+                ypos = (ypos + ypos_offset);
+        }
+	
+	return new THREE.Vector2( xpos, ypos );
+}
+
+function get_cut_end_point( threeGroup, i ){
+	var localPt = threeGroup.children[i].geometry.vertices[ threeGroup.children[i].geometry.vertices.length - 1 ];
+	var worldPt = threeGroup.localToWorld(localPt.clone());
+        var xpos = worldPt.x + (parseFloat(laserxmax) / 2);
+        var ypos = worldPt.y + (parseFloat(laserymax) / 2);
+
+	var xpos_offset = threeGroup.children[i].position.x;
+        var ypos_offset = threeGroup.children[i].position.y;
+        
+	if (threeGroup.children[i].geometry.type == "CircleGeometry") {
+		xpos = (xpos + xpos_offset);
+                ypos = (ypos + ypos_offset);
+        }
+	
+	return new THREE.Vector2( xpos, ypos );
+}
+
+function distance_2p( a, b ){
+	return (Math.pow(a.x-b.x, 2)+Math.pow(a.y-b.y,2));
+}
+
+function generate_optimized_Gcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset) {
+
+    var laserPwrVal = 0.0;
+    // console.log('inside generateGcode')
+    // console.log('Group', threeGroup);
+    // console.log('CutSpeed', cutSpeed);
+    // console.log('plungeSpeed', plungeSpeed);
+    // console.log('Laser Power %', laserPwr);
+    var lasermultiply = $('#lasermultiply').val();
+    // console.log('Laser Multiplier', lasermultiply);
+
+    if (lasermultiply <= 1) {
+        var laserPwrVal = laserPwr / 100;
+        laserPwrVal = parseFloat(laserPwrVal).toFixed(2);
+    } else {
+        var laserPwrVal = laserPwr * (lasermultiply / 100);
+        laserPwrVal = laserPwrVal.toFixed(0);
+    }
+    // console.log('Laser Power Value', laserPwrVal, ' type of ', typeof(laserPwrVal));
+
+    var g = "";
+    // get the THREE.Group() that is the txt3d
+
+    var txtGrp = threeGroup;
+    var that = this;
+    var isLaserOn = false;
+    var isAtClearanceHeight = false;
+    var isFeedrateSpecifiedAlready = false;
+    var isSeekrateSpecifiedAlready = false;
+
+
+    var cncMode = false;
+
+    if  ($('#cncMode').val() == "Enable") {
+      cncMode = true;
+    }
+
+    // var subj_path2 = [];
+    // var subj_paths = [];
+    // console.log(txtGrp);
+    // console.log(rapidSpeed)
+    // console.log(cutSpeed);
+
+    // txtGrp.updateMatrixWorld();
+
+    var toCut = txtGrp.clone(); //Copia delle linee di cui deve ancora fare il gocde.
+    var actual_position = new THREE.Vector2( 0, 0 ); //Posizione attuale del LASER
+
+    while( toCut.children.length > 0 ){
+	console.log("Element ", toCut.children.length);
+	var opt_distance = distance_2p( get_cut_begin_point( toCut, 0 ), actual_position );
+	var opt_cut = 0;
+	//g+= "Calcolo "+toCut.children.length+" distanze\n\n";
+	for( i = 0; i < toCut.children.length; i++ ){ // Scorre i segmenti da disegnare cercando iil più vicino
+		var distance = distance_2p( get_cut_begin_point( toCut, i ), actual_position );
+	//	g+=i+": "+distance+" mm\n";
+		if( distance < opt_distance ){
+			opt_distance = distance;
+			opt_cut = i;
+		}
+	}
+	//g+="Distanza ottimale "+opt_cut+": "+opt_distance+" mm\n";
+	//opt_cut = 0; //QUESTA LINEA FA SEMPLICEMENTE ESEGUIRE IL TAGLIO IN ORDINE.
+	actual_position = get_cut_end_point( toCut, opt_cut );
+	child = toCut.children[opt_cut].clone();
+
+	if (child.type == "Line") {
+
+            var xpos_offset = child.position.x;
+            var ypos_offset = child.position.y;
+
+
+            // let's create gcode for all points in line
+            for (i = 0; i < child.geometry.vertices.length; i++) {
+
+                // Convert to World Coordinates
+                var localPt = child.geometry.vertices[i];
+                var worldPt = txtGrp.localToWorld(localPt.clone());
+                var xpos = worldPt.x + (parseFloat(laserxmax) / 2);
+                var ypos = worldPt.y + (parseFloat(laserymax) / 2);
+
+
+                if (child.geometry.type == "CircleGeometry") {
+                  xpos = (xpos + xpos_offset);
+                  ypos = (ypos + ypos_offset);
+                }
+
+
+                var zpos = worldPt.z;
+
+                if (zoffset) {
+                  zpos = zpos - zoffset;
+                }
+
+
+                // First Move To
+                if (i == 0) {
+                    // first point in line where we start lasering/milling
+                    var seekrate;
+                    if (isSeekrateSpecifiedAlready) {
+                        seekrate = "";
+                    } else {
+                        // console.log('Rapid Speed: ', rapidSpeed);
+                        if (rapidSpeed) {
+                            seekrate = " F" + rapidSpeed;
+                            isSeekrateSpecifiedAlready = true;
+                        } else {
+                            seekrate = "";
+                        }
+
+                    }
+                    if (cncMode) {
+                      if (!isAtClearanceHeight) {
+                        g += "\nG0 Z" + clearanceHeight + "\n"; // Position Before Plunge!
+                      }
+                    };
+                    g += "G0" + seekrate;
+                    g += " X" + xpos.toFixed(4) + " Y" + ypos.toFixed(4) + "\n";
+                    if (cncMode) {
+                      g += "\nG0 Z1\n";  // G0 to Z0 then Plunge!
+                      g += "G1 F"+plungeSpeed+" Z" + zpos.toFixed(4) + "\n";  // Plunge!!!!
+                    } else {
+                      if (isFeedrateSpecifiedAlready) {
+                      } else {
+                          // console.log('Cut Speed: ', cutSpeed);
+                          if (cutSpeed) {
+                              feedrate = " F" + cutSpeed;
+                              isFeedrateSpecifiedAlready = true;
+                          } else {
+                              feedrate = "";
+                          }
+                      }
+                      g +=  "G1" + feedrate + " X" + xpos.toFixed(4) + " Y" + ypos.toFixed(4) + " Z" + zpos.toFixed(4) + "\n";
+                    };
+                    isAtClearanceHeight = false;
+                // Else Cut move
+                } else {
+                    // we are in a non-first line so this is normal moving
+                    // if the laser is not on, we need to turn it on
+                    if (!isLaserOn) {
+                        if (laseron) {
+                            g += laseron
+                            g += '\n'
+                        } else {
+                            // Nothing - most of the firmware used G0 = move, G1 = cut and doesnt need a laseron/laseroff command
+                        };
+                        isLaserOn = true;
+                    }
+
+                    // do normal feedrate move
+                    var feedrate;
+                    if (isFeedrateSpecifiedAlready) {
+                    } else {
+                        console.log('Cut Speed: ', cutSpeed);
+                        if (cutSpeed) {
+                            feedrate = " F" + cutSpeed;
+                            isFeedrateSpecifiedAlready = true;
+                        } else {
+                            feedrate = "";
+                        }
+                    }
+                    g += "G1" + feedrate;
+                    g += " X" + xpos.toFixed(4);
+                    g += " Y" + ypos.toFixed(4);
+                    g += " Z" + zpos.toFixed(4);
+                    g += " S" + laserPwrVal + "\n";
+                }
+            }
+
+
+
+            // make feedrate have to get specified again on next line if there is one
+            isFeedrateSpecifiedAlready = false;
+            isLaserOn = false;
+            // if (firmware.indexOf('Grbl') == 0) {
+            if (laseroff) {
+                g += laseroff
+                g += '\n'
+            } else {
+                // Nothing - most of the firmware used G0 = move, G1 = cut and doesnt need a laseron/laseroff command
+            }
+        }
+
+	toCut.remove( toCut.children[opt_cut] );
+	}
+	
+    //FAGLI STAMPARE TUTTI I PUNTI E CONTROLLA DOVE SONO DAVVERO
+    console.log("Generated gcode. length:", g.length);
+    console.log(" ");
+    isGcodeInRegeneratingState = false;
+    return g;
+};
+
 
 function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset) {
 
@@ -746,3 +978,4 @@ drawClipperPaths = function(paths, color, opacity, z, isClosed, name) {
     }
     return group;
 };
+
