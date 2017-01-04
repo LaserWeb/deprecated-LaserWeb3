@@ -183,10 +183,6 @@ function get_cut_end_point( threeGroup, i ){
 	return new THREE.Vector2( xpos, ypos );
 }
 
-function distance_2p( a, b ){
-	return (Math.pow(a.x-b.x, 2)+Math.pow(a.y-b.y,2));
-}
-
 function generate_optimized_Gcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, rapidSpeed, laseron, laseroff, clearanceHeight, zoffset) {
 
     var laserPwrVal = 0.0;
@@ -232,33 +228,44 @@ function generate_optimized_Gcode(threeGroup, objectseq, cutSpeed, plungeSpeed, 
 
     // txtGrp.updateMatrixWorld();
 
-    var toCut = txtGrp.clone(); //Copia delle linee di cui deve ancora fare il gocde.
-    var actual_position = new THREE.Vector2( 0, 0 ); //Posizione attuale del LASER
+    var toCut = txtGrp.clone();
+    var current_position = new THREE.Vector2( 0, 0 );
 
     while( toCut.children.length > 0 ){
-	console.log("Element ", toCut.children.length);
-	var opt_distance = distance_2p( get_cut_begin_point( toCut, 0 ), actual_position );
+	var opt_distance = current_position.distanceToSquared( get_cut_begin_point( toCut, 0 ) );
 	var opt_cut = 0;
-	//g+= "Calcolo "+toCut.children.length+" distanze\n\n";
-	for( i = 0; i < toCut.children.length; i++ ){ // Scorre i segmenti da disegnare cercando iil più vicino
-		var distance = distance_2p( get_cut_begin_point( toCut, i ), actual_position );
-	//	g+=i+": "+distance+" mm\n";
+	var cut_reverse = 0;
+	for( i = 0; i < toCut.children.length; i++ ){
+		var distance = current_position.distanceToSquared( get_cut_begin_point( toCut, i ) );
 		if( distance < opt_distance ){
 			opt_distance = distance;
 			opt_cut = i;
+			cut_reverse = 0;
 		}
 	}
-	//g+="Distanza ottimale "+opt_cut+": "+opt_distance+" mm\n";
-	//opt_cut = 0; //QUESTA LINEA FA SEMPLICEMENTE ESEGUIRE IL TAGLIO IN ORDINE.
-	actual_position = get_cut_end_point( toCut, opt_cut );
-	child = toCut.children[opt_cut].clone();
+	for( i = 0; i < toCut.children.length; i++ ){
+		var distance = current_position.distanceToSquared( get_cut_end_point( toCut, i ) );
+		if( distance < opt_distance ){
+			opt_distance = distance;
+			opt_cut = i;
+			cut_reverse = 1;
+		}
+	}
 
+	if( cut_reverse )
+		current_position = get_cut_begin_point( toCut, opt_cut );
+	else
+		current_position = get_cut_end_point( toCut, opt_cut );
+
+	child = toCut.children[opt_cut].clone();
+	
 	if (child.type == "Line") {
 
             var xpos_offset = child.position.x;
             var ypos_offset = child.position.y;
 
-
+	    if( cut_reverse )
+		child.geometry.vertices = child.geometry.vertices.reverse();
             // let's create gcode for all points in line
             for (i = 0; i < child.geometry.vertices.length; i++) {
 
@@ -372,8 +379,6 @@ function generate_optimized_Gcode(threeGroup, objectseq, cutSpeed, plungeSpeed, 
 
 	toCut.remove( toCut.children[opt_cut] );
 	}
-	
-    //FAGLI STAMPARE TUTTI I PUNTI E CONTROLLA DOVE SONO DAVVERO
     console.log("Generated gcode. length:", g.length);
     console.log(" ");
     isGcodeInRegeneratingState = false;
