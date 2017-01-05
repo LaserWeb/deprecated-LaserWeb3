@@ -401,8 +401,6 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                         case 'smoothie':
                             addQ('fire off\n');
                             send1Q();
-                            //port.write('fire off\n');
-                            //console.log('Sent: fire off');
                             break;
                         case 'tinyg':
                             addQ('M5S0');
@@ -431,7 +429,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                             port.write("$X\n");
                             break;
                         case 'tinyg':
-                            port.write('$X/n'); // resume
+                            port.write('$X\n'); // resume
                             break;
                     }
                     console.log('Resuming Queue Lockout');
@@ -723,7 +721,6 @@ function send1Q() {
                 if (smoothie_buffer) {
                     var gcodeLine = '';
                     var lastMode = '';
-                    var newMode = '';
                     spaceLeft = SMOOTHIE_RX_BUFFER_SIZE - gcodeLine.length;
                     while (gcodeQueue.length > 0 && spaceLeft > 0 && !blocked && !paused) {
                         gcode = gcodeQueue.shift();
@@ -752,7 +749,7 @@ function send1Q() {
                     }
                 } else {
                     if (gcodeQueue.length > 0 && !blocked && !paused) {
-                        var gcode = gcodeQueue.shift();
+                        gcode = gcodeQueue.shift();
                         if (gcode.indexOf('fire ') === -1) {
                             gcode = gcode.replace(/\s+/g, '');
                         }
