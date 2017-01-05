@@ -24,7 +24,7 @@ $(document).ready(function() {
         var lasermultiply = document.getElementById('lasermultiply').value;
         var homingseq = document.getElementById('homingseq').value;
         var endgcode = document.getElementById('endgcode').value;
-	
+
         cncMode = $('#cncMode').val()
         if (cncMode == "Enable") {
           var clearanceHeight = document.getElementById('clearanceHeight').value;
@@ -66,8 +66,8 @@ $(document).ready(function() {
                 var passes = parseInt( $("#passes"+(j)).val() );
                 var passdepth = parseFloat( $("#depth"+(j)).val() );
                 var rapidSpeed = parseFloat($("#rapidspeed").val() ) * 60;
-		//"none"=doesn't change cutting order, "standard"=optimize using cartesian distance, "manhattan"=optimize using manhattan distance.	
-		var optimization = $("#optimization_mode"+(j)).val(); 
+		//"none"=doesn't change cutting order, "standard"=optimize using cartesian distance, "manhattan"=optimize using manhattan distance.
+		var optimization = $("#optimization_mode"+(j)).val();
                 if (objectsInScene[j].userData.inflated) {
                   // g += generateGcode(objectsInScene[j].userData.inflated, j, cutSpeed0, plungeSpeed0, pwr0, rapidSpeed, laseron, laseroff, clearanceHeight);
                   printLog('Separate Operation for ' + objectsInScene[j].name, msgcolor, "file")
@@ -160,12 +160,12 @@ function get_cut_begin_point( threeGroup, i ){
 
 	var xpos_offset = threeGroup.children[i].position.x;
         var ypos_offset = threeGroup.children[i].position.y;
-        
+
 	if (threeGroup.children[i].geometry.type == "CircleGeometry") {
 		xpos = (xpos + xpos_offset);
                 ypos = (ypos + ypos_offset);
         }
-	
+
 	return new THREE.Vector2( xpos, ypos );
 }
 
@@ -177,12 +177,12 @@ function get_cut_end_point( threeGroup, i ){
 
 	var xpos_offset = threeGroup.children[i].position.x;
         var ypos_offset = threeGroup.children[i].position.y;
-        
+
 	if (threeGroup.children[i].geometry.type == "CircleGeometry") {
 		xpos = (xpos + xpos_offset);
                 ypos = (ypos + ypos_offset);
         }
-	
+
 	return new THREE.Vector2( xpos, ypos );
 }
 
@@ -237,18 +237,23 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
     while( toCut.children.length > 0 ){
 	var opt_cut = 0;
 	var cut_reverse = 0;
+  //If is found a cut at a distance 0 from the current_position, there is no need
+  //to add a G0 move that turns off the laser.
+	var need_move_to = 1;
+
 
 	if( optimization != "none" ){
 		var opt_distance;
 		if( optimization == "manhattan" )
 			opt_distance = current_position.distanceToManhattan( get_cut_begin_point( toCut, 0 ) );
-		else 
+		else
 			opt_distance = current_position.distanceToSquared( get_cut_begin_point( toCut, 0 ) );
+
 		for( i = 0; i < toCut.children.length; i++ ){
-			var distance;			
+			var distance;
 			if( optimization == "manhattan" )
 				distance = current_position.distanceToManhattan( get_cut_begin_point( toCut, i ) );
-			else 
+			else
 				distance = current_position.distanceToSquared( get_cut_begin_point( toCut, i ) );
 			if( distance < opt_distance ){
 				opt_distance = distance;
@@ -256,35 +261,37 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
 				cut_reverse = 0;
 			}
 		}
+
 		for( i = 0; i < toCut.children.length; i++ ){
-			var distance;			
+			var distance;
 			if( optimization == "manhattan" )
 				distance = current_position.distanceToManhattan( get_cut_end_point( toCut, i ) );
-			else 
+			else
 				distance = current_position.distanceToSquared( get_cut_end_point( toCut, i ) );
-			
+
 			if( distance < opt_distance ){
 				opt_distance = distance;
 				opt_cut = i;
 				cut_reverse = 1;
 			}
 		}
+
+		if( opt_distance == 0 ) need_move_to = 0;
 	}
-	
+
 	if( cut_reverse )
 		current_position = get_cut_begin_point( toCut, opt_cut );
 	else
 		current_position = get_cut_end_point( toCut, opt_cut );
 
 	child = toCut.children[opt_cut].clone();
-	
-	if (child.type == "Line") {
 
+	if (child.type == "Line") {
             var xpos_offset = child.position.x;
             var ypos_offset = child.position.y;
 
 	    if( cut_reverse )
-		child.geometry.vertices = child.geometry.vertices.reverse();
+		      child.geometry.vertices = child.geometry.vertices.reverse();
             // let's create gcode for all points in line
             for (i = 0; i < child.geometry.vertices.length; i++) {
 
@@ -309,7 +316,7 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
 
 
                 // First Move To
-                if (i == 0) {
+                if (i == 0 && need_move_to == 1 ){
                     // first point in line where we start lasering/milling
                     var seekrate;
                     if (isSeekrateSpecifiedAlready) {
@@ -831,4 +838,3 @@ drawClipperPaths = function(paths, color, opacity, z, isClosed, name) {
     }
     return group;
 };
-
