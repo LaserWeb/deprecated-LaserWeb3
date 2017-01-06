@@ -61,9 +61,6 @@ var tinygBufferSize = TINYG_RX_BUFFER_SIZE; // init space left
 var jsObject;
 
 
-// Start logfile
-writeLog('LaserWeb started');
-
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     writeLog(chalk.green(' '));
     writeLog(chalk.green('***************************************************************'));
