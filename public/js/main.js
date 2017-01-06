@@ -62,9 +62,9 @@ $(document).ready(function() {
         resetView();
     });
 
-
     $('#savesettings').on('click', function() {
         saveSettingsLocal();
+        listSettings(JSON.stringify(localStorage));
     });
 
     // Tabs on right side
@@ -136,6 +136,7 @@ $(document).ready(function() {
     checkNumPad();
 
     checkSettingsLocal();
+    listSettings(JSON.stringify(localStorage));
     
     // Show/Hide quote tab
     $("#quote-menu").toggle(loadSetting("showQuoteTab") == "Hide" ? false : true);

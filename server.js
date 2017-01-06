@@ -40,16 +40,18 @@ var chalk = require('chalk');
 var isConnected, connectedTo, port, isBlocked, lastSent = "", paused = false, blocked = false, statusLoop, queueCounter, connections = [];
 var gcodeQueue; gcodeQueue = [];
 var request = require('request'); // proxy for remote webcams
-var firmware, fVersion = 0;
+var firmware, fdialect, fVersion = 0;
 var feedOverride = 100;
 var spindleOverride = 100;
 var laserTestOn = false;
+
+var lbGRelative= false;
 
 var GRBL_RX_BUFFER_SIZE = 128; // 128 characters
 var grblBufferSize = [];
 
 var tinygBufferSize = 4; // space for 4 lines of gcode left
-var jsObject;
+var jsObject,jsSettings;
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -168,6 +170,21 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           blocked = false;
           paused = false;
           break;
+        case 'marlin':
+          if (fdialect === "laserbot" ) {
+            // Turn off laser if laserbot
+            port.write('M4 P0\n');
+          } else {
+            // whatever is used to turn off laser
+            if (jsSettings.hasOwnProperty('laseroff')) {
+              port.write(jsSettings.laseroff + '\n');
+            }
+          }
+          port.write('M112\n');         // Emergency Stop, requires reset of board to continue
+          gcodeQueue.length = 0;        // dump the queue
+          blocked = false;
+          paused = false;
+          break;
       }
       laserTestOn = false;
       io.sockets.emit("connectStatus", 'stopped:'+port.path);
@@ -193,6 +210,17 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         case 'tinyg':
           port.write('!');    // Send hold command
           break;
+        case 'marlin':
+          if (fdialect === "laserbot" ) {
+            // Turn off laser if laserbot
+            port.write('M4 P0\n');
+          } else {
+            // whatever is used to turn off laser
+            if (jsSettings.hasOwnProperty('laseroff')) {
+              port.write(jsSettings.laseroff + '\n');
+            }
+          }
+          break;
       }
       io.sockets.emit("connectStatus", 'paused:'+port.path);
     } else {
@@ -214,6 +242,9 @@ function handleConnection (socket) { // When we open a WS connection, send the l
         case 'tinyg':
           port.write('~');    // Send resume command
           break;
+        case 'marlin':
+          // Nothing to do 
+          break;
       }
       paused = false;
       send1Q(); // restart queue
@@ -230,7 +261,7 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 	    var tosend = line[0];
         if (tosend.length > 0) {
           addQ(tosend);
-		  send1Q();
+          send1Q();
         }
       }
     } else {
@@ -285,6 +316,21 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           break;
         case 'tinyg':
           break;
+        case 'marlin':
+          if (data === 0) {
+            feedOverride = 100;
+  	      } else {
+  	        if ((feedOverride + data <= 200) && (feedOverride + data >= 10)) {
+  	          // valid range is 10..200, else ignore!
+              // Marlin doesn't work with '0', but all other values appears to be ok, but just to be on safe side...
+              feedOverride += data;
+            }
+            jumpQ('M220S' + feedOverride);
+            io.sockets.emit('feedOverride', feedOverride);
+            console.log('Feed Override ' + feedOverride.toString() + '%');
+            send1Q();
+            break;
+          }
       }
     } else {
       io.sockets.emit("connectStatus", 'closed');
@@ -338,6 +384,19 @@ function handleConnection (socket) { // When we open a WS connection, send the l
           break;
         case 'tinyg':
           break;
+        case 'marlin':
+          // there is no 'real' override, but we can fake one adjusting power in output
+          if (data === 0) {
+            spindleOverride = 100;
+  	      } else {
+  	        if ((spindleOverride + data <= 200) && (spindleOverride + data >= 0)) {
+  	          // valid range is 0..200, else ignore!
+              spindleOverride += data;
+  	        }
+  	      }
+          io.sockets.emit('spindleOverride', spindleOverride);
+          console.log('Spindle (Laser) Override ' + spindleOverride.toString() + '%');
+          break;
       }
     } else {
       io.sockets.emit("connectStatus", 'closed');
@@ -387,6 +446,24 @@ function handleConnection (socket) { // When we open a WS connection, send the l
                 }
                 send1Q();
                 break;
+              case 'marlin':
+                // This depends on marlin dialect.. for now only makeblok M4 commands 
+                if (fdialect === "laserbot" ) {
+                  laserTestOn = true;
+                  addQ('M4P' + 255*power/100); // power=0..255, but 'S' value assumes percentages
+                  if (duration > 0) {
+                    addQ('G4P' + duration); // P=miliseconds already 
+                    addQ('M4P0');
+                    laserTestOn = false;
+                  }
+                  send1Q();
+                } else {
+                  // Be aware, this will put laser on with full strenght
+                  if (jsSettings.hasOwnProperty('laseron')) {
+                    addQ(jsSettings.laseron);
+                  }
+                }
+                break;
             }
           }
         } else {
@@ -402,6 +479,17 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             case 'tinyg':
               addQ('M5S0');
               send1Q();
+              break;
+            case 'marlin':
+              // This depends on marlin dialect.. for now only makeblok M4 commands 
+              if (fdialect === "laserbot" ) {
+                addQ('M4P0');
+                send1Q();
+              } else {
+                if (jsSettings.hasOwnProperty('laseroff')) {
+                  addQ(jsSettings.laseroff);  // shouldn't this be default option ?
+                }
+              }
               break;
           }
           laserTestOn = false;
@@ -461,6 +549,16 @@ function handleConnection (socket) { // When we open a WS connection, send the l
     socket.emit("firmware", firmware);
   });
 
+  // Deliver Firmware dialect to Web-Client
+  // Not used right now, but can imagine in future
+
+  socket.on('getDialect', function(data) { 
+    socket.emit("dialect", fdialect);
+  });
+
+  socket.on('settings', function(data) {
+    jsSettings= JSON.parse(data);
+  });
   socket.on('refreshPorts', function(data) {	// Refresh serial port list
     console.log(chalk.yellow('WARN:'), chalk.blue('Requesting Ports Refresh '));
     serialport.list(function (err, ports) {
@@ -650,10 +748,35 @@ function handleConnection (socket) { // When we open a WS connection, send the l
             }
           }, 250);
         }
+        if (data.indexOf('echo:Marlin ') >=0) { // Marlin (or deriviate)
+          firmware = 'marlin';
+          fVersion = data.substr(12);
+          console.log('Marlin firmware detected (' + fVersion + ')');
+          // Check for Makeblock version, check with M220 without params (ok=normal, oMG\nok=Makeblock version)
+          if (isConnected) {
+              port.write('M220\n'); 
+          }
+          statusLoop = setInterval(function() {
+            if (isConnected) {
+              port.write('M119\n'); // Endstop status, Not really a 'ping', but not harmfull reply/overhead
+            }
+          }, 5000); // much larger intervall, for not flooding port 
+
+        }
         if (data.indexOf("ok") === 0) { // Got an OK so we are clear to send
-		  blocked = false;
+          blocked = false;
           if (firmware === 'grbl') {
             grblBufferSize.shift();
+          }
+          send1Q();
+        }
+        // Makeblock Laserbot strangly added 'oMG' as response in Marlin firmware
+        // So, thats how to find out its a Makeblock Laserbot dialect
+        if (data.indexOf("oMG") === 0) { // Makeblock Laserbot strangly added 'oMG' as response in firmware
+          blocked = false;
+          if (!fdialect) {
+            fdialect = 'laserbot';
+            console.log('Marlin Makeblock Laserbot variant detected');
           }
           send1Q();
         }
@@ -672,8 +795,111 @@ function handleConnection (socket) { // When we open a WS connection, send the l
 // End Websocket <-> Serial
 
 
+
+// hacking the output of laserbot
+// It doesn't support the 'S'/spindle parameter
+// But we can set the strength via M4 command
+// Also, laserbot 0,0 coordinates are on the right bottom side, 
+// instead of left, so lets 'flip' the X coordinates without 
+// messing with GUI
+
+function laserbotHook(gcode) {
+
+  // Use general 'S' Spindleoverride parameter on lasercommand
+  if (gcode.indexOf('M4') == 0)  {
+    if (!laserTestOn) {
+      var pos=gcode.indexOf('P');
+      if (pos>0) {
+        var Pin= gcode.substr(pos+1);
+        var Pout= (Pin/100)* spindleOverride;
+        if (Pout > 255) { 
+          Pout=255;
+        }
+        return 'M4P'+Pout;
+      }
+    }
+  } else {
+
+    // flip X as, since laserbot 'real' 0,0 coordinates is on the RIGHT bottom side
+
+    if (gcode.indexOf('G')==0) {
+
+      // replace G28
+      if (gcode.indexOf('G28')==0) {
+        var xmax=350; // laserbot default, but check settings if altered, just in case
+        if (jsSettings.hasOwnProperty('laserXMax')) {
+          if (jsSettings.laserXMax>0) {
+            xmax=jsSettings.laserXMax;
+          }
+        }
+        gcodeQueue.push('G28'); 
+        gcodeQueue.push('G91'); 
+        gcodeQueue.push('G0F4000X'+xmax); 
+        return 'G90'; 
+      }
+
+      if (gcode.indexOf('G90')==0) {
+        lbGRelative= false;
+        return gcode;
+      }
+
+      if (gcode.indexOf('G91')==0) {
+        lbGRelative= true;
+        return gcode;
+      }
+
+      if (gcode.indexOf('X')>0) {
+        var xseg=(' '+gcode.match(/X-?\d+\.?\d*/)).substr(1);
+        var xval=xseg.substr(1)*1; 
+        if (lbGRelative) {
+          // relative to current coordinates
+          // just invert the motion
+          xval=xval*-1;
+        } else {
+          var xmax=350; // laserbot default, but check settings if altered, just in case
+          if (jsSettings.hasOwnProperty('laserXMax')) {
+            if (jsSettings.laserXMax>0) {
+              xmax=jsSettings.laserXMax;
+            }
+          }
+          xval=xmax-xval;
+        }
+        gcode=gcode.replace(xseg,'X'+xval);
+      }
+
+
+      // Replace general 'S' parameter with lasercommand
+      // G0 turns laser off,but G1 doesn't turn it back on, bug in firmware...
+      // To be on safe side, just use M4 to turn on and off
+      if (gcode.indexOf('G1') == 0) {
+        // makeblok doesn't use the 'S' parameter , so, alter power instead
+        var pos=gcode.indexOf('S');
+        if (pos>0) {
+          var Pin= gcode.substr(pos+1);
+          var Pout= (Pin/100)* spindleOverride;
+          if (Pout > 255) { 
+            Pout=255;
+          }
+          gcodeQueue.push('M4P'+Pout);
+          gcode=gcode.substr(0,pos-1);
+          gcodeQueue.push(gcode);
+          return 'M4P0'; 
+        }
+      }
+    }
+
+  }
+
+  return gcode;
+}
+
+
 // Queue
 function addQ(gcode) {
+  // Makeblok laserbot hack
+  if ((firmware === 'marlin') && (fdialect === 'laserbot')) {
+    gcode=laserbotHook(gcode);
+  }
   gcodeQueue.push(gcode);
 }
 
@@ -732,6 +958,16 @@ function send1Q() {
           tinygBufferSize--;
         }
         break;
+      case 'marlin':
+        while (tinygBufferSize>0 && gcodeQueue.length > 0 && !blocked && !paused) {
+          var gcode = gcodeQueue.shift();
+          // strip space to save bandwidth
+          gcode = gcode.replace(/\s+/g, '');
+          console.log('Sent: '  + gcode + ' Q: ' + gcodeQueue.length);
+          lastSent = gcode;
+          port.write(gcode + '\n');
+          blocked = true;
+        }
     }
   }
 }

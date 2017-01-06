@@ -298,6 +298,11 @@ function playGcode() {
   }
 }
 
+// added to report settings information to server
+function listSettings(data) {
+		  socket.emit('settings', data);
+}
+
 
 var lastPosx = 0, lastPosy = 0, lastPosz = 0;
 
