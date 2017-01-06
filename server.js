@@ -68,19 +68,21 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     writeLog(chalk.green('***************************************************************'));
     writeLog(chalk.white('  Access the LaserWeb User Interface:                          '));
     writeLog(chalk.green('  1. Open Chrome                                               '));
-    writeLog(chalk.green('  2. Go to : ') + chalk.yellow(' http://' + add + ':' + config.webPort + '/ '));
+    writeLog(chalk.green('  2. Go to : ') + chalk.yellow(' http://' + add + ':' + config.webPort + '/'));
     writeLog(chalk.green('***************************************************************'));
     writeLog(chalk.green(' '));
     writeLog(chalk.green(' '));
     writeLog(chalk.red('* Updates: '));
     writeLog(chalk.green('  Remember to check the commit log on'));
-    writeLog(chalk.green('  ') + chalk.yellow('https://github.com/LaserWeb/LaserWeb3/commits/master'));
+    writeLog(chalk.yellow('  https://github.com/LaserWeb/LaserWeb3/commits/master'));
     writeLog(chalk.green('  regularly, to know about updates and fixes, and then when ready'));
     writeLog(chalk.green('  update LaserWeb3 accordingly by running') + chalk.cyan('git pull'));
     writeLog(chalk.green(' '));
     writeLog(chalk.red('* Support: '));
     writeLog(chalk.green('  If you need help / support, come over to '));
     writeLog(chalk.green('  ') + chalk.yellow('https://plus.google.com/communities/115879488566665599508'));
+    writeLog(chalk.green('***************************************************************'));
+    writeLog(chalk.green(' '));
 });
 
 
@@ -374,8 +376,8 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                                     if (fDate >= new Date('2017-01-02')) {
                                         divider = 1000;
                                     }
-                                    addQ('G4 P' + duration / divider + '\n');
-                                    addQ('fire off' + '\n');
+                                    addQ('G4P' + duration / divider + '\n');
+                                    addQ('fire off');
                                     laserTestOn = false;
                                 }
                                 send1Q();
@@ -708,7 +710,7 @@ function send1Q() {
                         grblBufferSize.push(gcodeLen);
                         port.write(gcode + '\n');
                         lastSent = gcode;
-                        console.log('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
+                        writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
                     } else {
                         gcodeQueue.unshift(gcode);
                         blocked = true;
@@ -722,7 +724,7 @@ function send1Q() {
                     spaceLeft = SMOOTHIE_RX_BUFFER_SIZE - gcodeLine.length;
                     while (gcodeQueue.length > 0 && spaceLeft > 0 && !blocked && !paused) {
                         gcode = gcodeQueue.shift();
-                        if (gcode.indexOf('fire ') === -1) {
+                        if (gcode.indexOf('fire ') === -1 && gcode.indexOf('G4') === -1) {
                             gcode = gcode.replace(/\s+/g, '');
                         }
                         if (gcode.length < spaceLeft) {
@@ -741,7 +743,7 @@ function send1Q() {
                         blocked = true;
                         port.write(gcodeLine + '\n');
                         lastSent = gcodeLine;
-                        console.log('Sent: ' + gcodeLine + ' Q: ' + gcodeQueue.length);
+                        writeLog('Sent: ' + gcodeLine + ' Q: ' + gcodeQueue.length);
                         gcodeLine = '';
                         lastMode = '';
                     }
@@ -754,7 +756,7 @@ function send1Q() {
                         blocked = true;
                         port.write(gcode + '\n');
                         lastSent = gcode;
-                        console.log('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
+                        writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
                     }
                 }
                 break;
@@ -780,15 +782,15 @@ function writeLog(line) {
             logFile = fs.createWriteStream("logfile.txt");
         }
         var time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-        line = line.replace(String.fromCharCode(0x1B) + '[31m', '');
-        line = line.replace(String.fromCharCode(0x1B) + '[32m', '');
-        line = line.replace(String.fromCharCode(0x1B) + '[33m', '');
-        line = line.replace(String.fromCharCode(0x1B) + '[34m', '');
-        line = line.replace(String.fromCharCode(0x1B) + '[35m', '');
-        line = line.replace(String.fromCharCode(0x1B) + '[36m', '');
-        line = line.replace(String.fromCharCode(0x1B) + '[37m', '');
-        line = line.replace(String.fromCharCode(0x1B) + '[38m', '');
-        line = line.replace(String.fromCharCode(0x1B) + '[39m', '');
+        line = line.split(String.fromCharCode(0x1B) + '[31m').join('');
+        line = line.split(String.fromCharCode(0x1B) + '[32m').join('');
+        line = line.split(String.fromCharCode(0x1B) + '[33m').join('');
+        line = line.split(String.fromCharCode(0x1B) + '[34m').join('');
+        line = line.split(String.fromCharCode(0x1B) + '[35m').join('');
+        line = line.split(String.fromCharCode(0x1B) + '[36m').join('');
+        line = line.split(String.fromCharCode(0x1B) + '[37m').join('');
+        line = line.split(String.fromCharCode(0x1B) + '[38m').join('');
+        line = line.split(String.fromCharCode(0x1B) + '[39m').join('');
         logFile.write(time + ' ' + line + '\r\n');
     }
 }
