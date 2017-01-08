@@ -177,8 +177,8 @@ function fillEasyCam() {
               <div class="input-group">
                 <select id="optimization_mode`+i+`" class="form-control">
                     <option value="none">None</option>
-                    <option value="standard">Cartesian Distance</option>
-		    <option value="manhattan">Manhattan Distance</option>
+                    <option value="standard">Cartesian Distance (Experimental)</option>
+		                <option value="manhattan">Manhattan Distance (Experimental)</option>
                 </select>
               </div>
             </div>
@@ -214,7 +214,7 @@ function fillEasyCam() {
         layerprep += template;
       }
     } else if (objectsInScene[i].type == 'Mesh') {
-      
+
       if (typeof(object) != 'undefined') {
         scene.remove(object);
       };
@@ -226,7 +226,7 @@ function fillEasyCam() {
       var xpos = objectsInScene[i].position.x
       var ypos = objectsInScene[i].position.y
       // var seq = objectsInScene[i].userData.seq;
-      
+
       var scale = objectsInScene[i].scale.y;
       // scale was already initialized during bitmap load, and may have been changed
       // We want to set the UI to the actual scale value instead of a default value here
