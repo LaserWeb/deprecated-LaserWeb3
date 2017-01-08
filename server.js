@@ -40,7 +40,7 @@ var http = require('http');
 var chalk = require('chalk');
 var request = require('request'); // proxy for remote webcams
 
-var isConnected, connectedTo, port, lastSent = "";
+var isConnected, connectedTo, port, lastSent = '';
 var paused = false;
 var blocked = false;
 var statusLoop, queueCounter, connections = [];
@@ -94,7 +94,7 @@ function handler(req, res) {
 
     var queryData = url.parse(req.url, true).query;
     if (queryData.url) {
-        if (queryData.url !== "") {
+        if (queryData.url !== '') {
             request({
                 url: queryData.url, // proxy for remote webcams
                 callback: (err, res, body) => {
@@ -126,14 +126,14 @@ function handleConnection(socket) { // When we open a WS connection, send the li
     connections.push(socket);
 
     serialport.list(function (err, ports) {
-        socket.emit("ports", ports);
+        socket.emit('ports', ports);
     });
 
     socket.on('firstLoad', function (data) {
         socket.emit('config', config);
         if (isConnected) {
-            socket.emit("activePorts", port.path + ',' + port.options.baudRate);
-            socket.emit("connectStatus", 'opened:' + port.path);
+            socket.emit('activePorts', port.path + ',' + port.options.baudRate);
+            socket.emit('connectStatus', 'opened:' + port.path);
         }
     });
 
@@ -173,9 +173,9 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     break;
             }
             laserTestOn = false;
-            io.sockets.emit("connectStatus", 'stopped:' + port.path);
+            io.sockets.emit('connectStatus', 'stopped:' + port.path);
         } else {
-            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'closed');
         }
     });
 
@@ -191,28 +191,28 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     }
                     break;
                 case 'smoothie':
-                    port.write("M600\n"); // Laser will be turned off by smoothie (in default config!)
+                    port.write('M600\n'); // Laser will be turned off by smoothie (in default config!)
                     break;
                 case 'tinyg':
                     port.write('!'); // Send hold command
                     break;
             }
-            io.sockets.emit("connectStatus", 'paused:' + port.path);
+            io.sockets.emit('connectStatus', 'paused:' + port.path);
         } else {
-            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'closed');
         }
     });
 
     socket.on('unpause', function (data) {
         if (isConnected) {
             writeLog(chalk.red('UNPAUSE'));
-            io.sockets.emit("connectStatus", 'unpaused:' + port.path);
+            io.sockets.emit('connectStatus', 'unpaused:' + port.path);
             switch (firmware) {
                 case 'grbl':
                     port.write('~'); // Send resume command
                     break;
                 case 'smoothie':
-                    port.write("M601\n");
+                    port.write('M601\n');
                     break;
                 case 'tinyg':
                     port.write('~'); // Send resume command
@@ -221,7 +221,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             paused = false;
             send1Q(); // restart queue
         } else {
-            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'closed');
         }
     });
 
@@ -237,7 +237,8 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             }
             send1Q();
         } else {
-            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'closed');
+            writeLog(chalk.yellow('WARN:') + chalk.blue('Port closed!'));
         }
     });
 
@@ -290,7 +291,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     break;
             }
         } else {
-            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'closed');
         }
     });
 
@@ -343,7 +344,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     break;
             }
         } else {
-            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'closed');
         }
     });
 
@@ -352,7 +353,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             data = data.split(',');
             var power = parseFloat(data[0]);
             var duration = parseInt(data[1]);
-            writeLog('laserTest: ', 'Power ' + power + ', Duration ' + duration);
+            writeLog('laserTest: ' + 'Power ' + power + ', Duration ' + duration);
             if (power > 0) {
                 if (!laserTestOn) {
                     if (duration >= 0) {
@@ -415,7 +416,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                 }
             }
         } else {
-            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'closed');
         }
     });
 
@@ -427,10 +428,10 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     writeLog('Clearing Lockout');
                     switch (firmware) {
                         case 'grbl':
-                            port.write("$X\n");
+                            port.write('$X\n');
                             break;
                         case 'smoothie':
-                            port.write("$X\n");
+                            port.write('$X\n');
                             break;
                         case 'tinyg':
                             port.write('$X/n'); // resume
@@ -445,10 +446,10 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     writeLog('Clearing Lockout');
                     switch (firmware) {
                         case 'grbl':
-                            port.write("$X\n");
+                            port.write('$X\n');
                             break;
                         case 'smoothie':
-                            port.write("$X\n"); //M999
+                            port.write('$X\n'); //M999
                             break;
                         case 'tinyg':
                             port.write('%'); // flush tinyg quere
@@ -459,25 +460,25 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     break;
             }
         } else {
-            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'closed');
         }
     });
 
     socket.on('getFirmware', function (data) { // Deliver Firmware to Web-Client
-        socket.emit("firmware", firmware);
+        socket.emit('firmware', firmware + ',' + fVersion + ',' + fDate);
     });
 
     socket.on('refreshPorts', function (data) { // Refresh serial port list
         writeLog(chalk.yellow('WARN:') + chalk.blue('Requesting Ports Refresh '));
         serialport.list(function (err, ports) {
-            socket.emit("ports", ports);
+            socket.emit('ports', ports);
         });
     });
 
     socket.on('closePort', function (data) { // Close serial port and dump queue
         if (isConnected) {
             writeLog(chalk.yellow('WARN:') + chalk.blue('Closing Port ' + port.path));
-            io.sockets.emit("connectStatus", 'closing:' + port.path);
+            io.sockets.emit('connectStatus', 'closing:' + port.path);
             //port.write(String.fromCharCode(0x18)); // ctrl-x
             gcodeQueue.length = 0; // dump the queye
             grblBufferSize.length = 0; // dump bufferSizes
@@ -489,15 +490,15 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             connectedTo = false;
             paused = false;
             blocked = false;
-            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'closed');
         } else {
-            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'closed');
         }
     });
 
     socket.on('areWeLive', function (data) { // Report active serial port to web-client
         if (isConnected) {
-            socket.emit("activePorts", port.path + ',' + port.options.baudRate);
+            socket.emit('activePorts', port.path + ',' + port.options.baudRate);
         }
     });
 
@@ -509,17 +510,17 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                 parser: serialport.parsers.readline("\n"),
                 baudrate: parseInt(data[1])
             });
-            io.sockets.emit("connectStatus", 'opening:' + port.path);
+            io.sockets.emit('connectStatus', 'opening:' + port.path);
 
             port.on('open', function () {
-                io.sockets.emit("activePorts", port.path + ',' + port.options.baudRate);
-                io.sockets.emit("connectStatus", 'opened:' + port.path);
+                io.sockets.emit('activePorts', port.path + ',' + port.options.baudRate);
+                io.sockets.emit('connectStatus', 'opened:' + port.path);
                 setTimeout(function() { //wait for controller to be ready
                     if (!firmware) { // Grbl should be allready retected
-                        port.write("version\n"); // Check if it's Smoothieware?
+                        port.write('version\n'); // Check if it's Smoothieware?
                         setTimeout(function() {  // Wait for Smoothie to answer
                             if (!firmware) {     // If still not set
-                                port.write("$fb\n"); // Check if it's TinyG
+                                port.write('$fb\n'); // Check if it's TinyG
                             }
                         }, 500);
                     }
@@ -538,19 +539,20 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             port.on('close', function () { // open errors will be emitted as an error event
                 clearInterval(queueCounter);
                 clearInterval(statusLoop);
-                io.sockets.emit("connectStatus", 'closed:');
-                io.sockets.emit("connectStatus", 'Connect');
+                io.sockets.emit('connectStatus', 'closed:');
+                io.sockets.emit('connectStatus', 'Connect');
                 isConnected = false;
                 connectedTo = false;
                 firmware = false;
+                writeLog(chalk.yellow('WARN:') + chalk.blue('Port closed'));
             });
 
             port.on('error', function (err) { // open errors will be emitted as an error event
-                console.log('Error: ', err.message);
-                io.sockets.emit("data", data);
+                writeLog(chalk.yellow('ERROR:') + err.message);
+                io.sockets.emit('data', data);
             });
 
-            port.on("data", function (data) {
+            port.on('data', function (data) {
                 writeLog('Recv: ' + data);
                 if (data.indexOf('{') === 0) { // TinyG response
                     jsObject = JSON.parse(data);
@@ -559,38 +561,38 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                         if (footer !== undefined) {
                             if (footer[1] == 108) {
                                 writeLog(
-                                    "Response" +
+                                    'Response' +
                                     util.format("TinyG reported an syntax error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]) +
                                     jsObject
                                 );
                             } else if (footer[1] == 20) {
                                 writeLog(
-                                    "Response" +
+                                    'Response' +
                                     util.format("TinyG reported an internal error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]) +
                                     jsObject
                                 );
                             } else if (footer[1] == 202) {
                                 writeLog(
-                                    "Response" +
+                                    'Response' +
                                     util.format("TinyG reported an TOO SHORT MOVE on line %d", jsObject.r.n) +
                                     jsObject
                                 );
                             } else if (footer[1] == 204) {
                                 writeLog(
-                                    "InAlarm" +
+                                    'InAlarm' +
                                     util.format("TinyG reported COMMAND REJECTED BY ALARM '%s'", part) +
                                     jsObject
                                 );
                             } else if (footer[1] != 0) {
                                 writeLog(
-                                    "Response" +
+                                    'Response' +
                                     util.format("TinyG reported an error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]) +
                                     jsObject
                                 );
                             }
                         }
 
-                        writeLog("response" + jsObject.r + footer);
+                        writeLog('response' + jsObject.r + footer);
 
                         jsObject = jsObject.r;
 
@@ -600,15 +602,15 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     }
 
                     if (jsObject.hasOwnProperty('er')) {
-                        writeLog("errorReport" + jsObject.er);
+                        writeLog('errorReport' + jsObject.er);
                     } else if (jsObject.hasOwnProperty('sr')) {
-                        writeLog("statusChanged" + jsObject.sr);
+                        writeLog('statusChanged' + jsObject.sr);
                     } else if (jsObject.hasOwnProperty('gc')) {
-                        writeLog("gcodeReceived" + jsObject.gc);
+                        writeLog('gcodeReceived' + jsObject.gc);
                     }
 
                     if (jsObject.hasOwnProperty('rx')) {
-                        writeLog("rxReceived" + jsObject.rx);
+                        writeLog('rxReceived' + jsObject.rx);
                     }
 
                     if (jsObject.hasOwnProperty('fb')) { // Check if it's TinyG
@@ -653,22 +655,22 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                         }
                     }, 250);
                 }
-                if (data.indexOf("ok") === 0) { // Got an OK so we are clear to send
+                if (data.indexOf('ok') === 0) { // Got an OK so we are clear to send
                     blocked = false;
                     if (firmware === 'grbl') {
                         grblBufferSize.shift();
                     }
                     send1Q();
                 }
-                if (data.indexOf("error") === 0) {
+                if (data.indexOf('error') === 0) {
                     if (firmware === 'grbl') {
                         grblBufferSize.shift();
                     }
                 }
-                io.sockets.emit("data", data);
+                io.sockets.emit('data', data);
             });
         } else {
-            io.sockets.emit("connectStatus", 'opened:' + port.path);
+            io.sockets.emit('connectStatus', 'opened:' + port.path);
         }
     });
 }
@@ -779,7 +781,7 @@ function writeLog(line) {
     console.log(line);
     if (config.logFile) {
         if (!logFile) {
-            logFile = fs.createWriteStream("logfile.txt");
+            logFile = fs.createWriteStream('logfile.txt');
         }
         var time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
         line = line.split(String.fromCharCode(0x1B) + '[31m').join('');
