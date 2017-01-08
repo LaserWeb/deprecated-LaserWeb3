@@ -245,34 +245,42 @@ function generateGcode(threeGroup, objectseq, cutSpeed, plungeSpeed, laserPwr, r
     if( optimization != "none" ){
       var opt_distance;
       if( optimization == "manhattan" )
-      opt_distance = current_position.distanceToManhattan( get_cut_begin_point( toCut, 0 ) );
+        opt_distance = current_position.distanceToManhattan( get_cut_begin_point( toCut, 0 ) );
       else
-      opt_distance = current_position.distanceToSquared( get_cut_begin_point( toCut, 0 ) );
+        opt_distance = current_position.distanceToSquared( get_cut_begin_point( toCut, 0 ) );
 
       for( i = 0; i < toCut.children.length; i++ ){
         var distance;
         if( optimization == "manhattan" )
-        distance = current_position.distanceToManhattan( get_cut_begin_point( toCut, i ) );
+          distance = current_position.distanceToManhattan( get_cut_begin_point( toCut, i ) );
         else
-        distance = current_position.distanceToSquared( get_cut_begin_point( toCut, i ) );
+          distance = current_position.distanceToSquared( get_cut_begin_point( toCut, i ) );
         if( distance < opt_distance ){
           opt_distance = distance;
           opt_cut = i;
           cut_reverse = 0;
+
+          if( opt_distance == 0 ){ //If opt_distance == 0 no more optimization can be performed, time saving instruction.
+            break; //Exit from for cycle.
+          }
         }
       }
 
       for( i = 0; i < toCut.children.length; i++ ){
         var distance;
         if( optimization == "manhattan" )
-        distance = current_position.distanceToManhattan( get_cut_end_point( toCut, i ) );
+          distance = current_position.distanceToManhattan( get_cut_end_point( toCut, i ) );
         else
-        distance = current_position.distanceToSquared( get_cut_end_point( toCut, i ) );
+          distance = current_position.distanceToSquared( get_cut_end_point( toCut, i ) );
 
         if( distance < opt_distance ){
           opt_distance = distance;
           opt_cut = i;
           cut_reverse = 1;
+
+          if( opt_distance == 0 ){ //If opt_distance == 0 no more optimization can be performed, time saving instruction.
+            break; //Exit form for cycle.
+          }
         }
       }
 
