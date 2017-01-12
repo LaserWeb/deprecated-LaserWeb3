@@ -658,7 +658,14 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                 if (data.indexOf('ok') === 0) { // Got an OK so we are clear to send
                     blocked = false;
                     if (firmware === 'grbl') {
-                        grblBufferSize.shift();
+                        var space = grblBufferSize.shift();
+                        //var buffers = '', sum = GRBL_RX_BUFFER_SIZE;
+                        //for (var i = 0; i < grblBufferSize.length; i++) {
+                        //    sum -= parseInt(grblBufferSize[i]);
+                            //buffers += grblBufferSize[i] + '+';
+                        //}
+                        //writeLog('Buffers: ' + buffers.substr(0, buffers.length-1) + ' Rest: ' + sum);
+                        //writeLog('Buffers released: ' + space + ' Rest: ' + sum);
                     }
                     send1Q();
                 }
@@ -667,6 +674,17 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                         grblBufferSize.shift();
                     }
                 }
+//                if (data.indexOf('<') === 0) { // Got status report
+//                    if (data.indexOf('Bf')) { // Got Grbl buffer info (ex: Bf:15,128)
+//                        var startBf = data.search(/Bf:/i) + 3;
+//                        if (startBf > 3) {
+//                            var bf = data.replace('>', '').substr(startBf).split(/,|\|/, 3);
+//                            if (Array.isArray(bf)) {
+//                                writeLog('Buffers (Grbl: ' + bf[1] + ', Server: ' + grblBufferSpace() + ')');
+//                            }
+//                        }
+//                    }
+//                }
                 io.sockets.emit('data', data);
             });
         } else {
@@ -688,7 +706,7 @@ function jumpQ(gcode) {
 
 function grblBufferSpace() {
     var total = 0;
-    for (var i = 0, n = grblBufferSize.length; i < n; ++i) {
+    for (var i = 0; i < grblBufferSize.length; i++) {
         total += grblBufferSize[i];
     }
     return GRBL_RX_BUFFER_SIZE - total;
@@ -708,11 +726,11 @@ function send1Q() {
                     spaceLeft = grblBufferSpace();
                     gcodeLen = gcode.length;
                     //writeLog('BufferSpace: ' + spaceLeft + ' gcodeLen: ' + gcodeLen);
-                    if (gcodeLen <= spaceLeft) {
-                        grblBufferSize.push(gcodeLen);
+                    if ((gcodeLen + 1) <= spaceLeft) {
+                        grblBufferSize.push(gcodeLen + 1);
                         port.write(gcode + '\n');
                         lastSent = gcode;
-                        writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
+                        writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length + ' Bspace: ' + (spaceLeft - gcodeLen - 1));
                     } else {
                         gcodeQueue.unshift(gcode);
                         blocked = true;
