@@ -709,7 +709,7 @@ function send1Q() {
                     gcodeLen = gcode.length;
                     //writeLog('BufferSpace: ' + spaceLeft + ' gcodeLen: ' + gcodeLen);
                     if (gcodeLen <= spaceLeft) {
-                        grblBufferSize.push(gcodeLen);
+                        grblBufferSize.push(gcodeLen + 1);
                         port.write(gcode + '\n');
                         lastSent = gcode;
                         writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
