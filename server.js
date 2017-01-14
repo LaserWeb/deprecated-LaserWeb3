@@ -60,6 +60,7 @@ var TINYG_RX_BUFFER_SIZE = 4;       // max. lines of gcode to send before wait f
 var tinygBufferSize = TINYG_RX_BUFFER_SIZE; // init space left
 var jsObject;
 
+var rxBuffer = '';
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     writeLog(chalk.green(' '));
@@ -507,7 +508,6 @@ function handleConnection(socket) { // When we open a WS connection, send the li
         writeLog(chalk.yellow('WARN:') + chalk.blue('Connecting to Port ' + data));
         if (!isConnected) {
             port = new SerialPort(data[0], {
-                parser: serialport.parsers.readline("\n"),
                 baudrate: parseInt(data[1])
             });
             io.sockets.emit('connectStatus', 'opening:' + port.path);
@@ -515,6 +515,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             port.on('open', function () {
                 io.sockets.emit('activePorts', port.path + ',' + port.options.baudRate);
                 io.sockets.emit('connectStatus', 'opened:' + port.path);
+                port.write(String.fromCharCode(0x18)); // ctrl-x
                 setTimeout(function() { //wait for controller to be ready
                     if (!firmware) { // Grbl should be allready retected
                         port.write('version\n'); // Check if it's Smoothieware?
@@ -552,128 +553,132 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                 io.sockets.emit('data', data);
             });
 
-            port.on('data', function (data) {
-                writeLog('Recv: ' + data);
-                if (data.indexOf('{') === 0) { // TinyG response
-                    jsObject = JSON.parse(data);
-                    if (jsObject.hasOwnProperty('r')) {
-                        var footer = jsObject.f || (jsObject.r && jsObject.r.f);
-                        if (footer !== undefined) {
-                            if (footer[1] == 108) {
-                                writeLog(
-                                    'Response' +
-                                    util.format("TinyG reported an syntax error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]) +
-                                    jsObject
-                                );
-                            } else if (footer[1] == 20) {
-                                writeLog(
-                                    'Response' +
-                                    util.format("TinyG reported an internal error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]) +
-                                    jsObject
-                                );
-                            } else if (footer[1] == 202) {
-                                writeLog(
-                                    'Response' +
-                                    util.format("TinyG reported an TOO SHORT MOVE on line %d", jsObject.r.n) +
-                                    jsObject
-                                );
-                            } else if (footer[1] == 204) {
-                                writeLog(
-                                    'InAlarm' +
-                                    util.format("TinyG reported COMMAND REJECTED BY ALARM '%s'", part) +
-                                    jsObject
-                                );
-                            } else if (footer[1] != 0) {
-                                writeLog(
-                                    'Response' +
-                                    util.format("TinyG reported an error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]) +
-                                    jsObject
-                                );
+            port.on('data', function (rawData) {
+                //writeLog('Recv: [[[' + rawData + ']]]');
+                let lines = (rxBuffer + rawData).split('\n');
+                rxBuffer = lines.pop();
+                let numOk = 0;
+                for (let data of lines) {
+                    //writeLog('Recv: ' + data);
+                    if (data.indexOf('{') === 0) { // TinyG response
+                        jsObject = JSON.parse(data);
+                        if (jsObject.hasOwnProperty('r')) {
+                            var footer = jsObject.f || (jsObject.r && jsObject.r.f);
+                            if (footer !== undefined) {
+                                if (footer[1] == 108) {
+                                    writeLog(
+                                        'Response' +
+                                        util.format("TinyG reported an syntax error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]) +
+                                        jsObject
+                                    );
+                                } else if (footer[1] == 20) {
+                                    writeLog(
+                                        'Response' +
+                                        util.format("TinyG reported an internal error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]) +
+                                        jsObject
+                                    );
+                                } else if (footer[1] == 202) {
+                                    writeLog(
+                                        'Response' +
+                                        util.format("TinyG reported an TOO SHORT MOVE on line %d", jsObject.r.n) +
+                                        jsObject
+                                    );
+                                } else if (footer[1] == 204) {
+                                    writeLog(
+                                        'InAlarm' +
+                                        util.format("TinyG reported COMMAND REJECTED BY ALARM '%s'", part) +
+                                        jsObject
+                                    );
+                                } else if (footer[1] != 0) {
+                                    writeLog(
+                                        'Response' +
+                                        util.format("TinyG reported an error reading '%s': %d (based on %d bytes read)", JSON.stringify(jsObject.r), footer[1], footer[2]) +
+                                        jsObject
+                                    );
+                                }
                             }
+
+                            writeLog('response' + jsObject.r + footer);
+
+                            jsObject = jsObject.r;
+
+                            tinygBufferSize++;
+                            blocked = false;
+                            send1Q();
                         }
 
-                        writeLog('response' + jsObject.r + footer);
+                        if (jsObject.hasOwnProperty('er')) {
+                            writeLog('errorReport' + jsObject.er);
+                        } else if (jsObject.hasOwnProperty('sr')) {
+                            writeLog('statusChanged' + jsObject.sr);
+                        } else if (jsObject.hasOwnProperty('gc')) {
+                            writeLog('gcodeReceived' + jsObject.gc);
+                        }
 
-                        jsObject = jsObject.r;
+                        if (jsObject.hasOwnProperty('rx')) {
+                            writeLog('rxReceived' + jsObject.rx);
+                        }
 
-                        tinygBufferSize++;
-                        blocked = false;
-                        send1Q();
+                        if (jsObject.hasOwnProperty('fb')) { // Check if it's TinyG
+                            firmware = 'tinyg';
+                            fVersion = jsObject.fb;
+                            writeLog('TinyG detected (' + fVersion + ')');
+
+                            // Start intervall for status queries
+                            statusLoop = setInterval(function () {
+                                if (isConnected) {
+                                    port.write('{"sr":null}');
+                                }
+                            }, 250);
+                        }
                     }
-
-                    if (jsObject.hasOwnProperty('er')) {
-                        writeLog('errorReport' + jsObject.er);
-                    } else if (jsObject.hasOwnProperty('sr')) {
-                        writeLog('statusChanged' + jsObject.sr);
-                    } else if (jsObject.hasOwnProperty('gc')) {
-                        writeLog('gcodeReceived' + jsObject.gc);
-                    }
-
-                    if (jsObject.hasOwnProperty('rx')) {
-                        writeLog('rxReceived' + jsObject.rx);
-                    }
-
-                    if (jsObject.hasOwnProperty('fb')) { // Check if it's TinyG
-                        firmware = 'tinyg';
-                        fVersion = jsObject.fb;
-                        writeLog('TinyG detected (' + fVersion + ')');
+                    if (data.indexOf('Grbl') === 0) { // Check if it's Grbl
+                        firmware = 'grbl';
+                        fVersion = data.substr(5, 4); // get version
+                        writeLog('GRBL detected (' + fVersion + ')');
 
                         // Start intervall for status queries
                         statusLoop = setInterval(function () {
                             if (isConnected) {
-                                port.write('{"sr":null}');
+                                port.write('?');
                             }
                         }, 250);
                     }
-                }
-                if (data.indexOf('Grbl') === 0) { // Check if it's Grbl
-                    firmware = 'grbl';
-                    fVersion = data.substr(5, 4); // get version
-                    writeLog('GRBL detected (' + fVersion + ')');
+                    if (data.indexOf('LPC176') >= 0) { // LPC1768 or LPC1769 should be Smoothie
+                        //  Build version: edge-6ce309b, Build date: Jan 2 2017 23:50:57, MCU: LPC1768, System Clock: 100MHz
+                        firmware = 'smoothie';
+                        var startPos = data.search(/version:/i) + 9;
+                        fVersion = data.substr(startPos).split(/,/, 1);
+                        startPos = data.search(/Build date:/i) + 12;
+                        fDate = new Date(data.substr(startPos).split(/,/, 1));
+                        var dateString = fDate.toDateString();
+                        writeLog('Smoothieware detected (' + fVersion + ', ' + dateString + ')');
 
-                    // Start intervall for status queries
-                    statusLoop = setInterval(function () {
-                        if (isConnected) {
-                            port.write('?');
-                        }
-                    }, 250);
-                }
-                if (data.indexOf('LPC176') >= 0) { // LPC1768 or LPC1769 should be Smoothie
-                    //  Build version: edge-6ce309b, Build date: Jan 2 2017 23:50:57, MCU: LPC1768, System Clock: 100MHz
-                    firmware = 'smoothie';
-                    var startPos = data.search(/version:/i) + 9;
-                    fVersion = data.substr(startPos).split(/,/, 1);
-                    startPos = data.search(/Build date:/i) + 12;
-                    fDate = new Date(data.substr(startPos).split(/,/, 1));
-                    var dateString = fDate.toDateString();
-                    writeLog('Smoothieware detected (' + fVersion + ', ' + dateString + ')');
-
-                    // Start intervall for status queries
-                    statusLoop = setInterval(function () {
-                        if (isConnected) {
-                            port.write('?');
-                        }
-                    }, 250);
-                }
-                if (data.indexOf('ok') === 0) { // Got an OK so we are clear to send
-                    blocked = false;
-                    if (firmware === 'grbl') {
-                        var space = grblBufferSize.shift();
-                        //var buffers = '', sum = GRBL_RX_BUFFER_SIZE;
-                        //for (var i = 0; i < grblBufferSize.length; i++) {
-                        //    sum -= parseInt(grblBufferSize[i]);
-                            //buffers += grblBufferSize[i] + '+';
-                        //}
-                        //writeLog('Buffers: ' + buffers.substr(0, buffers.length-1) + ' Rest: ' + sum);
-                        //writeLog('Buffers released: ' + space + ' Rest: ' + sum);
+                        // Start intervall for status queries
+                        statusLoop = setInterval(function () {
+                            if (isConnected) {
+                                port.write('?');
+                            }
+                        }, 250);
                     }
-                    send1Q();
-                }
-                if (data.indexOf('error') === 0) {
-                    if (firmware === 'grbl') {
-                        grblBufferSize.shift();
+                    if (data.indexOf('ok') === 0) { // Got an OK so we are clear to send
+                        ++numOk;
+                        if (firmware === 'grbl') {
+                            var space = grblBufferSize.shift();
+                            //var buffers = '', sum = GRBL_RX_BUFFER_SIZE;
+                            //for (var i = 0; i < grblBufferSize.length; i++) {
+                            //    sum -= parseInt(grblBufferSize[i]);
+                                //buffers += grblBufferSize[i] + '+';
+                            //}
+                            //writeLog('Buffers: ' + buffers.substr(0, buffers.length-1) + ' Rest: ' + sum);
+                            //writeLog('Buffers released: ' + space + ' Rest: ' + sum);
+                        }
                     }
-                }
+                    if (data.indexOf('error') === 0) {
+                        if (firmware === 'grbl') {
+                            grblBufferSize.shift();
+                        }
+                    }
 //                if (data.indexOf('<') === 0) { // Got status report
 //                    if (data.indexOf('Bf')) { // Got Grbl buffer info (ex: Bf:15,128)
 //                        var startBf = data.search(/Bf:/i) + 3;
@@ -685,7 +690,14 @@ function handleConnection(socket) { // When we open a WS connection, send the li
 //                        }
 //                    }
 //                }
-                io.sockets.emit('data', data);
+                    io.sockets.emit('data', data);
+                }
+                if (numOk) {
+                    writeLog("Received " + numOk + " ok's");
+                    blocked = false;
+                    writeLog('BufferSpace: ' + grblBufferSpace());
+                    send1Q();
+                }
             });
         } else {
             io.sockets.emit('connectStatus', 'opened:' + port.path);
@@ -706,7 +718,7 @@ function jumpQ(gcode) {
 
 function grblBufferSpace() {
     var total = 0;
-    for (var i = 0; i < grblBufferSize.length; i++) {
+    for (var i = 0, n = grblBufferSize.length; i < n; ++i) {
         total += grblBufferSize[i];
     }
     return GRBL_RX_BUFFER_SIZE - total;
@@ -720,6 +732,8 @@ function send1Q() {
     if (isConnected) {
         switch (firmware) {
             case 'grbl':
+                let blocks = '';
+                let numBlocks = 0;
                 while (gcodeQueue.length > 0 && !blocked && !paused) {
                     // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
                     gcode = gcodeQueue.shift().replace(/\s+/g, '');
@@ -728,13 +742,18 @@ function send1Q() {
                     //writeLog('BufferSpace: ' + spaceLeft + ' gcodeLen: ' + gcodeLen);
                     if ((gcodeLen + 1) <= spaceLeft) {
                         grblBufferSize.push(gcodeLen + 1);
-                        port.write(gcode + '\n');
+                        blocks += gcode + '\n';
+                        ++numBlocks;
                         lastSent = gcode;
-                        writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length + ' Bspace: ' + (spaceLeft - gcodeLen - 1));
+                        //writeLog('Will send: ' + gcode + ' Q: ' + gcodeQueue.length);
                     } else {
                         gcodeQueue.unshift(gcode);
                         blocked = true;
                     }
+                }
+                if (blocks.length) {
+                    writeLog('send ' + numBlocks + ' blocks, ' + blocks.length + ' bytes');
+                    port.write(blocks);
                 }
                 break;
             case 'smoothie':
