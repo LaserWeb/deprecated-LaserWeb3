@@ -50,7 +50,7 @@ var feedOverride = 100;
 var spindleOverride = 100;
 var laserTestOn = false;
 
-var GRBL_RX_BUFFER_SIZE = 128;      // 128 characters
+var GRBL_RX_BUFFER_SIZE = 8192;
 var grblBufferSize = [];
 
 var SMOOTHIE_RX_BUFFER_SIZE = 64;  // max. length of one command line
