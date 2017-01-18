@@ -370,6 +370,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                                 send1Q();
                                 break;
                             case 'smoothie':
+                                addQ('M3\n');
                                 addQ('fire ' + power + '\n');
                                 laserTestOn = true;
                                 if (duration > 0) {
@@ -378,7 +379,8 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                                         divider = 1000;
                                     }
                                     addQ('G4P' + duration / divider + '\n');
-                                    addQ('fire off');
+                                    addQ('fire off\n');
+                                    addQ('M5');
                                     laserTestOn = false;
                                 }
                                 send1Q();
@@ -405,6 +407,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                             break;
                         case 'smoothie':
                             addQ('fire off\n');
+                            addQ('M5');
                             send1Q();
                             break;
                         case 'tinyg':
@@ -811,6 +814,7 @@ function writeLog(line) {
         line = line.split(String.fromCharCode(0x1B) + '[37m').join('');
         line = line.split(String.fromCharCode(0x1B) + '[38m').join('');
         line = line.split(String.fromCharCode(0x1B) + '[39m').join('');
+        line = line.split(String.fromCharCode(0x1B) + '[94m').join('');
         logFile.write(time + ' ' + line + '\r\n');
     }
 }
