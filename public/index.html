@@ -750,16 +750,8 @@
                                       </select>
                                       <span class="help-block">Combines pixels with the same grayscale value into a longer line move. NB Disable for Smoothieware </span>
                                       <label for="startgcode" class="control-label">Start G-Code <span style="color:#FFA500;">(Optional)</span></label>
-                                      <textarea id="startgcode" class="form-control numpadgcode uppercase" placeholder="For example G28 G90 M80 - supports multi line commands"></textarea>
+                                      <textarea id="startgcode" class="form-control numpadgcode uppercase" placeholder="For example M4 G28 G90 M80 - supports multi line commands"></textarea>
                                       <span class="help-block">Prepended before jobs: Use to home machine, turn air assist on, etc</span>
-                                      <div id="lasercommands">
-                                       <label for="laseron" class="control-label">Laser ON Command <span style="color:#FFA500;">(Optional)</span></label>
-                                       <input id="laseron" type="text" class="form-control numpadgcode uppercase" placeholder="For example M3 / blank for firmwares that support G1" />
-                                       <span class="help-block">Most firmwares use G0 moves as laser off and G1 as laser on.  Usually you can leave this blank</span>
-                                       <label for="laseroff" class="control-label">Laser OFF Command <span style="color:#FFA500;">(Optional)</span></label>
-                                       <input id="laseroff" type="text" class="form-control numpadgcode uppercase" placeholder="For example M5 / blank for firmwares that support G1" />
-                                       <span class="help-block">Most firmwares use G0 moves as laser off and G1 as laser on.  Usually you can leave this blank</span>
-                                      </div>
                                       <label for="lasermultiply" class="control-label">PWM Max S value <span style="color:red;">(Required)</span></label>
                                       <input id="lasermultiply" type="text" class="form-control numpad uppercase" placeholder="For example 255, 1, or 1000" />
                                       <span class="help-block">For Smoothieware, set this to "1", for Grbl set this to "255"</span>
@@ -767,7 +759,7 @@
                                       <input id="homingseq" type="text" class="form-control numpadgcode uppercase" placeholder="For example G28 or $H" />
                                       <span class="help-block">Gets sent when you click the home buttons</span>
                                       <label for="endgcode" class="control-label">End G-Code <span style="color:#FFA500;">(Optional)</span></label>
-                                      <textarea id="endgcode" class="form-control numpadgcode uppercase" placeholder="For example M81 G28 - supports multi line commands"></textarea>
+                                      <textarea id="endgcode" class="form-control numpadgcode uppercase" placeholder="For example M5 M81 G28 - supports multi line commands"></textarea>
                                       <span class="help-block">Appended after jobs: Use to move carriage out of the way, turn air assist off, etc</span>
                                       <label for="rapidspeed" class="control-label">Travel Moves <span style="color:red;">(Required)</span></label>
                                       <div class="input-group">
@@ -775,6 +767,7 @@
                                         <span class="input-group-addon">mm/s</span>
                                       </div>
                                       <span class="help-block">Feedrate for G0 Moves</span>
+                                      <hr>
                                       <div id="lasertest">
                                         <label for="lasertestpower" class="control-label">LaserTest Power <span style="color:#FFA500;">(Optional)</span></label>
                                         <div class="input-group">
@@ -787,6 +780,16 @@
                                             <span class="input-group-addon">ms</span>
                                         </div>
                                         <span class="help-block">Parameters for the Laser Test button</span>
+                                      </div>
+                                      <hr>
+                                      <div id="lasercommands">
+                                      <span class="help-block">Optional commands to be run just before and after any G1 moves. Useful for Plasma/esoteric applications</span>
+                                       <label for="laseron" class="control-label">Pre-G1 Opt Command` <span style="color:#FFA500;">(Optional)</span></label>
+                                       <input id="laseron" type="text" class="form-control numpadgcode uppercase" placeholder="For example M3 / blank for firmwares that support G1" />
+                                       <span class="help-block">Most firmwares use G0 moves as laser off and G1 as laser on.  Usually you can leave this blank</span>
+                                       <label for="laseroff" class="control-label">Post-G1 Opt Command <span style="color:#FFA500;">(Optional)</span></label>
+                                       <input id="laseroff" type="text" class="form-control numpadgcode uppercase" placeholder="For example M5 / blank for firmwares that support G1" />
+                                       <span class="help-block">Most firmwares use G0 moves as laser off and G1 as laser on.  Usually you can leave this blank</span>
                                       </div>
                                   </form>
                               </div><!-- #menu2 -->
