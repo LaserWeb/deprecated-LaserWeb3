@@ -23,10 +23,10 @@ function initJog() {
     var moves = `
     G90\n
     G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
-    G0 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
-    G0 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
-    G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
-    G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
+    G1 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
+    G1 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
+    G1 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
+    G1 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
     G90\n`;
     sendGcode(moves);
   });
@@ -51,17 +51,17 @@ function initJog() {
 
   $('#gotoXZero').on('click', function(ev) {
     var feedrate = $('#jogfeedxy').val() * 60;
-    sendGcode('G0 X0 F' + feedrate);
+    sendGcode('G1 X0 F' + feedrate);
   });
 
   $('#gotoYZero').on('click', function(ev) {
     var feedrate = $('#jogfeedxy').val() * 60;
-    sendGcode('G0 Y0 F' + feedrate);
+    sendGcode('G1 Y0 F' + feedrate);
   });
 
   $('#gotoZZero').on('click', function(ev) {
     var feedrate = $('#jogfeedz').val() * 60;
-    sendGcode('G0 Z0 F' + feedrate);
+    sendGcode('G1 Z0 F' + feedrate);
   });
 
   $('#XProbeMin').on('click', function(ev) {
@@ -218,7 +218,7 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedxy').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' X'+ dist + '\nG90\n');
+       sendGcode('G91\nG1 F'+ feedrate +' X'+ dist + '\nG90\n');
      }
   });
 
@@ -227,7 +227,7 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedxy').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' Y'+ dist + '\nG90\n');
+       sendGcode('G91\nG1 F'+ feedrate +' Y'+ dist + '\nG90\n');
      }
   });
 
@@ -236,7 +236,7 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedz').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' Z'+ dist + '\nG90\n');
+       sendGcode('G91\nG1 F'+ feedrate +' Z'+ dist + '\nG90\n');
      }
   });
 
@@ -245,7 +245,7 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedxy').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' X-'+ dist + '\nG90\n');
+       sendGcode('G91\nG1 F'+ feedrate +' X-'+ dist + '\nG90\n');
      }
   });
 
@@ -254,7 +254,7 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedxy').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' Y-'+ dist + '\nG90\n');
+       sendGcode('G91\nG1 F'+ feedrate +' Y-'+ dist + '\nG90\n');
      }
   });
 
@@ -263,7 +263,7 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedz').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' Z-'+ dist + '\nG90\n');
+       sendGcode('G91\nG1 F'+ feedrate +' Z-'+ dist + '\nG90\n');
      }
   });
 
