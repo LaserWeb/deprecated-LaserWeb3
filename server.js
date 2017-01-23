@@ -50,7 +50,7 @@ var feedOverride = 100;
 var spindleOverride = 100;
 var laserTestOn = false;
 
-var GRBL_RX_BUFFER_SIZE = 128;      // 128 characters
+var GRBL_RX_BUFFER_SIZE = 1024;      // 128 characters
 var grblBufferSize = [];
 
 var SMOOTHIE_RX_BUFFER_SIZE = 64;  // max. length of one command line
@@ -423,6 +423,38 @@ function handleConnection(socket) { // When we open a WS connection, send the li
         }
     });
 
+    socket.on('jog', function (data) {
+        if (isConnected) {
+            data = data.split(',');
+            var dir = data[0];
+            var dist = parseFloat(data[1]);
+            var feed;
+            if (data.length > 2) {
+                feed = parseInt(data[2]);
+                if (feed) {
+                    feed = 'F' + feed;   
+                }
+            }
+            writeLog('JOG: ' + dir + dist + ' ' + feed);
+            switch (firmware) {
+                case 'grbl':
+                    addQ('$J=G91' + dir + dist + feed + '\n');
+                    break;
+                case 'smoothie':
+                    addQ('G91\nG0' + feed + dir + dist + '\nG90\n');
+                    break;
+                case 'tinyg':
+                    addQ('G91\nG0F'+ feed + dir + dist + '\nG90\n');
+                    break;
+            }
+            send1Q();
+        } else {
+            io.sockets.emit("connectStatus", 'closed');
+            io.sockets.emit('connectStatus', 'Connect');
+            writeLog(chalk.red('ERROR: ') + chalk.blue('Machine connection not open!'), 1);
+        }
+    });
+    
     socket.on('clearAlarm', function (data) { // Laser Test Fire
         if (isConnected) {
             writeLog('Clearing Queue: Method ' + data);
@@ -518,6 +550,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             port.on('open', function () {
                 io.sockets.emit('activePorts', port.path + ',' + port.options.baudRate);
                 io.sockets.emit('connectStatus', 'opened:' + port.path);
+                port.write(String.fromCharCode(0x18)); // ctrl-x (needed for grbl-lpc)
                 setTimeout(function() { //wait for controller to be ready
                     if (!firmware) { // Grbl should be allready retected
                         port.write('version\n'); // Check if it's Smoothieware?
@@ -619,6 +652,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     if (jsObject.hasOwnProperty('fb')) { // Check if it's TinyG
                         firmware = 'tinyg';
                         fVersion = jsObject.fb;
+                        io.sockets.emit('firmware', firmware + ',' + fVersion);
                         writeLog('TinyG detected (' + fVersion + ')');
 
                         // Start intervall for status queries
@@ -632,6 +666,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                 if (data.indexOf('Grbl') === 0) { // Check if it's Grbl
                     firmware = 'grbl';
                     fVersion = data.substr(5, 4); // get version
+                    io.sockets.emit('firmware', firmware + ',' + fVersion);
                     writeLog('GRBL detected (' + fVersion + ')');
 
                     // Start intervall for status queries
@@ -649,6 +684,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     startPos = data.search(/Build date:/i) + 12;
                     fDate = new Date(data.substr(startPos).split(/,/, 1));
                     var dateString = fDate.toDateString();
+                    io.sockets.emit('firmware', firmware + ',' + fVersion + ',' + dateString);
                     writeLog('Smoothieware detected (' + fVersion + ', ' + dateString + ')');
 
                     // Start intervall for status queries

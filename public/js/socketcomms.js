@@ -5,7 +5,7 @@ var playing = false;
 var paused = false;
 var queueEmptyCount = 0;
 var laserTestOn = false;
-var firmware;
+var firmware, fVersion;
 var ovStep = 1;
 var ovLoop;
 var server = ''; //192.168.14.100';
@@ -46,6 +46,49 @@ function initSocket() {
         }
     });
 
+    socket.on('firmware', function (data) {
+        console.log('firmware' + data);
+        data = data.split(',');
+        firmware = data[0];
+        fVersion = data[1];
+        switch (firmware) {
+            case 'grbl':
+                if (fVersion >= '1.1e') { //is Grbl >= v1.1
+                    $('#overrides').removeClass('hide');
+                    $('#motorsOff').addClass('hide');
+                    $('homeX').hide();
+                    $('homeY').hide();
+                    $('homeZ').hide();
+                } else {
+                    socket.emit('closePort', 1);
+                    isConnected = false;
+                    $('#closePort').addClass('disabled');
+                    $('#machineStatus').html('Not Connected');
+                    $("#machineStatus").removeClass('badge-ok');
+                    $("#machineStatus").addClass('badge-notify');
+                    $("#machineStatus").removeClass('badge-warn');
+                    $("#machineStatus").removeClass('badge-busy');
+                    $('#overrides').addClass('hide');
+                    printLog("<b><u>You need to update GRBL firmware to the latest version 1.1d!</u></b> (see <a href=\"https://github.com/LaserWeb/LaserWeb3/wiki/Firmware:-GRBL-1.1d\">Wiki</a> for details)", errorcolor, "usb");
+                }
+                break;
+            case 'smoothie':
+                $('#overrides').removeClass('hide');
+                $('#motorsOff').show();
+                $('homeX').show();
+                $('homeY').show();
+                $('homeZ').show();
+                break;
+            case 'tinyg':
+                $("#machineStatus").removeClass('badge-ok');
+                $("#machineStatus").addClass('badge-notify');
+                $("#machineStatus").removeClass('badge-warn');
+                $("#machineStatus").removeClass('badge-busy');
+                $('#overrides').addClass('hide');
+                break;
+        }
+    });
+
     socket.on('data', function (data) {
         $('#syncstatus').html('Socket OK');
         // isConnected = true;
@@ -57,33 +100,6 @@ function initSocket() {
             printLog(data, '#cccccc', "usb");
         } else {
             printLog(data, msgcolor, "usb");
-        }
-        if (data.indexOf('LPC176')) { //LPC1768 or LPC1769 should be Smoothie
-            $('#overrides').removeClass('hide');
-            $('#motorsOff').show();
-            $('homeX').show();
-            $('homeY').show();
-            $('homeZ').show();
-        }
-        if (data.indexOf('Grbl') === 0) {
-            if (parseFloat(data.substr(5)) >= 1.1) { //is Grbl >= v1.1
-                $('#overrides').removeClass('hide');
-                $('#motorsOff').hide();
-                $('homeX').hide();
-                $('homeY').hide();
-                $('homeZ').hide();
-            } else {
-                socket.emit('closePort', 1);
-                isConnected = false;
-                $('#closePort').addClass('disabled');
-                $('#machineStatus').html('Not Connected');
-                $("#machineStatus").removeClass('badge-ok');
-                $("#machineStatus").addClass('badge-notify');
-                $("#machineStatus").removeClass('badge-warn');
-                $("#machineStatus").removeClass('badge-busy');
-                $('#overrides').addClass('hide');
-                printLog("<b><u>You need to update GRBL firmware to the latest version 1.1d!</u></b> (see <a href=\"https://github.com/LaserWeb/LaserWeb3/wiki/Firmware:-GRBL-1.1d\">Wiki</a> for details)", errorcolor, "usb");
-            }
         }
     });
 
@@ -476,6 +492,14 @@ function laserTest(power, duration) {
         }
     } else {
         printLog('You have to Connect to a machine First!', errorcolor, "usb");
+    }
+}
+
+function jog(dir, dist, feed = null) {
+    if (feed) {
+        socket.emit('jog', dir + ',' + dist + ',' + feed);
+    } else {
+        socket.emit('jog', dir + ',' + dist);        
     }
 }
 
