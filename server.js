@@ -49,11 +49,15 @@ var firmware, fVersion, fDate;
 var feedOverride = 100;
 var spindleOverride = 100;
 var laserTestOn = false;
+var queueLen;
+var queuePos = 0;
+var queuePointer = 0;
+var startTime;
 
 var GRBL_RX_BUFFER_SIZE = 128;      // 128 characters
 var grblBufferSize = [];
 
-var SMOOTHIE_RX_BUFFER_SIZE = 64;  // max. length of one command line
+var SMOOTHIE_RX_BUFFER_SIZE = 128;  // max. length of one command line
 var smoothie_buffer = true;
 
 var TINYG_RX_BUFFER_SIZE = 4;       // max. lines of gcode to send before wait for ok
@@ -71,12 +75,11 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     writeLog(chalk.green('  2. Go to : ') + chalk.yellow(' http://' + add + ':' + config.webPort + '/'));
     writeLog(chalk.green('***************************************************************'));
     writeLog(chalk.green(' '));
-    writeLog(chalk.green(' '));
     writeLog(chalk.red('* Updates: '));
     writeLog(chalk.green('  Remember to check the commit log on'));
     writeLog(chalk.yellow('  https://github.com/LaserWeb/LaserWeb3/commits/master'));
     writeLog(chalk.green('  regularly, to know about updates and fixes, and then when ready'));
-    writeLog(chalk.green('  update LaserWeb3 accordingly by running') + chalk.cyan('git pull'));
+    writeLog(chalk.green('  update LaserWeb3 accordingly by running ') + chalk.cyan('git pull'));
     writeLog(chalk.green(' '));
     writeLog(chalk.red('* Support: '));
     writeLog(chalk.green('  If you need help / support, come over to '));
@@ -148,6 +151,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                         port.write(String.fromCharCode(0x9E)); // Stop Spindle/Laser
                     }
                     gcodeQueue.length = 0; // dump the queye
+                    queueLen = 0;
                     grblBufferSize.length = 0; // dump bufferSizes
                     blocked = false;
                     paused = false;
@@ -155,17 +159,13 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                     break;
                 case 'smoothie':
                     //port.write('!');              // hold
-                    paused = true;
                     port.write(String.fromCharCode(0x18)); // ctrl-x
-                    gcodeQueue.length = 0; // dump the queye
-                    grblBufferSize.length = 0; // dump bufferSizes
-                    blocked = false;
-                    paused = false;
                     break;
                 case 'tinyg':
                     port.write('!'); // hold
                     port.write('%'); // dump TinyG queue
                     gcodeQueue.length = 0; // dump LW queue
+                    queueLen = 0;
                     grblBufferSize.length = 0; // dump bufferSizes
                     tinygBufferSize = TINYG_RX_BUFFER_SIZE;
                     blocked = false;
@@ -232,9 +232,13 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                 var line = data[i].split(';'); // Remove everything after ; = comment
                 var tosend = line[0];
                 if (tosend.length > 0) {
+                    if (tosend.indexOf('G0') === 0 || tosend.indexOf('G1') === 0) {
+                        tosend = tosend.replace(/\s+/g, '');
+                    }
                     addQ(tosend);
                 }
             }
+            startTime = new Date(Date.now());
             send1Q();
         } else {
             io.sockets.emit('connectStatus', 'closed');
@@ -441,10 +445,17 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                             break;
                     }
                     writeLog('Resuming Queue Lockout');
+                    blocked = false;
+                    paused = false;
+                    send1Q();
                     break;
                 case '2':
                     writeLog('Emptying Queue');
                     gcodeQueue.length = 0; // dump the queye
+                    queueLen = 0;
+                    queuePos = 0;
+                    queuePointer = 0;
+                    startTime = 0;
                     grblBufferSize.length = 0; // dump bufferSizes
                     writeLog('Clearing Lockout');
                     switch (firmware) {
@@ -460,6 +471,9 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                             port.write('~'); // resume
                             break;
                     }
+                    blocked = false;
+                    paused = false;
+                    send1Q();
                     break;
             }
         } else {
@@ -484,6 +498,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             io.sockets.emit('connectStatus', 'closing:' + port.path);
             //port.write(String.fromCharCode(0x18)); // ctrl-x
             gcodeQueue.length = 0; // dump the queye
+            queueLen = 0;
             grblBufferSize.length = 0; // dump bufferSizes
             tinygBufferSize = TINYG_RX_BUFFER_SIZE; // reset tinygBufferSize
             clearInterval(queueCounter);
@@ -535,7 +550,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
 
                 // Start interval for qCount messages to socket clients
                 queueCounter = setInterval(function () {
-                    io.sockets.emit('qCount', gcodeQueue.length);
+                    io.sockets.emit('qCount', gcodeQueue.length - queuePointer);
                 }, 500);
             });
 
@@ -556,8 +571,41 @@ function handleConnection(socket) { // When we open a WS connection, send the li
             });
 
             port.on('data', function (data) {
-                writeLog('Recv: ' + data);
-                if (data.indexOf('{') === 0) { // TinyG response
+                //writeLog('Recv: ' + data);
+                if (data.indexOf('ok') === 0) { // Got an OK so we are clear to send
+                    blocked = false;
+                    if (firmware === 'grbl') {
+                        var space = grblBufferSize.shift();
+                    }
+                    send1Q();
+                } else if (data.indexOf('Grbl') === 0) { // Check if it's Grbl
+                    firmware = 'grbl';
+                    fVersion = data.substr(5, 4); // get version
+                    writeLog('GRBL detected (' + fVersion + ')');
+
+                    // Start intervall for status queries
+                    statusLoop = setInterval(function () {
+                        if (isConnected) {
+                            port.write('?');
+                        }
+                    }, 250);
+                } else if (data.indexOf('LPC176') >= 0) { // LPC1768 or LPC1769 should be Smoothie
+                    //  Build version: edge-6ce309b, Build date: Jan 2 2017 23:50:57, MCU: LPC1768, System Clock: 100MHz
+                    firmware = 'smoothie';
+                    var startPos = data.search(/version:/i) + 9;
+                    fVersion = data.substr(startPos).split(/,/, 1);
+                    startPos = data.search(/Build date:/i) + 12;
+                    fDate = new Date(data.substr(startPos).split(/,/, 1));
+                    var dateString = fDate.toDateString();
+                    writeLog('Smoothieware detected (' + fVersion + ', ' + dateString + ')');
+
+                    // Start intervall for status queries
+                    statusLoop = setInterval(function () {
+                        if (isConnected) {
+                            port.write('?');
+                        }
+                    }, 100);
+                } else if (data.indexOf('{') === 0) { // TinyG response
                     jsObject = JSON.parse(data);
                     if (jsObject.hasOwnProperty('r')) {
                         var footer = jsObject.f || (jsObject.r && jsObject.r.f);
@@ -596,9 +644,7 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                         }
 
                         writeLog('response' + jsObject.r + footer);
-
                         jsObject = jsObject.r;
-
                         tinygBufferSize++;
                         blocked = false;
                         send1Q();
@@ -628,56 +674,13 @@ function handleConnection(socket) { // When we open a WS connection, send the li
                             }
                         }, 250);
                     }
-                }
-                if (data.indexOf('Grbl') === 0) { // Check if it's Grbl
-                    firmware = 'grbl';
-                    fVersion = data.substr(5, 4); // get version
-                    writeLog('GRBL detected (' + fVersion + ')');
-
-                    // Start intervall for status queries
-                    statusLoop = setInterval(function () {
-                        if (isConnected) {
-                            port.write('?');
-                        }
-                    }, 250);
-                }
-                if (data.indexOf('LPC176') >= 0) { // LPC1768 or LPC1769 should be Smoothie
-                    //  Build version: edge-6ce309b, Build date: Jan 2 2017 23:50:57, MCU: LPC1768, System Clock: 100MHz
-                    firmware = 'smoothie';
-                    var startPos = data.search(/version:/i) + 9;
-                    fVersion = data.substr(startPos).split(/,/, 1);
-                    startPos = data.search(/Build date:/i) + 12;
-                    fDate = new Date(data.substr(startPos).split(/,/, 1));
-                    var dateString = fDate.toDateString();
-                    writeLog('Smoothieware detected (' + fVersion + ', ' + dateString + ')');
-
-                    // Start intervall for status queries
-                    statusLoop = setInterval(function () {
-                        if (isConnected) {
-                            port.write('?');
-                        }
-                    }, 250);
-                }
-                if (data.indexOf('ok') === 0) { // Got an OK so we are clear to send
-                    blocked = false;
-                    if (firmware === 'grbl') {
-                        var space = grblBufferSize.shift();
-                        //var buffers = '', sum = GRBL_RX_BUFFER_SIZE;
-                        //for (var i = 0; i < grblBufferSize.length; i++) {
-                        //    sum -= parseInt(grblBufferSize[i]);
-                            //buffers += grblBufferSize[i] + '+';
-                        //}
-                        //writeLog('Buffers: ' + buffers.substr(0, buffers.length-1) + ' Rest: ' + sum);
-                        //writeLog('Buffers released: ' + space + ' Rest: ' + sum);
-                    }
-                    send1Q();
-                }
-                if (data.indexOf('error') === 0) {
+                } else if (data.indexOf('error') === 0) {
+                    writeLog('Recv: ' + data);
                     if (firmware === 'grbl') {
                         grblBufferSize.shift();
                     }
-                }
-//                if (data.indexOf('<') === 0) { // Got status report
+//                } else if (data.indexOf('<') === 0) { // Got status report
+//                    writeLog('Recv: ' + data);
 //                    if (data.indexOf('Bf')) { // Got Grbl buffer info (ex: Bf:15,128)
 //                        var startBf = data.search(/Bf:/i) + 3;
 //                        if (startBf > 3) {
@@ -687,8 +690,10 @@ function handleConnection(socket) { // When we open a WS connection, send the li
 //                            }
 //                        }
 //                    }
-//                }
-                io.sockets.emit('data', data);
+                }
+                if (data.indexOf('ok') !== 0) {
+                    io.sockets.emit('data', data);
+                }
             });
         } else {
             io.sockets.emit('connectStatus', 'opened:' + port.path);
@@ -701,10 +706,12 @@ function handleConnection(socket) { // When we open a WS connection, send the li
 // Queue
 function addQ(gcode) {
     gcodeQueue.push(gcode);
+    queueLen = gcodeQueue.length;
 }
 
 function jumpQ(gcode) {
-    gcodeQueue.unshift(gcode);
+    //gcodeQueue.unshift(gcode);
+    port.write(gcode + '\n');
 }
 
 function grblBufferSpace() {
@@ -724,8 +731,7 @@ function send1Q() {
         switch (firmware) {
             case 'grbl':
                 while (gcodeQueue.length > 0 && !blocked && !paused) {
-                    // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
-                    gcode = gcodeQueue.shift().replace(/\s+/g, '');
+                    gcode = gcodeQueue.shift();
                     spaceLeft = grblBufferSpace();
                     gcodeLen = gcode.length;
                     //writeLog('BufferSpace: ' + spaceLeft + ' gcodeLen: ' + gcodeLen);
@@ -743,57 +749,88 @@ function send1Q() {
             case 'smoothie':
                 if (smoothie_buffer) {
                     var gcodeLine = '';
-                    var lastMode = '';
-                    spaceLeft = SMOOTHIE_RX_BUFFER_SIZE - gcodeLine.length;
-                    while (gcodeQueue.length > 0 && spaceLeft > 0 && !blocked && !paused) {
-                        gcode = gcodeQueue.shift();
-                        if (gcode.indexOf('fire ') === -1 && gcode.indexOf('G4') === -1) {
-                            gcode = gcode.replace(/\s+/g, '');
-                        }
-                        if (gcode.length < spaceLeft) {
+                    //queueLen = gcodeQueue.length;
+                    spaceLeft = SMOOTHIE_RX_BUFFER_SIZE;
+                    while ((queueLen - queuePointer) > 0 && spaceLeft > 0 && !blocked && !paused) {
+                        gcodeLen = gcodeQueue[queuePointer].length;
+                        if (gcodeLen < spaceLeft) {
                             // Add gcode to send buffer
+                            gcode = gcodeQueue[queuePointer];
+                            queuePointer++;
                             gcodeLine += gcode;
                             spaceLeft = SMOOTHIE_RX_BUFFER_SIZE - gcodeLine.length;
                         } else {
-                            // Not enough space left in send buffer 
-                            // -> push gcode back to queue and leave while loop
-                            gcodeQueue.unshift(gcode);
+                            // Not enough space left in send buffer
                             blocked = true;
                         }
                     }
-                    if (gcodeLine.length > 0) {
+                    if (gcodeLine.length > 0 && !paused) {
                         // Send the buffer
                         blocked = true;
                         port.write(gcodeLine + '\n');
                         lastSent = gcodeLine;
-                        writeLog('Sent: ' + gcodeLine + ' Q: ' + gcodeQueue.length);
+                        //writeLog('Sent: ' + gcodeLine + ' Q: ' + (queueLen - queuePointer));
                         gcodeLine = '';
-                        lastMode = '';
                     }
                 } else {
-                    if (gcodeQueue.length > 0 && !blocked && !paused) {
-                        gcode = gcodeQueue.shift();
-                        if (gcode.indexOf('fire ') === -1) {
-                            gcode = gcode.replace(/\s+/g, '');
-                        }
+                    queueLen = gcodeQueue.length;
+                    if ((queueLen - queuePointer) > 0 && !blocked && !paused) {
+                        gcode = gcodeQueue[queuePointer];
+                        queuePointer++;
                         blocked = true;
                         port.write(gcode + '\n');
                         lastSent = gcode;
-                        writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
+                        //writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
                     }
                 }
                 break;
             case 'tinyg':
                 while (tinygBufferSize > 0 && gcodeQueue.length > 0 && !blocked && !paused) {
                     gcode = gcodeQueue.shift();
-                    // Optimise gcode by stripping spaces - saves a few bytes of serial bandwidth, and formatting commands vs gcode to upper and lowercase as needed
-                    gcode = gcode.replace(/\s+/g, '');
                     writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
                     lastSent = gcode;
                     port.write(gcode + '\n');
                     tinygBufferSize--;
                 }
                 break;
+        }
+        if (queueLen - queuePointer <= 0) {
+            // Job finished
+            gcodeQueue.length = 0; // dump the queye
+            queueLen = 0;
+            queuePos = 0;
+            queuePointer = 0;
+            startTime = 0;
+            grblBufferSize.length = 0; // dump bufferSizes
+        }
+        var finishTime, elapsedTimeMS, elapsedTime, speed;
+        if ((queuePointer - queuePos) >= 100) {
+            queuePos = queuePointer;
+            if (startTime > 0) {
+                finishTime = new Date(Date.now());
+                elapsedTimeMS = finishTime.getTime() - startTime.getTime();
+                elapsedTime = Math.round(elapsedTimeMS / 1000);
+                if (elapsedTime > 0) {
+                    speed = (queuePointer / elapsedTime).toFixed(0);
+                    writeLog('Done: ' + queuePointer + '/' + queueLen + ' (ave. ' + speed + ' lines/s)');
+                }
+            } else {
+                writeLog('Done: ' + queuePointer + '/' + queueLen);
+            }
+        }
+        if (gcodeQueue.length > 0 && (queueLen - queuePointer) === 0) {
+            if (startTime > 0) {
+                finishTime = new Date(Date.now());
+                elapsedTimeMS = finishTime.getTime() - startTime.getTime();
+                elapsedTime = Math.round(elapsedTimeMS / 1000);
+                if (elapsedTime > 0) {
+                    speed = (queuePointer / elapsedTime).toFixed(0);
+                    writeLog("Job started at " + startTime.toString());
+                    writeLog("Job finished at " + finishTime.toString());
+                    writeLog("Elapsed time: " + elapsedTime + " seconds.");
+                    writeLog('Ave. Speed: ' + speed + ' lines/s');
+                }
+            }
         }
     }
 }

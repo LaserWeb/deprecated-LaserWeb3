@@ -282,6 +282,9 @@ Rasterizer.prototype.rasterRow = function(y) {
             while (posx.slice(-1) === '0') {
               posx = posx.substr(0, posx.length - 1);
             }
+            if (posx.substr(-1) === '.') {
+                posx += '0';
+            }
             if (lastIntensity > 0.05) {
               if (!isLaserOn) {
                 if (laseron) {
