@@ -22,18 +22,24 @@ var GRBL_RX_BUFFER_SIZE = 128;      // 128 characters
 var grblBufferSize = [];
 var new_grbl_buffer = true;
                              
-var SMOOTHIE_RX_BUFFER_SIZE = 128;  // max. length of one command line
+var SMOOTHIE_RX_BUFFER_SIZE = 63;  // max. length of one command line
 var smoothie_buffer = true;
 
 var TINYG_RX_BUFFER_SIZE = 4;       // max. lines of gcode to send before wait for ok
 var tinygBufferSize = TINYG_RX_BUFFER_SIZE; // init space left
 var jsObject;
 
+if (process.argv.length < 4) {
+    writeLog('ERROR: missing params!');
+    writeLog('Usage: node test-server.js Serialport Filename');
+    writeLog('Ex: node test-server.js COM3 short.gcode');
+    process.exit();
+}
 var port = process.argv[2];
 var file = process.argv[3];
 
 port = new SerialPort(port, {
-    parser: serialport.parsers.readline("\n"),
+    parser: serialport.parsers.readline('\n'),
     baudrate: parseInt('115200')
 });
 
@@ -273,9 +279,8 @@ function send1Q() {
                         gcodeLen = gcodeQueue[queuePointer].length;
                         if (gcodeLen < spaceLeft) {
                             // Add gcode to send buffer
-                            gcode = gcodeQueue[queuePointer];
+                            gcodeLine += gcodeQueue[queuePointer];
                             queuePointer++;
-                            gcodeLine += gcode;
                             spaceLeft = SMOOTHIE_RX_BUFFER_SIZE - gcodeLine.length;
                         } else {
                             // Not enough space left in send buffer
@@ -291,7 +296,7 @@ function send1Q() {
                         gcodeLine = '';
                     }
                 } else {
-                    if ((queueLen - queuePointer) > 0 && !blocked && !paused) {
+                    if ((gcodeQueue.length  - queuePointer) > 0 && !blocked && !paused) {
                         gcode = gcodeQueue[queuePointer];
                         queuePointer++;
                         blocked = true;
@@ -314,28 +319,22 @@ function send1Q() {
         var finishTime, elapsedTimeMS, elapsedTime, speed;
         if ((queuePointer - queuePos) >= 100) {
             queuePos = queuePointer;
-            if (startTime >= 0) {
-                finishTime = new Date(Date.now());
-                elapsedTimeMS = finishTime.getTime() - startTime.getTime();
-                elapsedTime = Math.round(elapsedTimeMS / 1000);
-                speed = (queuePointer / elapsedTime).toFixed(0);
-                writeLog('Done: ' + queuePointer + '/' + queueLen + ' (ave. ' + speed + ' lines/s)');
-            } else {
-                writeLog('Done: ' + queuePointer + '/' + queueLen);
-            }
+            finishTime = new Date(Date.now());
+            elapsedTimeMS = finishTime.getTime() - startTime.getTime();
+            elapsedTime = Math.round(elapsedTimeMS / 1000);
+            speed = (queuePointer / elapsedTime).toFixed(0);
+            writeLog('Done: ' + queuePointer + '/' + queueLen + ' (ave. ' + speed + ' lines/s)');
         }
         if ((queueLen - queuePointer) === 0) {
-            if (startTime >= 0) {
-                finishTime = new Date(Date.now());
-                elapsedTimeMS = finishTime.getTime() - startTime.getTime();
-                elapsedTime = Math.round(elapsedTimeMS / 1000);
-                speed = (queuePointer / elapsedTime).toFixed(0);
-                writeLog("Job started at " + startTime.toString());
-                writeLog("Job finished at " + finishTime.toString());
-                writeLog("Elapsed time: " + elapsedTime + " seconds.");
-                writeLog('Ave. Speed: ' + speed + ' lines/s');
-                process.exit();
-            }
+            finishTime = new Date(Date.now());
+            elapsedTimeMS = finishTime.getTime() - startTime.getTime();
+            elapsedTime = Math.round(elapsedTimeMS / 1000);
+            speed = (queuePointer / elapsedTime).toFixed(0);
+            writeLog("Job started at " + startTime.toString());
+            writeLog("Job finished at " + finishTime.toString());
+            writeLog("Elapsed time: " + elapsedTime + " seconds.");
+            writeLog('Ave. Speed: ' + speed + ' lines/s');
+            process.exit();
         }
     }
 }
