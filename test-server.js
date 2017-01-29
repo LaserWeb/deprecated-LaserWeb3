@@ -17,12 +17,13 @@ var rd;
 var queueLen;
 var queuePos = 0;
 var queuePointer = 0;
+var readyToSend = true;
 
 var GRBL_RX_BUFFER_SIZE = 128;      // 128 characters
 var grblBufferSize = [];
 var new_grbl_buffer = true;
                              
-var SMOOTHIE_RX_BUFFER_SIZE = 63;  // max. length of one command line
+var SMOOTHIE_RX_BUFFER_SIZE = 64;  // max. length of one command line
 var smoothie_buffer = true;
 
 var TINYG_RX_BUFFER_SIZE = 4;       // max. lines of gcode to send before wait for ok
@@ -70,10 +71,10 @@ port.on('close', function () { // open errors will be emitted as an error event
 port.on('data', function (data) {
     //writeLog('Recv: ' + data);
     if (data.indexOf('ok') === 0) { // Got an OK so we are clear to send
-        blocked = false;
         if (firmware === 'grbl') {
             var space = grblBufferSize.shift();
         }
+        blocked = false;
         send1Q();
     } else if (data.indexOf('Grbl') === 0) { // Check if it's Grbl
         firmware = 'grbl';
@@ -223,12 +224,12 @@ function grblBufferSpace() {
 function send1Q() {
     var gcode;
     var gcodeLen = 0;
+    var gcodeLine = '';
     var spaceLeft = 0;
-    if (isConnected) {
+    if (isConnected & readyToSend) {
         switch (firmware) {
             case 'grbl':
                 if (new_grbl_buffer) {
-                    var gcodeLine = '';
                     if (grblBufferSize.length === 0){
                         spaceLeft = GRBL_RX_BUFFER_SIZE;
                         while ((queueLen - queuePointer) > 0 && spaceLeft > 0 && !blocked && !paused) {
@@ -249,9 +250,7 @@ function send1Q() {
                             // Send the buffer
                             blocked = true;
                             port.write(gcodeLine);
-                            lastSent = gcodeLine;
                             //writeLog('Sent: ' + gcodeLine + ' Q: ' + (queueLen - queuePointer));
-                            gcodeLine = '';
                         }
                     }
                 } else {
@@ -263,7 +262,6 @@ function send1Q() {
                             queuePointer++;
                             grblBufferSize.push(gcodeLen + 1);
                             port.write(gcode + '\n');
-                            lastSent = gcode;
                             //writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length + ' Bspace: ' + (spaceLeft - gcodeLen - 1));
                         } else {
                             blocked = true;
@@ -273,15 +271,14 @@ function send1Q() {
                 break;
             case 'smoothie':
                 if (smoothie_buffer) {
-                    var gcodeLine = '';
                     spaceLeft = SMOOTHIE_RX_BUFFER_SIZE;
-                    while ((queueLen - queuePointer) > 0 && spaceLeft > 0 && !blocked && !paused) {
+                    while ((queueLen - queuePointer) > 0 && spaceLeft > 5 && !blocked && !paused) {
                         gcodeLen = gcodeQueue[queuePointer].length;
                         if (gcodeLen < spaceLeft) {
                             // Add gcode to send buffer
                             gcodeLine += gcodeQueue[queuePointer];
                             queuePointer++;
-                            spaceLeft = SMOOTHIE_RX_BUFFER_SIZE - gcodeLine.length;
+                            spaceLeft -= gcodeLen;
                         } else {
                             // Not enough space left in send buffer
                             blocked = true;
@@ -290,10 +287,18 @@ function send1Q() {
                     if (gcodeLine.length > 0) {
                         // Send the buffer
                         blocked = true;
-                        port.write(gcodeLine + '\n');
-                        lastSent = gcodeLine;
+                        readyToSend = false;
+                        port.write(gcodeLine + '\n', function (err) {
+                            if (err) {
+                                writeLog('Port write error ' + err);
+                            }
+                            port.drain(function() {
+                                //writeLog('...drain');
+                                readyToSend = true;
+                                send1Q();
+                            });
+                        });
                         //writeLog('Sent: ' + gcodeLine + ' Q: ' + (queueLen - queuePointer));
-                        gcodeLine = '';
                     }
                 } else {
                     if ((gcodeQueue.length  - queuePointer) > 0 && !blocked && !paused) {
@@ -301,7 +306,6 @@ function send1Q() {
                         queuePointer++;
                         blocked = true;
                         port.write(gcode + '\n');
-                        lastSent = gcode;
                         //writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
                     }
                 }
@@ -310,9 +314,8 @@ function send1Q() {
                 while (tinygBufferSize > 0 && gcodeQueue.length > 0 && !blocked && !paused) {
                     gcode = gcodeQueue.shift();
                     port.write(gcode + '\n');
-                    lastSent = gcode;
-                    //writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
                     tinygBufferSize--;
+                    //writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
                 }
                 break;
         }
@@ -323,7 +326,7 @@ function send1Q() {
             elapsedTimeMS = finishTime.getTime() - startTime.getTime();
             elapsedTime = Math.round(elapsedTimeMS / 1000);
             speed = (queuePointer / elapsedTime).toFixed(0);
-            writeLog('Done: ' + queuePointer + '/' + queueLen + ' (ave. ' + speed + ' lines/s)');
+            writeLog('Done: ' + queuePointer + ' of ' + queueLen + ' (ave. ' + speed + ' lines/s)');
         }
         if ((queueLen - queuePointer) === 0) {
             finishTime = new Date(Date.now());
