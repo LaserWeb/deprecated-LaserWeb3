@@ -32,12 +32,19 @@ var jsObject;
 
 if (process.argv.length < 4) {
     writeLog('ERROR: missing params!');
-    writeLog('Usage: node test-server.js Serialport Filename');
-    writeLog('Ex: node test-server.js COM3 short.gcode');
+    writeLog('Usage: node test-server.js Serialport Filename [FeedOverride%]');
+    writeLog('Ex: node test-server.js COM3 short.gcode 80');
     process.exit();
 }
 var port = process.argv[2];
 var file = process.argv[3];
+var feedOverride = 100;
+if (process.argv[4]) {
+    feedOverride = process.argv[4];    
+}
+
+writeLog('Streaming File ' + file + ' to Port ' + port + ' (feedOverride=' + feedOverride + '%)');
+
 
 port = new SerialPort(port, {
     parser: serialport.parsers.readline('\n'),
@@ -57,6 +64,10 @@ port.on('open', function () {
     }, 500);
     isConnected = true;
     connectedTo = port.path;
+});
+
+port.on('error', function (err) { // open errors will be emitted as an error event
+    writeLog(err);
 });
 
 port.on('close', function () { // open errors will be emitted as an error event
@@ -82,11 +93,14 @@ port.on('data', function (data) {
         writeLog('GRBL detected (' + fVersion + ')');
 
         // Start intervall for status queries
-        statusLoop = setInterval(function () {
-            if (isConnected) {
-                port.write('?');
-            }
-        }, 250);
+//        statusLoop = setInterval(function () {
+//            if (isConnected) {
+//                port.write('?');
+//            }
+//        }, 250);
+
+        port.write('M220S' + feedOverride + '\n');
+        writeLog('Setting feedOverride to ' + feedOverride + '%');
 
         // Add file to queue and start sending
         rd = readline.createInterface({
@@ -122,12 +136,15 @@ port.on('data', function (data) {
         writeLog('Smoothieware detected (' + fVersion + ', ' + dateString + ')');
 
         // Start intervall for status queries
-        statusLoop = setInterval(function () {
-            if (isConnected) {
-                port.write('?');
-            }
-        }, 250);
-        
+//        statusLoop = setInterval(function () {
+//            if (isConnected) {
+//                port.write('?');
+//            }
+//        }, 250);
+
+        port.write('M220S' + feedOverride + '\n');
+        writeLog('Setting feedOverride to ' + feedOverride + '%');
+
         // Add file to queue and start sending
         rd = readline.createInterface({
             input: fs.createReadStream('./' + file),
@@ -146,7 +163,7 @@ port.on('data', function (data) {
             }
         });
         rd.on('close', function() {
-//            queueLen = gcodeQueue.length;
+            queueLen = gcodeQueue.length;
             console.log('Queue: ' + queueLen); 
             startTime = new Date(Date.now());
             send1Q();
@@ -167,11 +184,11 @@ port.on('data', function (data) {
             writeLog('TinyG detected (' + fVersion + ')');
 
             // Start intervall for status queries
-            statusLoop = setInterval(function () {
-                if (isConnected) {
-                    port.write('{"sr":null}');
-                }
-            }, 250);
+//            statusLoop = setInterval(function () {
+//                if (isConnected) {
+//                    port.write('{"sr":null}');
+//                }
+//            }, 250);
 
             // Add file to queue and start sending
             rd = readline.createInterface({
@@ -197,6 +214,25 @@ port.on('data', function (data) {
                 send1Q();
             });
         }
+//    } else if (data.indexOf('ALARM') === 0) {
+//            writeLog('Clearing Lockout', 1);
+//            switch (firmware) {
+//                case 'grbl':
+//                    machineSend('$X\n');
+//                    blocked = false;
+//                    paused = false;
+//                    break;
+//                case 'smoothie':
+//                    machineSend('$X\n'); //M999
+//                    blocked = false;
+//                    paused = false;
+//                    break;
+//                case 'tinyg':
+//                    machineSend('~'); // resume
+//                    blocked = false;
+//                    paused = false;
+//                    break;
+//            }
     } else if (data.indexOf('error') === 0) {
         if (firmware === 'grbl') {
             grblBufferSize.shift();
@@ -208,7 +244,6 @@ port.on('data', function (data) {
 // Queue
 function addQ(gcode) {
     gcodeQueue.push(gcode);
-    queueLen = gcodeQueue.length;
 }
 
 function grblBufferSpace() {
@@ -227,58 +262,19 @@ function send1Q() {
     var gcodeLine = '';
     var spaceLeft = 0;
     if (isConnected & readyToSend) {
-        switch (firmware) {
-            case 'grbl':
-                if (new_grbl_buffer) {
-                    if (grblBufferSize.length === 0){
-                        spaceLeft = GRBL_RX_BUFFER_SIZE;
-                        while ((queueLen - queuePointer) > 0 && spaceLeft > 0 && !blocked && !paused) {
-                            gcodeLen = gcodeQueue[queuePointer].length;
-                            if (gcodeLen < spaceLeft) {
-                                // Add gcode to send buffer
-                                gcode = gcodeQueue[queuePointer];
-                                queuePointer++;
-                                grblBufferSize.push(gcodeLen + 1);
-                                gcodeLine += gcode + '\n';
-                                spaceLeft = GRBL_RX_BUFFER_SIZE - gcodeLine.length;
-                            } else {
-                                // Not enough space left in send buffer
-                                blocked = true;
-                            }
-                        }
-                        if (gcodeLine.length > 0) {
-                            // Send the buffer
-                            blocked = true;
-                            port.write(gcodeLine);
-                            //writeLog('Sent: ' + gcodeLine + ' Q: ' + (queueLen - queuePointer));
-                        }
-                    }
-                } else {
-                    while ((queueLen - queuePointer) > 0 && !blocked && !paused) {
-                        spaceLeft = grblBufferSpace();
-                        gcodeLen = gcodeQueue[queuePointer].length;
-                        if (gcodeLen < spaceLeft) {
-                            gcode = gcodeQueue[queuePointer];
-                            queuePointer++;
-                            grblBufferSize.push(gcodeLen + 1);
-                            port.write(gcode + '\n');
-                            //writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length + ' Bspace: ' + (spaceLeft - gcodeLen - 1));
-                        } else {
-                            blocked = true;
-                        }
-                    }
-                }
-                break;
-            case 'smoothie':
-                if (smoothie_buffer) {
-                    spaceLeft = SMOOTHIE_RX_BUFFER_SIZE;
-                    while ((queueLen - queuePointer) > 0 && spaceLeft > 5 && !blocked && !paused) {
+        if (firmware === 'grbl') {
+            if (new_grbl_buffer) {
+                if (grblBufferSize.length === 0){
+                    spaceLeft = GRBL_RX_BUFFER_SIZE;
+                    while ((queueLen - queuePointer) > 0 && spaceLeft > 0 && !blocked && !paused) {
                         gcodeLen = gcodeQueue[queuePointer].length;
                         if (gcodeLen < spaceLeft) {
                             // Add gcode to send buffer
-                            gcodeLine += gcodeQueue[queuePointer];
+                            gcode = gcodeQueue[queuePointer];
                             queuePointer++;
-                            spaceLeft -= gcodeLen;
+                            grblBufferSize.push(gcodeLen + 1);
+                            gcodeLine += gcode + '\n';
+                            spaceLeft = GRBL_RX_BUFFER_SIZE - gcodeLine.length;
                         } else {
                             // Not enough space left in send buffer
                             blocked = true;
@@ -287,40 +283,76 @@ function send1Q() {
                     if (gcodeLine.length > 0) {
                         // Send the buffer
                         blocked = true;
-                        readyToSend = false;
-                        port.write(gcodeLine + '\n', function (err) {
-                            if (err) {
-                                writeLog('Port write error ' + err);
-                            }
-                            port.drain(function() {
-                                //writeLog('...drain');
-                                readyToSend = true;
-                                send1Q();
-                            });
-                        });
+                        port.write(gcodeLine);
                         //writeLog('Sent: ' + gcodeLine + ' Q: ' + (queueLen - queuePointer));
                     }
-                } else {
-                    if ((gcodeQueue.length  - queuePointer) > 0 && !blocked && !paused) {
+                }
+            } else {
+                while ((queueLen - queuePointer) > 0 && !blocked && !paused) {
+                    spaceLeft = grblBufferSpace();
+                    gcodeLen = gcodeQueue[queuePointer].length;
+                    if (gcodeLen < spaceLeft) {
                         gcode = gcodeQueue[queuePointer];
                         queuePointer++;
-                        blocked = true;
+                        grblBufferSize.push(gcodeLen + 1);
                         port.write(gcode + '\n');
-                        //writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
+                        //writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length + ' Bspace: ' + (spaceLeft - gcodeLen - 1));
+                    } else {
+                        blocked = true;
                     }
                 }
-                break;
-            case 'tinyg':
+            }
+        } else if (firmware === 'smoothie') {
+            if (smoothie_buffer) {
+                spaceLeft = SMOOTHIE_RX_BUFFER_SIZE;
+                while ((queueLen - queuePointer) > 0 && spaceLeft > 5 && !blocked && !paused) {
+                    gcodeLen = gcodeQueue[queuePointer].length;
+                    if (gcodeLen < spaceLeft) {
+                        // Add gcode to send buffer
+                        gcodeLine += gcodeQueue[queuePointer]; 
+                        queuePointer++;
+                        spaceLeft -= gcodeLen;
+                    } else {
+                        // Not enough space left in send buffer
+                        blocked = true;
+                    }
+                }
+                if (gcodeLine.length > 0) {
+                    // Send the buffer
+                    blocked = true;
+                    port.write(gcodeLine + '\n');
+//                        readyToSend = false;
+//                        port.write(gcodeLine + '\n', function (err) {
+//                            if (err) {
+//                                writeLog('Port write error ' + err);
+//                            }
+//                            port.drain(function() {
+//                                //writeLog('...drain');
+//                                readyToSend = true;
+//                                send1Q();
+//                            });
+//                        });
+                    //writeLog('Sent: ' + gcodeLine + ' Q: ' + (queueLen - queuePointer));
+                }
+            } else {
+                if ((gcodeQueue.length  - queuePointer) > 0 && !blocked && !paused) {
+                    gcode = gcodeQueue[queuePointer];
+                    queuePointer++;
+                    blocked = true;
+                    port.write(gcode + '\n');
+                    //writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
+                }
+            }
+        } else if (firmware === 'tinyg') {
                 while (tinygBufferSize > 0 && gcodeQueue.length > 0 && !blocked && !paused) {
                     gcode = gcodeQueue.shift();
                     port.write(gcode + '\n');
                     tinygBufferSize--;
                     //writeLog('Sent: ' + gcode + ' Q: ' + gcodeQueue.length);
                 }
-                break;
         }
         var finishTime, elapsedTimeMS, elapsedTime, speed;
-        if ((queuePointer - queuePos) >= 100) {
+        if ((queuePointer - queuePos) >= 500) {
             queuePos = queuePointer;
             finishTime = new Date(Date.now());
             elapsedTimeMS = finishTime.getTime() - startTime.getTime();
