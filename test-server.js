@@ -23,7 +23,7 @@ var GRBL_RX_BUFFER_SIZE = 128;      // 128 characters
 var grblBufferSize = [];
 var new_grbl_buffer = true;
                              
-var SMOOTHIE_RX_BUFFER_SIZE = 64;  // max. length of one command line
+var SMOOTHIE_RX_BUFFER_SIZE = 128;  // max. length of one command line
 var smoothie_buffer = true;
 
 var TINYG_RX_BUFFER_SIZE = 4;       // max. lines of gcode to send before wait for ok
@@ -99,8 +99,8 @@ port.on('data', function (data) {
 //            }
 //        }, 250);
 
-        port.write('M220S' + feedOverride + '\n');
-        writeLog('Setting feedOverride to ' + feedOverride + '%');
+//        port.write('M220S' + feedOverride + '\n');
+//        writeLog('Setting feedOverride to ' + feedOverride + '%');
 
         // Add file to queue and start sending
         rd = readline.createInterface({
@@ -159,7 +159,9 @@ port.on('data', function (data) {
                     line = line.replace(/\s+/g, '');
                 }
                 //console.log(line);
-                addQ(line);
+                if (line.indexOf('$') === -1) {
+                    addQ(line);
+                }
             }
         });
         rd.on('close', function() {
