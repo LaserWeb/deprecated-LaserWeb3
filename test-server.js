@@ -6,7 +6,7 @@ var fs = require('fs');
 var readline = require('readline');
 
 var logFile;
-var isConnected, connectedTo, port, lastSent = '';
+var isConnected, connectedTo, port;
 var paused = false;
 var blocked = false;
 var statusLoop;
@@ -25,6 +25,8 @@ var new_grbl_buffer = true;
                              
 var SMOOTHIE_RX_BUFFER_SIZE = 128;  // max. length of one command line
 var smoothie_buffer = true;
+var lastMode;
+var cmdsBuffered = 0;
 
 var TINYG_RX_BUFFER_SIZE = 4;       // max. lines of gcode to send before wait for ok
 var tinygBufferSize = TINYG_RX_BUFFER_SIZE; // init space left
@@ -84,9 +86,16 @@ port.on('data', function (data) {
     if (data.indexOf('ok') === 0) { // Got an OK so we are clear to send
         if (firmware === 'grbl') {
             var space = grblBufferSize.shift();
+            blocked = false;
+            send1Q();
+        } else if (firmware === 'smoothie') {
+//            cmdsBuffered--;
+//            if (cmdsBuffered <= 0) {
+                blocked = false;
+                send1Q();
+//            }
         }
-        blocked = false;
-        send1Q();
+
     } else if (data.indexOf('Grbl') === 0) { // Check if it's Grbl
         firmware = 'grbl';
         fVersion = data.substr(5, 4); // get version
@@ -155,12 +164,27 @@ port.on('data', function (data) {
             line = line.split(';'); // Remove everything after ; = comment
             line = line[0];
             if (line.length > 0) {
-                if (line.indexOf('G0') === 0 || line.indexOf('G1') === 0) {
+                var newMode;
+                if (line.indexOf('G0') === 0) {
                     line = line.replace(/\s+/g, '');
+                    newMode = 'G0';
+                } else if (line.indexOf('G1') === 0) {
+                    line = line.replace(/\s+/g, '');
+                    newMode = 'G1';
+                } else if (line.indexOf('G2') === 0) {
+                    line = line.replace(/\s+/g, '');
+                    newMode = 'G2';
+                } else if (line.indexOf('G3') === 0) {
+                    line = line.replace(/\s+/g, '');
+                    newMode = 'G3';
                 }
                 //console.log(line);
                 if (line.indexOf('$') === -1) {
+                    if (newMode === lastMode) {
+                        line = line.substr(2);
+                    }
                     addQ(line);
+                    lastMode = newMode;
                 }
             }
         });
@@ -314,6 +338,7 @@ function send1Q() {
                         gcodeLine += gcodeQueue[queuePointer]; 
                         queuePointer++;
                         spaceLeft -= gcodeLen;
+                        //cmdsBuffered++;
                     } else {
                         // Not enough space left in send buffer
                         blocked = true;
@@ -323,17 +348,6 @@ function send1Q() {
                     // Send the buffer
                     blocked = true;
                     port.write(gcodeLine + '\n');
-//                        readyToSend = false;
-//                        port.write(gcodeLine + '\n', function (err) {
-//                            if (err) {
-//                                writeLog('Port write error ' + err);
-//                            }
-//                            port.drain(function() {
-//                                //writeLog('...drain');
-//                                readyToSend = true;
-//                                send1Q();
-//                            });
-//                        });
                     //writeLog('Sent: ' + gcodeLine + ' Q: ' + (queueLen - queuePointer));
                 }
             } else {
