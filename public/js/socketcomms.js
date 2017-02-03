@@ -92,8 +92,10 @@ function initSocket() {
     socket.on('data', function (data) {
         $('#syncstatus').html('Socket OK');
         // isConnected = true;
-	if (data.startsWith('ok')) {
-	    var foo = true;
+	if (/*firmware == 'smoothie' &&*/ data.startsWith('ok')) {
+		if (data.indexOf('<') === 0) {
+                    updateStatus(data);
+                }
 	} else {
 	        if (data.indexOf('<') === 0) {
 	            updateStatus(data);
