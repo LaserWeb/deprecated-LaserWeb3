@@ -92,15 +92,19 @@ function initSocket() {
     socket.on('data', function (data) {
         $('#syncstatus').html('Socket OK');
         // isConnected = true;
-        if (data.indexOf('<') === 0) {
-            updateStatus(data);
-        } else if (data.indexOf('{\"sr\"') === 0) {
-            updateStatusTinyG(data);
-        } else if (data === 'ok') {
-            printLog(data, '#cccccc', "usb");
-        } else {
-            printLog(data, msgcolor, "usb");
-        }
+	if (data.startsWith('ok')) {
+	    var foo = true;
+	} else {
+	        if (data.indexOf('<') === 0) {
+	            updateStatus(data);
+	        } else if (data.indexOf('{\"sr\"') === 0) {
+	            updateStatusTinyG(data);
+	        } else if (data === 'ok') {
+	            printLog(data, '#cccccc', "usb");
+	        } else {
+	            printLog(data, msgcolor, "usb");
+	        }
+	}
     });
 
     // smoothie feed override report (from server)
