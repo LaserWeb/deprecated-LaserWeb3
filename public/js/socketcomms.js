@@ -49,6 +49,9 @@ function initSocket() {
     socket.on('firmware', function (data) {
         console.log('firmware' + data);
         data = data.split(',');
+        var version = $('meta[name=version]').attr("content");
+        ga('set', 'dimension1', data);
+        ga('set', 'dimension2', version);
         firmware = data[0];
         fVersion = data[1];
         switch (firmware) {
@@ -499,7 +502,7 @@ function jog(dir, dist, feed = null) {
     if (feed) {
         socket.emit('jog', dir + ',' + dist + ',' + feed);
     } else {
-        socket.emit('jog', dir + ',' + dist);        
+        socket.emit('jog', dir + ',' + dist);
     }
 }
 
