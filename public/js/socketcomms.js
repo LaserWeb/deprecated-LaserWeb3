@@ -52,6 +52,7 @@ function initSocket() {
         var version = $('meta[name=version]').attr("content");
         ga('set', 'dimension1', data);
         ga('set', 'dimension2', version);
+        ga('send', 'pageview');
         firmware = data[0];
         fVersion = data[1];
         switch (firmware) {
