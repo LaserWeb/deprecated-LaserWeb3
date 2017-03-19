@@ -1,6 +1,6 @@
 {
   "name": "laserweb",
-  "version": "3.254.0",
+  "version": "3.256.0",
   "description": "a fully featured web ui for laser cutter/engravers, reprap and other 3d printers",
   "contributors": [
     "Peter van der Walt <peter.plaaswerf@gmail.com>"

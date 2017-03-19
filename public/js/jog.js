@@ -20,14 +20,24 @@ function initJog() {
     console.log('bbox for Draw Bounding Box: '+ object +' Min X: ', (bbox2.min.x + (laserxmax / 2)), '  Max X:', (bbox2.max.x + (laserxmax / 2)), 'Min Y: ', (bbox2.min.y + (laserymax / 2)), '  Max Y:', (bbox2.max.y + (laserymax / 2)));
     printLog("Drawing Bounding Box...", msgcolor, "jog");
     var feedrate = $('#jogfeedxy').val() * 60;
+    if (firmware==='grbl') {
     var moves = `
-    G90\n
-    G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
-    G0 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
-    G0 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
-    G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
-    G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
-    G90\n`;
+        $J=G90 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
+        $J=G90 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
+        $J=G90 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
+        $J=G90 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
+        $J=G90 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
+    `;
+    } else {
+        var moves = `
+        G90\n
+        G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
+        G0 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
+        G0 X`+(bbox2.max.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
+        G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.max.y + (laserymax / 2))+` F`+feedrate+`\n
+        G0 X`+(bbox2.min.x + (laserxmax / 2))+` Y`+(bbox2.min.y + (laserymax / 2))+` F`+feedrate+`\n
+        G90\n`;
+    }
     sendGcode(moves);
   });
 
@@ -218,7 +228,8 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedxy').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' X'+ dist + '\nG90\n');
+       //sendGcode('G91\nG0 F'+ feedrate +' X'+ dist + '\nG90\n');
+       jog('X', dist, feedrate);
      }
   });
 
@@ -227,7 +238,8 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedxy').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' Y'+ dist + '\nG90\n');
+       //sendGcode('G91\nG0 F'+ feedrate +' Y'+ dist + '\nG90\n');
+       jog('Y', dist, feedrate);
      }
   });
 
@@ -236,7 +248,8 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedz').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' Z'+ dist + '\nG90\n');
+       //sendGcode('G91\nG0 F'+ feedrate +' Z'+ dist + '\nG90\n');
+       jog('Z', dist, feedrate);
      }
   });
 
@@ -245,7 +258,8 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedxy').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' X-'+ dist + '\nG90\n');
+       //sendGcode('G91\nG0 F'+ feedrate +' X-'+ dist + '\nG90\n');
+       jog('X', '-' + dist, feedrate);
      }
   });
 
@@ -254,7 +268,8 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedxy').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' Y-'+ dist + '\nG90\n');
+       //sendGcode('G91\nG0 F'+ feedrate +' Y-'+ dist + '\nG90\n');
+       jog('Y', '-' + dist, feedrate);
      }
   });
 
@@ -263,7 +278,8 @@ function initJog() {
        var dist = $('input[name=stp]:checked', '#stepsize').val();
        var feedrate = $('#jogfeedz').val() * 60;
        console.log('Jog Distance', dist);
-       sendGcode('G91\nG0 F'+ feedrate +' Z-'+ dist + '\nG90\n');
+       //sendGcode('G91\nG0 F'+ feedrate +' Z-'+ dist + '\nG90\n');
+       jog('Z', '-' + dist, feedrate);
      }
   });
 
