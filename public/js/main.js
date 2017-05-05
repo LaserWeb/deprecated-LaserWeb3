@@ -136,7 +136,7 @@ $(document).ready(function() {
     checkNumPad();
 
     checkSettingsLocal();
-    
+
     // Show/Hide quote tab
     $("#quote-menu").toggle(loadSetting("showQuoteTab") == "Hide" ? false : true);
 
@@ -244,6 +244,10 @@ $(document).ready(function() {
         this.value = this.value.toLocaleUpperCase();
     });
 
+    $("#statusmodal").modal('show');
+    $("#statusTitle").html("<h4>Please upgrade to <kbd>LaserWeb4</kbd></h4>");
+    $("#statusBody").html("LaserWeb4 has reached mainstream adoption.  There wont be any more upgrades or fixes to LaserWeb3<hr>");
+    $("#statusBody2").html("Head on over to <a href=\"https://github.com/LaserWeb/LaserWeb4-Binaries/releases\">https://github.com/LaserWeb/LaserWeb4-Binaries/releases</a> to download the latest version!<hr> Read the documentation for LaserWeb4 on <a href=\"https://cncpro.co\">https://cncpro.co</a><hr>Close this window if you'd like to continue using LaserWeb3");
 
 
 }); // End of document.ready
