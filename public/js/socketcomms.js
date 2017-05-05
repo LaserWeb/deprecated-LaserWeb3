@@ -433,6 +433,11 @@ function updateStatus(data) {
         if (bullseye) {
             setBullseyePosition(pos[0], pos[1], pos[2]); // Also updates #mX #mY #mZ
         }
+
+        if (playing) {
+          TweenMax.to(controls.target, 1, { x: (xpos - (laserxmax / 2)), y: (ypos - (laserymax / 2)), z: zpos });
+          TweenMax.to(camera.position, 1, { x: xpos, y: ypos, z: 500 });
+        }      
     }
 
     // Extract override values (for Grbl > v1.1 only!)
