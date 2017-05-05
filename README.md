@@ -1,8 +1,10 @@
+# LaserWeb v4 - available for the adventurous
+
+Version 4 is currently in Public BETA and will soon replace LaserWeb3.
+If you feel you want to give it a go, head over to https://github.com/LaserWeb/LaserWeb4-Binaries/
+
 # LaserWeb
 
-Check the LaserWeb/CNCWeb Google+ community (https://plus.google.com/u/0/communities/115879488566665599508) for updates on the progress of the newest iteration of LaserWeb.
-
-Donations to the developers to further things along are always welcome, but even if you can not contribute financially, if you use LaserWeb and like it, spread the word around. More users translates into more contributors which then allows for faster, feature rich development.
 
 ## Documentation:
 
