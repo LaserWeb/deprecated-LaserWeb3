@@ -39,6 +39,7 @@ var endgcode;
 var isLaserOn = false;
 var speed;
 var IsG1FSet = false;
+var LastwasG1 = false;
 
 // add MAP function to the Numbers function
 Number.prototype.map = function(in_min, in_max, out_min, out_max) {
@@ -224,6 +225,7 @@ Rasterizer.prototype.rasterRow = function(y) {
     var gcodey = (this.config.imgheight * this.config.spotSize1) - posy;
     gcodey = gcodey.toFixed(3);
     this.result += 'G0 Y{0}\n'.format(gcodey);
+    LastwasG1 = false;
 
     // Clear grayscale values on each line change
     var lastGrey = -1;
@@ -290,16 +292,27 @@ Rasterizer.prototype.rasterRow = function(y) {
                 if (laseron) {
                     this.result += laseron
                     this.result += '\n'
+                    LastwasG1 = false; //Just in case
                 }
                 isLaserOn = true;
               }
               if (lastFeed != speed || IsG1FSet != true) {
                 // console.log("DIFF " + lastFeed + " " + speed)
-                this.result += 'G1 X{0} S{2} F{3}\n'.format(posx, gcodey, lastIntensity, speed);
+                if (LastwasG1 != true) {
+                    this.result += 'G1 X{0} S{2} F{3}\n'.format(posx, gcodey, lastIntensity, speed);
+                } else {
+                    this.result += 'X{0} S{2} F{3}\n'.format(posx, gcodey, lastIntensity, speed);
+                }
                 IsG1FSet = true;
+                LastwasG1 = true;
               } else {
                 // console.log("SAME " + lastFeed + " " + speed)
-                this.result += 'G1 X{0} S{2}\n'.format(posx, gcodey, lastIntensity);
+                if (LastwasG1 != true) {
+                    this.result += 'G1 X{0} S{2}\n'.format(posx, gcodey, lastIntensity);
+                } else {
+                    this.result += 'X{0} S{2}\n'.format(posx, gcodey, lastIntensity);
+                }
+                LastwasG1 = true;
               }
               // if (laseroff) {
               //     this.result += laseroff
@@ -313,8 +326,10 @@ Rasterizer.prototype.rasterRow = function(y) {
                       this.result += '\n'
                   }
                   isLaserOn = false;
+                  LastwasG1 = false; //Just in case
                 }
                 this.result += 'G0 X{0} S0\n'.format(posx, gcodey);
+                LastwasG1 = false;
 
               }
             }
@@ -335,6 +350,7 @@ Rasterizer.prototype.rasterRow = function(y) {
     if (laseroff) {
         this.result += laseroff
         this.result += '\n'
+        LastwasG1 = false; //Just in case
     }
     isLaserOn = false;
     this.dir = -this.dir; // Reverse direction for next row - makes us move in a more efficient zig zag down the image
